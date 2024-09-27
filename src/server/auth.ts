@@ -1,7 +1,7 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { Role } from "@prisma/client";
+import { type Role } from "@prisma/client";
 import {
-  DefaultUser,
+  type DefaultUser,
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
