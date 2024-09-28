@@ -1,12 +1,12 @@
 "use client";
 import React, { type ComponentPropsWithRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage, Header } from "../../ui";
-import { cn } from "~/lib/utils";
+import { cn } from "~/lib";
 import { LogIn, UserRound } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { NavbarButton } from "./navbar-button";
-import { NAVBAR_LINKS } from "./navbar-links-constant";
+import { NAVBAR_LINKS } from "~/constants";
 
 type Props = ComponentPropsWithRef<"div">;
 
@@ -27,7 +27,7 @@ const NavbarContent = (props: Props) => {
         {Object.values(NAVBAR_LINKS).map((value) => (
           <NavbarButton
             key={value.href}
-            icon={value.icon}
+            icon={<value.icon />}
             pathname={value.href}
             title={value.title}
             isActive={pathname === value.href}

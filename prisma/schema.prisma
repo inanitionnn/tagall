@@ -123,15 +123,15 @@ model Tag {
 
     name String
 
-    items        Item[]
-    itemComments ItemComment[]
-    tagType      TagType       @relation(fields: [tagTypeId], references: [id], onDelete: Cascade)
-    tagTypeId    String
+    items         Item[]
+    itemComments  ItemComment[]
+    tagCategory   TagCategory   @relation(fields: [tagCategoryId], references: [id], onDelete: Cascade)
+    tagCategoryId String
 
-    @@index([tagTypeId, name, id])
+    @@index([tagCategoryId, name, id])
 }
 
-model TagType {
+model TagCategory {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button, Paragraph } from "../../ui";
-import { cn } from "~/lib/utils";
+import { cn } from "~/lib";
 
 type NavbarButtonProps = {
   title: string;

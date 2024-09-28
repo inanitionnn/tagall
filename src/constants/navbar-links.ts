@@ -1,29 +1,29 @@
-import { Folders, House, LibraryBig, Tags } from "lucide-react";
+import { Folders, House, LibraryBig, LucideIcon, Tags } from "lucide-react";
 
 type NavbarLinkType = {
-  icon: React.ReactNode;
+  icon: LucideIcon;
   title: string;
   href: string;
 };
 
 const NAVBAR_LINKS: NavbarLinkType[] = [
   {
-    icon: <House />,
+    icon: House,
     href: "/",
     title: "Home",
   },
   {
-    icon: <LibraryBig />,
+    icon: LibraryBig,
     href: "/collections",
     title: "Collections",
   },
   {
-    icon: <Folders />,
+    icon: Folders,
     href: "/groups",
     title: "Groups",
   },
   {
-    icon: <Tags />,
+    icon: Tags,
     href: "/tags",
     title: "Tags",
   },

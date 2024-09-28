@@ -1,5 +1,5 @@
 import { type ComponentPropsWithRef } from "react";
-import { cn } from "~/lib/utils";
+import { cn } from "~/lib";
 import { NavbarContent } from "./navbar-content";
 
 type Props = ComponentPropsWithRef<"div">;
