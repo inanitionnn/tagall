@@ -2,8 +2,9 @@ import "~/styles/globals.css";
 
 import { Source_Sans_3, Oswald } from "next/font/google";
 import { type Metadata } from "next";
-
 import { TRPCReactProvider } from "~/trpc/react";
+import { Session } from "next-auth";
+import { Wrapper } from "./_components/wrapper";
 
 const sourceSansPro = Source_Sans_3({
   subsets: ["latin"],
@@ -19,11 +20,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+  params: { session },
+}: Readonly<{
+  children: React.ReactNode;
+  params: { session: Session | null | undefined };
+}>) {
   return (
     <html lang="en" className={`${sourceSansPro.variable} ${oswald.variable}`}>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          <Wrapper session={session}>{children}</Wrapper>
+        </TRPCReactProvider>
       </body>
     </html>
   );
