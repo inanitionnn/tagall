@@ -1,4 +1,4 @@
-import { type ComponentPropsWithRef, type Ref, forwardRef } from "react";
+import { type ComponentPropsWithoutRef, forwardRef } from "react";
 import { type VariantProps, cva } from "class-variance-authority";
 import { cn } from "~/lib/utils";
 
@@ -15,10 +15,8 @@ const paragraphVariants = cva("font-sans leading-relaxed", {
   },
 });
 
-type Props = ComponentPropsWithRef<"p"> &
-  VariantProps<typeof paragraphVariants> & {
-    vsize: "lg" | "base" | "sm";
-  };
+type Props = ComponentPropsWithoutRef<"p"> &
+  VariantProps<typeof paragraphVariants>;
 
 const Paragraph = forwardRef<HTMLParagraphElement, Props>((props, ref) => {
   const { className, vsize, children, ...restProps } = props;

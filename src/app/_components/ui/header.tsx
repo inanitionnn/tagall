@@ -1,4 +1,4 @@
-import { type ComponentPropsWithRef, type Ref, forwardRef } from "react";
+import { type ComponentPropsWithoutRef, forwardRef } from "react";
 import { type VariantProps, cva } from "class-variance-authority";
 import { cn } from "~/lib/utils";
 
@@ -20,7 +20,7 @@ const headerVariants = cva("font-head leading-relaxed", {
 
 type HeaderTag = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
-type Props = ComponentPropsWithRef<HeaderTag> &
+type Props = ComponentPropsWithoutRef<HeaderTag> &
   VariantProps<typeof headerVariants> & {
     vtag: HeaderTag;
   };
