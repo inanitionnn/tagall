@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-geist-sans)", ...fontFamily.sans],
+        sans: ["var(--font-source-sans)", ...fontFamily.sans],
+        head: ["var(--font-oswald)", ...fontFamily.sans],
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -55,6 +56,16 @@ export default {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+      },
+      fontSize: {
+        "5xl": "7.993rem", // h1
+        "4xl": "5.653rem", // h2
+        "3xl": "3.998rem", // h3
+        "2xl": "2.827rem", // h4
+        xl: "1.999rem", // h5
+        lg: "1.414rem", // h6
+        base: "1rem", // p
+        sm: "0.707rem", // small
       },
     },
   },
