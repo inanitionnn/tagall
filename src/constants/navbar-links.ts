@@ -1,4 +1,4 @@
-import { Folders, House, LibraryBig, LucideIcon, Tags } from "lucide-react";
+import { Folders, House, LibraryBig, type LucideIcon, Tags } from "lucide-react";
 
 type NavbarLinkType = {
   icon: LucideIcon;
