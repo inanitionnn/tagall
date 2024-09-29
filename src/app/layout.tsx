@@ -3,8 +3,9 @@ import "~/styles/globals.css";
 import { Source_Sans_3, Oswald } from "next/font/google";
 import { type Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
-import { Session } from "next-auth";
-import { Wrapper } from "./_components/wrapper";
+import { type Session } from "next-auth";
+import { SessionProviderWrapper } from "./_components/wrappers/session-provider-wrapper";
+import { ToastWrapper } from "./_components/wrappers/toast-wrapper";
 
 const sourceSansPro = Source_Sans_3({
   subsets: ["latin"],
@@ -29,7 +30,9 @@ export default function RootLayout({
     <html lang="en" className={`${sourceSansPro.variable} ${oswald.variable}`}>
       <body>
         <TRPCReactProvider>
-          <Wrapper session={session}>{children}</Wrapper>
+          <SessionProviderWrapper session={session}>
+            <ToastWrapper>{children}</ToastWrapper>
+          </SessionProviderWrapper>
         </TRPCReactProvider>
       </body>
     </html>
