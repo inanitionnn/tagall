@@ -29,8 +29,8 @@ const Header = forwardRef<HTMLHeadingElement, Props>((props, ref) => {
   const { className, children, vtag: Tag = "h1", ...restProps } = props;
   return (
     <Tag
-      className={cn(headerVariants({ vtag: Tag, className }))}
       ref={ref}
+      className={cn(headerVariants({ vtag: Tag, className }))}
       {...restProps}
     >
       {children}
