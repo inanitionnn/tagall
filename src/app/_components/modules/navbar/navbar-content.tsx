@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage, Header } from "../../ui";
 import { cn } from "~/lib";
 import { LogIn, UserRound } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { NavbarButton } from "./navbar-button";
 import { NAVBAR_LINKS } from "~/constants";
 
@@ -51,10 +51,12 @@ const NavbarContent = (props: Props) => {
         />
       ) : (
         <NavbarButton
+          isLink={false}
           icon={<LogIn />}
           pathname={"/login"}
           title={"Login"}
           isActive={true}
+          onClick={() => signIn("google")}
         />
       )}
     </div>
