@@ -15,7 +15,7 @@ export const tagRouter = createTRPCRouter({
         data: {
           name: input.name,
           tagCategory: { connect: { id: input.tagCategoryId } },
-          user: { connect: { id: ctx.session!.user.id } },
+          user: { connect: { id: ctx.session.user.id } },
         },
       });
     }),

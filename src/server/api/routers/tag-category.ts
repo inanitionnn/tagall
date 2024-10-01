@@ -30,7 +30,7 @@ export const tagCategoryRouter = createTRPCRouter({
           icon: input.icon,
           isAuto: input.isAuto,
           priority: input.priority,
-          user: { connect: { id: ctx.session!.user.id } },
+          user: { connect: { id: ctx.session.user.id } },
         },
       });
     }),

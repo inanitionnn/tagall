@@ -11,10 +11,8 @@ import {
   Header,
   Input,
   Paragraph,
-  Switch,
 } from "../../ui";
-import { type LucideIcon, Minus, Pencil, Plus } from "lucide-react";
-import { SelectTagIconDialog } from "./select-tag-icon-dialog";
+import { Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";

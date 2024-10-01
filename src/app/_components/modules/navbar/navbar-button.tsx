@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button, Paragraph } from "../../ui";
 import { cn } from "~/lib";
-import { ComponentPropsWithoutRef } from "react";
+import { type ComponentPropsWithoutRef } from "react";
 
 type NavbarButtonProps = ComponentPropsWithoutRef<"button"> & {
   title: string;

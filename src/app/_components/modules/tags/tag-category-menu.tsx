@@ -4,8 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../../ui";
-import { Ellipsis, LucideIcon } from "lucide-react";
-import { forwardRef } from "react";
+import { Ellipsis, type LucideIcon } from "lucide-react";
 import { UpdateTagCategoryDrawer } from "./update-tag-category-drawer";
 import { DeleteTagCategoryDialog } from "./delete-tag-category-dialog";
 
@@ -17,7 +16,7 @@ type Props = {
   priority: number;
 };
 
-const TagCategoryMenu = forwardRef<HTMLDivElement, Props>((props, ref) => {
+const TagCategoryMenu = (props: Props) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -31,6 +30,6 @@ const TagCategoryMenu = forwardRef<HTMLDivElement, Props>((props, ref) => {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-});
+};
 
 export { TagCategoryMenu };
