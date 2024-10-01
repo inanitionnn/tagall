@@ -70,6 +70,7 @@ CREATE TABLE "ItemComment" (
     "title" TEXT NOT NULL,
     "description" TEXT,
     "itemId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "ItemComment_pkey" PRIMARY KEY ("id")
 );
@@ -84,6 +85,7 @@ CREATE TABLE "ItemTextBlock" (
     "image" TEXT,
     "number" INTEGER NOT NULL DEFAULT 0,
     "itemId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "ItemTextBlock_pkey" PRIMARY KEY ("id")
 );
@@ -93,22 +95,23 @@ CREATE TABLE "Tag" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "name" TEXT NOT NULL,
-    "tagTypeId" TEXT NOT NULL,
+    "tagCategoryId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "Tag_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "TagType" (
+CREATE TABLE "TagCategory" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "name" TEXT NOT NULL,
     "icon" TEXT,
-    "color" TEXT,
     "isAuto" BOOLEAN NOT NULL DEFAULT false,
     "priority" INTEGER NOT NULL DEFAULT 0,
+    "userId" TEXT NOT NULL,
 
-    CONSTRAINT "TagType_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "TagCategory_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -145,16 +148,16 @@ CREATE INDEX "User_role_id_email_idx" ON "User"("role", "id", "email");
 CREATE INDEX "Item_name_createdAt_userId_id_idx" ON "Item"("name", "createdAt", "userId", "id");
 
 -- CreateIndex
-CREATE INDEX "ItemComment_createdAt_itemId_id_idx" ON "ItemComment"("createdAt", "itemId", "id");
+CREATE INDEX "ItemComment_createdAt_userId_itemId_id_idx" ON "ItemComment"("createdAt", "userId", "itemId", "id");
 
 -- CreateIndex
-CREATE INDEX "ItemTextBlock_number_itemId_id_idx" ON "ItemTextBlock"("number", "itemId", "id");
+CREATE INDEX "ItemTextBlock_number_userId_itemId_id_idx" ON "ItemTextBlock"("number", "userId", "itemId", "id");
 
 -- CreateIndex
-CREATE INDEX "Tag_tagTypeId_name_id_idx" ON "Tag"("tagTypeId", "name", "id");
+CREATE INDEX "Tag_tagCategoryId_userId_name_id_idx" ON "Tag"("tagCategoryId", "userId", "name", "id");
 
 -- CreateIndex
-CREATE INDEX "TagType_priority_id_idx" ON "TagType"("priority", "id");
+CREATE INDEX "TagCategory_priority_userId_id_idx" ON "TagCategory"("priority", "userId", "id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_ItemToTag_AB_unique" ON "_ItemToTag"("A", "B");
@@ -181,10 +184,22 @@ ALTER TABLE "Item" ADD CONSTRAINT "Item_userId_fkey" FOREIGN KEY ("userId") REFE
 ALTER TABLE "ItemComment" ADD CONSTRAINT "ItemComment_itemId_fkey" FOREIGN KEY ("itemId") REFERENCES "Item"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "ItemComment" ADD CONSTRAINT "ItemComment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "ItemTextBlock" ADD CONSTRAINT "ItemTextBlock_itemId_fkey" FOREIGN KEY ("itemId") REFERENCES "Item"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Tag" ADD CONSTRAINT "Tag_tagTypeId_fkey" FOREIGN KEY ("tagTypeId") REFERENCES "TagType"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ItemTextBlock" ADD CONSTRAINT "ItemTextBlock_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Tag" ADD CONSTRAINT "Tag_tagCategoryId_fkey" FOREIGN KEY ("tagCategoryId") REFERENCES "TagCategory"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Tag" ADD CONSTRAINT "Tag_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TagCategory" ADD CONSTRAINT "TagCategory_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_ItemToTag" ADD CONSTRAINT "_ItemToTag_A_fkey" FOREIGN KEY ("A") REFERENCES "Item"("id") ON DELETE CASCADE ON UPDATE CASCADE;

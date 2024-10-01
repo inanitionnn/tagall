@@ -62,9 +62,13 @@ model User {
     image         String?
     role          Role      @default(USER)
 
-    accounts Account[]
-    sessions Session[]
-    items    Item[]
+    accounts       Account[]
+    sessions       Session[]
+    items          Item[]
+    tags           Tag[]
+    tagsCategories TagCategory[]
+    itemComments   ItemComment[]
+    itemTextBlocks ItemTextBlock[]
 
     @@index([role, id, email])
 }
@@ -97,8 +101,10 @@ model ItemComment {
     tags   Tag[]
     item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
     itemId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String
 
-    @@index([createdAt, itemId, id])
+    @@index([createdAt, userId, itemId, id])
 }
 
 model ItemTextBlock {
@@ -113,8 +119,10 @@ model ItemTextBlock {
 
     item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
     itemId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String
 
-    @@index([number, itemId, id])
+    @@index([number, userId, itemId, id])
 }
 
 model Tag {
@@ -127,8 +135,10 @@ model Tag {
     itemComments  ItemComment[]
     tagCategory   TagCategory   @relation(fields: [tagCategoryId], references: [id], onDelete: Cascade)
     tagCategoryId String
+    user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId        String
 
-    @@index([tagCategoryId, name, id])
+    @@index([tagCategoryId, userId, name, id])
 }
 
 model TagCategory {
@@ -137,11 +147,12 @@ model TagCategory {
 
     name     String
     icon     String?
-    color    String?
     isAuto   Boolean @default(false)
     priority Int     @default(0)
 
-    tags Tag[]
+    tags   Tag[]
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String
 
-    @@index([priority, id])
+    @@index([priority, userId, id])
 }
