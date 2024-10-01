@@ -13,13 +13,12 @@ const SelectTagIconDialog = (props: Props) => {
   const { SelectedIcon, setSelectedIcon } = props;
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <Dialog open={isOpen}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger>
         <Button
           variant="outline"
           size={SelectedIcon ? "icon" : "default"}
           className="gap-2"
-          onClick={() => setIsOpen(true)}
         >
           {SelectedIcon ? <SelectedIcon /> : "Select Icon"}
         </Button>

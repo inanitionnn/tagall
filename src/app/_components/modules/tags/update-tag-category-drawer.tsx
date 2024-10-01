@@ -13,7 +13,7 @@ import {
   Paragraph,
   Switch,
 } from "../../ui";
-import { type LucideIcon, Minus, Plus } from "lucide-react";
+import { type LucideIcon, Minus, Pencil, Plus } from "lucide-react";
 import { SelectTagIconDialog } from "./select-tag-icon-dialog";
 import { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
@@ -25,30 +25,35 @@ const tagCategorySchema = z.object({
   priority: z.number().min(0).max(100).optional(),
 });
 
-const CreateTagCategoryDrawer = () => {
+type Props = {
+  id: string;
+  icon: LucideIcon | null;
+  name: string | null;
+  isAuto: boolean;
+  priority: number;
+};
+
+const UpdateTagCategoryDrawer = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [icon, setIcon] = useState<LucideIcon | null>(null);
-  const [name, setName] = useState<string | null>(null);
-  const [isAuto, setIsAuto] = useState<boolean>(false);
-  const [priority, setPriority] = useState<number>(0);
+  const [icon, setIcon] = useState<LucideIcon | null>(props.icon);
+  const [name, setName] = useState<string | null>(props.name);
+  const [isAuto, setIsAuto] = useState<boolean>(props.isAuto);
+  const [priority, setPriority] = useState<number>(props.priority);
   const [errors, setErrors] = useState<{
     name?: string[];
     priority?: string[];
   }>({});
 
   const utils = api.useUtils();
-  const createCategory = api.tagCategory.create.useMutation({
+  const updateCategory = api.tagCategory.update.useMutation({
     onSuccess: async () => {
       await utils.tagCategory.invalidate();
-      setName(null);
-      setIcon(null);
-      setIsAuto(false);
-      setPriority(0);
     },
   });
 
   const submit = () => {
     const data = {
+      id: props.id,
       name: name ?? "",
       icon: icon?.displayName,
       isAuto,
@@ -59,10 +64,10 @@ const CreateTagCategoryDrawer = () => {
       setErrors(validationResult.error.flatten().fieldErrors);
     } else {
       setIsOpen(false);
-      toast.promise(createCategory.mutateAsync(data), {
-        loading: "Creating category...",
-        success: "Category created successfully!",
-        error: (error) => `Failed to create category: ${error.message}`,
+      toast.promise(updateCategory.mutateAsync(data), {
+        loading: "Updating category...",
+        success: "Category updated successfully!",
+        error: (error) => `Failed to update category: ${error.message}`,
       });
     }
   };
@@ -82,14 +87,19 @@ const CreateTagCategoryDrawer = () => {
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger>
-        <Button variant="outline" className="gap-2">
-          <Plus /> Add category
+        <Button
+          variant="ghost"
+          size={"sm"}
+          className="w-full justify-start gap-2"
+        >
+          <Pencil size={16} />
+          Update
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <div className="mx-auto flex w-full max-w-md flex-col items-center">
           <DrawerHeader className="w-full gap-4">
-            <Header vtag="h5">New Tag Category</Header>
+            <Header vtag="h5">Update Tag Category</Header>
             <div className="flex items-center gap-4">
               <SelectTagIconDialog
                 SelectedIcon={icon}
@@ -172,9 +182,9 @@ const CreateTagCategoryDrawer = () => {
             <Button
               disabled={!!Object.values(errors).length}
               className="w-full"
-              onClick={() => submit()}
+              onClick={submit}
             >
-              Create
+              Update
             </Button>
           </DrawerFooter>
         </div>
@@ -183,4 +193,4 @@ const CreateTagCategoryDrawer = () => {
   );
 };
 
-export { CreateTagCategoryDrawer };
+export { UpdateTagCategoryDrawer };

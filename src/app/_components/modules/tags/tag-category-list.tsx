@@ -16,15 +16,7 @@ const TagCategoryList = () => {
   return (
     <div ref={parent} className="flex flex-col gap-6">
       {categories.map((category) => (
-        <TagCategoryBlock
-          key={category.id}
-          id={category.id}
-          isAuto={category.isAuto}
-          title={category.name}
-          tags={category.tags}
-          titleIcon={category.icon}
-          priority={category.priority}
-        />
+        <TagCategoryBlock key={category.id} {...category} />
       ))}
     </div>
   );

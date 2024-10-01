@@ -1,8 +1,8 @@
 "use client";
 import autoAnimate from "@formkit/auto-animate";
 import { useEffect, useRef } from "react";
-import { Badge } from "../../ui";
 import { CreateTagDrawer } from "./create-tag-drawer";
+import { TagMenu } from "./tag-menu";
 
 type Props = {
   tagCategoryId: string;
@@ -26,13 +26,7 @@ const TagList = (props: Props) => {
   return (
     <div ref={parent} className="flex flex-wrap gap-2">
       {tags.map((tag) => (
-        <Badge
-          key={tag.id}
-          variant={"outline"}
-          className="hover:cursor-pointer hover:border-transparent hover:bg-destructive hover:text-destructive-foreground"
-        >
-          {tag.name}
-        </Badge>
+        <TagMenu key={tag.id} {...tag} />
       ))}
       <CreateTagDrawer tagCategoryId={tagCategoryId} />
     </div>

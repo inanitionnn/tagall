@@ -11,54 +11,53 @@ import {
   Header,
   Input,
   Paragraph,
+  Switch,
 } from "../../ui";
-import { Plus } from "lucide-react";
+import { type LucideIcon, Minus, Pencil, Plus } from "lucide-react";
+import { SelectTagIconDialog } from "./select-tag-icon-dialog";
 import { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { z } from "zod";
 
-const tagSchema = z.object({
+const tagCategorySchema = z.object({
   name: z.string().min(1).max(64),
 });
 
 type Props = {
-  tagCategoryId: string;
+  id: string;
+  name: string | null;
 };
 
-const CreateTagDrawer = (props: Props) => {
-  const { tagCategoryId } = props;
+const UpdateTagDrawer = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [name, setName] = useState<string | null>(null);
-
+  const [name, setName] = useState<string | null>(props.name);
   const [errors, setErrors] = useState<{
     name?: string[];
     priority?: string[];
   }>({});
 
   const utils = api.useUtils();
-  const createTag = api.tag.create.useMutation({
+  const updateTag = api.tag.update.useMutation({
     onSuccess: async () => {
       await utils.tagCategory.invalidate();
-      setName(null);
     },
   });
 
   const submit = () => {
     const data = {
-      tagCategoryId,
+      id: props.id,
       name: name ?? "",
     };
-    const validationResult = tagSchema.safeParse(data);
+    const validationResult = tagCategorySchema.safeParse(data);
     if (!validationResult.success) {
       setErrors(validationResult.error.flatten().fieldErrors);
     } else {
       setIsOpen(false);
-      console.log("data", data);
-      toast.promise(createTag.mutateAsync(data), {
-        loading: "Creating category...",
-        success: "Category created successfully!",
-        error: (error) => `Failed to create category: ${error.message}`,
+      toast.promise(updateTag.mutateAsync(data), {
+        loading: "Updating category...",
+        success: "Category updated successfully!",
+        error: (error) => `Failed to update category: ${error.message}`,
       });
     }
   };
@@ -66,7 +65,7 @@ const CreateTagDrawer = (props: Props) => {
   useEffect(() => {
     if (name !== null) {
       const data = { name };
-      const validationResult = tagSchema.safeParse(data);
+      const validationResult = tagCategorySchema.safeParse(data);
       if (!validationResult.success) {
         setErrors(validationResult.error.flatten().fieldErrors);
       } else {
@@ -78,14 +77,19 @@ const CreateTagDrawer = (props: Props) => {
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger>
-        <Button variant="outline" size={"icon"} className="rounded-full">
-          <Plus />
+        <Button
+          variant="ghost"
+          size={"sm"}
+          className="w-full justify-start gap-2"
+        >
+          <Pencil size={16} />
+          Update
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <div className="mx-auto flex w-full max-w-md flex-col items-center">
           <DrawerHeader className="w-full gap-4">
-            <Header vtag="h5">New Tag</Header>
+            <Header vtag="h5">Update Tag</Header>
             <Input
               autoFocus
               placeholder="Category name"
@@ -110,9 +114,9 @@ const CreateTagDrawer = (props: Props) => {
             <Button
               disabled={!!Object.values(errors).length}
               className="w-full"
-              onClick={() => submit()}
+              onClick={submit}
             >
-              Create
+              Update
             </Button>
           </DrawerFooter>
         </div>
@@ -121,4 +125,4 @@ const CreateTagDrawer = (props: Props) => {
   );
 };
 
-export { CreateTagDrawer };
+export { UpdateTagDrawer };

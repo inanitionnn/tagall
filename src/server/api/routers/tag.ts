@@ -15,7 +15,30 @@ export const tagRouter = createTRPCRouter({
         data: {
           name: input.name,
           tagCategory: { connect: { id: input.tagCategoryId } },
+          user: { connect: { id: ctx.session!.user.id } },
         },
       });
+    }),
+
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+        name: z.string().min(1).max(64),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.tag.update({
+        where: { id: input.id },
+        data: {
+          name: input.name,
+        },
+      });
+    }),
+
+  delete: protectedProcedure
+    .input(z.string().cuid())
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.tag.delete({ where: { id: input } });
     }),
 });

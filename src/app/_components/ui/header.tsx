@@ -9,7 +9,7 @@ const headerVariants = cva("font-head leading-relaxed", {
       h2: "text-3xl md:text-4xl font-bold tracking-wide",
       h3: "text-3xl font-bold tracking-wide",
       h4: "text-2xl font-semibold tracking-wider",
-      h5: "text-xl font-semibold tracking-wider",
+      h5: "text-lg md:text-xl font-semibold tracking-wider",
       h6: "text-lg font-semibold tracking-wider",
     },
   },
