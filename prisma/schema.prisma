@@ -69,6 +69,7 @@ model User {
     tagsCategories TagCategory[]
     itemComments   ItemComment[]
     itemTextBlocks ItemTextBlock[]
+    collections    Collection[]
 
     @@index([role, id, email])
 }
@@ -125,6 +126,21 @@ model ItemTextBlock {
     @@index([number, userId, itemId, id])
 }
 
+model Collection {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name  String
+    image String?
+
+    user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId        String
+    tagCategories TagCategory[]
+
+    @@index([name, createdAt, userId, id])
+}
+
 model Tag {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
@@ -150,9 +166,10 @@ model TagCategory {
     isAuto   Boolean @default(false)
     priority Int     @default(0)
 
-    tags   Tag[]
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String
+    tags        Tag[]
+    user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId      String
+    collections Collection[]
 
     @@index([priority, userId, id])
 }
