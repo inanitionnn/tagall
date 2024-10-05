@@ -11,3 +11,5 @@ export * from "./dialog";
 export * from "./drawer";
 export * from "./switch";
 export * from "./dropdown-menu";
+export * from "./spinner";
+export * from "./form";

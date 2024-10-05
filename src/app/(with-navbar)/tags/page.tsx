@@ -1,5 +1,7 @@
-import { TagCategoryList } from "~/app/_components/modules";
-import { CreateTagCategoryDrawer } from "~/app/_components/modules/tags/create-tag-category-drawer";
+import {
+  TagCategoryList,
+  CreateTagCategoryDrawer,
+} from "~/app/_components/modules";
 import { Button, Header, Input, Wrapper } from "~/app/_components/ui";
 import { api, HydrateClient } from "~/trpc/server";
 

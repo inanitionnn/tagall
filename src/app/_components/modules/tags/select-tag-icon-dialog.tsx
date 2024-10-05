@@ -16,6 +16,7 @@ const SelectTagIconDialog = (props: Props) => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger>
         <Button
+          type="button"
           variant="outline"
           size={SelectedIcon ? "icon" : "default"}
           className="gap-2"
@@ -33,6 +34,7 @@ const SelectTagIconDialog = (props: Props) => {
               key={index}
               size={"icon"}
               variant={"ghost"}
+              type="button"
               onClick={() => {
                 setIsOpen(false);
                 setSelectedIcon(Icon);

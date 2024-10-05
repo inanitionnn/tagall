@@ -1,6 +1,6 @@
 import { cn } from "~/lib";
 import { Header, Paragraph, Wrapper } from "../../ui";
-import { Bot, Flag, Plus } from "lucide-react";
+import { Bot, BotMessageSquare, Flag, Plus } from "lucide-react";
 import { TAG_ICONS } from "~/constants/tag-icons";
 import { forwardRef } from "react";
 import { TagList } from "./tag-list";
@@ -28,13 +28,10 @@ const TagCategoryBlock = forwardRef<HTMLDivElement, Props>((props, ref) => {
   return (
     <Wrapper ref={ref}>
       <div className="flex items-start justify-between">
-        <div className="flex flex-col items-start gap-2 md:flex-row md:items-center">
+        <div className="flex flex-col items-start gap-2">
           <div className="flex items-center gap-2">
             {Icon && <Icon className="min-h-6 min-w-6 md:min-h-8 md:min-w-8" />}
             <Header vtag="h5">{name}</Header>
-            <Paragraph vsize={"base"} className="hidden text-border md:block">
-              |
-            </Paragraph>
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
@@ -47,8 +44,8 @@ const TagCategoryBlock = forwardRef<HTMLDivElement, Props>((props, ref) => {
                   |
                 </Paragraph>
                 <div className="flex items-center gap-1">
-                  <Bot size={16} />
-                  <Paragraph vsize={"base"}>Auto Elements</Paragraph>
+                  <BotMessageSquare size={16} />
+                  <Paragraph vsize={"base"}>To Elements</Paragraph>
                 </div>
               </>
             )}
@@ -58,8 +55,8 @@ const TagCategoryBlock = forwardRef<HTMLDivElement, Props>((props, ref) => {
                   |
                 </Paragraph>
                 <div className="flex items-center gap-1">
-                  <Plus size={16} />
-                  <Paragraph vsize={"base"}>Auto tags</Paragraph>
+                  <Bot size={16} />
+                  <Paragraph vsize={"base"}>New tags</Paragraph>
                 </div>
               </>
             )}
