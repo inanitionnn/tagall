@@ -10,7 +10,7 @@ export const tagCategoryRouter = createTRPCRouter({
           orderBy: { name: "asc" },
         },
       },
-      orderBy: [{ isAuto: "asc" }, { priority: "desc" }, { name: "desc" }],
+      orderBy: [{ priority: "desc" }, { name: "desc" }],
     });
   }),
 
@@ -19,7 +19,8 @@ export const tagCategoryRouter = createTRPCRouter({
       z.object({
         name: z.string().min(1).max(64),
         icon: z.string().max(64).nullable().optional(),
-        isAuto: z.boolean(),
+        autoAddToElement: z.boolean(),
+        autoAddTags: z.boolean(),
         priority: z.number().min(0).max(100).optional(),
       }),
     )
@@ -28,7 +29,8 @@ export const tagCategoryRouter = createTRPCRouter({
         data: {
           name: input.name,
           icon: input.icon,
-          isAuto: input.isAuto,
+          autoAddToElement: input.autoAddToElement,
+          autoAddTags: input.autoAddTags,
           priority: input.priority,
           user: { connect: { id: ctx.session.user.id } },
         },
@@ -41,7 +43,8 @@ export const tagCategoryRouter = createTRPCRouter({
         id: z.string().cuid(),
         name: z.string().min(1).max(64),
         icon: z.string().max(64).nullable().optional(),
-        isAuto: z.boolean(),
+        autoAddToElement: z.boolean(),
+        autoAddTags: z.boolean(),
         priority: z.number().min(0).max(100).optional(),
       }),
     )
@@ -51,7 +54,8 @@ export const tagCategoryRouter = createTRPCRouter({
         data: {
           name: input.name,
           icon: input.icon,
-          isAuto: input.isAuto,
+          autoAddToElement: input.autoAddToElement,
+          autoAddTags: input.autoAddTags,
           priority: input.priority,
         },
       });

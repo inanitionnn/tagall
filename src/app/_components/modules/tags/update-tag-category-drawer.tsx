@@ -29,7 +29,8 @@ type Props = {
   id: string;
   icon: LucideIcon | null;
   name: string | null;
-  isAuto: boolean;
+  autoAddToElement: boolean;
+  autoAddTags: boolean;
   priority: number;
 };
 
@@ -37,7 +38,10 @@ const UpdateTagCategoryDrawer = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [icon, setIcon] = useState<LucideIcon | null>(props.icon);
   const [name, setName] = useState<string | null>(props.name);
-  const [isAuto, setIsAuto] = useState<boolean>(props.isAuto);
+  const [autoAddToElement, setAutoAddToElement] = useState<boolean>(
+    props.autoAddToElement,
+  );
+  const [autoAddTags, setAutoAddTags] = useState<boolean>(props.autoAddTags);
   const [priority, setPriority] = useState<number>(props.priority);
   const [errors, setErrors] = useState<{
     name?: string[];
@@ -56,8 +60,9 @@ const UpdateTagCategoryDrawer = (props: Props) => {
       id: props.id,
       name: name ?? "",
       icon: icon?.displayName,
-      isAuto,
       priority,
+      autoAddToElement,
+      autoAddTags,
     };
     const validationResult = tagCategorySchema.safeParse(data);
     if (!validationResult.success) {
@@ -122,11 +127,24 @@ const UpdateTagCategoryDrawer = (props: Props) => {
                 {errors.name[0]}
               </Paragraph>
             )}
+
             <div className="flex items-center gap-2">
               <Paragraph className="font-medium" vsize={"lg"}>
-                Auto:{" "}
+                Auto add new tags:{" "}
               </Paragraph>
-              <Switch checked={isAuto} onCheckedChange={(e) => setIsAuto(e)} />
+              <Switch
+                checked={autoAddTags}
+                onCheckedChange={(e) => setAutoAddTags(e)}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Paragraph className="font-medium" vsize={"lg"}>
+                Auto add tags to elements:{" "}
+              </Paragraph>
+              <Switch
+                checked={autoAddToElement}
+                onCheckedChange={(e) => setAutoAddToElement(e)}
+              />
             </div>
             <div className="flex items-center gap-2">
               <Paragraph vsize={"lg"} className="mr-2 font-medium">

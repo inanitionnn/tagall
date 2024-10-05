@@ -1,6 +1,6 @@
 import { cn } from "~/lib";
 import { Header, Paragraph, Wrapper } from "../../ui";
-import { Bot, Flag } from "lucide-react";
+import { Bot, Flag, Plus } from "lucide-react";
 import { TAG_ICONS } from "~/constants/tag-icons";
 import { forwardRef } from "react";
 import { TagList } from "./tag-list";
@@ -8,7 +8,8 @@ import { TagCategoryMenu } from "./tag-category-menu";
 
 type Props = {
   id: string;
-  isAuto: boolean;
+  autoAddToElement: boolean;
+  autoAddTags: boolean;
   name: string;
   tags: {
     name: string;
@@ -21,10 +22,11 @@ type Props = {
 };
 
 const TagCategoryBlock = forwardRef<HTMLDivElement, Props>((props, ref) => {
-  const { id, isAuto, name, icon, tags, priority } = props;
+  const { id, autoAddTags, autoAddToElement, name, icon, tags, priority } =
+    props;
   const Icon = icon ? (TAG_ICONS[icon] ?? null) : null;
   return (
-    <Wrapper ref={ref} className={cn({ "rounded-r-none": isAuto })}>
+    <Wrapper ref={ref}>
       <div className="flex items-start justify-between">
         <div className="flex flex-col items-start gap-2 md:flex-row md:items-center">
           <div className="flex items-center gap-2">
@@ -39,14 +41,25 @@ const TagCategoryBlock = forwardRef<HTMLDivElement, Props>((props, ref) => {
               <Flag size={16} />
               <Paragraph vsize={"base"}>{priority}</Paragraph>
             </div>
-            {isAuto && (
+            {autoAddToElement && (
               <>
                 <Paragraph vsize={"base"} className="text-border">
                   |
                 </Paragraph>
                 <div className="flex items-center gap-1">
                   <Bot size={16} />
-                  <Paragraph vsize={"base"}>Auto</Paragraph>
+                  <Paragraph vsize={"base"}>Auto Elements</Paragraph>
+                </div>
+              </>
+            )}
+            {autoAddTags && (
+              <>
+                <Paragraph vsize={"base"} className="text-border">
+                  |
+                </Paragraph>
+                <div className="flex items-center gap-1">
+                  <Plus size={16} />
+                  <Paragraph vsize={"base"}>Auto tags</Paragraph>
                 </div>
               </>
             )}

@@ -12,7 +12,8 @@ type Props = {
   id: string;
   icon: LucideIcon | null;
   name: string | null;
-  isAuto: boolean;
+  autoAddToElement: boolean;
+  autoAddTags: boolean;
   priority: number;
 };
 

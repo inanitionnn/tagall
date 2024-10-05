@@ -29,7 +29,8 @@ const CreateTagCategoryDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [icon, setIcon] = useState<LucideIcon | null>(null);
   const [name, setName] = useState<string | null>(null);
-  const [isAuto, setIsAuto] = useState<boolean>(false);
+  const [autoAddToElement, setAutoAddToElement] = useState<boolean>(false);
+  const [autoAddTags, setAutoAddTags] = useState<boolean>(false);
   const [priority, setPriority] = useState<number>(0);
   const [errors, setErrors] = useState<{
     name?: string[];
@@ -42,8 +43,9 @@ const CreateTagCategoryDrawer = () => {
       await utils.tagCategory.invalidate();
       setName(null);
       setIcon(null);
-      setIsAuto(false);
       setPriority(0);
+      setAutoAddToElement(false);
+      setAutoAddTags(false);
     },
   });
 
@@ -51,7 +53,8 @@ const CreateTagCategoryDrawer = () => {
     const data = {
       name: name ?? "",
       icon: icon?.displayName,
-      isAuto,
+      autoAddToElement,
+      autoAddTags,
       priority,
     };
     const validationResult = tagCategorySchema.safeParse(data);
@@ -114,9 +117,21 @@ const CreateTagCategoryDrawer = () => {
             )}
             <div className="flex items-center gap-2">
               <Paragraph className="font-medium" vsize={"lg"}>
-                Auto:{" "}
+                Auto add new tags:{" "}
               </Paragraph>
-              <Switch checked={isAuto} onCheckedChange={(e) => setIsAuto(e)} />
+              <Switch
+                checked={autoAddTags}
+                onCheckedChange={(e) => setAutoAddTags(e)}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Paragraph className="font-medium" vsize={"lg"}>
+                Auto add tags to elements:{" "}
+              </Paragraph>
+              <Switch
+                checked={autoAddToElement}
+                onCheckedChange={(e) => setAutoAddToElement(e)}
+              />
             </div>
             <div className="flex items-center gap-2">
               <Paragraph vsize={"lg"} className="mr-2 font-medium">

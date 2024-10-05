@@ -161,10 +161,11 @@ model TagCategory {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
 
-    name     String
-    icon     String?
-    isAuto   Boolean @default(false)
-    priority Int     @default(0)
+    name             String
+    icon             String?
+    autoAddTags      Boolean @default(false)
+    autoAddToElement Boolean @default(false)
+    priority         Int     @default(0)
 
     tags        Tag[]
     user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
