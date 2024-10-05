@@ -21,7 +21,7 @@ const TagMenu = (props: Props) => {
       <DropdownMenuTrigger>
         <Badge
           variant={isOpen ? "default" : "outline"}
-          className="hover:cursor-pointer hover:bg-accent hover:text-accent-foreground"
+          className="h-10 rounded-md hover:cursor-pointer hover:bg-accent hover:text-accent-foreground"
         >
           {props.name}
         </Badge>

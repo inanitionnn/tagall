@@ -28,9 +28,9 @@ const DeleteTagDialog = (props: Props) => {
   const submit = () => {
     setIsOpen(false);
     toast.promise(deleteTag.mutateAsync(props.id), {
-      loading: "Updating category...",
-      success: "Category updated successfully!",
-      error: (error) => `Failed to update category: ${error.message}`,
+      loading: "Deleting category...",
+      success: "Category delete successfully!",
+      error: (error) => `Failed to delete tag: ${error.message}`,
     });
   };
 
@@ -45,9 +45,9 @@ const DeleteTagDialog = (props: Props) => {
           <Trash2 size={16} /> Delete
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-sm gap-4">
         <div className="flex flex-col">
-          <Header vtag="h4">Are you sure?</Header>
+          <Header vtag="h5">Are you sure?</Header>
           <Paragraph>This action cannot be undone.</Paragraph>
         </div>
 

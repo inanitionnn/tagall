@@ -28,7 +28,7 @@ import {
   Plus,
 } from "lucide-react";
 import { SelectTagIconDialog } from "./select-tag-icon-dialog";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -70,12 +70,7 @@ const CreateTagCategoryDrawer = () => {
   });
 
   const resetForm = () => {
-    form.reset({
-      name: "",
-      priority: 0,
-      autoAddTags: false,
-      autoAddToElement: false,
-    });
+    form.reset();
     setIcon(null);
   };
 
@@ -97,7 +92,7 @@ const CreateTagCategoryDrawer = () => {
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger>
         <Button variant="outline" className="gap-2">
-          <Plus /> Add category
+          <Plus /> Category
         </Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -111,30 +106,30 @@ const CreateTagCategoryDrawer = () => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-4"
               >
-                <div className="flex items-start gap-4">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={() => (
-                      <FormItem className="w-full rounded-lg border p-4">
-                        <div className="flex flex-row items-center justify-between gap-4">
-                          <FormControl>
-                            <Input
-                              autoFocus
-                              placeholder="Enter category name"
-                              {...form.register("name")}
-                            />
-                          </FormControl>
-                          <SelectTagIconDialog
-                            SelectedIcon={icon}
-                            setSelectedIcon={setIcon}
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={() => (
+                    <FormItem className="w-full rounded-lg border p-4">
+                      <FormLabel className="text-base">Name</FormLabel>
+                      <div className="flex flex-row items-center justify-between gap-4">
+                        <FormControl>
+                          <Input
+                            autoFocus
+                            placeholder="Enter category name"
+                            {...form.register("name")}
                           />
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                        </FormControl>
+                        <SelectTagIconDialog
+                          SelectedIcon={icon}
+                          setSelectedIcon={setIcon}
+                        />
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="priority"
