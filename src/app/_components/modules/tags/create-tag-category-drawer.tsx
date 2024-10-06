@@ -35,7 +35,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-const tagCategorySchema = z.object({
+const formSchema = z.object({
   name: z.string().min(1, "Name is required").max(64, "Name is too long"),
   priority: z
     .number()
@@ -59,7 +59,7 @@ const CreateTagCategoryDrawer = () => {
   });
 
   const form = useForm({
-    resolver: zodResolver(tagCategorySchema),
+    resolver: zodResolver(formSchema),
     mode: "onBlur",
     defaultValues: {
       name: "",
@@ -74,7 +74,7 @@ const CreateTagCategoryDrawer = () => {
     setIcon(null);
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
     const formData = {
       ...data,
       icon: icon?.displayName,

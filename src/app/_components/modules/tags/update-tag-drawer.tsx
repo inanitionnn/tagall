@@ -25,7 +25,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-const tagSchema = z.object({
+const formSchema = z.object({
   name: z.string().min(1, "Name is required").max(64, "Name is too long"),
 });
 
@@ -47,12 +47,12 @@ const UpdateTagDrawer = (props: Props) => {
   });
 
   const form = useForm({
-    resolver: zodResolver(tagSchema),
+    resolver: zodResolver(formSchema),
     mode: "onBlur",
     defaultValues: props,
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
     const formData = {
       ...data,
       id: props.id,
