@@ -12,6 +12,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
   Header,
   Input,
@@ -72,50 +73,45 @@ const CreateTagDrawer = (props: Props) => {
         </Button>
       </DrawerTrigger>
       <DrawerContent>
-        <div className="mx-auto flex w-full max-w-lg flex-col items-center py-4">
-          <Header vtag="h5" className="text-center">
-            Create Tag
-          </Header>
-          <DrawerHeader className="w-full gap-4">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={() => (
-                    <FormItem className="w-full rounded-lg border p-4">
-                      <FormLabel className="text-base">Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          autoFocus
-                          placeholder="Enter category name"
-                          {...form.register("name")}
-                        />
-                      </FormControl>
+        <Header vtag="h5" className="text-center">
+          Create Tag
+        </Header>
+        <DrawerHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        autoFocus
+                        placeholder="Enter category name"
+                        {...form.register("name")}
+                      />
+                    </FormControl>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </form>
-            </Form>
-          </DrawerHeader>
-          <DrawerFooter className="w-full flex-row">
-            <DrawerClose>
-              <Button variant="outline">Cancel</Button>
-            </DrawerClose>
-            <Button
-              disabled={form.formState.isSubmitting}
-              className="w-full"
-              onClick={form.handleSubmit(onSubmit)}
-            >
-              Create
-            </Button>
-          </DrawerFooter>
-        </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </DrawerHeader>
+        <DrawerFooter>
+          <DrawerClose>
+            <Button variant="outline">Cancel</Button>
+          </DrawerClose>
+          <Button
+            disabled={form.formState.isSubmitting}
+            className="w-full"
+            onClick={form.handleSubmit(onSubmit)}
+          >
+            Create
+          </Button>
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
