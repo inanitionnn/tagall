@@ -13,3 +13,4 @@ export * from "./switch";
 export * from "./dropdown-menu";
 export * from "./spinner";
 export * from "./form";
+export * from "./separator";

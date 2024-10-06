@@ -1,6 +1,12 @@
 "use client";
 import React, { type ComponentPropsWithRef } from "react";
-import { Avatar, AvatarFallback, AvatarImage, Header } from "../../ui";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Header,
+  Separator,
+} from "../../ui";
 import { cn } from "~/lib";
 import { LogIn, UserRound } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -24,15 +30,22 @@ const NavbarContent = (props: Props) => {
     >
       <Header vtag="h4">Tagall</Header>
       <div className="flex flex-col gap-4">
-        {Object.values(NAVBAR_LINKS).map((value) => (
-          <NavbarButton
-            key={value.href}
-            icon={<value.icon />}
-            pathname={value.href}
-            title={value.title}
-            isActive={pathname === value.href}
-          />
-        ))}
+        {Object.values(NAVBAR_LINKS).map((value, index) => {
+          if (value.type === "divider") {
+            return <Separator key={index} />;
+          } else if (value.type === "link") {
+            const Icon = value.icon;
+            return (
+              <NavbarButton
+                key={index}
+                icon={<Icon />}
+                pathname={value.href}
+                title={value.title}
+                isActive={pathname === value.href}
+              />
+            );
+          }
+        })}
       </div>
 
       {session?.user.id ? (
