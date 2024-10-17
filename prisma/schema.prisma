@@ -64,14 +64,30 @@ model User {
 
     accounts       Account[]
     sessions       Session[]
-    items          Item[]
     tags           Tag[]
     tagsCategories TagCategory[]
     itemComments   ItemComment[]
-    itemTextBlocks ItemTextBlock[]
+    userToItems    UserToItem[]
     collections    Collection[]
 
     @@index([role, id, email])
+}
+
+model UserToItem {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId       String
+    item         Item          @relation(fields: [itemId], references: [id], onDelete: Cascade)
+    itemId       String
+    tags         Tag[]
+    collection   Collection    @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+    collectionId String
+    itemComments ItemComment[]
+
+    @@index([createdAt, userId, itemId, id])
 }
 
 model Item {
@@ -79,16 +95,12 @@ model Item {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name  String
-    image String?
+    name        String
+    description String?
+    image       String?
 
-    user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId         String
-    tags           Tag[]
-    itemComments   ItemComment[]
-    itemTextBlocks ItemTextBlock[]
-
-    @@index([name, createdAt, userId, id])
+    userToItems UserToItem[]
+    defaultTags DefaultTag[]
 }
 
 model ItemComment {
@@ -99,31 +111,13 @@ model ItemComment {
     title       String
     description String?
 
-    tags   Tag[]
-    item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
-    itemId String
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String
+    userToItem   UserToItem @relation(fields: [userToItemId], references: [id], onDelete: Cascade)
+    userToItemId String
+    user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId       String
+    tags         Tag[]
 
-    @@index([createdAt, userId, itemId, id])
-}
-
-model ItemTextBlock {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    title       String
-    description String?
-    image       String?
-    number      Int     @default(0)
-
-    item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
-    itemId String
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String
-
-    @@index([number, userId, itemId, id])
+    @@index([createdAt, userId, userToItemId, id])
 }
 
 model Collection {
@@ -131,14 +125,40 @@ model Collection {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name  String
-    image String?
+    name String
 
-    user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId        String
-    tagCategories TagCategory[]
+    user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId              String
+    defaultCollection   DefaultCollection @relation(fields: [defaultCollectionId], references: [id])
+    defaultCollectionId String
+    userToItem          UserToItem[]
+    tagCategories       TagCategory[]
 
     @@index([name, createdAt, userId, id])
+}
+
+model DefaultCollection {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name String
+
+    collections          Collection[]
+    defaultTagCategories DefaultTagCategory[]
+    parseMethods         ParseMethod[]
+}
+
+model ParseMethod {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name        String
+    description String?
+    icon        String?
+
+    defaultCollections DefaultCollection[]
 }
 
 model Tag {
@@ -147,30 +167,57 @@ model Tag {
 
     name String
 
-    items         Item[]
-    itemComments  ItemComment[]
     tagCategory   TagCategory   @relation(fields: [tagCategoryId], references: [id], onDelete: Cascade)
     tagCategoryId String
     user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId        String
+    userToItems   UserToItem[]
+    itemComment   ItemComment[]
 
-    @@index([tagCategoryId, userId, name, id])
+    @@index([createdAt, tagCategoryId, userId, id])
+}
+
+model DefaultTag {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
+    name String
+
+    items                Item[]
+    defaultTagCategory   DefaultTagCategory? @relation(fields: [defaultTagCategoryId], references: [id])
+    defaultTagCategoryId String?
+
+    @@index([defaultTagCategoryId, id])
 }
 
 model TagCategory {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
 
-    name             String
-    icon             String?
-    autoAddTags      Boolean @default(false)
-    autoAddToElement Boolean @default(false)
-    priority         Int     @default(0)
+    name          String
+    icon          String?
+    isItemHasMany Boolean @default(false)
+    priority      Int     @default(0)
 
-    tags        Tag[]
     user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId      String
+    tags        Tag[]
     collections Collection[]
 
-    @@index([priority, userId, id])
+    @@index([createdAt, priority, userId, id])
+}
+
+model DefaultTagCategory {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
+    name          String
+    icon          String?
+    isItemHasMany Boolean @default(false)
+    priority      Int     @default(0)
+
+    defaultTags        DefaultTag[]
+    defaultCollections DefaultCollection[]
+
+    @@index([priority, id])
 }
