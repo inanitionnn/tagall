@@ -1,9 +1,8 @@
-import { ImdbDetailsResult, ImdbSearchResult } from "../types";
+import { IMDB_TYPES } from "../types";
 import { getHtmlFromUrl } from "./axios.service";
 import * as cheerio from "cheerio";
 
 // #region Private Functions
-
 function extractElements<T>(...arrays: T[][]): T[] {
   const getItem = (item: any) => {
     return (
@@ -26,16 +25,16 @@ function extractElements<T>(...arrays: T[][]): T[] {
   return [...new Set(extractedArrays.flat())];
 }
 
-function fillImdbDetailsResult(props: any): ImdbDetailsResult {
-  const resultObject: ImdbDetailsResult = {
+function fillImdbDetailsResult(props: any): IMDB_TYPES.ImdbDetailsResult {
+  return {
     title: props.titleText?.text || props.originalTitleText?.text || null,
     image: props.primaryImage?.url || null,
     plot: props.plot?.plotText?.plainText || null,
     type: {
       titleType: props.titleType?.id || null,
-      isSeries: props.titleType?.isSeries,
-      isEpisode: props.titleType?.isEpisode,
-      canHaveEpisodes: props.titleType?.canHaveEpisodes,
+      isSeries: !!props.titleType?.isSeries,
+      isEpisode: !!props.titleType?.isEpisode,
+      canHaveEpisodes: !!props.titleType?.canHaveEpisodes,
     },
     year: {
       release: props.releaseYear?.year || null,
@@ -47,17 +46,14 @@ function fillImdbDetailsResult(props: any): ImdbDetailsResult {
     },
     rating: props.ratingsSummary?.aggregateRating || null,
     contentRating: {
-      isAdult: props.isAdult,
+      isAdult: props.isAdult || null,
       rating: props.contentRating || null,
     },
-
-    production: {
-      companies: extractElements<string>(props.production?.edges),
-      status: props.productionStatus?.currentProductionStage?.id || null,
-    },
+    production: extractElements<string>(props.production?.edges),
     people: extractElements<string>(
       props.castPageTitle?.edges,
       props.actor,
+      props.director,
       props.creator,
       props.creatorsPageTitle,
       props.directorsPageTitle,
@@ -67,17 +63,15 @@ function fillImdbDetailsResult(props: any): ImdbDetailsResult {
       props.titleGenres?.genres,
       props.keywords?.edges,
       props.interests?.edges,
-    ).map((keyword) => keyword.toLowerCase()),
+    ),
   };
-
-  return resultObject;
 }
-
 // #endregion Private Functions
 
+// #region Public Functions
 export async function getImdbDetailsByUrl(
   url: string,
-): Promise<ImdbDetailsResult> {
+): Promise<IMDB_TYPES.ImdbDetailsResult> {
   try {
     const html = await getHtmlFromUrl(url);
 
@@ -97,7 +91,9 @@ export async function getImdbDetailsByUrl(
   }
 }
 
-export async function searchImdb(query: string): Promise<ImdbSearchResult[]> {
+export async function searchImdb(
+  query: string,
+): Promise<IMDB_TYPES.ImdbSearchResult[]> {
   const url = `https://www.imdb.com/find/?q=${encodeURIComponent(
     query,
   )}&ref_=nv_sr_sm`;
@@ -107,7 +103,7 @@ export async function searchImdb(query: string): Promise<ImdbSearchResult[]> {
 
     const $ = cheerio.load(html);
 
-    const results: ImdbSearchResult[] = [];
+    const results: IMDB_TYPES.ImdbSearchResult[] = [];
 
     $("li.find-title-result").each((_, element) => {
       const titleElement = $(element).find(
@@ -116,12 +112,20 @@ export async function searchImdb(query: string): Promise<ImdbSearchResult[]> {
       const title = titleElement.text();
       const link = titleElement.attr("href");
       const imageElement = $(element).find("img.ipc-image");
-      const image = imageElement.attr("src");
+      const image = imageElement.attr("src") ?? null;
+
+      const yearText = $(element).find(".ipc-inline-list__item").first().text();
+      let year = null;
+      const match = yearText.match(/\b\d{4}\b/g);
+      if (match && match[0]) {
+        year = parseInt(match[0]);
+      }
 
       results.push({
         title,
         link: `https://www.imdb.com${link}`,
-        image: image || null,
+        image,
+        year,
       });
     });
 
@@ -131,3 +135,4 @@ export async function searchImdb(query: string): Promise<ImdbSearchResult[]> {
     throw new Error("Imdb parse error");
   }
 }
+// #endregion Public Functions
