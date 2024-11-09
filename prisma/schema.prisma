@@ -1,10 +1,21 @@
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["postgresqlExtensions"]
+}
+
+generator erd {
+    provider                  = "prisma-erd-generator"
+    output                    = "diagram.svg"
+    theme                     = "forest" // dark | forest | neutral | default
+    tableOnly                 = true
+    ignoreEnums               = true
+    includeRelationFromFields = false
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+    provider   = "postgresql"
+    url        = env("DATABASE_URL")
+    extensions = [vector]
 }
 
 enum Role {
@@ -12,7 +23,14 @@ enum Role {
     ADMIN
 }
 
-// Necessary for Next auth
+enum ItemStatus {
+    COMPLETED
+    INPROGRESS
+    NOTSTARTED
+    ABANDONED
+}
+
+// #region Next auth
 model Account {
     id String @id @default(cuid())
 
@@ -52,6 +70,8 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
+// #endregion Next auth
+
 model User {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
@@ -62,45 +82,57 @@ model User {
     image         String?
     role          Role      @default(USER)
 
-    accounts       Account[]
-    sessions       Session[]
-    tags           Tag[]
-    tagsCategories TagCategory[]
-    itemComments   ItemComment[]
-    userToItems    UserToItem[]
-    collections    Collection[]
+    accounts          Account[]
+    sessions          Session[]
+    tags              Tag[]
+    userToItems       UserToItem[]
+    userToCollections UserToCollection[]
 
     @@index([role, id, email])
 }
 
-model UserToItem {
+model Collection {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId       String
-    item         Item          @relation(fields: [itemId], references: [id], onDelete: Cascade)
-    itemId       String
-    tags         Tag[]
-    collection   Collection    @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-    collectionId String
-    itemComments ItemComment[]
+    name String
 
-    @@index([createdAt, userId, itemId, id])
+    items             Item[]
+    fieldGroups       FieldGroup[]
+    userToCollections UserToCollection[]
+}
+
+model UserToCollection {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId       String
+    collection   Collection   @relation(fields: [collectionId], references: [id])
+    collectionId String
+    fieldGroups  FieldGroup[]
+
+    @@index([createdAt, userId, collectionId, id])
 }
 
 model Item {
     id        String   @id @default(cuid())
+    parsedId  String?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name        String
-    description String?
-    image       String?
+    name      String
+    image     String?
+    embedding Unsupported("vector(1536)")?
 
-    userToItems UserToItem[]
-    defaultTags DefaultTag[]
+    fields       Field[]
+    collection   Collection   @relation(fields: [collectionId], references: [id])
+    collectionId String
+    userToItems  UserToItem[]
+
+    @@index([name, createdAt, id])
 }
 
 model ItemComment {
@@ -113,111 +145,62 @@ model ItemComment {
 
     userToItem   UserToItem @relation(fields: [userToItemId], references: [id], onDelete: Cascade)
     userToItemId String
-    user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([createdAt, userToItemId, id])
+}
+
+model UserToItem {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    rate   Int?
+    status ItemStatus @default(NOTSTARTED)
+
+    user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId       String
+    item         Item          @relation(fields: [itemId], references: [id], onDelete: Cascade)
+    itemId       String
     tags         Tag[]
+    itemComments ItemComment[]
 
-    @@index([createdAt, userId, userToItemId, id])
+    @@index([createdAt, userId, itemId, id])
 }
 
-model Collection {
+model FieldGroup {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     name String
 
-    user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId              String
-    defaultCollection   DefaultCollection @relation(fields: [defaultCollectionId], references: [id])
-    defaultCollectionId String
-    userToItem          UserToItem[]
-    tagCategories       TagCategory[]
-
-    @@index([name, createdAt, userId, id])
+    fields            Field[]
+    collections       Collection[]
+    userToCollections UserToCollection[]
 }
 
-model DefaultCollection {
+model Field {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     name String
 
-    collections          Collection[]
-    defaultTagCategories DefaultTagCategory[]
-    parseMethods         ParseMethod[]
-}
-
-model ParseMethod {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    name        String
-    description String?
-    icon        String?
-
-    defaultCollections DefaultCollection[]
+    items        Item[]
+    fieldGroup   FieldGroup @relation(fields: [fieldGroupId], references: [id])
+    fieldGroupId String
 }
 
 model Tag {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
 
-    name String
-
-    tagCategory   TagCategory   @relation(fields: [tagCategoryId], references: [id], onDelete: Cascade)
-    tagCategoryId String
-    user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId        String
-    userToItems   UserToItem[]
-    itemComment   ItemComment[]
-
-    @@index([createdAt, tagCategoryId, userId, id])
-}
-
-model DefaultTag {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-
-    name String
-
-    items                Item[]
-    defaultTagCategory   DefaultTagCategory? @relation(fields: [defaultTagCategoryId], references: [id])
-    defaultTagCategoryId String?
-
-    @@index([defaultTagCategoryId, id])
-}
-
-model TagCategory {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-
-    name          String
-    icon          String?
-    isItemHasMany Boolean @default(false)
-    priority      Int     @default(0)
+    name     String
+    priority Int    @default(0)
 
     user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId      String
-    tags        Tag[]
-    collections Collection[]
+    userToItems UserToItem[]
 
-    @@index([createdAt, priority, userId, id])
-}
-
-model DefaultTagCategory {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-
-    name          String
-    icon          String?
-    isItemHasMany Boolean @default(false)
-    priority      Int     @default(0)
-
-    defaultTags        DefaultTag[]
-    defaultCollections DefaultCollection[]
-
-    @@index([priority, id])
+    @@index([createdAt, priority, id])
 }

@@ -8,7 +8,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["var(--font-source-sans)", ...fontFamily.sans],
-        head: ["var(--font-oswald)", ...fontFamily.sans],
+        head: ["var(--font-nunito-sans)", ...fontFamily.sans],
       },
       borderRadius: {
         lg: "var(--radius)",
