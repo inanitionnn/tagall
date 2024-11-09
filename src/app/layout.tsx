@@ -1,6 +1,6 @@
 import "~/styles/globals.css";
 
-import { Source_Sans_3, Oswald } from "next/font/google";
+import { Source_Sans_3, Nunito_Sans } from "next/font/google";
 import { type Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
 import { type Session } from "next-auth";
@@ -13,7 +13,10 @@ const sourceSansPro = Source_Sans_3({
   subsets: ["latin"],
   variable: "--font-source-sans",
 });
-const oswald = Oswald({ subsets: ["latin"], variable: "--font-oswald" });
+const nunitoSans = Nunito_Sans({
+  subsets: ["latin"],
+  variable: "--font-nunito-sans",
+});
 
 export const metadata: Metadata = {
   title: "Tagall",
@@ -29,7 +32,10 @@ export default function RootLayout({
   params: { session: Session | null | undefined };
 }>) {
   return (
-    <html lang="en" className={`${sourceSansPro.variable} ${oswald.variable}`}>
+    <html
+      lang="en"
+      className={`${sourceSansPro.variable} ${nunitoSans.variable}`}
+    >
       <body>
         <TRPCReactProvider>
           <SessionProviderWrapper session={session}>

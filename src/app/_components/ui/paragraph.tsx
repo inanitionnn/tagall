@@ -5,9 +5,9 @@ import { cn } from "~/lib";
 const paragraphVariants = cva("font-sans leading-relaxed", {
   variants: {
     vsize: {
-      lg: "text-lg font-medium ",
-      base: "text-base font-normal tracking-wide",
-      sm: "text-sm font-normal tracking-wider",
+      lg: "text-lg ",
+      base: "text-base tracking-wide",
+      sm: "text-sm tracking-wider",
     },
   },
   defaultVariants: {

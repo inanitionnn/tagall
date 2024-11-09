@@ -5,12 +5,12 @@ import { cn } from "~/lib";
 const headerVariants = cva("font-head leading-relaxed", {
   variants: {
     vtag: {
-      h1: "text-3xl md:text-4xl xl:text-5xl font-bold tracking-wide",
-      h2: "text-3xl md:text-4xl font-bold tracking-wide",
-      h3: "text-3xl font-bold tracking-wide",
-      h4: "text-2xl font-semibold tracking-wider",
-      h5: "text-lg md:text-xl font-semibold tracking-wider",
-      h6: "text-lg font-semibold tracking-wider",
+      h1: "text-3xl md:text-4xl font-black",
+      h2: "text-2xl md:text-3xl font-extrabold",
+      h3: "text-1xl md:text-2xl font-extrabold",
+      h4: "text-lg md:text-xl font-extrabold",
+      h5: "text-base md:text-lg font-extrabold",
+      h6: "text-sm md:text-base font-extrabold",
     },
   },
   defaultVariants: {

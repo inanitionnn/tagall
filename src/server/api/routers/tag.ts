@@ -7,14 +7,14 @@ export const tagRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().min(1).max(64),
-        tagCategoryId: z.string().cuid(),
+        priority: z.number().min(0).max(100).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       return ctx.db.tag.create({
         data: {
           name: input.name,
-          tagCategory: { connect: { id: input.tagCategoryId } },
+          priority: input.priority,
           user: { connect: { id: ctx.session.user.id } },
         },
       });
@@ -25,6 +25,7 @@ export const tagRouter = createTRPCRouter({
       z.object({
         id: z.string().cuid(),
         name: z.string().min(1).max(64),
+        priority: z.number().min(0).max(100).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -32,6 +33,7 @@ export const tagRouter = createTRPCRouter({
         where: { id: input.id },
         data: {
           name: input.name,
+          priority: input.priority,
         },
       });
     }),
