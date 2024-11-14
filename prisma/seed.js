@@ -12,10 +12,12 @@ async function main() {
       create: {
         id: collection.id,
         name: collection.name,
+        priority: collection.priority,
       },
       update: {
         id: collection.id,
         name: collection.name,
+        priority: collection.priority,
       },
     });
   }

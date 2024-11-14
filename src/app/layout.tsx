@@ -36,7 +36,7 @@ export default function RootLayout({
       lang="en"
       className={`${sourceSansPro.variable} ${nunitoSans.variable}`}
     >
-      <body>
+      <body className="bg-muted">
         <TRPCReactProvider>
           <SessionProviderWrapper session={session}>
             <ToastWrapper>

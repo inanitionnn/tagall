@@ -1,1 +1,1 @@
-export * from "./imdb.type";
+export * from "./parse.type";

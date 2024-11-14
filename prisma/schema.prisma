@@ -82,11 +82,10 @@ model User {
     image         String?
     role          Role      @default(USER)
 
-    accounts          Account[]
-    sessions          Session[]
-    tags              Tag[]
-    userToItems       UserToItem[]
-    userToCollections UserToCollection[]
+    accounts    Account[]
+    sessions    Session[]
+    tags        Tag[]
+    userToItems UserToItem[]
 
     @@index([role, id, email])
 }
@@ -96,25 +95,13 @@ model Collection {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name String
+    name     String @unique
+    priority Int    @default(0)
 
-    items             Item[]
-    fieldGroups       FieldGroup[]
-    userToCollections UserToCollection[]
-}
+    items       Item[]
+    fieldGroups FieldGroup[]
 
-model UserToCollection {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId       String
-    collection   Collection   @relation(fields: [collectionId], references: [id])
-    collectionId String
-    fieldGroups  FieldGroup[]
-
-    @@index([createdAt, userId, collectionId, id])
+    @@index([priority, id])
 }
 
 model Item {
@@ -168,32 +155,31 @@ model UserToItem {
 }
 
 model FieldGroup {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id String @id @default(cuid())
 
-    name String
+    name String @unique
 
-    fields            Field[]
-    collections       Collection[]
-    userToCollections UserToCollection[]
+    fields      Field[]
+    collections Collection[]
+
+    @@index([name, id])
 }
 
 model Field {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id String @id @default(cuid())
 
-    name String
+    name String @unique
+    type String
 
     items        Item[]
     fieldGroup   FieldGroup @relation(fields: [fieldGroupId], references: [id])
     fieldGroupId String
+
+    @@index([name, id])
 }
 
 model Tag {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
+    id String @id @default(cuid())
 
     name     String
     priority Int    @default(0)
@@ -202,5 +188,5 @@ model Tag {
     userId      String
     userToItems UserToItem[]
 
-    @@index([createdAt, priority, id])
+    @@index([priority, id])
 }

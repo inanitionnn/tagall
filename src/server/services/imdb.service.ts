@@ -1,4 +1,4 @@
-import { IMDB_TYPES } from "../types";
+import { PARSE_TYPES } from "../types";
 import { getHtmlFromUrl } from "./axios.service";
 import * as cheerio from "cheerio";
 
@@ -25,7 +25,7 @@ function extractElements<T>(...arrays: T[][]): T[] {
   return [...new Set(extractedArrays.flat())];
 }
 
-function fillImdbDetailsResult(props: any): IMDB_TYPES.ImdbDetailsResult {
+function fillImdbDetailsResult(props: any): PARSE_TYPES.ImdbDetailsResult {
   return {
     title: props.titleText?.text || props.originalTitleText?.text || null,
     image: props.primaryImage?.url || null,
@@ -36,19 +36,19 @@ function fillImdbDetailsResult(props: any): IMDB_TYPES.ImdbDetailsResult {
       isEpisode: !!props.titleType?.isEpisode,
       canHaveEpisodes: !!props.titleType?.canHaveEpisodes,
     },
-    year: {
-      release: props.releaseYear?.year || null,
-      end: props.releaseYear?.endYear || null,
-    },
-    runtime: {
-      seconds: props.runtime?.seconds || null,
-      text: props.runtime?.displayableProperty?.value?.plainText || null,
-    },
+    // year: {
+    //   release: props.releaseYear?.year || null,
+    //   end: props.releaseYear?.endYear || null,
+    // },
+    year: props.releaseYear?.year || null,
+    // runtime: {
+    //   seconds: props.runtime?.seconds || null,
+    //   text: props.runtime?.displayableProperty?.value?.plainText || null,
+    // },
+    runtime: props.runtime?.displayableProperty?.value?.plainText || null,
     rating: props.ratingsSummary?.aggregateRating || null,
-    contentRating: {
-      isAdult: props.isAdult || null,
-      rating: props.contentRating || null,
-    },
+    isAdult: props.isAdult || null,
+    contentRating: props.contentRating || null,
     production: extractElements<string>(props.production?.edges),
     people: extractElements<string>(
       props.castPageTitle?.edges,
@@ -58,7 +58,7 @@ function fillImdbDetailsResult(props: any): IMDB_TYPES.ImdbDetailsResult {
       props.creatorsPageTitle,
       props.directorsPageTitle,
     ),
-    keywords: extractElements<string>(
+    keyword: extractElements<string>(
       props.genres?.genres,
       props.titleGenres?.genres,
       props.keywords?.edges,
@@ -66,14 +66,33 @@ function fillImdbDetailsResult(props: any): IMDB_TYPES.ImdbDetailsResult {
     ),
   };
 }
+
+function getHighQualityImageUrls(originalUrl: string) {
+  if (!originalUrl) return null;
+
+  // Extract the base part of the URL (before the resolution parameters)
+  const baseUrlMatch = originalUrl.match(/(.*?)\._V1/);
+  if (!baseUrlMatch) return { original: originalUrl };
+
+  const baseUrl = baseUrlMatch[1];
+
+  return {
+    small: `${baseUrl}._V1_QL75_UX140_CR0,0,140,207_.jpg`, // 140px width
+    medium: `${baseUrl}._V1_QL75_UX280_CR0,0,280,414_.jpg`, // 280px width
+    large: `${baseUrl}._V1_QL75_UX380_CR0,0,380,562_.jpg`, // 380px width
+    xLarge: `${baseUrl}._V1_QL75_UX500_CR0,0,500,740_.jpg`, // 500px width
+    original: `${baseUrl}._V1_QL75_UY1000_CR0,0,675,1000_.jpg`, // Maximum quality
+    raw: `${baseUrl}._V1_.jpg`, // Original without quality parameters
+  };
+}
 // #endregion Private Functions
 
 // #region Public Functions
-export async function getImdbDetailsByUrl(
-  url: string,
-): Promise<IMDB_TYPES.ImdbDetailsResult> {
+export async function getImdbDetailsById(
+  id: string,
+): Promise<PARSE_TYPES.ImdbDetailsResult> {
   try {
-    const html = await getHtmlFromUrl(url);
+    const html = await getHtmlFromUrl(`https://www.imdb.com/title/${id}/`);
 
     const $ = cheerio.load(html);
 
@@ -93,40 +112,82 @@ export async function getImdbDetailsByUrl(
 
 export async function searchImdb(
   query: string,
-): Promise<IMDB_TYPES.ImdbSearchResult[]> {
-  const url = `https://www.imdb.com/find/?q=${encodeURIComponent(
+  type: "film" | "series",
+): Promise<PARSE_TYPES.SearchResult[]> {
+  let title_type;
+  switch (type) {
+    case "film":
+      title_type = "feature,tv_movie,short,tv_short";
+      break;
+    case "series":
+      title_type = "tv_series,tv_miniseries";
+      break;
+  }
+
+  const url = `https://www.imdb.com/search/title/?title=${encodeURIComponent(
     query,
-  )}&ref_=nv_sr_sm`;
+  )}&title_type=${encodeURIComponent(title_type)}`;
 
   try {
     const html = await getHtmlFromUrl(url);
 
     const $ = cheerio.load(html);
 
-    const results: IMDB_TYPES.ImdbSearchResult[] = [];
+    const results: PARSE_TYPES.SearchResult[] = [];
 
-    $("li.find-title-result").each((_, element) => {
-      const titleElement = $(element).find(
-        ".ipc-metadata-list-summary-item__t",
-      );
-      const title = titleElement.text();
-      const link = titleElement.attr("href");
-      const imageElement = $(element).find("img.ipc-image");
-      const image = imageElement.attr("src") ?? null;
+    // Select all list items that contain movie/show information
+    $(".ipc-metadata-list-summary-item").each((_, element) => {
+      const result: PARSE_TYPES.SearchResult = {
+        description: null,
+        image: null,
+        keywords: [],
+        link: null,
+        title: null,
+        year: null,
+      };
 
-      const yearText = $(element).find(".ipc-inline-list__item").first().text();
-      let year = null;
-      const match = yearText.match(/\b\d{4}\b/g);
-      if (match && match[0]) {
-        year = parseInt(match[0]);
+      const titleElement = $(element).find(".dli-title h3.ipc-title__text");
+      const rawTitle = titleElement.text();
+      // result.rank = parseInt(rawTitle.split(".")[0]) || null;
+      result.title = rawTitle.split(". ")[1] || rawTitle || null;
+
+      const metadata = $(element).find(".dli-title-metadata-item");
+      metadata.each((index, item) => {
+        const text = $(item).text();
+        if (index === 0) result.year = parseInt(text) || null;
+        if (index === 1) result.keywords.push(text);
+        if (index === 2) result.keywords.push(text);
+      });
+
+      // const ratingElement = $(element).find(".ratingGroup--imdb-rating");
+      // if (ratingElement.length) {
+      //   const rating =
+      //     ratingElement.find(".ipc-rating-star--rating").text() + " imdb";
+      //   result.keywords.push(rating);
+      // }
+
+      // const metacriticElement = $(element).find(".metacritic-score-box");
+      // if (metacriticElement.length) {
+      //   const metacritic = parseInt(metacriticElement.text()) + " metascore";
+      //   result.keywords.push(metacritic);
+      // }
+
+      const plotElement = $(element).find(".dli-plot-container");
+      result.description = plotElement.text().trim();
+
+      // Get poster URL
+      const posterImg = $(element).find(".ipc-image").attr("src");
+      if (posterImg) {
+        result.image = getHighQualityImageUrls(posterImg)?.large ?? null;
       }
 
-      results.push({
-        title,
-        link: `https://www.imdb.com${link}`,
-        image,
-        year,
-      });
+      // Get movie/show URL
+      const linkElement = $(element).find(".ipc-title-link-wrapper");
+      if (linkElement.length) {
+        result.link = "https://www.imdb.com" + linkElement.attr("href");
+      }
+
+      results.push(result);
     });
 
     return results;

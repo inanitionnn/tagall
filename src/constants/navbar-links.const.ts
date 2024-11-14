@@ -53,8 +53,8 @@ const NAVBAR_LINKS: NavbarLinkType[] = [
   {
     type: "link",
     icon: BadgePlus,
-    href: "/create",
-    title: "Create",
+    href: "/add",
+    title: "Add",
   },
   {
     type: "link",
