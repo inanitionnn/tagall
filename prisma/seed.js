@@ -5,46 +5,61 @@ const prisma = new PrismaClient();
 async function main() {
   const { collections, fieldGroups } = seedsData;
   for (const collection of collections) {
-    await prisma.collection.upsert({
-      where: {
-        id: collection.id,
-      },
-      create: {
-        id: collection.id,
-        name: collection.name,
-        priority: collection.priority,
-      },
-      update: {
-        id: collection.id,
-        name: collection.name,
-        priority: collection.priority,
-      },
-    });
+    try {
+      await prisma.collection.upsert({
+        where: {
+          id: collection.id,
+        },
+        create: {
+          id: collection.id,
+          name: collection.name,
+          priority: collection.priority,
+        },
+        update: {
+          id: collection.id,
+          name: collection.name,
+          priority: collection.priority,
+        },
+      });
+    } catch (error) {
+      console.log({ collection, error });
+    }
   }
   for (const fieldGroup of fieldGroups) {
-    await prisma.fieldGroup.upsert({
-      where: {
-        id: fieldGroup.id,
-      },
-      create: {
-        id: fieldGroup.id,
-        name: fieldGroup.name,
-        collections: {
-          connect: fieldGroup.collections.map((collectionId) => ({
-            id: collectionId,
-          })),
+    try {
+      await prisma.fieldGroup.upsert({
+        where: {
+          id: fieldGroup.id,
         },
-      },
-      update: {
-        id: fieldGroup.id,
-        name: fieldGroup.name,
-        collections: {
-          connect: fieldGroup.collections.map((collectionId) => ({
-            id: collectionId,
-          })),
+        create: {
+          id: fieldGroup.id,
+          name: fieldGroup.name,
+          priority: fieldGroup.priority,
+          isFiltering: fieldGroup.isFiltering,
+          isNumber: fieldGroup.isNumber,
+          isSorting: fieldGroup.isSorting,
+          collections: {
+            connect: fieldGroup.collections.map((collectionId) => ({
+              id: collectionId,
+            })),
+          },
         },
-      },
-    });
+        update: {
+          name: fieldGroup.name,
+          priority: fieldGroup.priority,
+          isFiltering: fieldGroup.isFiltering,
+          isNumber: fieldGroup.isNumber,
+          isSorting: fieldGroup.isSorting,
+          collections: {
+            connect: fieldGroup.collections.map((collectionId) => ({
+              id: collectionId,
+            })),
+          },
+        },
+      });
+    } catch (error) {
+      console.log({ fieldGroup, error });
+    }
   }
 }
 

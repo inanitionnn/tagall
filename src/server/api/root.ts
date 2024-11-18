@@ -3,6 +3,7 @@ import { tagRouter } from "./routers/tag";
 import { collectionRouter } from "./routers/collection";
 import { parseRouter } from "./routers/parse";
 import { itemRouter } from "./routers/item";
+import { fieldRouter } from "./routers/field";
 
 /**
  * This is the primary router for your server.
@@ -14,6 +15,7 @@ export const appRouter = createTRPCRouter({
   collection: collectionRouter,
   parse: parseRouter,
   item: itemRouter,
+  field: fieldRouter,
 });
 
 // export type definition of API

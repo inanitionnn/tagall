@@ -33,7 +33,7 @@ export const itemRouter = createTRPCRouter({
 
         return items.map((item) => {
           const groupedFields: {
-            [key: string]: { name: string; fields: { name: string }[] };
+            [key: string]: { name: string; fields: { value: string }[] };
           } = {};
 
           item.fields.forEach((field) => {
@@ -47,7 +47,7 @@ export const itemRouter = createTRPCRouter({
               };
             }
 
-            groupedFields[groupId].fields.push({ name: field.name });
+            groupedFields[groupId].fields.push({ value: field.value });
           });
 
           return {
@@ -103,15 +103,7 @@ export const itemRouter = createTRPCRouter({
       if (!item) {
         throw new Error("Something went wrong! Item not found!");
       }
-      console.log({
-        userId: ctx.session.user.id,
-        itemId: item.id,
-        rate: input.rate ? input.rate : null,
-        status: input.status,
-        tags: {
-          connect: input.tags?.map((tag) => ({ id: tag })),
-        },
-      });
+
       await ctx.db.userToItem.create({
         data: {
           userId: ctx.session.user.id,

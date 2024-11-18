@@ -157,25 +157,28 @@ model UserToItem {
 model FieldGroup {
     id String @id @default(cuid())
 
-    name String @unique
+    name        String  @unique
+    priority    Int     @default(0)
+    isNumber    Boolean @default(false)
+    isSorting   Boolean @default(false)
+    isFiltering Boolean @default(false)
 
     fields      Field[]
     collections Collection[]
 
-    @@index([name, id])
+    @@index([name, priority, isSorting, isFiltering, id])
 }
 
 model Field {
     id String @id @default(cuid())
 
-    name String @unique
-    type String
+    value String @unique
 
     items        Item[]
     fieldGroup   FieldGroup @relation(fields: [fieldGroupId], references: [id])
     fieldGroupId String
 
-    @@index([name, id])
+    @@index([value, id])
 }
 
 model Tag {

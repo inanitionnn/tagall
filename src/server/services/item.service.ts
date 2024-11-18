@@ -60,13 +60,15 @@ export async function createImdbItem(props: GetHtmlFromUrlProps) {
     }
     switch (typeof value) {
       case "string": {
+        if (fieldGroup.isNumber) {
+          continue;
+        }
         await ctx.db.field.upsert({
           where: {
-            name: value,
+            value: value,
           },
           create: {
-            name: value,
-            type: "string",
+            value: value,
             fieldGroupId: fieldGroup.id,
             items: {
               connect: {
@@ -87,11 +89,10 @@ export async function createImdbItem(props: GetHtmlFromUrlProps) {
       case "number": {
         await ctx.db.field.upsert({
           where: {
-            name: value.toString(),
+            value: value.toString(),
           },
           create: {
-            name: value.toString(),
-            type: "number",
+            value: value.toString(),
             fieldGroupId: fieldGroup.id,
             items: {
               connect: {
@@ -110,17 +111,16 @@ export async function createImdbItem(props: GetHtmlFromUrlProps) {
         break;
       }
       case "object": {
-        if (!Array.isArray(value)) {
+        if (!Array.isArray(value) || fieldGroup.isNumber) {
           continue;
         }
         for (const field of value) {
           await ctx.db.field.upsert({
             where: {
-              name: field,
+              value: field,
             },
             create: {
-              name: field,
-              type: "string",
+              value: field,
               fieldGroupId: fieldGroup.id,
               items: {
                 connect: {

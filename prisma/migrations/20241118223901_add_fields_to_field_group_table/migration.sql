@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "FieldGroup" ADD COLUMN     "isFiltering" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "isNumber" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "isSorting" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "priority" INTEGER NOT NULL DEFAULT 0;
