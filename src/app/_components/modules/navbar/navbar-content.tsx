@@ -28,7 +28,7 @@ const NavbarContent = (props: Props) => {
       )}
       {...restProps}
     >
-      <Header vtag="h4">Tagall</Header>
+      <Header vtag="h3">Tagall</Header>
       <div className="flex flex-col gap-4">
         {Object.values(NAVBAR_LINKS).map((value, index) => {
           if (value.type === "divider") {
