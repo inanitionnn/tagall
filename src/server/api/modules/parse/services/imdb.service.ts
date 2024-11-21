@@ -1,9 +1,9 @@
-import { PARSE_TYPES } from "../types";
-import { getHtmlFromUrl } from "./axios.service";
+import { ImdbDetailsResultType, SearchResultType } from "../types";
+import { GetHtmlFromUrl } from "./axios.service";
 import * as cheerio from "cheerio";
 
 // #region Private Functions
-function extractElements<T>(...arrays: T[][]): T[] {
+function ExtractElements<T>(...arrays: T[][]): T[] {
   const getItem = (item: any) => {
     return (
       item.id ||
@@ -25,10 +25,10 @@ function extractElements<T>(...arrays: T[][]): T[] {
   return [...new Set(extractedArrays.flat())];
 }
 
-function fillImdbDetailsResult(props: any): PARSE_TYPES.ImdbDetailsResult {
+function FillImdbDetailsResult(props: any): ImdbDetailsResultType {
   return {
     title: props.titleText?.text || props.originalTitleText?.text || null,
-    image: props.primaryImage?.url || null,
+    image: GetHighQualityImageUrls(props.primaryImage?.url)?.original || null,
     plot: props.plot?.plotText?.plainText || null,
     type: {
       titleType: props.titleType?.id || null,
@@ -49,8 +49,8 @@ function fillImdbDetailsResult(props: any): PARSE_TYPES.ImdbDetailsResult {
     rating: props.ratingsSummary?.aggregateRating || null,
     isAdult: props.isAdult || null,
     contentRating: props.contentRating || null,
-    production: extractElements<string>(props.production?.edges),
-    people: extractElements<string>(
+    production: ExtractElements<string>(props.production?.edges),
+    people: ExtractElements<string>(
       props.castPageTitle?.edges,
       props.actor,
       props.director,
@@ -58,7 +58,7 @@ function fillImdbDetailsResult(props: any): PARSE_TYPES.ImdbDetailsResult {
       props.creatorsPageTitle,
       props.directorsPageTitle,
     ),
-    keyword: extractElements<string>(
+    keyword: ExtractElements<string>(
       props.genres?.genres,
       props.titleGenres?.genres,
       props.keywords?.edges,
@@ -67,7 +67,7 @@ function fillImdbDetailsResult(props: any): PARSE_TYPES.ImdbDetailsResult {
   };
 }
 
-function getHighQualityImageUrls(originalUrl: string) {
+function GetHighQualityImageUrls(originalUrl: string) {
   if (!originalUrl) return null;
 
   // Extract the base part of the URL (before the resolution parameters)
@@ -88,11 +88,11 @@ function getHighQualityImageUrls(originalUrl: string) {
 // #endregion Private Functions
 
 // #region Public Functions
-export async function getImdbDetailsById(
+export async function GetImdbDetailsById(
   id: string,
-): Promise<PARSE_TYPES.ImdbDetailsResult> {
+): Promise<ImdbDetailsResultType> {
   try {
-    const html = await getHtmlFromUrl(`https://www.imdb.com/title/${id}/`);
+    const html = await GetHtmlFromUrl(`https://www.imdb.com/title/${id}/`);
 
     const $ = cheerio.load(html);
 
@@ -103,17 +103,17 @@ export async function getImdbDetailsById(
     const metadataScriptString = $('script[type="application/ld+json"]').html();
     const metadata = JSON.parse(metadataScriptString ?? "");
 
-    return fillImdbDetailsResult({ ...pageProps, ...metadata });
+    return FillImdbDetailsResult({ ...pageProps, ...metadata });
   } catch (error) {
     console.error(error);
     throw new Error("Imdb parse error");
   }
 }
 
-export async function searchImdb(
+export async function SearchImdb(
   query: string,
   type: "film" | "series",
-): Promise<PARSE_TYPES.SearchResult[]> {
+): Promise<SearchResultType[]> {
   let title_type;
   switch (type) {
     case "film":
@@ -129,15 +129,15 @@ export async function searchImdb(
   )}&title_type=${encodeURIComponent(title_type)}`;
 
   try {
-    const html = await getHtmlFromUrl(url);
+    const html = await GetHtmlFromUrl(url);
 
     const $ = cheerio.load(html);
 
-    const results: PARSE_TYPES.SearchResult[] = [];
+    const results: SearchResultType[] = [];
 
     // Select all list items that contain movie/show information
     $(".ipc-metadata-list-summary-item").each((_, element) => {
-      const result: PARSE_TYPES.SearchResult = {
+      const result: SearchResultType = {
         description: null,
         image: null,
         keywords: [],
@@ -178,7 +178,7 @@ export async function searchImdb(
       // Get poster URL
       const posterImg = $(element).find(".ipc-image").attr("src");
       if (posterImg) {
-        result.image = getHighQualityImageUrls(posterImg)?.large ?? null;
+        result.image = GetHighQualityImageUrls(posterImg)?.large ?? null;
       }
 
       // Get movie/show URL
