@@ -112,6 +112,7 @@ model Item {
 
     name      String
     image     String?
+    year      Int?
     embedding Unsupported("vector(1536)")?
 
     fields       Field[]
@@ -129,6 +130,8 @@ model ItemComment {
 
     title       String
     description String?
+    rate        Int?
+    status      ItemStatus @default(COMPLETED)
 
     userToItem   UserToItem @relation(fields: [userToItemId], references: [id], onDelete: Cascade)
     userToItemId String
@@ -151,7 +154,7 @@ model UserToItem {
     tags         Tag[]
     itemComments ItemComment[]
 
-    @@index([createdAt, userId, itemId, id])
+    @@index([createdAt, rate, status, userId, itemId, id])
 }
 
 model FieldGroup {
@@ -159,14 +162,12 @@ model FieldGroup {
 
     name        String  @unique
     priority    Int     @default(0)
-    isNumber    Boolean @default(false)
-    isSorting   Boolean @default(false)
     isFiltering Boolean @default(false)
 
     fields      Field[]
     collections Collection[]
 
-    @@index([name, priority, isSorting, isFiltering, id])
+    @@index([name, priority, isFiltering, id])
 }
 
 model Field {
