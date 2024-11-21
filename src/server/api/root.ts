@@ -1,9 +1,9 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { tagRouter } from "./routers/tag";
 import { collectionRouter } from "./routers/collection";
-import { parseRouter } from "./routers/parse";
-import { itemRouter } from "./routers/item";
 import { fieldRouter } from "./routers/field";
+import { parseRouter } from "./modules/parse";
+import { ItemRouter } from "./modules/item";
 
 /**
  * This is the primary router for your server.
@@ -14,7 +14,7 @@ export const appRouter = createTRPCRouter({
   tag: tagRouter,
   collection: collectionRouter,
   parse: parseRouter,
-  item: itemRouter,
+  item: ItemRouter,
   field: fieldRouter,
 });
 

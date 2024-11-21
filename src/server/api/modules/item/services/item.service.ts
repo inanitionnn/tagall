@@ -1,0 +1,306 @@
+import { Field, FieldGroup } from "@prisma/client";
+import { ContextType } from "../../../../types";
+import { AddToUserInputType, GetUserItemsInputType } from "../types";
+import { GetImdbDetailsById } from "../../parse/services";
+
+// #region private functions
+
+function FieldsToGroupedFields(
+  fields: Array<Field & { fieldGroup: FieldGroup }>,
+) {
+  const groupedFields: {
+    [key: string]: { name: string; fields: string[] };
+  } = {};
+
+  fields.forEach((field) => {
+    const groupId = field.fieldGroup.id;
+    const groupName = field.fieldGroup.name;
+
+    if (!groupedFields[groupId]) {
+      groupedFields[groupId] = {
+        name: groupName,
+        fields: [],
+      };
+    }
+
+    groupedFields[groupId].fields.push(field.value);
+  });
+
+  return Object.values(groupedFields);
+}
+
+async function CreateImdbItem(props: {
+  ctx: ContextType;
+  id: string;
+  collectionId: string;
+}) {
+  const { ctx, collectionId, id } = props;
+
+  const oldItem = await ctx.db.item.findFirst({
+    where: {
+      parsedId: id,
+    },
+  });
+
+  if (oldItem) {
+    return oldItem;
+  }
+
+  const details = await GetImdbDetailsById(id);
+  if (!details.title) {
+    throw new Error("Imdb parse error! Title not found!");
+  }
+  const item = await ctx.db.item.create({
+    data: {
+      collectionId: collectionId,
+      name: details.title,
+      year: details.year,
+      parsedId: id,
+      image: details.image,
+    },
+  });
+  for (const [key, value] of Object.entries(details)) {
+    if (key === "title" || key === "image") {
+      continue;
+    }
+    const fieldGroup = await ctx.db.fieldGroup.findFirst({
+      where: {
+        name: key,
+        collections: {
+          some: {
+            id: collectionId,
+          },
+        },
+      },
+    });
+    if (!fieldGroup) {
+      continue;
+    }
+    switch (typeof value) {
+      case "number":
+      case "string": {
+        await ctx.db.field.upsert({
+          where: {
+            value: String(value),
+          },
+          create: {
+            value: String(value),
+            fieldGroupId: fieldGroup.id,
+            items: {
+              connect: {
+                id: item.id,
+              },
+            },
+          },
+          update: {
+            items: {
+              connect: {
+                id: item.id,
+              },
+            },
+          },
+        });
+        break;
+      }
+      case "object": {
+        if (!Array.isArray(value)) {
+          continue;
+        }
+        for (const field of value) {
+          await ctx.db.field.upsert({
+            where: {
+              value: field,
+            },
+            create: {
+              value: field,
+              fieldGroupId: fieldGroup.id,
+              items: {
+                connect: {
+                  id: item.id,
+                },
+              },
+            },
+            update: {
+              items: {
+                connect: {
+                  id: item.id,
+                },
+              },
+            },
+          });
+        }
+
+        break;
+      }
+    }
+  }
+  return item;
+}
+
+// #endregion private functions
+
+// #region public functions
+
+export async function GetUserItems(props: {
+  ctx: ContextType;
+  input: GetUserItemsInputType;
+}) {
+  const { ctx, input } = props;
+  const limit = input?.limit || 20;
+  const page = input?.page || 1;
+
+  const rateFilter = input?.filtering?.find((filter) => filter.name === "rate");
+  const yearFilter = input?.filtering?.find((filter) => filter.name === "year");
+  const statusFilter = input?.filtering?.find(
+    (filter) => filter.name === "status",
+  );
+  const fields =
+    input?.filtering?.filter((filter) => filter.name === "field") ?? [];
+  const includeFieldsIds = fields
+    .filter((filter) => filter.type === "include")
+    .map((field) => field.fieldId);
+  const excludeFieldsIds = fields
+    .filter((filter) => filter.type === "exclude")
+    .map((field) => field.fieldId);
+
+  const userItems = await ctx.db.userToItem.findMany({
+    where: {
+      userId: ctx.session.user.id,
+      ...(rateFilter && {
+        rate: {
+          [rateFilter.type === "to" ? "lte" : "gte"]: rateFilter.value,
+        },
+      }),
+      ...(statusFilter && {
+        status: {
+          [statusFilter.type === "include" ? "in" : "notIn"]:
+            statusFilter.value,
+        },
+      }),
+      ...(yearFilter && {
+        item: {
+          year: {
+            [yearFilter.type === "to" ? "lte" : "gte"]: yearFilter.value,
+          },
+        },
+      }),
+      item: {
+        ...(input?.collectionsIds?.length && {
+          collectionId: {
+            in: input?.collectionsIds,
+          },
+        }),
+        ...((includeFieldsIds.length || excludeFieldsIds.length) && {
+          fields: {
+            ...(includeFieldsIds.length && {
+              every: {
+                id: {
+                  in: includeFieldsIds,
+                },
+              },
+            }),
+            ...(excludeFieldsIds.length && {
+              none: {
+                id: {
+                  in: excludeFieldsIds,
+                },
+              },
+            }),
+          },
+        }),
+      },
+    },
+
+    ...(input?.sorting && {
+      orderBy: {
+        ...(input.sorting.name === "rate" && {
+          rate: input.sorting.type,
+        }),
+        ...(input.sorting.name === "status" && {
+          status: input.sorting.type,
+        }),
+        ...(input.sorting.name === "date" && {
+          createdAt: input.sorting.type,
+        }),
+        ...(input.sorting.name === "year" && {
+          item: {
+            year: input.sorting.type,
+          },
+        }),
+      },
+    }),
+
+    include: {
+      item: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          fields: {
+            include: {
+              fieldGroup: true,
+            },
+          },
+        },
+      },
+    },
+
+    take: limit,
+    skip: (page - 1) * limit,
+  });
+
+  return userItems.map((userItems) => ({
+    id: userItems.item.id,
+    name: userItems.item.name,
+    image: userItems.item.image,
+    rate: userItems.rate,
+    status: userItems.status,
+    fieldGroups: FieldsToGroupedFields(userItems.item.fields),
+  }));
+}
+
+export async function AddToUser(props: {
+  ctx: ContextType;
+  input: AddToUserInputType;
+}) {
+  const { ctx, input } = props;
+
+  const collection = await ctx.db.collection.findUnique({
+    where: { id: input.collectionId },
+  });
+
+  if (!collection) {
+    throw new Error("Collection not found");
+  }
+
+  let item;
+  switch (collection.name) {
+    case "Serie":
+    case "Film":
+      item = await CreateImdbItem({
+        ctx,
+        id: input.id,
+        collectionId: collection.id,
+      });
+      break;
+    default:
+      throw new Error("Invalid collection name");
+  }
+  if (!item) {
+    throw new Error("Something went wrong! Item not found!");
+  }
+
+  await ctx.db.userToItem.create({
+    data: {
+      userId: ctx.session.user.id,
+      itemId: item.id,
+      rate: input.rate ? input.rate : null,
+      status: input.status,
+      // tags: {
+      //   connect: input.tags?.map((tag) => ({ id: tag })),
+      // },
+    },
+  });
+}
+
+// #endregion public functions

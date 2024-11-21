@@ -1,1 +1,1 @@
-export * from "./parse.type";
+export * from "./context.type";
