@@ -5,9 +5,7 @@ import { AddToUser, GetUserItems } from "./services";
 export const ItemRouter = createTRPCRouter({
   getUserItems: protectedProcedure
     .input(GetUserItemsSchema)
-    .query(async (props) => GetUserItems(props)),
+    .query(GetUserItems),
 
-  addToUser: protectedProcedure
-    .input(AddToUserInputSchema)
-    .mutation(async (props) => AddToUser(props)),
+  addToUser: protectedProcedure.input(AddToUserInputSchema).mutation(AddToUser),
 });
