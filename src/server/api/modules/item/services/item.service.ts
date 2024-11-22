@@ -1,6 +1,11 @@
 import { Field, FieldGroup } from "@prisma/client";
 import { ContextType } from "../../../../types";
-import { AddToUserInputType, GetUserItemsInputType } from "../types";
+import {
+  AddToUserInputType,
+  GetUserItemsInputType,
+  GetYearsRangeInputType,
+  ItemType,
+} from "../types";
 import { GetImdbDetailsById } from "../../parse/services";
 
 // #region private functions
@@ -60,7 +65,7 @@ async function CreateImdbItem(props: {
     },
   });
   for (const [key, value] of Object.entries(details)) {
-    if (key === "title" || key === "image") {
+    if (key === "title" || key === "image" || key === "year") {
       continue;
     }
     const fieldGroup = await ctx.db.fieldGroup.findFirst({
@@ -144,7 +149,7 @@ async function CreateImdbItem(props: {
 export async function GetUserItems(props: {
   ctx: ContextType;
   input: GetUserItemsInputType;
-}) {
+}): Promise<ItemType[]> {
   const { ctx, input } = props;
   const limit = input?.limit || 20;
   const page = input?.page || 1;
@@ -220,7 +225,7 @@ export async function GetUserItems(props: {
           status: input.sorting.type,
         }),
         ...(input.sorting.name === "date" && {
-          createdAt: input.sorting.type,
+          updatedAt: input.sorting.type,
         }),
         ...(input.sorting.name === "year" && {
           item: {
@@ -235,6 +240,7 @@ export async function GetUserItems(props: {
         select: {
           id: true,
           name: true,
+          year: true,
           image: true,
           fields: {
             include: {
@@ -252,11 +258,45 @@ export async function GetUserItems(props: {
   return userItems.map((userItems) => ({
     id: userItems.item.id,
     name: userItems.item.name,
+    year: userItems.item.year,
     image: userItems.item.image,
     rate: userItems.rate,
     status: userItems.status,
     fieldGroups: FieldsToGroupedFields(userItems.item.fields),
   }));
+}
+
+export async function GetYearsRange(props: {
+  ctx: ContextType;
+  input: GetYearsRangeInputType;
+}) {
+  const { ctx, input } = props;
+
+  const yearRange = await ctx.db.item.aggregate({
+    _min: {
+      year: true,
+    },
+    _max: {
+      year: true,
+    },
+    where: {
+      userToItems: {
+        some: {
+          userId: ctx.session.user.id,
+        },
+      },
+      ...(input?.length && {
+        collectionId: {
+          in: input,
+        },
+      }),
+    },
+  });
+
+  return {
+    minYear: yearRange._min.year,
+    maxYear: yearRange._max.year,
+  };
 }
 
 export async function AddToUser(props: {

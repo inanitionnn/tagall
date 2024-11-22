@@ -1,8 +1,8 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
-import { collectionRouter } from "./modules/collection";
-import { fieldRouter } from "./modules/field";
-import { parseRouter } from "./modules/parse";
-import { ItemRouter } from "./modules/item";
+import { CollectionRouter } from "./modules/collection/collection.router";
+import { ParseRouter } from "./modules/parse/parse.router";
+import { FieldRouter } from "./modules/field/field.router";
+import { ItemRouter } from "./modules/item/item.router";
 
 /**
  * This is the primary router for your server.
@@ -10,10 +10,10 @@ import { ItemRouter } from "./modules/item";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  collection: collectionRouter,
-  parse: parseRouter,
+  collection: CollectionRouter,
+  parse: ParseRouter,
   item: ItemRouter,
-  field: fieldRouter,
+  field: FieldRouter,
 });
 
 // export type definition of API
