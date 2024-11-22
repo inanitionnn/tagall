@@ -1,26 +1,23 @@
 "use client";
 import { api } from "~/trpc/react";
 import { useState } from "react";
-import { AddTabs } from "./add-tabs";
-import { PARSE_TYPES } from "../../../../server/types";
 import { AddSearch } from "./add-search";
 import { AddSearchResultItem } from "./add-search-result-item";
 import { AddItemModal } from "./add-item-modal";
+import { SearchResultType } from "../../../../server/api/modules/parse/types";
+import { AddCollectionsTabs } from "./add-collections-tabs";
 
 function AddContainer() {
-  const [searchResults, setSearchResults] = useState<
-    PARSE_TYPES.SearchResult[]
-  >([]);
+  const [searchResults, setSearchResults] = useState<SearchResultType[]>([]);
   const [collections] = api.collection.getAll.useSuspenseQuery();
   const [currentCollectionId, setCurrentCollectionId] = useState<string>(
     collections[0]?.id || "",
   );
-  const [currentItem, setCurrentItem] =
-    useState<PARSE_TYPES.SearchResult | null>(null);
+  const [currentItem, setCurrentItem] = useState<SearchResultType | null>(null);
 
   return (
     <div className="flex flex-col gap-8">
-      <AddTabs
+      <AddCollectionsTabs
         collections={collections}
         currentCollectionId={currentCollectionId}
         setCurrentCollectionId={setCurrentCollectionId}

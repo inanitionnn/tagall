@@ -3,13 +3,13 @@ import { Input, Spinner } from "../../ui";
 import { api } from "~/trpc/react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { PARSE_TYPES } from "../../../../server/types";
 import { Search } from "lucide-react";
+import { SearchResultType } from "../../../../server/api/modules/parse/types";
 
 type Props = {
   currentCollectionId: string;
-  setSearchResults: Dispatch<SetStateAction<PARSE_TYPES.SearchResult[]>>;
-  setCurrentItem: Dispatch<SetStateAction<PARSE_TYPES.SearchResult | null>>;
+  setSearchResults: Dispatch<SetStateAction<SearchResultType[]>>;
+  setCurrentItem: Dispatch<SetStateAction<SearchResultType | null>>;
 };
 
 function AddSearch(props: Props) {
@@ -25,8 +25,6 @@ function AddSearch(props: Props) {
     );
   const onSubmit = () => {
     if (!isLoading && query.length >= 1) {
-      console.log("currentCollectionId", currentCollectionId);
-      console.log("query", query);
       setCurrentItem(null);
       refetch();
     }

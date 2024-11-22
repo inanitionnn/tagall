@@ -1,5 +1,4 @@
 "use client";
-import { PARSE_TYPES } from "../../../../server/types";
 import Image from "next/image";
 import {
   Button,
@@ -19,19 +18,20 @@ import {
 import { ItemStatus } from "@prisma/client";
 import { api } from "../../../../trpc/react";
 import { toast } from "sonner";
+import { SearchResultType } from "../../../../server/api/modules/parse/types";
 
 type Props = {
   open: boolean;
-  currentItem: PARSE_TYPES.SearchResult;
+  currentItem: SearchResultType;
   currentCollectionId: string;
-  setCurrentItem: Dispatch<SetStateAction<PARSE_TYPES.SearchResult | null>>;
+  setCurrentItem: Dispatch<SetStateAction<SearchResultType | null>>;
 };
 
 const AddItemModal = (props: Props) => {
   const { currentItem, open, currentCollectionId, setCurrentItem } = props;
   const [rating, setRating] = useState<number[]>([0]);
   const [status, setStatus] = useState<ItemStatus>(ItemStatus.NOTSTARTED);
-  const { mutateAsync, error } = api.item.addToUser.useMutation();
+  const { mutateAsync } = api.item.addToUser.useMutation();
 
   const onSubmit = () => {
     if (currentItem) {

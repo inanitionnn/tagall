@@ -1,11 +1,11 @@
-import { PARSE_TYPES } from "../../../../server/types";
 import Image from "next/image";
 import { Header, Paragraph } from "../../ui";
 import { Dispatch, SetStateAction } from "react";
+import { SearchResultType } from "../../../../server/api/modules/parse/types";
 
 type Props = {
-  searchResult: PARSE_TYPES.SearchResult;
-  setCurrentItem: Dispatch<SetStateAction<PARSE_TYPES.SearchResult | null>>;
+  searchResult: SearchResultType;
+  setCurrentItem: Dispatch<SetStateAction<SearchResultType | null>>;
 };
 
 const AddSearchResultItem = (props: Props) => {

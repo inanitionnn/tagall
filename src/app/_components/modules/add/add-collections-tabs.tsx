@@ -1,19 +1,14 @@
 import { Dispatch, SetStateAction } from "react";
 import { Button } from "../../ui";
+import { CollectionType } from "../../../../server/api/modules/collection/types";
 
 type Props = {
-  collections: {
-    name: string;
-    priority: number;
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
-  }[];
+  collections: CollectionType[];
   currentCollectionId: string;
   setCurrentCollectionId: Dispatch<SetStateAction<string>>;
 };
 
-const AddTabs = (props: Props) => {
+const AddCollectionsTabs = (props: Props) => {
   const { collections, currentCollectionId, setCurrentCollectionId } = props;
 
   return (
@@ -31,4 +26,4 @@ const AddTabs = (props: Props) => {
   );
 };
 
-export { AddTabs };
+export { AddCollectionsTabs };
