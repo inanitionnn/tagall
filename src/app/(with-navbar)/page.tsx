@@ -1,20 +1,13 @@
-"use client";
-import { signOut } from "next-auth/react";
-import { Header, Paragraph } from "../_components/ui";
+import { api, HydrateClient } from "../../trpc/server";
+import { HomeContainer } from "../_components/modules";
 
-export default function Home() {
+export default async function Home() {
+  await api.collection.getAll.prefetch();
+  await api.item.getUserItems.prefetch();
+  await api.item.getYearsRange.prefetch();
   return (
-    <div>
-      <Header vtag="h1">Home </Header>
-      <Header vtag="h2">Home </Header>
-      <Header vtag="h3">Home </Header>
-      <Header vtag="h4">Home </Header>
-      <Header vtag="h5">Home </Header>
-      <Header vtag="h6">Home </Header>
-      <Paragraph vsize={"lg"}>Home </Paragraph>
-      <Paragraph vsize={"base"}>Home </Paragraph>
-      <Paragraph vsize={"sm"}>Home </Paragraph>
-      <button onClick={() => signOut()}>Sign out</button>
-    </div>
+    <HydrateClient>
+      <HomeContainer />
+    </HydrateClient>
   );
 }
