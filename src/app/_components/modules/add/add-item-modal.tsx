@@ -9,16 +9,15 @@ import {
   ResponsiveModalContent,
   Separator,
 } from "../../ui";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import {
   RATING_NAMES,
   STATUS_ICONS,
   STATUS_NAMES,
 } from "../../../../constants";
 import { ItemStatus } from "@prisma/client";
-import { api } from "../../../../trpc/react";
-import { toast } from "sonner";
 import { SearchResultType } from "../../../../server/api/modules/parse/types";
+import { useAddItemToUser } from "./hooks/use-add-item-to-user.hook";
 
 type Props = {
   open: boolean;
@@ -28,34 +27,9 @@ type Props = {
 };
 
 const AddItemModal = (props: Props) => {
-  const { currentItem, open, currentCollectionId, setCurrentItem } = props;
-  const [rating, setRating] = useState<number[]>([0]);
-  const [status, setStatus] = useState<ItemStatus>(ItemStatus.NOTSTARTED);
-  const { mutateAsync } = api.item.addToUser.useMutation();
-
-  const onSubmit = () => {
-    if (currentItem) {
-      const match = currentItem.link?.match(/\/title\/(tt\d+)/);
-
-      const id = match ? match[1] : null;
-      if (!id) {
-        toast.error("Invalid item id");
-        return;
-      }
-      const promise = mutateAsync({
-        collectionId: currentCollectionId,
-        rate: rating[0] ?? 0,
-        status: status,
-        id: id,
-      });
-      setCurrentItem(null);
-      toast.promise(promise, {
-        loading: "Adding item...",
-        success: "Item added successfully!",
-        error: (error) => `Failed to add item: ${error.message}`,
-      });
-    }
-  };
+  const { currentItem, open, setCurrentItem } = props;
+  const { rating, setRating, setStatus, status, submit } =
+    useAddItemToUser(props);
 
   return (
     <ResponsiveModal
@@ -142,7 +116,7 @@ const AddItemModal = (props: Props) => {
               />
             </div>
             <Separator />
-            <Button onClick={onSubmit}>Add to collection</Button>
+            <Button onClick={submit}>Add to collection</Button>
           </div>
         </div>
       </ResponsiveModalContent>

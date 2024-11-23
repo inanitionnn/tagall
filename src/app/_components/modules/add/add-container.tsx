@@ -8,8 +8,8 @@ import { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { AddCollectionsTabs } from "./add-collections-tabs";
 
 function AddContainer() {
-  const [searchResults, setSearchResults] = useState<SearchResultType[]>([]);
   const [collections] = api.collection.getAll.useSuspenseQuery();
+  const [searchResults, setSearchResults] = useState<SearchResultType[]>([]);
   const [currentCollectionId, setCurrentCollectionId] = useState<string>(
     collections[0]?.id || "",
   );

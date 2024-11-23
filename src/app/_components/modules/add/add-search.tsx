@@ -1,10 +1,9 @@
 "use client";
 import { Input, Spinner } from "../../ui";
-import { api } from "~/trpc/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { toast } from "sonner";
+import { Dispatch, SetStateAction } from "react";
 import { Search } from "lucide-react";
 import { SearchResultType } from "../../../../server/api/modules/parse/types";
+import { useSearch } from "./hooks/use-search.hook";
 
 type Props = {
   currentCollectionId: string;
@@ -13,42 +12,7 @@ type Props = {
 };
 
 function AddSearch(props: Props) {
-  const { currentCollectionId, setSearchResults, setCurrentItem } = props;
-  const [query, setQuery] = useState("");
-  const { data, isSuccess, isLoading, isError, refetch } =
-    api.parse.search.useQuery(
-      {
-        collectionId: currentCollectionId,
-        query,
-        limit: 10,
-      },
-      { enabled: false },
-    );
-  const onSubmit = () => {
-    if (!isLoading && query.length >= 1) {
-      setCurrentItem(null);
-      refetch();
-    }
-  };
-
-  useEffect(() => {
-    if (isSuccess) {
-      setSearchResults(data);
-    }
-  }, [isSuccess]);
-
-  useEffect(() => {
-    if (isError) {
-      toast.error("Failed to fetch search results");
-    }
-  }, [isError]);
-
-  useEffect(() => {
-    if (currentCollectionId) {
-      setSearchResults([]);
-      setCurrentItem(null);
-    }
-  }, [currentCollectionId]);
+  const { isLoading, query, setQuery, submit } = useSearch(props);
 
   return (
     <div className="relative">
@@ -56,7 +20,7 @@ function AddSearch(props: Props) {
         //   type="search"
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            onSubmit();
+            submit();
           }
         }}
         value={query}
@@ -68,7 +32,7 @@ function AddSearch(props: Props) {
         <Spinner className="absolute right-3 top-3 h-5 w-5 text-zinc-400 dark:text-zinc-500" />
       ) : (
         <Search
-          onClick={onSubmit}
+          onClick={submit}
           className="absolute right-3 top-1/2 z-30 h-5 w-5 -translate-y-1/2 cursor-pointer text-zinc-400 dark:text-zinc-500"
         />
       )}
