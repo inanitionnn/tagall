@@ -20,6 +20,7 @@ function AddSearch(props: Props) {
       {
         collectionId: currentCollectionId,
         query,
+        limit: 10,
       },
       { enabled: false },
     );

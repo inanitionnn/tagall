@@ -19,3 +19,4 @@ export * from "./skeleton";
 export * from "./dual-range-slider";
 export * from "./responsive-modal";
 export * from "./infinite-scroll";
+export * from "./select";

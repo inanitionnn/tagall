@@ -15,9 +15,9 @@ export const Search = async (props: {
   }
   switch (collection.name) {
     case "Film":
-      return SearchImdb(input.query, "film");
+      return SearchImdb(input.query, "film", input.limit);
     case "Serie":
-      return SearchImdb(input.query, "series");
+      return SearchImdb(input.query, "series", input.limit);
     default:
       throw new Error("Invalid collection name");
   }

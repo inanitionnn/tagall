@@ -10,7 +10,7 @@ const headerVariants = cva("font-head leading-relaxed", {
       h3: "text-1xl md:text-2xl font-extrabold",
       h4: "text-lg md:text-xl font-extrabold",
       h5: "text-base md:text-lg font-extrabold",
-      h6: "text-sm md:text-base font-extrabold",
+      h6: "text-base font-extrabold",
     },
   },
   defaultVariants: {

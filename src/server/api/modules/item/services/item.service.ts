@@ -31,7 +31,34 @@ function FieldsToGroupedFields(
     groupedFields[groupId].fields.push(field.value);
   });
 
-  return Object.values(groupedFields);
+  return Object.values(groupedFields).map((group) => ({
+    ...group,
+    fields: group.fields.sort(),
+  }));
+}
+
+function dateToTimeAgoString(date: Date) {
+  const now = new Date();
+  const diff = Math.floor((now.getTime() - date.getTime()) / 1000); // Різниця в секундах
+
+  const units = [
+    { name: "year", seconds: 365 * 24 * 60 * 60 },
+    { name: "month", seconds: 30 * 24 * 60 * 60 },
+    { name: "week", seconds: 7 * 24 * 60 * 60 },
+    { name: "day", seconds: 24 * 60 * 60 },
+    { name: "hour", seconds: 60 * 60 },
+    { name: "minute", seconds: 60 },
+    { name: "second", seconds: 1 },
+  ];
+
+  for (const unit of units) {
+    const interval = Math.floor(diff / unit.seconds);
+    if (interval > 0) {
+      return `${interval} ${unit.name}${interval > 1 ? "s" : ""} ago`;
+    }
+  }
+
+  return "just now";
 }
 
 async function CreateImdbItem(props: {
@@ -60,12 +87,18 @@ async function CreateImdbItem(props: {
       collectionId: collectionId,
       name: details.title,
       year: details.year,
+      description: details.plot,
       parsedId: id,
       image: details.image,
     },
   });
   for (const [key, value] of Object.entries(details)) {
-    if (key === "title" || key === "image" || key === "year") {
+    if (
+      key === "title" ||
+      key === "image" ||
+      key === "year" ||
+      key === "plot"
+    ) {
       continue;
     }
     const fieldGroup = await ctx.db.fieldGroup.findFirst({
@@ -154,11 +187,24 @@ export async function GetUserItems(props: {
   const limit = input?.limit || 20;
   const page = input?.page || 1;
 
-  const rateFilter = input?.filtering?.find((filter) => filter.name === "rate");
-  const yearFilter = input?.filtering?.find((filter) => filter.name === "year");
-  const statusFilter = input?.filtering?.find(
-    (filter) => filter.name === "status",
-  );
+  const rateFromFilter = input?.filtering
+    ?.filter((filter) => filter.name === "rate")
+    .find((filter) => filter.type === "from");
+  const rateToFilter = input?.filtering
+    ?.filter((filter) => filter.name === "rate")
+    .find((filter) => filter.type === "to");
+  const yearFromFilter = input?.filtering
+    ?.filter((filter) => filter.name === "year")
+    .find((filter) => filter.type === "from");
+  const yearToFilter = input?.filtering
+    ?.filter((filter) => filter.name === "year")
+    .find((filter) => filter.type === "to");
+  const statusIncludeFilter = input?.filtering
+    ?.filter((filter) => filter.name === "status")
+    .filter((filter) => filter.type === "include");
+  const statusExcludeFilter = input?.filtering
+    ?.filter((filter) => filter.name === "status")
+    .filter((filter) => filter.type === "exclude");
   const fields =
     input?.filtering?.filter((filter) => filter.name === "field") ?? [];
   const includeFieldsIds = fields
@@ -171,21 +217,37 @@ export async function GetUserItems(props: {
   const userItems = await ctx.db.userToItem.findMany({
     where: {
       userId: ctx.session.user.id,
-      ...(rateFilter && {
+      ...((rateFromFilter ||
+        rateToFilter ||
+        input?.sorting?.name === "rate") && {
         rate: {
-          [rateFilter.type === "to" ? "lte" : "gte"]: rateFilter.value,
+          ...(rateToFilter && {
+            lte: rateToFilter.value,
+          }),
+          ...(rateFromFilter && {
+            gte: rateFromFilter.value,
+          }),
         },
       }),
-      ...(statusFilter && {
+      ...((statusIncludeFilter?.length || statusExcludeFilter?.length) && {
         status: {
-          [statusFilter.type === "include" ? "in" : "notIn"]:
-            statusFilter.value,
+          ...(statusIncludeFilter && {
+            in: statusIncludeFilter.map((filter) => filter.value),
+          }),
+          ...(statusExcludeFilter && {
+            notIn: statusExcludeFilter.map((filter) => filter.value),
+          }),
         },
       }),
-      ...(yearFilter && {
+      ...((yearFromFilter || yearToFilter) && {
         item: {
           year: {
-            [yearFilter.type === "to" ? "lte" : "gte"]: yearFilter.value,
+            ...(yearToFilter && {
+              lte: yearToFilter.value,
+            }),
+            ...(yearFromFilter && {
+              gte: yearFromFilter.value,
+            }),
           },
         },
       }),
@@ -219,7 +281,10 @@ export async function GetUserItems(props: {
     ...(input?.sorting && {
       orderBy: {
         ...(input.sorting.name === "rate" && {
-          rate: input.sorting.type,
+          rate: {
+            sort: input.sorting.type,
+            nulls: "last",
+          },
         }),
         ...(input.sorting.name === "status" && {
           status: input.sorting.type,
@@ -229,7 +294,10 @@ export async function GetUserItems(props: {
         }),
         ...(input.sorting.name === "year" && {
           item: {
-            year: input.sorting.type,
+            year: {
+              sort: input.sorting.type,
+              nulls: "last",
+            },
           },
         }),
       },
@@ -241,7 +309,13 @@ export async function GetUserItems(props: {
           id: true,
           name: true,
           year: true,
+          description: true,
           image: true,
+          collection: {
+            select: {
+              name: true,
+            },
+          },
           fields: {
             include: {
               fieldGroup: true,
@@ -258,10 +332,14 @@ export async function GetUserItems(props: {
   return userItems.map((userItems) => ({
     id: userItems.item.id,
     name: userItems.item.name,
+    description: userItems.item.description,
     year: userItems.item.year,
     image: userItems.item.image,
     rate: userItems.rate,
     status: userItems.status,
+    timeAgo: dateToTimeAgoString(userItems.updatedAt),
+    updatedAt: userItems.updatedAt,
+    collection: userItems.item.collection.name,
     fieldGroups: FieldsToGroupedFields(userItems.item.fields),
   }));
 }

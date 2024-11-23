@@ -67,7 +67,7 @@ function FillImdbDetailsResult(props: any): ImdbDetailsResultType {
   };
 }
 
-function GetHighQualityImageUrls(originalUrl: string) {
+function GetHighQualityImageUrls(originalUrl: string | null) {
   if (!originalUrl) return null;
 
   // Extract the base part of the URL (before the resolution parameters)
@@ -112,7 +112,63 @@ export async function GetImdbDetailsById(
 
 export async function SearchImdb(
   query: string,
+  type: "film" | "series" | "all" = "all",
+  limit: number = 10,
+): Promise<SearchResultType[]> {
+  // Формування URL запиту з усіма необхідними параметрами
+  const url = `https://www.imdb.com/find/?q=${encodeURIComponent(query)}&s=tt&${
+    type === "film" ? "ttype=ft" : type === "series" ? "ttype=tv" : ""
+  }&ref_=fn_tt`;
+
+  try {
+    const html = await GetHtmlFromUrl(url);
+    const $ = cheerio.load(html);
+
+    const results: SearchResultType[] = [];
+    const elements = $("li.find-title-result").slice(0, limit);
+    elements.each((index, element) => {
+      const titleElement = $(element).find(
+        ".ipc-metadata-list-summary-item__t",
+      );
+      const title = titleElement.text().trim() || null;
+      const link = titleElement.attr("href") || null;
+
+      const imageElement = $(element).find("img.ipc-image");
+      const image = imageElement.attr("src") || null;
+
+      const yearElement = $(element).find(".ipc-inline-list__item").first();
+      const year = parseInt(yearElement.text().trim()) || null;
+
+      const actorElements = $(element).find(
+        ".ipc-metadata-list-summary-item__stl .ipc-inline-list__item",
+      );
+      const actors: string[] = [];
+      actorElements.each((_, actorEl) => {
+        const actor = $(actorEl).text().trim();
+        if (actor) actors.push(actor);
+      });
+
+      results.push({
+        title,
+        link: link ? `https://www.imdb.com${link}` : null,
+        image: GetHighQualityImageUrls(image)?.large ?? null,
+        year,
+        description: null,
+        keywords: actors,
+      });
+    });
+
+    return results;
+  } catch (error) {
+    console.error(error);
+    throw new Error("IMDB parse error");
+  }
+}
+
+export async function AdvancedSearchImdb(
+  query: string,
   type: "film" | "series",
+  limit: number = 10,
 ): Promise<SearchResultType[]> {
   let title_type;
   switch (type) {
@@ -134,9 +190,8 @@ export async function SearchImdb(
     const $ = cheerio.load(html);
 
     const results: SearchResultType[] = [];
-
-    // Select all list items that contain movie/show information
-    $(".ipc-metadata-list-summary-item").each((_, element) => {
+    const elements = $(".ipc-metadata-list-summary-item").slice(0, limit);
+    elements.each((_, element) => {
       const result: SearchResultType = {
         description: null,
         image: null,
