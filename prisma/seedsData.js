@@ -23,13 +23,6 @@ export const seedsData = {
   ],
   fieldGroups: [
     {
-      id: "cm3a9si9x0004i1s7hnos3c86",
-      name: "plot",
-      priority: 1000,
-      isFiltering: false,
-      collections: ["cm3a9sw1v000gi1s7appi2tju", "cm3bnlve100000ks784yufzt9"],
-    },
-    {
       id: "cm3a9sm6c0008i1s7ekkm28ed",
       name: "people",
       priority: 5,

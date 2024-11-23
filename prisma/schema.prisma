@@ -110,10 +110,11 @@ model Item {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name      String
-    image     String?
-    year      Int?
-    embedding Unsupported("vector(1536)")?
+    name        String
+    image       String?
+    year        Int?
+    description String?
+    embedding   Unsupported("vector(1536)")?
 
     fields       Field[]
     collection   Collection   @relation(fields: [collectionId], references: [id])

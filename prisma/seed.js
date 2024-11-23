@@ -36,8 +36,6 @@ async function main() {
           name: fieldGroup.name,
           priority: fieldGroup.priority,
           isFiltering: fieldGroup.isFiltering,
-          isNumber: fieldGroup.isNumber,
-          isSorting: fieldGroup.isSorting,
           collections: {
             connect: fieldGroup.collections.map((collectionId) => ({
               id: collectionId,
@@ -48,8 +46,6 @@ async function main() {
           name: fieldGroup.name,
           priority: fieldGroup.priority,
           isFiltering: fieldGroup.isFiltering,
-          isNumber: fieldGroup.isNumber,
-          isSorting: fieldGroup.isSorting,
           collections: {
             connect: fieldGroup.collections.map((collectionId) => ({
               id: collectionId,
