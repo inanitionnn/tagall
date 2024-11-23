@@ -3,9 +3,7 @@ import {
   Dices,
   Folders,
   House,
-  LibraryBig,
   type LucideIcon,
-  Tags,
 } from "lucide-react";
 
 type NavbarLinkType =
@@ -29,24 +27,24 @@ const NAVBAR_LINKS: NavbarLinkType[] = [
   {
     type: "divider",
   },
-  {
-    type: "link",
-    icon: LibraryBig,
-    href: "/collections",
-    title: "Collections",
-  },
+  // {
+  //   type: "link",
+  //   icon: LibraryBig,
+  //   href: "/collections",
+  //   title: "Collections",
+  // },
   {
     type: "link",
     icon: Folders,
     href: "/groups",
     title: "Groups",
   },
-  {
-    type: "link",
-    icon: Tags,
-    href: "/tags",
-    title: "Tags",
-  },
+  // {
+  //   type: "link",
+  //   icon: Tags,
+  //   href: "/tags",
+  //   title: "Tags",
+  // },
   {
     type: "divider",
   },
