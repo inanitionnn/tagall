@@ -14,7 +14,7 @@ import { useGetFilterFields } from "./hooks/use-get-filter-fields.hook";
 import { useItemFilter } from "./hooks/use-item-filter.hook";
 
 function HomeContainer() {
-  const [collections] = api.collection.getAll.useSuspenseQuery();
+  const [collections] = api.collection.getUserCollections.useSuspenseQuery();
 
   const LIMIT = 26;
 
