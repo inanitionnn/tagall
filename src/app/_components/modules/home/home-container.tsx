@@ -13,6 +13,7 @@ import { HomeFilterDialog } from "./home-filter-dialog";
 import { useGetFilterFields } from "./hooks/use-get-filter-fields.hook";
 import { useItemFilter } from "./hooks/use-item-filter.hook";
 import { useDebounce } from "../../../../hooks";
+import { STATUS_NAMES } from "../../../../constants";
 
 function HomeContainer() {
   const [collections] = api.collection.getUserCollections.useSuspenseQuery();
@@ -83,6 +84,8 @@ function HomeContainer() {
           setFilterYears={setFilterYears}
           yearsRange={yearsRange}
           filterFieldGroups={filterFieldGroups}
+          filtering={filtering}
+          setFiltering={setFiltering}
         />
       </div>
 
@@ -106,10 +109,14 @@ function HomeContainer() {
               (filter.type === "from"
                 ? `${filter.name} > ${filter.value}`
                 : `${filter.name} < ${filter.value}`)}
-            {(filter.name === "status" || filter.name === "field") &&
+            {filter.name === "status" &&
               (filter.type === "include"
-                ? `+${filter.value}`
-                : `-${filter.value}`)}
+                ? `+ ${STATUS_NAMES[filter.value].toLowerCase()}`
+                : `- ${STATUS_NAMES[filter.value].toLowerCase()}`)}
+            {filter.name === "field" &&
+              (filter.type === "include"
+                ? `+ ${filter.value}`
+                : `- ${filter.value}`)}
           </Badge>
         ))}
         {filtering.length > 1 && (
