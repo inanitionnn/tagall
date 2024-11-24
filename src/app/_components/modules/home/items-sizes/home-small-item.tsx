@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { Header } from "../../ui";
-import { ItemType } from "../../../../server/api/modules/item/types";
+import { Header } from "../../../ui";
+import { ItemType } from "../../../../../server/api/modules/item/types";
 import Link from "next/link";
 
 type Props = {

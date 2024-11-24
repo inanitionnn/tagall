@@ -35,7 +35,7 @@ const HomeSortSelect = (props: Props) => {
         }
       }}
     >
-      <SelectTrigger className="h-14 w-[180px]">
+      <SelectTrigger className="h-14 w-[180px] shadow">
         <div className="flex gap-2">
           <Paragraph>{sorting.type === "asc" ? "▲" : "▼"}</Paragraph>
           <Paragraph className="capitalize">{sorting.name}</Paragraph>

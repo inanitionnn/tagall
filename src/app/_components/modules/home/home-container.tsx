@@ -2,22 +2,22 @@
 import { api } from "~/trpc/react";
 import { useEffect, useState } from "react";
 import { HomeCollectionsTabs } from "./home-collections-tabs";
-import { toast } from "sonner";
-import {
-  GetUserItemsFilterType,
-  GetUserItemsSortType,
-  ItemType,
-} from "../../../../server/api/modules/item/types";
-import { InfiniteScroll } from "../../ui";
-import { Loader2 } from "lucide-react";
+import { GetUserItemsSortType } from "../../../../server/api/modules/item/types";
+import { Badge, Header, InfiniteScroll, Spinner } from "../../ui";
 import { HomeItemsSizeTabs } from "./home-items-size-tabs";
 import { HomeSortSelect } from "./home-sort-select";
 import { HomeItems } from "./home-items";
+import { useYearsRange } from "./hooks/use-get-years-range.hook";
+import { useGetUserItems } from "./hooks/use-get-user-items.hook";
+import { HomeFilterDialog } from "./home-filter-dialog";
+import { useGetFilterFields } from "./hooks/use-get-filter-fields.hook";
+import { useItemFilter } from "./hooks/use-item-filter.hook";
 
 function HomeContainer() {
   const [collections] = api.collection.getAll.useSuspenseQuery();
 
   const LIMIT = 26;
+
   const [itemsSize, setItemsSize] = useState<"small" | "medium" | "list">(
     "small",
   );
@@ -25,86 +25,43 @@ function HomeContainer() {
     type: "desc",
     name: "date",
   });
-  const [filtering, setFiltering] = useState<GetUserItemsFilterType>([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [items, setItems] = useState<ItemType[]>([]);
+  2;
   const [currentCollectionsIds, setCurrentCollectionsIds] = useState<string[]>(
-    collections[0]?.id ? [collections[0]?.id] : [],
+    collections[0]?.id ? [collections[0].id] : [],
   );
-  const [yearsRange, setYearsRange] = useState<{
-    minYear: number;
-    maxYear: number;
-  }>({ minYear: 0, maxYear: 0 });
+
+  const { yearsRange } = useYearsRange({ currentCollectionsIds });
 
   const {
-    data: yearsRangeData,
-    error: yearsRangeError,
-    refetch: yearRangeRefetch,
-  } = api.item.getYearsRange.useQuery(currentCollectionsIds);
-
-  const {
-    data: itemsData,
-    isLoading: itemsLoading,
-    error: itemsError,
-    refetch: itemsRefetch,
-  } = api.item.getUserItems.useQuery({
-    limit: LIMIT,
-    page,
-    collectionsIds: currentCollectionsIds,
-    sorting,
     filtering,
+    filterRates,
+    filterYears,
+    setFilterRates,
+    setFilterYears,
+    setFiltering,
+  } = useItemFilter({
+    yearsRange,
+  });
+
+  const { items, setPage, hasMore, isLoading, resetPagination } =
+    useGetUserItems({
+      limit: LIMIT,
+      currentCollectionsIds,
+      sorting,
+      filtering,
+    });
+
+  const { filterFieldGroups } = useGetFilterFields({
+    currentCollectionsIds,
   });
 
   useEffect(() => {
-    if (yearsRangeData) {
-      setYearsRange({
-        minYear: yearsRangeData.minYear ?? 0,
-        maxYear: yearsRangeData.maxYear ?? 0,
-      });
-    }
-  }, [yearsRangeData]);
-
-  useEffect(() => {
-    if (itemsData) {
-      if (itemsData.length < LIMIT) {
-        setHasMore(false);
-      }
-      if (page === 1) {
-        setItems(itemsData);
-      } else {
-        setItems((prev) => [...prev, ...itemsData]);
-      }
-    }
-  }, [itemsData]);
-
-  useEffect(() => {
-    if (itemsError) {
-      toast.error(itemsError.message);
-    }
-    if (yearsRangeError) {
-      toast.error(yearsRangeError.message);
-    }
-  }, [itemsError, yearsRangeError]);
-
-  useEffect(() => {
-    yearRangeRefetch();
-  }, [currentCollectionsIds]);
-
-  useEffect(() => {
-    if (hasMore) {
-      itemsRefetch();
-    }
-  }, [page]);
-
-  useEffect(() => {
-    setPage(1);
-    setHasMore(true);
+    resetPagination();
   }, [currentCollectionsIds, filtering, sorting]);
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-wrap justify-between gap-6">
+      <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap justify-between gap-6">
         <HomeCollectionsTabs
           collections={collections}
           currentCollectionsIds={currentCollectionsIds}
@@ -114,17 +71,66 @@ function HomeContainer() {
         <HomeSortSelect setSorting={setSorting} sorting={sorting} />
 
         <HomeItemsSizeTabs itemsSize={itemsSize} setItemsSize={setItemsSize} />
+
+        <HomeFilterDialog
+          filterRates={filterRates}
+          filterYears={filterYears}
+          setFilterRates={setFilterRates}
+          setFilterYears={setFilterYears}
+          yearsRange={yearsRange}
+          filterFieldGroups={filterFieldGroups}
+        />
       </div>
 
+      <div className="flex flex-wrap gap-2">
+        {filtering.map((filter, index) => (
+          <Badge
+            className="cursor-pointer px-2 py-0.5 text-sm hover:bg-destructive"
+            key={index}
+            onClick={() =>
+              setFiltering((prev) =>
+                prev.filter(
+                  (f) =>
+                    f.name !== filter.name ||
+                    f.type !== filter.type ||
+                    f.value !== filter.value,
+                ),
+              )
+            }
+          >
+            {(filter.name === "rate" || filter.name === "year") &&
+              (filter.type === "from"
+                ? `${filter.name} > ${filter.value}`
+                : `${filter.name} < ${filter.value}`)}
+            {(filter.name === "status" || filter.name === "field") &&
+              (filter.type === "include"
+                ? `+${filter.value}`
+                : `-${filter.value}`)}
+          </Badge>
+        ))}
+        {filtering.length > 1 && (
+          <Badge
+            className="cursor-pointer bg-destructive px-2 py-0.5 text-sm"
+            onClick={() => setFiltering([])}
+          >
+            Clear
+          </Badge>
+        )}
+      </div>
       <HomeItems items={items} itemsSize={itemsSize} />
 
       <InfiniteScroll
         hasMore={hasMore}
-        isLoading={itemsLoading}
+        isLoading={isLoading}
         next={() => setPage((prev) => prev + 1)}
         threshold={1}
       >
-        {hasMore && <Loader2 className="my-4 h-8 w-8 animate-spin" />}
+        {hasMore && (
+          <div className="flex w-full items-center justify-center gap-6">
+            <Spinner size={"medium"} />
+            <Header vtag="h5">loading</Header>
+          </div>
+        )}
       </InfiniteScroll>
     </div>
   );

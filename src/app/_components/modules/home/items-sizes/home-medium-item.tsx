@@ -1,11 +1,11 @@
 import Image from "next/image";
-import { Badge, Header, Paragraph } from "../../ui";
-import { ItemType } from "../../../../server/api/modules/item/types";
+import { Badge, Header, Paragraph } from "../../../ui";
+import { ItemType } from "../../../../../server/api/modules/item/types";
 import {
   RATING_NAMES,
   STATUS_ICONS,
   STATUS_NAMES,
-} from "../../../../constants";
+} from "../../../../../constants";
 
 type Props = {
   item: ItemType;
@@ -15,7 +15,7 @@ const HomeMediumItem = (props: Props) => {
   const { item } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
-    <div className="flex h-36 w-full cursor-pointer gap-2 rounded-sm bg-background shadow-md sm:h-64">
+    <div className="flex h-36 w-full cursor-pointer gap-2 rounded-sm bg-background shadow sm:h-64">
       <div className="aspect-[29/40]">
         {item.image ? (
           <Image

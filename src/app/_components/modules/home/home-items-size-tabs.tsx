@@ -10,7 +10,7 @@ type Props = {
 const HomeItemsSizeTabs = (props: Props) => {
   const { itemsSize, setItemsSize } = props;
   return (
-    <div className="inline-flex w-min items-center justify-center gap-2 rounded-md bg-background p-2 text-muted-foreground">
+    <div className="inline-flex w-min items-center justify-center gap-2 rounded-md bg-background p-2 text-muted-foreground shadow">
       <Button
         onClick={() => setItemsSize("small")}
         size={"icon"}
