@@ -239,8 +239,14 @@ export async function GetUserItems(props: {
           }),
         },
       }),
-      ...((yearFromFilter || yearToFilter) && {
-        item: {
+
+      item: {
+        ...(input?.collectionsIds?.length && {
+          collectionId: {
+            in: input?.collectionsIds,
+          },
+        }),
+        ...((yearFromFilter || yearToFilter) && {
           year: {
             ...(yearToFilter && {
               lte: yearToFilter.value,
@@ -248,13 +254,6 @@ export async function GetUserItems(props: {
             ...(yearFromFilter && {
               gte: yearFromFilter.value,
             }),
-          },
-        },
-      }),
-      item: {
-        ...(input?.collectionsIds?.length && {
-          collectionId: {
-            in: input?.collectionsIds,
           },
         }),
         ...((includeFieldsIds.length || excludeFieldsIds.length) && {
@@ -358,6 +357,9 @@ export async function GetYearsRange(props: {
       year: true,
     },
     where: {
+      year: {
+        not: null,
+      },
       userToItems: {
         some: {
           userId: ctx.session.user.id,
