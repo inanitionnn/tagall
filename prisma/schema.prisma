@@ -133,6 +133,7 @@ model ItemComment {
     description String?
     rate        Int?
     status      ItemStatus @default(COMPLETED)
+    private     Boolean    @default(false)
 
     userToItem   UserToItem @relation(fields: [userToItemId], references: [id], onDelete: Cascade)
     userToItemId String
