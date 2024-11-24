@@ -3,7 +3,8 @@ export type ImdbDetailsResultType = {
   year: number | null;
   image: string | null;
   plot: string | null;
-  keyword: string[];
+  genres: string[];
+  keywords: string[];
   people: string[];
   runtime: string | null;
   type: {
