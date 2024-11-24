@@ -13,7 +13,7 @@ const AddSearchResultItem = (props: Props) => {
 
   return (
     <div
-      className="flex h-64 cursor-pointer flex-col gap-2 rounded-sm bg-background p-4 shadow-md transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg sm:flex-row"
+      className="flex h-64 cursor-pointer flex-col gap-2 rounded-sm bg-background p-4 shadow transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg sm:flex-row"
       onClick={() => setCurrentItem(() => searchResult)}
     >
       <Header vtag="h5" className="leading-tight sm:hidden">

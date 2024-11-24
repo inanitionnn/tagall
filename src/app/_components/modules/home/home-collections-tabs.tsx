@@ -22,7 +22,7 @@ const HomeCollectionsTabs = (props: Props) => {
   };
 
   return (
-    <div className="inline-flex w-min items-center justify-center gap-2 rounded-md bg-background p-2 text-muted-foreground">
+    <div className="inline-flex w-min items-center justify-center gap-2 rounded-md bg-background p-2 text-muted-foreground shadow">
       {collections.map((collection) => (
         <Button
           key={collection.id}

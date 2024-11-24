@@ -9,8 +9,12 @@ type Props = {
   limit?: number;
 };
 export const useSearch = (props: Props) => {
-  const { currentCollectionId, limit, setCurrentItem, setSearchResults } =
-    props;
+  const {
+    limit = 10,
+    currentCollectionId,
+    setCurrentItem,
+    setSearchResults,
+  } = props;
 
   const [query, setQuery] = useState("");
 
@@ -19,7 +23,7 @@ export const useSearch = (props: Props) => {
       {
         collectionId: currentCollectionId,
         query,
-        limit: limit || 10,
+        limit: limit,
       },
       { enabled: false },
     );

@@ -22,6 +22,7 @@ export const GetUserItemsFilterSchema = z.array(
       name: z.literal("field"),
       type: z.enum(["include", "exclude"]),
       fieldId: z.string().cuid(),
+      value: z.string(),
     }),
   ]),
 );
