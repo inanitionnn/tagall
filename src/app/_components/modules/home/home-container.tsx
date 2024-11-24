@@ -12,6 +12,7 @@ import { useGetUserItems } from "./hooks/use-get-user-items.hook";
 import { HomeFilterDialog } from "./home-filter-dialog";
 import { useGetFilterFields } from "./hooks/use-get-filter-fields.hook";
 import { useItemFilter } from "./hooks/use-item-filter.hook";
+import { useDebounce } from "../../../../hooks";
 
 function HomeContainer() {
   const [collections] = api.collection.getUserCollections.useSuspenseQuery();
@@ -43,12 +44,15 @@ function HomeContainer() {
     yearsRange,
   });
 
+  const debouncedFiltering = useDebounce(filtering, 5000);
+  const debouncedSorting = useDebounce(sorting, 5000);
+
   const { items, setPage, hasMore, isLoading, resetPagination } =
     useGetUserItems({
       limit: LIMIT,
       currentCollectionsIds,
-      sorting,
-      filtering,
+      sorting: debouncedSorting,
+      filtering: debouncedFiltering,
     });
 
   const { filterFieldGroups } = useGetFilterFields({
@@ -57,7 +61,7 @@ function HomeContainer() {
 
   useEffect(() => {
     resetPagination();
-  }, [currentCollectionsIds, filtering, sorting]);
+  }, [currentCollectionsIds, debouncedFiltering, debouncedSorting]);
 
   return (
     <div className="flex flex-col gap-8">
