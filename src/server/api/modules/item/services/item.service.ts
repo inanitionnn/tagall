@@ -406,6 +406,7 @@ export async function AddToUser(props: {
     default:
       throw new Error("Invalid collection name");
   }
+
   if (!item) {
     throw new Error("Something went wrong! Item not found!");
   }

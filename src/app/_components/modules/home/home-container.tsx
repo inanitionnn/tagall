@@ -3,7 +3,7 @@ import { api } from "~/trpc/react";
 import { useEffect, useState } from "react";
 import { HomeCollectionsTabs } from "./home-collections-tabs";
 import { GetUserItemsSortType } from "../../../../server/api/modules/item/types";
-import { Badge, Header, InfiniteScroll, Spinner } from "../../ui";
+import { Header, InfiniteScroll, Spinner } from "../../ui";
 import { HomeItemsSizeTabs } from "./home-items-size-tabs";
 import { HomeSortSelect } from "./home-sort-select";
 import { HomeItems } from "./home-items";
@@ -13,7 +13,8 @@ import { HomeFilterDialog } from "./home-filter-dialog";
 import { useGetFilterFields } from "./hooks/use-get-filter-fields.hook";
 import { useItemFilter } from "./hooks/use-item-filter.hook";
 import { useDebounce } from "../../../../hooks";
-import { STATUS_NAMES } from "../../../../constants";
+import { HomeFilterBadges } from "./home-filter-badges";
+import { HomeNoItemsCard } from "./home-no-items-card";
 
 function HomeContainer() {
   const [collections] = api.collection.getUserCollections.useSuspenseQuery();
@@ -45,8 +46,8 @@ function HomeContainer() {
     yearsRange,
   });
 
-  const debouncedFiltering = useDebounce(filtering, 5000);
-  const debouncedSorting = useDebounce(sorting, 5000);
+  const debouncedFiltering = useDebounce(filtering, 500);
+  const debouncedSorting = useDebounce(sorting, 500);
 
   const { items, setPage, hasMore, isLoading, resetPagination } =
     useGetUserItems({
@@ -63,6 +64,14 @@ function HomeContainer() {
   useEffect(() => {
     resetPagination();
   }, [currentCollectionsIds, debouncedFiltering, debouncedSorting]);
+
+  if (!collections.length) {
+    return (
+      <div className="flex h-svh items-center justify-center p-6">
+        <HomeNoItemsCard />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-8">
@@ -89,45 +98,8 @@ function HomeContainer() {
         />
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {filtering.map((filter, index) => (
-          <Badge
-            className="cursor-pointer px-2 py-0.5 text-sm hover:bg-destructive"
-            key={index}
-            onClick={() =>
-              setFiltering((prev) =>
-                prev.filter(
-                  (f) =>
-                    f.name !== filter.name ||
-                    f.type !== filter.type ||
-                    f.value !== filter.value,
-                ),
-              )
-            }
-          >
-            {(filter.name === "rate" || filter.name === "year") &&
-              (filter.type === "from"
-                ? `${filter.name} > ${filter.value}`
-                : `${filter.name} < ${filter.value}`)}
-            {filter.name === "status" &&
-              (filter.type === "include"
-                ? `+ ${STATUS_NAMES[filter.value].toLowerCase()}`
-                : `- ${STATUS_NAMES[filter.value].toLowerCase()}`)}
-            {filter.name === "field" &&
-              (filter.type === "include"
-                ? `+ ${filter.value}`
-                : `- ${filter.value}`)}
-          </Badge>
-        ))}
-        {filtering.length > 1 && (
-          <Badge
-            className="cursor-pointer bg-destructive px-2 py-0.5 text-sm"
-            onClick={() => setFiltering([])}
-          >
-            Clear
-          </Badge>
-        )}
-      </div>
+      <HomeFilterBadges filtering={filtering} setFiltering={setFiltering} />
+
       <HomeItems items={items} itemsSize={itemsSize} />
 
       <InfiniteScroll

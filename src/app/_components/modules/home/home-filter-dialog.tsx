@@ -156,16 +156,54 @@ const HomeFilterDialog = (props: Props) => {
                 <div key={fieldGroup.id} className="flex flex-col gap-2">
                   <Header vtag="h6">{fieldGroup.name}</Header>
                   <div className="flex flex-wrap gap-2">
-                    {fieldGroup.fields.map((field) => (
-                      <Button
-                        key={field.id}
-                        variant={"ghost"}
-                        size={"sm"}
-                        className="text-muted-foreground"
-                      >
-                        {field.value}
-                      </Button>
-                    ))}
+                    {fieldGroup.fields.map((field) => {
+                      const fieldFilter = filtering.find(
+                        (f) => f.name === "field" && f.value === field.value,
+                      );
+                      return (
+                        <Button
+                          key={field.id}
+                          variant={
+                            fieldFilter?.type === "include"
+                              ? "success"
+                              : fieldFilter?.type === "exclude"
+                                ? "destructive"
+                                : "ghost"
+                          }
+                          size={"sm"}
+                          onClick={() =>
+                            setFiltering((prev) => {
+                              const updatedFiltering = prev.filter(
+                                (f) =>
+                                  f.name !== "field" || f.value !== field.value,
+                              ) as GetUserItemsFilterType;
+                              const currentFilter = prev.find(
+                                (f) =>
+                                  f.name === "field" && f.value === field.value,
+                              );
+                              if (!currentFilter) {
+                                updatedFiltering.push({
+                                  name: "field",
+                                  type: "include",
+                                  value: field.value,
+                                  fieldId: field.id,
+                                });
+                              } else if (currentFilter.type === "include") {
+                                updatedFiltering.push({
+                                  name: "field",
+                                  type: "exclude",
+                                  value: field.value,
+                                  fieldId: field.id,
+                                });
+                              }
+                              return updatedFiltering;
+                            })
+                          }
+                        >
+                          {field.value}
+                        </Button>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
