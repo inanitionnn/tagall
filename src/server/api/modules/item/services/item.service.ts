@@ -2,6 +2,7 @@ import { Field, FieldGroup } from "@prisma/client";
 import { ContextType } from "../../../../types";
 import {
   AddToUserInputType,
+  GetUserItemInputType,
   GetUserItemsInputType,
   GetYearsRangeInputType,
   ItemType,
@@ -341,6 +342,62 @@ export async function GetUserItems(props: {
     collection: userItems.item.collection.name,
     fieldGroups: FieldsToGroupedFields(userItems.item.fields),
   }));
+}
+
+export async function GetUserItem(props: {
+  ctx: ContextType;
+  input: GetUserItemInputType;
+}): Promise<ItemType | null> {
+  const { ctx, input } = props;
+
+  const userItem = await ctx.db.userToItem.findUnique({
+    where: {
+      userId_itemId: {
+        userId: ctx.session.user.id,
+        itemId: input,
+      },
+    },
+
+    include: {
+      item: {
+        select: {
+          id: true,
+          name: true,
+          year: true,
+          description: true,
+          image: true,
+          collection: {
+            select: {
+              name: true,
+            },
+          },
+          fields: {
+            include: {
+              fieldGroup: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!userItem) {
+    return null;
+  }
+
+  return {
+    id: userItem.item.id,
+    name: userItem.item.name,
+    description: userItem.item.description,
+    year: userItem.item.year,
+    image: userItem.item.image,
+    rate: userItem.rate,
+    status: userItem.status,
+    timeAgo: dateToTimeAgoString(userItem.updatedAt),
+    updatedAt: userItem.updatedAt,
+    collection: userItem.item.collection.name,
+    fieldGroups: FieldsToGroupedFields(userItem.item.fields),
+  };
 }
 
 export async function GetYearsRange(props: {
