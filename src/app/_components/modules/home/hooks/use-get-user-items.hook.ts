@@ -41,19 +41,6 @@ export const useGetUserItems = (props: Props) => {
   }, [data]);
 
   useEffect(() => {
-    if (data) {
-      if (data.length < limit) {
-        setHasMore(false);
-      }
-      if (page === 1) {
-        setItems(data);
-      } else {
-        setItems((prev) => [...prev, ...data]);
-      }
-    }
-  }, [data]);
-
-  useEffect(() => {
     if (error) {
       toast.error(error.message);
     }

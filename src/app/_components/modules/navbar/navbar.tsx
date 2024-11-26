@@ -12,7 +12,7 @@ export function Navbar(props: Props) {
       <DesktopNavbar className="fixed left-0 top-0 z-10 hidden w-60 bg-background md:block" />
       <div className="hidden pl-60 md:block" />
       <MobileNavbar className="w-60 bg-background" />
-      <div className="h-full w-full p-8">{children}</div>
+      <div className="relative h-full w-full">{children}</div>
     </div>
   );
 }

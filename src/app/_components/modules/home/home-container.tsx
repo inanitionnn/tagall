@@ -74,7 +74,7 @@ function HomeContainer() {
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 p-8">
       <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap justify-between gap-6">
         <HomeCollectionsTabs
           collections={collections}

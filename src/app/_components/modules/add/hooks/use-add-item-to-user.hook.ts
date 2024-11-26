@@ -37,9 +37,9 @@ export const useAddItemToUser = (props: Props) => {
     setCurrentItem(null);
 
     toast.promise(promise, {
-      loading: "Adding item...",
-      success: "Item added successfully!",
-      error: (error) => `Failed to add item: ${error.message}`,
+      loading: `Adding ${currentItem.title}...`,
+      success: `${currentItem.title} added successfully!`,
+      error: (error) => `Failed to add ${currentItem.title}: ${error.message}`,
     });
   };
 

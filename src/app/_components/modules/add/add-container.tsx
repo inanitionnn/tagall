@@ -16,7 +16,7 @@ function AddContainer() {
   const [currentItem, setCurrentItem] = useState<SearchResultType | null>(null);
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 p-8">
       <AddCollectionsTabs
         collections={collections}
         currentCollectionId={currentCollectionId}
