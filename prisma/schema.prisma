@@ -156,6 +156,7 @@ model UserToItem {
     tags         Tag[]
     itemComments ItemComment[]
 
+    @@unique([userId, itemId])
     @@index([createdAt, rate, status, userId, itemId, id])
 }
 
