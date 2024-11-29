@@ -58,13 +58,11 @@ function FillImdbDetailsResult(props: any): ImdbDetailsResultType {
       props.creatorsPageTitle,
       props.directorsPageTitle,
     ),
-    genres: ExtractElements<string>(
-      props.genres?.genres,
-      props.titleGenres?.genres,
-    ),
     keywords: ExtractElements<string>(
       props.keywords?.edges,
       props.interests?.edges,
+      props.genres?.genres,
+      props.titleGenres?.genres,
     ),
   };
 }

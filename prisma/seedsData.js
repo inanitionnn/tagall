@@ -31,22 +31,15 @@ export const seedsData = {
     },
     {
       id: "cm3a9so0i000ai1s77en3aul5",
-      name: "genres",
-      priority: 1,
-      isFiltering: true,
-      collections: ["cm3a9sw1v000gi1s7appi2tju", "cm3bnlve100000ks784yufzt9"],
-    },
-    {
-      id: "cm3a9so0i000ai1s77en3aul5",
       name: "keywords",
-      priority: 2,
+      priority: 3,
       isFiltering: true,
       collections: ["cm3a9sw1v000gi1s7appi2tju", "cm3bnlve100000ks784yufzt9"],
     },
     {
       id: "cm3a9sqbe000ci1s74wjod48c",
       name: "contentRating",
-      priority: 3,
+      priority: 6,
       isFiltering: true,
       collections: ["cm3a9sw1v000gi1s7appi2tju", "cm3bnlve100000ks784yufzt9"],
     },
@@ -60,7 +53,7 @@ export const seedsData = {
     {
       id: "cm3hvqbhn0000hxs7gckv6nyi",
       name: "runtime",
-      priority: 1000,
+      priority: 7,
       isFiltering: false,
       collections: ["cm3a9sw1v000gi1s7appi2tju"],
     },

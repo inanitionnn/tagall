@@ -50,7 +50,7 @@ const HomeMediumItem = (props: Props) => {
 
         <div className="hidden flex-wrap gap-2 sm:flex">
           {item.fieldGroups
-            .find((g) => g.name === "genres")
+            .find((g) => g.name === "keywords")
             ?.fields.filter((f) => f.split(" ").length < 2)
             .slice(0, 5)
             .map((f) => <Badge className="px-2 py-0.5 text-sm">{f}</Badge>)}
