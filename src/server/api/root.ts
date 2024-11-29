@@ -3,6 +3,7 @@ import { CollectionRouter } from "./modules/collection/collection.router";
 import { ParseRouter } from "./modules/parse/parse.router";
 import { FieldRouter } from "./modules/field/field.router";
 import { ItemRouter } from "./modules/item/item.router";
+import { EmbeddingRouter } from "./modules/embedding/parse.router";
 
 /**
  * This is the primary router for your server.
@@ -14,6 +15,7 @@ export const appRouter = createTRPCRouter({
   parse: ParseRouter,
   item: ItemRouter,
   field: FieldRouter,
+  embedding: EmbeddingRouter,
 });
 
 // export type definition of API
