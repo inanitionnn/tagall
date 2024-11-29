@@ -5,4 +5,6 @@ export type SearchResultType = {
   year: number | null;
   description: string | null;
   keywords: string[];
+  parsedId: string;
+  inCollection: boolean;
 };

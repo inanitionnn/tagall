@@ -34,6 +34,7 @@ function AddContainer() {
           open={!!currentItem}
           currentCollectionId={currentCollectionId}
           setCurrentItem={setCurrentItem}
+          setSearchResults={setSearchResults}
         />
       )}
       <div className="grid gap-6 lg:grid-cols-2">

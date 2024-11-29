@@ -8,10 +8,12 @@ type Props = {
   currentItem: SearchResultType | null;
   currentCollectionId: string;
   setCurrentItem: Dispatch<SetStateAction<SearchResultType | null>>;
+  setSearchResults: Dispatch<SetStateAction<SearchResultType[]>>;
 };
 
 export const useAddItemToUser = (props: Props) => {
-  const { currentCollectionId, currentItem, setCurrentItem } = props;
+  const { currentCollectionId, currentItem, setCurrentItem, setSearchResults } =
+    props;
   const [rating, setRating] = useState<number[]>([0]);
   const [status, setStatus] = useState<ItemStatus>(ItemStatus.NOTSTARTED);
   const { mutateAsync } = api.item.addToUser.useMutation();
@@ -19,11 +21,9 @@ export const useAddItemToUser = (props: Props) => {
   const submit = async () => {
     if (!currentItem) return;
 
-    const match = currentItem.link?.match(/\/title\/(tt\d+)/);
-    const id = match ? match[1] : null;
-
-    if (!id) {
-      toast.error("Invalid item id");
+    if (currentItem.inCollection) {
+      toast.error(`${currentItem.title} is already in your collection!`);
+      setCurrentItem(null);
       return;
     }
 
@@ -31,10 +31,22 @@ export const useAddItemToUser = (props: Props) => {
       collectionId: currentCollectionId,
       rate: rating[0] ?? 0,
       status,
-      id,
+      id: currentItem.parsedId,
     });
 
     setCurrentItem(null);
+    setSearchResults((prev) =>
+      prev.map((searchResult) => {
+        const isCurrentItem = searchResult.parsedId === currentItem?.parsedId;
+        if (isCurrentItem) {
+          return {
+            ...searchResult,
+            inCollection: true,
+          };
+        }
+        return searchResult;
+      }),
+    );
 
     toast.promise(promise, {
       loading: `Adding ${currentItem.title}...`,

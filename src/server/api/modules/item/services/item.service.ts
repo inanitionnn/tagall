@@ -15,16 +15,16 @@ function FieldsToGroupedFields(
   fields: Array<Field & { fieldGroup: FieldGroup }>,
 ) {
   const groupedFields: {
-    [key: string]: { name: string; fields: string[] };
+    [key: string]: { name: string; priority: number; fields: string[] };
   } = {};
 
   fields.forEach((field) => {
-    const groupId = field.fieldGroup.id;
-    const groupName = field.fieldGroup.name;
+    const { id: groupId, name: groupName, priority } = field.fieldGroup;
 
     if (!groupedFields[groupId]) {
       groupedFields[groupId] = {
         name: groupName,
+        priority,
         fields: [],
       };
     }
@@ -32,10 +32,12 @@ function FieldsToGroupedFields(
     groupedFields[groupId].fields.push(field.value);
   });
 
-  return Object.values(groupedFields).map((group) => ({
-    ...group,
-    fields: group.fields.sort(),
-  }));
+  return Object.values(groupedFields)
+    .sort((a, b) => a.priority - b.priority)
+    .map((group) => ({
+      name: group.name,
+      fields: group.fields.sort(),
+    }));
 }
 
 function dateToTimeAgoString(date: Date) {

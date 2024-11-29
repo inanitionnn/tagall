@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Header, Paragraph } from "../../ui";
 import { Dispatch, SetStateAction } from "react";
 import { SearchResultType } from "../../../../server/api/modules/parse/types";
+import { cn } from "../../../../lib";
 
 type Props = {
   searchResult: SearchResultType;
@@ -11,11 +12,28 @@ type Props = {
 const AddSearchResultItem = (props: Props) => {
   const { searchResult, setCurrentItem } = props;
 
+  const onClick = () => {
+    if (!searchResult.inCollection) {
+      setCurrentItem(() => searchResult);
+    }
+  };
+
   return (
     <div
-      className="flex h-64 cursor-pointer flex-col gap-2 rounded-sm bg-background p-4 shadow transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg sm:flex-row"
-      onClick={() => setCurrentItem(() => searchResult)}
+      className={cn(
+        "relative flex h-64 flex-col gap-2 rounded-sm bg-background p-4 shadow sm:flex-row",
+        {
+          "cursor-pointer transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg":
+            !searchResult.inCollection,
+        },
+      )}
+      onClick={onClick}
     >
+      {searchResult.inCollection && (
+        <div className="absolute bottom-2 left-2 rounded-sm bg-green-500 p-2 text-destructive-foreground">
+          <Paragraph>In Collection</Paragraph>
+        </div>
+      )}
       <Header vtag="h5" className="leading-tight sm:hidden">
         {searchResult.title}
       </Header>
@@ -38,9 +56,11 @@ const AddSearchResultItem = (props: Props) => {
             {searchResult.title}
           </Header>
 
-          <Paragraph vsize={"sm"} className="line-clamp-4">
-            {searchResult.description}
-          </Paragraph>
+          {searchResult.description && (
+            <Paragraph vsize={"sm"} className="line-clamp-4">
+              {searchResult.description}
+            </Paragraph>
+          )}
 
           <Paragraph>
             {[searchResult.year, ...searchResult.keywords].join(" • ")}

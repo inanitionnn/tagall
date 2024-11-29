@@ -24,6 +24,7 @@ type Props = {
   currentItem: SearchResultType;
   currentCollectionId: string;
   setCurrentItem: Dispatch<SetStateAction<SearchResultType | null>>;
+  setSearchResults: Dispatch<SetStateAction<SearchResultType[]>>;
 };
 
 const AddItemModal = (props: Props) => {
