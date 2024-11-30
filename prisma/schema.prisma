@@ -106,10 +106,10 @@ model Collection {
 
 model Item {
     id        String   @id @default(cuid())
-    parsedId  String?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    parsedId    String
     name        String
     image       String?
     year        Int?

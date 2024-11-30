@@ -5,9 +5,9 @@ const openai = new OpenAI({
   apiKey: env.OPENAI_API_KEY!,
 });
 
-async function getEmbedding(jsonInput: object): Promise<number[]> {
+export async function GetEmbedding(data: object | string): Promise<number[]> {
   try {
-    const inputString = JSON.stringify(jsonInput);
+    const inputString = typeof data === "string" ? data : JSON.stringify(data);
 
     const response = await openai.embeddings.create({
       model: "text-embedding-3-small",
