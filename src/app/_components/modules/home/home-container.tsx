@@ -32,6 +32,7 @@ function HomeContainer() {
   const [currentCollectionsIds, setCurrentCollectionsIds] = useState<string[]>(
     collections[0]?.id ? [collections[0].id] : [],
   );
+  const [searchFilter, setSearchFilter] = useState<string>("");
 
   const { yearsRange } = useYearsRange({ currentCollectionsIds });
 
@@ -87,14 +88,16 @@ function HomeContainer() {
         <HomeItemsSizeTabs itemsSize={itemsSize} setItemsSize={setItemsSize} />
 
         <HomeFilterDialog
+          searchFilter={searchFilter}
+          setSearchFilter={setSearchFilter}
           filterRates={filterRates}
-          filterYears={filterYears}
           setFilterRates={setFilterRates}
+          filterYears={filterYears}
           setFilterYears={setFilterYears}
-          yearsRange={yearsRange}
-          filterFieldGroups={filterFieldGroups}
           filtering={filtering}
           setFiltering={setFiltering}
+          yearsRange={yearsRange}
+          filterFieldGroups={filterFieldGroups}
         />
       </div>
 

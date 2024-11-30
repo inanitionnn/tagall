@@ -1,26 +1,22 @@
-"use client";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import {
   Button,
   DualRangeSlider,
   Header,
-  Paragraph,
+  Input,
   ResponsiveModal,
   ResponsiveModalContent,
   ResponsiveModalTrigger,
   ScrollArea,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
 } from "../../ui";
-import { SORT_OPTIONS, STATUS_NAMES } from "../../../../constants";
-import { SlidersHorizontal } from "lucide-react";
-import { api } from "../../../../trpc/react";
+import { STATUS_NAMES } from "../../../../constants";
+import { Search, SlidersHorizontal } from "lucide-react";
 import { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
 import { ItemStatus } from "@prisma/client";
 
 type Props = {
+  searchFilter: string;
+  setSearchFilter: Dispatch<SetStateAction<string>>;
   filterFieldGroups: {
     fields: {
       value: string;
@@ -52,7 +48,22 @@ const HomeFilterDialog = (props: Props) => {
     setFilterRates,
     setFilterYears,
     setFiltering,
+    searchFilter,
+    setSearchFilter,
   } = props;
+
+  const filteredStatusNames = Object.entries(STATUS_NAMES).filter(([_, name]) =>
+    name.toLowerCase().includes(searchFilter.toLowerCase()),
+  );
+
+  const filteredFieldGroups = filterFieldGroups
+    .map((fieldGroup) => ({
+      ...fieldGroup,
+      fields: fieldGroup.fields.filter((field) =>
+        field.value.toLowerCase().includes(searchFilter.toLowerCase()),
+      ),
+    }))
+    .filter((fieldGroup) => fieldGroup.fields.length > 0);
 
   return (
     <>
@@ -71,88 +82,105 @@ const HomeFilterDialog = (props: Props) => {
                 <Header vtag="h4">Filter</Header>
                 <Button onClick={() => setFiltering([])}>Clear</Button>
               </div>
+              <div className="relative">
+                <Input
+                  value={searchFilter}
+                  onChange={(e) => setSearchFilter(e.target.value)}
+                  placeholder="Search..."
+                  className="w-full rounded-md border border-zinc-300 px-4 py-2 pr-10 focus:border-primary focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                />
 
-              <div className="flex flex-col gap-4">
-                <Header vtag="h6">Years</Header>
-                <div className="px-6 pb-8">
-                  <DualRangeSlider
-                    label={(value) => value}
-                    labelPosition="bottom"
-                    value={filterYears}
-                    onValueChange={setFilterYears}
-                    min={yearsRange.minYear}
-                    max={yearsRange.maxYear}
-                    step={1}
-                  />
-                </div>
+                <Search className="absolute right-3 top-1/2 z-30 h-5 w-5 -translate-y-1/2 cursor-pointer text-zinc-400 dark:text-zinc-500" />
               </div>
-              <div className="flex flex-col gap-4">
-                <Header vtag="h6">Rate</Header>
-                <div className="px-6 pb-8">
-                  <DualRangeSlider
-                    label={(value) => value}
-                    labelPosition="bottom"
-                    value={filterRates}
-                    onValueChange={setFilterRates}
-                    min={1}
-                    max={10}
-                    step={1}
-                  />
+              {!searchFilter && (
+                <div className="flex flex-col gap-4">
+                  <Header vtag="h6">Years</Header>
+                  <div className="px-6 pb-8">
+                    <DualRangeSlider
+                      label={(value) => value}
+                      labelPosition="bottom"
+                      value={filterYears}
+                      onValueChange={setFilterYears}
+                      min={yearsRange.minYear}
+                      max={yearsRange.maxYear}
+                      step={1}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Header vtag="h6">Status</Header>
-                <div className="flex flex-wrap gap-2">
-                  {Object.entries(STATUS_NAMES).map(([status, name]) => {
-                    const typedStatus = status as ItemStatus;
-                    const statusFilter = filtering.find(
-                      (f) => f.name === "status" && f.value === typedStatus,
-                    );
-                    return (
-                      <Button
-                        key={typedStatus}
-                        variant={
-                          statusFilter?.type === "include"
-                            ? "success"
-                            : statusFilter?.type === "exclude"
-                              ? "destructive"
-                              : "ghost"
-                        }
-                        size={"sm"}
-                        onClick={() =>
-                          setFiltering((prev) => {
-                            const updatedFiltering = prev.filter(
-                              (f) =>
-                                f.name !== "status" || f.value !== typedStatus,
-                            ) as GetUserItemsFilterType;
-                            const currentFilter = prev.find(
-                              (f) =>
-                                f.name === "status" && f.value === typedStatus,
-                            );
-                            if (!currentFilter) {
-                              updatedFiltering.push({
-                                name: "status",
-                                type: "include",
-                                value: typedStatus,
-                              });
-                            } else if (currentFilter.type === "include") {
-                              updatedFiltering.push({
-                                name: "status",
-                                type: "exclude",
-                                value: typedStatus,
-                              });
-                            }
-                            return updatedFiltering;
-                          })
-                        }
-                      >
-                        {name}
-                      </Button>
-                    );
-                  })}
+              )}
+              {!searchFilter && (
+                <div className="flex flex-col gap-4">
+                  <Header vtag="h6">Rate</Header>
+                  <div className="px-6 pb-8">
+                    <DualRangeSlider
+                      label={(value) => value}
+                      labelPosition="bottom"
+                      value={filterRates}
+                      onValueChange={setFilterRates}
+                      min={1}
+                      max={10}
+                      step={1}
+                    />
+                  </div>
                 </div>
-              </div>
-              {filterFieldGroups.map((fieldGroup) => (
+              )}
+              {filteredStatusNames.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <Header vtag="h6">Status</Header>
+                  <div className="flex flex-wrap gap-2">
+                    {filteredStatusNames.map(([status, name]) => {
+                      const typedStatus = status as ItemStatus;
+                      const statusFilter = filtering.find(
+                        (f) => f.name === "status" && f.value === typedStatus,
+                      );
+                      return (
+                        <Button
+                          key={typedStatus}
+                          variant={
+                            statusFilter?.type === "include"
+                              ? "success"
+                              : statusFilter?.type === "exclude"
+                                ? "destructive"
+                                : "ghost"
+                          }
+                          size={"sm"}
+                          onClick={() =>
+                            setFiltering((prev) => {
+                              const updatedFiltering = prev.filter(
+                                (f) =>
+                                  f.name !== "status" ||
+                                  f.value !== typedStatus,
+                              ) as GetUserItemsFilterType;
+                              const currentFilter = prev.find(
+                                (f) =>
+                                  f.name === "status" &&
+                                  f.value === typedStatus,
+                              );
+                              if (!currentFilter) {
+                                updatedFiltering.push({
+                                  name: "status",
+                                  type: "include",
+                                  value: typedStatus,
+                                });
+                              } else if (currentFilter.type === "include") {
+                                updatedFiltering.push({
+                                  name: "status",
+                                  type: "exclude",
+                                  value: typedStatus,
+                                });
+                              }
+                              return updatedFiltering;
+                            })
+                          }
+                        >
+                          {name}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              {filteredFieldGroups.map((fieldGroup) => (
                 <div key={fieldGroup.id} className="flex flex-col gap-2">
                   <Header vtag="h6">{fieldGroup.name}</Header>
                   <div className="flex flex-wrap gap-2">
