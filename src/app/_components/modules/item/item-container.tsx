@@ -49,11 +49,9 @@ function ItemContainer(props: Props) {
 
       <div className="flex w-64 items-center gap-2 rounded-md bg-background p-4 shadow">
         <Header vtag="h6">Status:</Header>
-        <div className="flex items-center">
+        <div className="flex w-full items-center justify-between gap-1">
           <StatusIcon size={16} />
-          <Paragraph className="w-5 text-center">
-            {STATUS_NAMES[item.status]}
-          </Paragraph>
+          <Paragraph>{STATUS_NAMES[item.status]}</Paragraph>
         </div>
       </div>
 
@@ -62,9 +60,9 @@ function ItemContainer(props: Props) {
         {item.rate ? (
           <>
             <div className="flex w-full justify-between">
-              <div className="flex items-center">
+              <div className="flex items-center gap-1">
+                <Paragraph className="font-semibold">{item.rate}</Paragraph>
                 <Star size={16} />
-                <Paragraph className="w-5 text-center">{item.rate}</Paragraph>
               </div>
               <Paragraph>{RATING_NAMES[item.rate]}</Paragraph>
             </div>
