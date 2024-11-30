@@ -1,10 +1,4 @@
-import {
-  BadgePlus,
-  Dices,
-  Folders,
-  House,
-  type LucideIcon,
-} from "lucide-react";
+import { BadgePlus, House, type LucideIcon } from "lucide-react";
 
 type NavbarLinkType =
   | {
@@ -33,33 +27,33 @@ const NAVBAR_LINKS: NavbarLinkType[] = [
   //   href: "/collections",
   //   title: "Collections",
   // },
-  {
-    type: "link",
-    icon: Folders,
-    href: "/groups",
-    title: "Groups",
-  },
+  // {
+  //   type: "link",
+  //   icon: Folders,
+  //   href: "/groups",
+  //   title: "Groups",
+  // },
   // {
   //   type: "link",
   //   icon: Tags,
   //   href: "/tags",
   //   title: "Tags",
   // },
-  {
-    type: "divider",
-  },
+  // {
+  //   type: "divider",
+  // },
   {
     type: "link",
     icon: BadgePlus,
     href: "/add",
     title: "Add",
   },
-  {
-    type: "link",
-    icon: Dices,
-    href: "/random",
-    title: "Random",
-  },
+  // {
+  //   type: "link",
+  //   icon: Dices,
+  //   href: "/random",
+  //   title: "Random",
+  // },
 ];
 
 export { NAVBAR_LINKS };
