@@ -1,18 +1,16 @@
-"use client";
 import { Input, Spinner } from "../../ui";
 import { Dispatch, SetStateAction } from "react";
 import { Search } from "lucide-react";
-import { SearchResultType } from "../../../../server/api/modules/parse/types";
-import { useSearch } from "./hooks/use-search.hook";
 
 type Props = {
-  currentCollectionId: string;
-  setSearchResults: Dispatch<SetStateAction<SearchResultType[]>>;
-  setCurrentItem: Dispatch<SetStateAction<SearchResultType | null>>;
+  query: string;
+  setQuery: Dispatch<SetStateAction<string>>;
+  submit: () => void;
+  isLoading: boolean;
 };
 
 function AddSearch(props: Props) {
-  const { isLoading, query, setQuery, submit } = useSearch(props);
+  const { isLoading, query, setQuery, submit } = props;
 
   return (
     <div className="relative">

@@ -12,12 +12,6 @@ type Props = {
 const AddSearchResultItem = (props: Props) => {
   const { searchResult, setCurrentItem } = props;
 
-  const onClick = () => {
-    if (!searchResult.inCollection) {
-      setCurrentItem(() => searchResult);
-    }
-  };
-
   return (
     <div
       className={cn(
@@ -27,7 +21,11 @@ const AddSearchResultItem = (props: Props) => {
             !searchResult.inCollection,
         },
       )}
-      onClick={onClick}
+      onClick={() => {
+        if (!searchResult.inCollection) {
+          setCurrentItem(() => searchResult);
+        }
+      }}
     >
       {searchResult.inCollection && (
         <div className="absolute bottom-2 left-2 rounded-sm bg-green-500 p-2 text-destructive-foreground">

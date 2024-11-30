@@ -6,6 +6,7 @@ import { AddSearchResultItem } from "./add-search-result-item";
 import { AddItemModal } from "./add-item-modal";
 import { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { AddCollectionsTabs } from "./add-collections-tabs";
+import { useSearch } from "./hooks/use-search.hook";
 
 function AddContainer() {
   const [collections] = api.collection.getAll.useSuspenseQuery();
@@ -15,6 +16,12 @@ function AddContainer() {
   );
   const [currentItem, setCurrentItem] = useState<SearchResultType | null>(null);
 
+  const { isLoading, query, setQuery, submit } = useSearch({
+    currentCollectionId,
+    setSearchResults,
+    setCurrentItem,
+  });
+
   return (
     <div className="flex flex-col gap-8 p-8">
       <AddCollectionsTabs
@@ -23,9 +30,10 @@ function AddContainer() {
         setCurrentCollectionId={setCurrentCollectionId}
       />
       <AddSearch
-        setSearchResults={setSearchResults}
-        setCurrentItem={setCurrentItem}
-        currentCollectionId={currentCollectionId}
+        isLoading={isLoading}
+        query={query}
+        setQuery={setQuery}
+        submit={submit}
       />
 
       {currentItem && (
