@@ -63,6 +63,18 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
+      async profile(profile) {
+        const allowedEmails = ["tarolv3@example.com"];
+        if (!allowedEmails.includes(profile.email)) {
+          throw new Error("Email not allowed ;)");
+        }
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+        };
+      },
     }),
     /**
      * ...add more providers here.
