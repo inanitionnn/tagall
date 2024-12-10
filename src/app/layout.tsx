@@ -1,5 +1,6 @@
 import "~/styles/globals.css";
-
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Source_Sans_3, Nunito_Sans } from "next/font/google";
 import { type Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
@@ -40,6 +41,8 @@ export default function RootLayout({
         <TRPCReactProvider>
           <SessionProviderWrapper session={session}>
             <ToastWrapper>
+              <SpeedInsights />
+              <Analytics />
               <Suspense fallback={<Loaging />}>{children}</Suspense>
             </ToastWrapper>
           </SessionProviderWrapper>
