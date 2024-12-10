@@ -91,93 +91,66 @@ async function CreateImdbItem(props: {
 }) {
   const { ctx, collectionId, id } = props;
 
-  const transactionResult = await ctx.db.$transaction(async (prisma) => {
-    const oldItem = await prisma.item.findFirst({
-      where: {
-        parsedId: id,
-      },
-    });
-
-    if (oldItem) {
-      return oldItem;
-    }
-
-    const details = await GetImdbDetailsById(id);
-
-    if (!details.title) {
-      throw new Error("Imdb parse error! Title not found!");
-    }
-
-    const item = await prisma.item.create({
-      data: {
-        collectionId: collectionId,
-        name: details.title,
-        year: details.year,
-        description: details.plot,
-        parsedId: id,
-        image: details.image,
-      },
-    });
-
-    for (const [key, value] of Object.entries(details)) {
-      if (
-        key === "title" ||
-        key === "image" ||
-        key === "year" ||
-        key === "plot"
-      ) {
-        continue;
-      }
-      const fieldGroup = await prisma.fieldGroup.findFirst({
+  const transactionResult = await ctx.db.$transaction(
+    async (prisma) => {
+      const oldItem = await prisma.item.findFirst({
         where: {
-          name: key,
-          collections: {
-            some: {
-              id: collectionId,
-            },
-          },
+          parsedId: id,
         },
       });
-      if (!fieldGroup) {
-        continue;
+
+      if (oldItem) {
+        return oldItem;
       }
-      switch (typeof value) {
-        case "number":
-        case "string": {
-          await prisma.field.upsert({
-            where: {
-              value: String(value),
-            },
-            create: {
-              value: String(value),
-              fieldGroupId: fieldGroup.id,
-              items: {
-                connect: {
-                  id: item.id,
-                },
-              },
-            },
-            update: {
-              items: {
-                connect: {
-                  id: item.id,
-                },
-              },
-            },
-          });
-          break;
+
+      const details = await GetImdbDetailsById(id);
+
+      if (!details.title) {
+        throw new Error("Imdb parse error! Title not found!");
+      }
+
+      const item = await prisma.item.create({
+        data: {
+          collectionId: collectionId,
+          name: details.title,
+          year: details.year,
+          description: details.plot,
+          parsedId: id,
+          image: details.image,
+        },
+      });
+
+      for (const [key, value] of Object.entries(details)) {
+        if (
+          key === "title" ||
+          key === "image" ||
+          key === "year" ||
+          key === "plot"
+        ) {
+          continue;
         }
-        case "object": {
-          if (!Array.isArray(value)) {
-            continue;
-          }
-          for (const field of value) {
+        const fieldGroup = await prisma.fieldGroup.findFirst({
+          where: {
+            name: key,
+            collections: {
+              some: {
+                id: collectionId,
+              },
+            },
+          },
+        });
+        if (!fieldGroup) {
+          continue;
+        }
+        switch (typeof value) {
+          case "number":
+          case "string": {
             await prisma.field.upsert({
               where: {
-                value: field,
+                value: String(value),
               },
               create: {
-                value: field,
+                value: String(value),
                 fieldGroupId: fieldGroup.id,
                 items: {
                   connect: {
@@ -193,21 +166,51 @@ async function CreateImdbItem(props: {
                 },
               },
             });
+            break;
           }
+          case "object": {
+            if (!Array.isArray(value)) {
+              continue;
+            }
+            for (const field of value) {
+              await prisma.field.upsert({
+                where: {
+                  value: field,
+                },
+                create: {
+                  value: field,
+                  fieldGroupId: fieldGroup.id,
+                  items: {
+                    connect: {
+                      id: item.id,
+                    },
+                  },
+                },
+                update: {
+                  items: {
+                    connect: {
+                      id: item.id,
+                    },
+                  },
+                },
+              });
+            }
 
-          break;
+            break;
+          }
         }
       }
-    }
 
-    await SetEmbedding({
-      ctx,
-      itemId: item.id,
-      data: details,
-    });
+      await SetEmbedding({
+        ctx,
+        itemId: item.id,
+        data: details,
+      });
 
-    return item;
-  });
+      return item;
+    },
+    { timeout: 120_000 },
+  );
 
   return transactionResult;
 }
