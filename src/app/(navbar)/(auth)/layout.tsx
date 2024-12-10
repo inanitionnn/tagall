@@ -8,5 +8,5 @@ export default async function RootLayout({
   if (!sesstion || !sesstion.user) {
     redirect("/api/auth/signin");
   }
-  return { children };
+  return <>{children}</>;
 }

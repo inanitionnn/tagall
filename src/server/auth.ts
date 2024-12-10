@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       async profile(profile) {
-        const allowedEmails = ["tarolv3@example.com"];
+        const allowedEmails = ["tarolv3@gmail.com"];
         if (!allowedEmails.includes(profile.email)) {
           throw new Error("Email not allowed ;)");
         }
