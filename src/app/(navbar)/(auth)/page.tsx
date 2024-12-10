@@ -1,5 +1,5 @@
-import { api, HydrateClient } from "../../trpc/server";
-import { HomeContainer } from "../_components/modules";
+import { api, HydrateClient } from "../../../trpc/server";
+import { HomeContainer } from "../../_components/modules";
 
 export const dynamic = "force-dynamic";
 
