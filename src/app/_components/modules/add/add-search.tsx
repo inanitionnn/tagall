@@ -1,5 +1,5 @@
 import { Input, Spinner } from "../../ui";
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { Search } from "lucide-react";
 
 type Props = {

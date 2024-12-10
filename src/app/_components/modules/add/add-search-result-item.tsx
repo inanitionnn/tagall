@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Header, Paragraph } from "../../ui";
-import { Dispatch, SetStateAction } from "react";
-import { SearchResultType } from "../../../../server/api/modules/parse/types";
+import type { Dispatch, SetStateAction } from "react";
+import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { cn } from "../../../../lib";
 
 type Props = {

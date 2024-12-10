@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { type z } from "zod";
 import {
-  GetUserItemsFilterSchema,
-  GetUserItemsInputSchema,
-  GetUserItemsSortSchema,
+  type GetUserItemsFilterSchema,
+  type GetUserItemsInputSchema,
+  type GetUserItemsSortSchema,
 } from "../schemas";
 
 export type GetUserItemsFilterType = z.infer<typeof GetUserItemsFilterSchema>;

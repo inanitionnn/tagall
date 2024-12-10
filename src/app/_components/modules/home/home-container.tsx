@@ -2,7 +2,7 @@
 import { api } from "~/trpc/react";
 import { useEffect, useState } from "react";
 import { HomeCollectionsTabs } from "./home-collections-tabs";
-import { GetUserItemsSortType } from "../../../../server/api/modules/item/types";
+import type { GetUserItemsSortType } from "../../../../server/api/modules/item/types";
 import { Header, InfiniteScroll, Spinner } from "../../ui";
 import { HomeItemsSizeTabs } from "./home-items-size-tabs";
 import { HomeSortSelect } from "./home-sort-select";
@@ -28,7 +28,7 @@ function HomeContainer() {
     type: "desc",
     name: "date",
   });
-  2;
+
   const [currentCollectionsIds, setCurrentCollectionsIds] = useState<string[]>(
     collections[0]?.id ? [collections[0].id] : [],
   );
@@ -64,7 +64,12 @@ function HomeContainer() {
 
   useEffect(() => {
     resetPagination();
-  }, [currentCollectionsIds, debouncedFiltering, debouncedSorting]);
+  }, [
+    currentCollectionsIds,
+    debouncedFiltering,
+    debouncedSorting,
+    resetPagination,
+  ]);
 
   if (!collections.length) {
     return (

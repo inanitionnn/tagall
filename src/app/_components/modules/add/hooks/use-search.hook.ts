@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { api } from "../../../../../trpc/react";
 import { toast } from "sonner";
+import type { SearchResultType } from "../../../../../server/api/modules/parse/types";
 
 type Props = {
   currentCollectionId: string;
-  setSearchResults: (results: any) => void;
-  setCurrentItem: (item: any) => void;
+  setSearchResults: Dispatch<SetStateAction<SearchResultType[]>>;
+  setCurrentItem: Dispatch<SetStateAction<SearchResultType | null>>;
   limit?: number;
 };
 export const useSearch = (props: Props) => {
@@ -39,7 +40,7 @@ export const useSearch = (props: Props) => {
     if (isSuccess) {
       setSearchResults(data);
     }
-  }, [isSuccess]);
+  }, [isSuccess, data, setSearchResults]);
 
   useEffect(() => {
     if (isError) {
@@ -52,7 +53,7 @@ export const useSearch = (props: Props) => {
       setSearchResults([]);
       setCurrentItem(null);
     }
-  }, [currentCollectionId]);
+  }, [currentCollectionId, setSearchResults, setCurrentItem]);
 
   return {
     query,

@@ -1,5 +1,5 @@
-import { ContextType } from "../../../../types";
-import { GetFilterFieldsInputType } from "../types";
+import type { ContextType } from "../../../../types";
+import type { GetFilterFieldsInputType } from "../types";
 
 export const GetFilterFields = async (props: {
   ctx: ContextType;
@@ -9,8 +9,7 @@ export const GetFilterFields = async (props: {
   return ctx.db.fieldGroup.findMany({
     where: {
       isFiltering: true,
-      ...(input &&
-        input.length && {
+      ...(input?.length && {
           collections: {
             some: {
               id: {
@@ -24,8 +23,7 @@ export const GetFilterFields = async (props: {
       id: true,
       name: true,
       fields: {
-        ...(input &&
-          input.length && {
+        ...(input?.length && {
             where: {
               items: {
                 some: {

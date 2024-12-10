@@ -1,6 +1,6 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { type Dispatch, type SetStateAction } from "react";
 import { Badge } from "../../ui";
-import { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
+import type { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
 import { STATUS_NAMES } from "../../../../constants";
 
 type Props = {
@@ -14,7 +14,7 @@ const HomeFilterBadges = (props: Props) => {
   return (
     <div className="flex flex-wrap gap-2">
       {filtering.map((filter, index) => {
-        let badgeText: string = "";
+        let badgeText = "";
         switch (filter.name) {
           case "rate":
           case "year":

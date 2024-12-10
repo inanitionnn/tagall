@@ -1,10 +1,10 @@
-import { ImdbDetailsResultType, SearchResultType } from "../types";
+import { type ImdbDetailsResultType, type SearchResultType } from "../types";
 import { GetHtmlFromUrl } from "./axios.service";
 import * as cheerio from "cheerio";
 
 // #region Private Functions
-function ExtractElements<T>(...arrays: T[][]): T[] {
-  const getItem = (item: any) => {
+function ExtractElements<T>(...arrays: Record<string, any>[][]): T[] {
+  const getItem = (item: Record<string, any>): T => {
     return (
       item.id ||
       item.name ||
@@ -13,7 +13,7 @@ function ExtractElements<T>(...arrays: T[][]): T[] {
       item.name?.nameText?.text ||
       item.node?.primaryText?.text ||
       item.node?.company?.companyText?.text ||
-      item.credits?.map((credit: any) => credit?.name?.nameText?.text)[0]
+      item.credits?.map((credit: any) => credit?.name?.nameText?.text)?.[0]
     );
   };
 
@@ -27,28 +27,28 @@ function ExtractElements<T>(...arrays: T[][]): T[] {
 
 function FillImdbDetailsResult(props: any): ImdbDetailsResultType {
   return {
-    title: props.titleText?.text || props.originalTitleText?.text || null,
-    image: GetHighQualityImageUrls(props.primaryImage?.url)?.original || null,
-    plot: props.plot?.plotText?.plainText || null,
+    title: props.titleText?.text ?? props.originalTitleText?.text ?? null,
+    image: GetHighQualityImageUrls(props.primaryImage?.url)?.original ?? null,
+    plot: props.plot?.plotText?.plainText ?? null,
     type: {
-      titleType: props.titleType?.id || null,
+      titleType: props.titleType?.id ?? null,
       isSeries: !!props.titleType?.isSeries,
       isEpisode: !!props.titleType?.isEpisode,
       canHaveEpisodes: !!props.titleType?.canHaveEpisodes,
     },
     // year: {
-    //   release: props.releaseYear?.year || null,
-    //   end: props.releaseYear?.endYear || null,
+    //   release: props.releaseYear?.year ?? null,
+    //   end: props.releaseYear?.endYear ?? null,
     // },
-    year: props.releaseYear?.year || null,
+    year: props.releaseYear?.year ?? null,
     // runtime: {
-    //   seconds: props.runtime?.seconds || null,
-    //   text: props.runtime?.displayableProperty?.value?.plainText || null,
+    //   seconds: props.runtime?.seconds ?? null,
+    //   text: props.runtime?.displayableProperty?.value?.plainText ?? null,
     // },
-    runtime: props.runtime?.displayableProperty?.value?.plainText || null,
-    rating: props.ratingsSummary?.aggregateRating || null,
-    isAdult: props.isAdult || null,
-    contentRating: props.contentRating || null,
+    runtime: props.runtime?.displayableProperty?.value?.plainText ?? null,
+    rating: props.ratingsSummary?.aggregateRating ?? null,
+    isAdult: props.isAdult ?? null,
+    contentRating: props.contentRating ?? null,
     production: ExtractElements<string>(props.production?.edges),
     people: ExtractElements<string>(
       props.castPageTitle?.edges,
@@ -71,7 +71,7 @@ function GetHighQualityImageUrls(originalUrl: string | null) {
   if (!originalUrl) return null;
 
   // Extract the base part of the URL (before the resolution parameters)
-  const baseUrlMatch = originalUrl.match(/(.*?)\._V1/);
+  const baseUrlMatch = /(.*?)\._V1/.exec(originalUrl);
   if (!baseUrlMatch) return { original: originalUrl };
 
   const baseUrl = baseUrlMatch[1];
@@ -113,7 +113,7 @@ export async function GetImdbDetailsById(
 export async function SearchImdb(
   query: string,
   type: "film" | "series" | "all" = "all",
-  limit: number = 10,
+  limit = 10,
 ): Promise<SearchResultType[]> {
   // Формування URL запиту з усіма необхідними параметрами
   const url = `https://www.imdb.com/find/?q=${encodeURIComponent(query)}&s=tt&${
@@ -130,14 +130,14 @@ export async function SearchImdb(
       const titleElement = $(element).find(
         ".ipc-metadata-list-summary-item__t",
       );
-      const title = titleElement.text().trim() || null;
-      const link = titleElement.attr("href") || null;
+      const title = titleElement.text().trim() ?? null;
+      const link = titleElement.attr("href") ?? null;
 
       const imageElement = $(element).find("img.ipc-image");
-      const image = imageElement.attr("src") || null;
+      const image = imageElement.attr("src") ?? null;
 
       const yearElement = $(element).find(".ipc-inline-list__item").first();
-      const year = parseInt(yearElement.text().trim()) || null;
+      const year = parseInt(yearElement.text().trim()) ?? null;
 
       const actorElements = $(element).find(
         ".ipc-metadata-list-summary-item__stl .ipc-inline-list__item",
@@ -148,14 +148,19 @@ export async function SearchImdb(
         if (actor) actors.push(actor);
       });
 
-      results.push({
-        title,
-        link: link ? `https://www.imdb.com${link}` : null,
-        image: GetHighQualityImageUrls(image)?.large ?? null,
-        year,
-        description: null,
-        keywords: actors,
-      });
+      const parsedId = link?.match(/\/title\/(tt\d+)/)?.[1];
+      if (parsedId) {
+        results.push({
+          title,
+          link: link ? `https://www.imdb.com${link}` : null,
+          image: GetHighQualityImageUrls(image)?.large ?? null,
+          year,
+          description: null,
+          keywords: actors,
+          inCollection: false,
+          parsedId,
+        });
+      }
     });
 
     return results;
@@ -168,7 +173,7 @@ export async function SearchImdb(
 export async function AdvancedSearchImdb(
   query: string,
   type: "film" | "series",
-  limit: number = 10,
+  limit = 10,
 ): Promise<SearchResultType[]> {
   let title_type;
   switch (type) {
@@ -199,17 +204,19 @@ export async function AdvancedSearchImdb(
         link: null,
         title: null,
         year: null,
+        inCollection: false,
+        parsedId: "",
       };
 
       const titleElement = $(element).find(".dli-title h3.ipc-title__text");
       const rawTitle = titleElement.text();
-      // result.rank = parseInt(rawTitle.split(".")[0]) || null;
-      result.title = rawTitle.split(". ")[1] || rawTitle || null;
+      // result.rank = parseInt(rawTitle.split(".")[0]) ?? null;
+      result.title = rawTitle.split(". ")[1] ?? rawTitle ?? null;
 
       const metadata = $(element).find(".dli-title-metadata-item");
       metadata.each((index, item) => {
         const text = $(item).text();
-        if (index === 0) result.year = parseInt(text) || null;
+        if (index === 0) result.year = parseInt(text) ?? null;
         if (index === 1) result.keywords.push(text);
         if (index === 2) result.keywords.push(text);
       });
@@ -242,7 +249,10 @@ export async function AdvancedSearchImdb(
         result.link = "https://www.imdb.com" + linkElement.attr("href");
       }
 
-      results.push(result);
+      const parsedId = result.link?.match(/\/title\/(tt\d+)/)?.[1];
+      if (parsedId) {
+        results.push(result);
+      }
     });
 
     return results;

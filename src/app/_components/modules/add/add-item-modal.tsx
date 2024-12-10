@@ -9,14 +9,14 @@ import {
   ResponsiveModalContent,
   Separator,
 } from "../../ui";
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import {
   RATING_NAMES,
   STATUS_ICONS,
   STATUS_NAMES,
 } from "../../../../constants";
 import { ItemStatus } from "@prisma/client";
-import { SearchResultType } from "../../../../server/api/modules/parse/types";
+import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { useAddItemToUser } from "./hooks/use-add-item-to-user.hook";
 
 type Props = {
@@ -74,14 +74,13 @@ const AddItemModal = (props: Props) => {
               <Paragraph>
                 <b>Status:</b>
                 {"   "}
-                {STATUS_NAMES[status as keyof typeof STATUS_NAMES]}
+                {STATUS_NAMES[status]}
               </Paragraph>
               <div className="flex gap-2">
                 {Object.values(ItemStatus)
                   .reverse()
                   .map((s) => {
-                    const IconComponent =
-                      STATUS_ICONS[s as keyof typeof STATUS_ICONS];
+                    const IconComponent = STATUS_ICONS[s];
                     return (
                       <Button
                         key={s}
@@ -102,9 +101,7 @@ const AddItemModal = (props: Props) => {
                   <b>Rating:</b> {rating[0] ? rating[0] : "None"}
                 </Paragraph>
                 <Paragraph>
-                  {rating[0]
-                    ? RATING_NAMES[rating[0] as keyof typeof RATING_NAMES]
-                    : "Don't know"}
+                  {rating[0] ? RATING_NAMES[rating[0]] : "Don't know"}
                 </Paragraph>
               </div>
               <DualRangeSlider

@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { Button } from "../../ui";
-import { CollectionType } from "../../../../server/api/modules/collection/types";
+import type { CollectionType } from "../../../../server/api/modules/collection/types";
 
 type Props = {
   collections: CollectionType[];

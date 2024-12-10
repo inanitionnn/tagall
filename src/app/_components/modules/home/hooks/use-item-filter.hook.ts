@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GetUserItemsFilterType } from "../../../../../server/api/modules/item/types";
+import type { GetUserItemsFilterType } from "../../../../../server/api/modules/item/types";
 
 type Props = {
   yearsRange: {
@@ -50,7 +50,7 @@ export const useItemFilter = (props: Props) => {
     ) {
       setFilterYears(newFilterYears);
     }
-  }, [filtering, yearsRange]);
+  }, [filtering, yearsRange, filterRates, filterYears]);
 
   useEffect(() => {
     setFilterYears([yearsRange.minYear, yearsRange.maxYear]);
@@ -60,7 +60,7 @@ export const useItemFilter = (props: Props) => {
     const fromRate = filterRates[0];
     const toRate = filterRates[1];
     setFiltering((prev) => {
-      let updatedFiltering = prev.filter(
+      const updatedFiltering = prev.filter(
         (f) => f.name !== "rate",
       ) as GetUserItemsFilterType;
 
@@ -80,7 +80,7 @@ export const useItemFilter = (props: Props) => {
     const fromYear = filterYears[0];
     const toYear = filterYears[1];
     setFiltering((prev) => {
-      let updatedFiltering = prev.filter(
+      const updatedFiltering = prev.filter(
         (f) => f.name !== "year",
       ) as GetUserItemsFilterType;
 
@@ -94,7 +94,7 @@ export const useItemFilter = (props: Props) => {
 
       return updatedFiltering;
     });
-  }, [filterYears]);
+  }, [filterYears, yearsRange]);
 
   return {
     filterYears,

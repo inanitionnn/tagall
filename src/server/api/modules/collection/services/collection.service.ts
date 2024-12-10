@@ -1,4 +1,4 @@
-import { ContextType } from "../../../../types";
+import type { ContextType } from "../../../../types";
 
 export const GetAll = async (props: { ctx: ContextType }) => {
   const { ctx } = props;

@@ -2,7 +2,7 @@ import OpenAI from "openai";
 import { env } from "../../../../../env";
 
 const openai = new OpenAI({
-  apiKey: env.OPENAI_API_KEY!,
+  apiKey: env.OPENAI_API_KEY,
 });
 
 export async function GetEmbedding(data: object | string): Promise<number[]> {
@@ -21,7 +21,7 @@ export async function GetEmbedding(data: object | string): Promise<number[]> {
     }
 
     return embedding;
-  } catch (error: any) {
-    throw error;
+  } catch {
+    throw new Error("Failed to get embedding");
   }
 }

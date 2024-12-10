@@ -85,7 +85,9 @@ function ItemContainer(props: Props) {
               :
             </Header>
             {group.fields.map((field) => (
-              <Paragraph className="text-muted-foreground">{field}</Paragraph>
+              <Paragraph key={field} className="text-muted-foreground">
+                {field}
+              </Paragraph>
             ))}
           </div>
         ))}

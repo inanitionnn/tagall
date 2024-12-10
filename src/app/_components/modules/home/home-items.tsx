@@ -1,5 +1,5 @@
 import React from "react";
-import { ItemType } from "../../../../server/api/modules/item/types";
+import type { ItemType } from "../../../../server/api/modules/item/types";
 import { HomeSmallItem } from "./items-sizes/home-small-item";
 import { HomeMediumItem } from "./items-sizes/home-medium-item";
 import { HomeListItem } from "./items-sizes/home-list-item";

@@ -9,7 +9,7 @@ const HomeNoItemsCard = () => {
       <Header vtag="h4">Your collection is currently empty!</Header>
 
       <Paragraph>
-        It looks like you haven't added any items yet. Start building your
+        It looks like you haven&apos;t added any items yet. Start building your
         collection now and keep everything organized in one place.
       </Paragraph>
 

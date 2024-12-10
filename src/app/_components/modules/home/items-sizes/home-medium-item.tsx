@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Badge, Header, Paragraph } from "../../../ui";
-import { ItemType } from "../../../../../server/api/modules/item/types";
+import type { ItemType } from "../../../../../server/api/modules/item/types";
 import {
   RATING_NAMES,
   STATUS_ICONS,
@@ -53,7 +53,11 @@ const HomeMediumItem = (props: Props) => {
             .find((g) => g.name === "keywords")
             ?.fields.filter((f) => f.split(" ").length < 2)
             .slice(0, 5)
-            .map((f) => <Badge className="px-2 py-0.5 text-sm">{f}</Badge>)}
+            .map((f) => (
+              <Badge key={f} className="px-2 py-0.5 text-sm">
+                {f}
+              </Badge>
+            ))}
         </div>
         <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2">

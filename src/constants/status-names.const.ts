@@ -1,5 +1,5 @@
-import { ItemStatus } from "@prisma/client";
-import { Bookmark, Check, Eye, LucideIcon, Trash2 } from "lucide-react";
+import type { ItemStatus } from "@prisma/client";
+import { Bookmark, Check, Eye, type LucideIcon, Trash2 } from "lucide-react";
 
 export const STATUS_NAMES: Record<ItemStatus, string> = {
   ABANDONED: "Adandoned",

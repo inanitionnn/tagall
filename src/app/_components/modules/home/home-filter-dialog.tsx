@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { type Dispatch, type SetStateAction } from "react";
 import {
   Button,
   DualRangeSlider,
@@ -11,8 +11,8 @@ import {
 } from "../../ui";
 import { STATUS_NAMES } from "../../../../constants";
 import { Search, SlidersHorizontal } from "lucide-react";
-import { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
-import { ItemStatus } from "@prisma/client";
+import type { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
+import type { ItemStatus } from "@prisma/client";
 
 type Props = {
   searchFilter: string;
@@ -150,7 +150,7 @@ const HomeFilterDialog = (props: Props) => {
                                 (f) =>
                                   f.name !== "status" ||
                                   f.value !== typedStatus,
-                              ) as GetUserItemsFilterType;
+                              );
                               const currentFilter = prev.find(
                                 (f) =>
                                   f.name === "status" &&
@@ -204,7 +204,7 @@ const HomeFilterDialog = (props: Props) => {
                               const updatedFiltering = prev.filter(
                                 (f) =>
                                   f.name !== "field" || f.value !== field.value,
-                              ) as GetUserItemsFilterType;
+                              );
                               const currentFilter = prev.find(
                                 (f) =>
                                   f.name === "field" && f.value === field.value,

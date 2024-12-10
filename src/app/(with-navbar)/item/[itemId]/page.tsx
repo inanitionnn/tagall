@@ -3,7 +3,7 @@ import { ItemContainer } from "../../../_components/modules/item/item-container"
 
 export default async function Item({ params }: { params: { itemId: string } }) {
   const { itemId } = params;
-  await api.item.getUserItem.prefetch(itemId);
+  void api.item.getUserItem.prefetch(itemId);
 
   return (
     <HydrateClient>

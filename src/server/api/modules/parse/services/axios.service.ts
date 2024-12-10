@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export async function GetHtmlFromUrl(url: string) {
+export async function GetHtmlFromUrl(url: string): Promise<string> {
   const response = await axios.get(url, {
     headers: {
       "Accept-Language": "en-US,en;q=0.9",
@@ -10,5 +10,5 @@ export async function GetHtmlFromUrl(url: string) {
     },
   });
 
-  return response.data;
+  return response.data as string;
 }

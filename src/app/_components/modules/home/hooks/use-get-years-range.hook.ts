@@ -41,7 +41,7 @@ export const useYearsRange = (props: Props) => {
 
   useEffect(() => {
     refetch();
-  }, [currentCollectionsIds]);
+  }, [currentCollectionsIds, refetch]);
 
   return {
     yearsRange,

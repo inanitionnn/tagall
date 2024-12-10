@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import {
+import { useState, useEffect, useCallback } from "react";
+import type {
   GetUserItemsFilterType,
   GetUserItemsSortType,
   ItemType,
@@ -38,7 +38,7 @@ export const useGetUserItems = (props: Props) => {
         setItems((prev) => [...prev, ...data]);
       }
     }
-  }, [data]);
+  }, [data, limit, page]);
 
   useEffect(() => {
     if (error) {
@@ -50,12 +50,12 @@ export const useGetUserItems = (props: Props) => {
     if (hasMore) {
       refetch();
     }
-  }, [page]);
+  }, [page, hasMore, refetch]);
 
-  const resetPagination = () => {
+  const resetPagination = useCallback(() => {
     setPage(1);
     setHasMore(true);
-  };
+  }, []);
 
   return {
     items,

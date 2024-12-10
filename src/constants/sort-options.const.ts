@@ -1,4 +1,4 @@
-import { GetUserItemsSortType } from "../server/api/modules/item/types";
+import type { GetUserItemsSortType } from "../server/api/modules/item/types";
 
 export const SORT_OPTIONS: GetUserItemsSortType[] = [
   { type: "asc", name: "date" },

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AddSearch } from "./add-search";
 import { AddSearchResultItem } from "./add-search-result-item";
 import { AddItemModal } from "./add-item-modal";
-import { SearchResultType } from "../../../../server/api/modules/parse/types";
+import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { AddCollectionsTabs } from "./add-collections-tabs";
 import { useSearch } from "./hooks/use-search.hook";
 
@@ -12,7 +12,7 @@ function AddContainer() {
   const [collections] = api.collection.getAll.useSuspenseQuery();
   const [searchResults, setSearchResults] = useState<SearchResultType[]>([]);
   const [currentCollectionId, setCurrentCollectionId] = useState<string>(
-    collections[0]?.id || "",
+    collections[0]?.id ?? "",
   );
   const [currentItem, setCurrentItem] = useState<SearchResultType | null>(null);
 

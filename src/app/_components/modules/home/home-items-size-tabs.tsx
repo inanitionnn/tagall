@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { type Dispatch, type SetStateAction } from "react";
 import { Button } from "../../ui";
 import { Grid2x2, Grid3x3, TableProperties } from "lucide-react";
 

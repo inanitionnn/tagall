@@ -38,7 +38,7 @@ export const useGetFilterFields = (props: Props) => {
 
   useEffect(() => {
     refetch();
-  }, [currentCollectionsIds]);
+  }, [currentCollectionsIds, refetch]);
 
   return {
     isLoading,

@@ -1,11 +1,11 @@
-import { Field, FieldGroup, Prisma } from "@prisma/client";
-import { ContextType } from "../../../../types";
+import { type Field, type FieldGroup, Prisma } from "@prisma/client";
+import { type ContextType } from "../../../../types";
 import {
-  AddToUserInputType,
-  GetUserItemInputType,
-  GetUserItemsInputType,
-  GetYearsRangeInputType,
-  ItemType,
+  type AddToUserInputType,
+  type GetUserItemInputType,
+  type GetUserItemsInputType,
+  type GetYearsRangeInputType,
+  type ItemType,
 } from "../types";
 import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../embedding/services";
@@ -33,9 +33,10 @@ async function SetEmbedding(props: {
 function FieldsToGroupedFields(
   fields: Array<Field & { fieldGroup: FieldGroup }>,
 ) {
-  const groupedFields: {
-    [key: string]: { name: string; priority: number; fields: string[] };
-  } = {};
+  const groupedFields: Record<
+    string,
+    { name: string; priority: number; fields: string[] }
+  > = {};
 
   fields.forEach((field) => {
     const { id: groupId, name: groupName, priority } = field.fieldGroup;
@@ -220,8 +221,8 @@ export async function GetUserItems(props: {
   input: GetUserItemsInputType;
 }): Promise<ItemType[]> {
   const { ctx, input } = props;
-  const limit = input?.limit || 20;
-  const page = input?.page || 1;
+  const limit = input?.limit ?? 20;
+  const page = input?.page ?? 1;
 
   const rateFromFilter = input?.filtering
     ?.filter((filter) => filter.name === "rate")
@@ -253,8 +254,8 @@ export async function GetUserItems(props: {
   const userItems = await ctx.db.userToItem.findMany({
     where: {
       userId: ctx.session.user.id,
-      ...((rateFromFilter ||
-        rateToFilter ||
+      ...((rateFromFilter ??
+        rateToFilter ??
         input?.sorting?.name === "rate") && {
         rate: {
           ...(rateToFilter && {
@@ -265,7 +266,7 @@ export async function GetUserItems(props: {
           }),
         },
       }),
-      ...((statusIncludeFilter?.length || statusExcludeFilter?.length) && {
+      ...((statusIncludeFilter?.length ?? statusExcludeFilter?.length) && {
         status: {
           ...(statusIncludeFilter && {
             in: statusIncludeFilter.map((filter) => filter.value),
@@ -282,7 +283,7 @@ export async function GetUserItems(props: {
             in: input?.collectionsIds,
           },
         }),
-        ...((yearFromFilter || yearToFilter) && {
+        ...((yearFromFilter ?? yearToFilter) && {
           year: {
             ...(yearToFilter && {
               lte: yearToFilter.value,
@@ -292,7 +293,7 @@ export async function GetUserItems(props: {
             }),
           },
         }),
-        ...((includeFieldsIds.length || excludeFieldsIds.length) && {
+        ...((includeFieldsIds.length ?? excludeFieldsIds.length) && {
           fields: {
             ...(includeFieldsIds.length && {
               every: {

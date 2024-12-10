@@ -1,4 +1,4 @@
-import { z } from "zod";
-import { AddToUserInputSchema } from "../schemas";
+import { type z } from "zod";
+import { type AddToUserInputSchema } from "../schemas";
 
 export type AddToUserInputType = z.infer<typeof AddToUserInputSchema>;

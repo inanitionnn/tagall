@@ -1,4 +1,4 @@
-import { ItemStatus } from "@prisma/client";
+import { type ItemStatus } from "@prisma/client";
 
 export type ItemType = {
   id: string;

@@ -1,6 +1,6 @@
-import { PrismaClient, Role } from "@prisma/client";
-import { DefaultArgs } from "@prisma/client/runtime/library";
-import { ISODateString } from "next-auth";
+import type { PrismaClient, Role } from "@prisma/client";
+import type { DefaultArgs } from "@prisma/client/runtime/library";
+import type { ISODateString } from "next-auth";
 
 export type ContextType = {
   db: PrismaClient<
