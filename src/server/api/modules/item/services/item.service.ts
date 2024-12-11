@@ -9,6 +9,7 @@ import {
 } from "../types";
 import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../embedding/services";
+import { uploadImageByUrl } from "../../files/files.service";
 
 // #region private functions
 
@@ -109,6 +110,8 @@ async function CreateImdbItem(props: {
         throw new Error("Imdb parse error! Title not found!");
       }
 
+      const image = await uploadImageByUrl(details.image);
+
       const item = await prisma.item.create({
         data: {
           collectionId: collectionId,
@@ -116,7 +119,7 @@ async function CreateImdbItem(props: {
           year: details.year,
           description: details.plot,
           parsedId: id,
-          image: details.image,
+          image: image?.public_id ?? null,
         },
       });
 

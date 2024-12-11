@@ -30,6 +30,10 @@ export const env = createEnv({
     REDIS_API_KEY: z.string(),
 
     SEARCHLY_API_KEY: z.string(),
+
+    CLOUDINARY_CLOUD_NAME: z.string(),
+    CLOUDINARY_API_KEY: z.string(),
+    CLOUDINARY_API_SECRET: z.string(),
   },
 
   /**
@@ -38,7 +42,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string(),
   },
 
   /**
@@ -55,6 +59,11 @@ export const env = createEnv({
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     REDIS_API_KEY: process.env.REDIS_API_KEY,
     SEARCHLY_API_KEY: process.env.SEARCHLY_API_KEY,
+    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:
+      process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

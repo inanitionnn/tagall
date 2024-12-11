@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Badge, Header, Paragraph } from "../../../ui";
 import type { ItemType } from "../../../../../server/api/modules/item/types";
 import {
@@ -6,6 +5,7 @@ import {
   STATUS_ICONS,
   STATUS_NAMES,
 } from "../../../../../constants";
+import CloudinaryImage from "../../../shared/cloudinary-image";
 
 type Props = {
   item: ItemType;
@@ -18,13 +18,7 @@ const HomeListItem = (props: Props) => {
     <div className="flex h-36 w-full cursor-pointer gap-2 rounded-sm bg-background p-2 shadow sm:h-20">
       <div className="aspect-[29/40]">
         {item.image ? (
-          <Image
-            src={item.image}
-            alt={"cover" + item.name}
-            className="aspect-[29/40] rounded-sm object-cover"
-            width={290}
-            height={400}
-          />
+          <CloudinaryImage publicId={item.image} />
         ) : (
           <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />
         )}

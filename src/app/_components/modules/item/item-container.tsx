@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { api } from "~/trpc/react";
 import { redirect } from "next/navigation";
 import { Header, Paragraph } from "../../ui";
@@ -9,6 +8,7 @@ import {
   STATUS_NAMES,
 } from "../../../../constants";
 import { Star } from "lucide-react";
+import CloudinaryImage from "../../shared/cloudinary-image";
 
 type Props = {
   itemId: string;
@@ -28,13 +28,7 @@ function ItemContainer(props: Props) {
       <div className="grid grid-cols-[256px_auto] grid-rows-1 gap-4">
         <div className="aspect-[29/40] w-full">
           {item.image ? (
-            <Image
-              src={item.image}
-              alt={"cover" + item.name}
-              className="aspect-[29/40] rounded-sm object-cover"
-              width={290}
-              height={400}
-            />
+            <CloudinaryImage publicId={item.image} />
           ) : (
             <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />
           )}
