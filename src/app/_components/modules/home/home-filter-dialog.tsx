@@ -75,8 +75,8 @@ const HomeFilterDialog = (props: Props) => {
             </Button>
           </div>
         </ResponsiveModalTrigger>
-        <ResponsiveModalContent className="overflow-hidden p-4 sm:max-w-2xl md:max-w-2xl lg:max-w-3xl [&>button]:hidden">
-          <ScrollArea type="always">
+        <ResponsiveModalContent className="p-4 sm:max-w-2xl md:max-w-2xl lg:max-w-3xl [&>button]:hidden">
+          <ScrollArea type="always" className="max-h-[95%]">
             <div className="flex max-h-[400px] w-full flex-col gap-8 rounded-sm bg-background p-4 md:max-h-[700px]">
               <div className="flex items-center justify-between">
                 <Header vtag="h4">Filter</Header>
