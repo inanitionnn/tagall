@@ -33,11 +33,6 @@ export const useYearsRange = (props: Props) => {
       toast.error(error.message);
     }
   }, [error]);
-  useEffect(() => {
-    if (yearsRange) {
-      console.log(yearsRange);
-    }
-  }, [yearsRange]);
 
   useEffect(() => {
     refetch();

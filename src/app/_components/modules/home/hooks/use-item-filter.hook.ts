@@ -33,7 +33,6 @@ export const useItemFilter = (props: Props) => {
       setFilterRates(newFilterRates);
     }
 
-    // Оновлення filterYears залежно від filtering
     const fromYear = filtering
       .filter((f) => f.name === "year")
       .find((f) => f.type === "from");
@@ -50,7 +49,7 @@ export const useItemFilter = (props: Props) => {
     ) {
       setFilterYears(newFilterYears);
     }
-  }, [filtering, yearsRange, filterRates, filterYears]);
+  }, [filtering]);
 
   useEffect(() => {
     setFilterYears([yearsRange.minYear, yearsRange.maxYear]);
@@ -94,7 +93,7 @@ export const useItemFilter = (props: Props) => {
 
       return updatedFiltering;
     });
-  }, [filterYears, yearsRange]);
+  }, [filterYears]);
 
   return {
     filterYears,
