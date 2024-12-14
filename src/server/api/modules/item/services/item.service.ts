@@ -284,6 +284,12 @@ export async function GetUserItems(props: {
       }),
 
       item: {
+        ...(input?.search && {
+          name: {
+            contains: input.search,
+            mode: "insensitive",
+          },
+        }),
         ...(input?.collectionsIds?.length && {
           collectionId: {
             in: input?.collectionsIds,

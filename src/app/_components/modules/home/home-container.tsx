@@ -15,12 +15,14 @@ import { useItemFilter } from "./hooks/use-item-filter.hook";
 import { useDebounce } from "../../../../hooks";
 import { HomeFilterBadges } from "./home-filter-badges";
 import { HomeNoItemsCard } from "./home-no-items-card";
+import { HomeSearch } from "./home-search";
 
 function HomeContainer() {
   const [collections] = api.collection.getUserCollections.useSuspenseQuery();
 
   const LIMIT = 26;
 
+  const [searchQuery, setSearchQuery] = useState("");
   const [itemsSize, setItemsSize] = useState<"small" | "medium" | "list">(
     "small",
   );
@@ -49,6 +51,7 @@ function HomeContainer() {
 
   const debouncedFiltering = useDebounce(filtering, 500);
   const debouncedSorting = useDebounce(sorting, 500);
+  const debouncedSearch = useDebounce(searchQuery, 500);
 
   const { items, setPage, hasMore, isLoading, resetPagination } =
     useGetUserItems({
@@ -56,6 +59,7 @@ function HomeContainer() {
       currentCollectionsIds,
       sorting: debouncedSorting,
       filtering: debouncedFiltering,
+      searchQuery: debouncedSearch,
     });
 
   const { filterFieldGroups } = useGetFilterFields({
@@ -68,6 +72,7 @@ function HomeContainer() {
     currentCollectionsIds,
     debouncedFiltering,
     debouncedSorting,
+    debouncedSearch,
     resetPagination,
   ]);
 
@@ -105,6 +110,8 @@ function HomeContainer() {
           filterFieldGroups={filterFieldGroups}
         />
       </div>
+
+      <HomeSearch query={searchQuery} setQuery={setSearchQuery} />
 
       <HomeFilterBadges filtering={filtering} setFiltering={setFiltering} />
 

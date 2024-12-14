@@ -12,9 +12,16 @@ type Props = {
   currentCollectionsIds: string[];
   sorting: GetUserItemsSortType;
   filtering: GetUserItemsFilterType;
+  searchQuery: string;
 };
 export const useGetUserItems = (props: Props) => {
-  const { limit = 10, currentCollectionsIds, sorting, filtering } = props;
+  const {
+    limit = 10,
+    currentCollectionsIds,
+    sorting,
+    filtering,
+    searchQuery,
+  } = props;
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [items, setItems] = useState<ItemType[]>([]);
@@ -25,6 +32,7 @@ export const useGetUserItems = (props: Props) => {
     collectionsIds: currentCollectionsIds,
     sorting,
     filtering,
+    search: searchQuery,
   });
 
   useEffect(() => {

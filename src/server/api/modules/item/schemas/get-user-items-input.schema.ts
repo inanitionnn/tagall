@@ -39,5 +39,6 @@ export const GetUserItemsInputSchema = z
     collectionsIds: z.array(z.string().cuid()).optional(),
     filtering: GetUserItemsFilterSchema.optional(),
     sorting: GetUserItemsSortSchema.optional(),
+    search: z.string().optional(),
   })
   .optional();
