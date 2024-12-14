@@ -177,7 +177,7 @@ export async function AdvancedSearchImdb(
   let title_type;
   switch (type) {
     case "film":
-      title_type = "feature,tv_movie,short,tv_short";
+      title_type = "feature,tv_movie,short,tv_short,video";
       break;
     case "series":
       title_type = "tv_series,tv_miniseries";
@@ -248,8 +248,9 @@ export async function AdvancedSearchImdb(
         result.link = "https://www.imdb.com" + linkElement.attr("href");
       }
 
-      const parsedId = result.link?.match(/\/title\/(tt\d+)/)?.[1];
-      if (parsedId) {
+      result.parsedId = result.link?.match(/\/title\/(tt\d+)/)?.[1] ?? "";
+
+      if (result.parsedId) {
         results.push(result);
       }
     });

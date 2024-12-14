@@ -1,6 +1,6 @@
 import type { ContextType } from "../../../../types";
 import type { SearchInputType, SearchResultType } from "../types";
-import { SearchImdb } from "./imdb.service";
+import { AdvancedSearchImdb } from "./imdb.service";
 
 export const Search = async (props: {
   ctx: ContextType;
@@ -16,11 +16,11 @@ export const Search = async (props: {
   let items: SearchResultType[] = [];
   switch (collection.name) {
     case "Film": {
-      items = await SearchImdb(input.query, "film", input.limit);
+      items = await AdvancedSearchImdb(input.query, "film", input.limit);
       break;
     }
     case "Serie": {
-      items = await SearchImdb(input.query, "series", input.limit);
+      items = await AdvancedSearchImdb(input.query, "series", input.limit);
       break;
     }
     default:
