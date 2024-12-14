@@ -112,7 +112,7 @@ model Item {
     collectionId String
     userToItems  UserToItem[]
 
-    @@index([name, createdAt, id])
+    @@index([name, createdAt, year, id])
 }
 
 model ItemComment {
