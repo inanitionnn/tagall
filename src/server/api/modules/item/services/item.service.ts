@@ -531,6 +531,8 @@ export async function AddToUser(props: {
       // },
     },
   });
+
+  return "Item added successfully!";
 }
 
 // #endregion public functions
