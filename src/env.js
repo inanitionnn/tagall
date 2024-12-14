@@ -29,8 +29,6 @@ export const env = createEnv({
 
     REDIS_API_KEY: z.string(),
 
-    SEARCHLY_API_KEY: z.string(),
-
     CLOUDINARY_CLOUD_NAME: z.string(),
     CLOUDINARY_API_KEY: z.string(),
     CLOUDINARY_API_SECRET: z.string(),
@@ -58,7 +56,6 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     REDIS_API_KEY: process.env.REDIS_API_KEY,
-    SEARCHLY_API_KEY: process.env.SEARCHLY_API_KEY,
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:
       process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
