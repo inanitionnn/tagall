@@ -37,12 +37,12 @@ export default function RootLayout({
       lang="en"
       className={`${sourceSansPro.variable} ${nunitoSans.variable}`}
     >
+      <SpeedInsights />
+      <Analytics />
       <body className="bg-muted">
         <TRPCReactProvider>
           <SessionProviderWrapper session={session}>
             <ToastWrapper>
-              <SpeedInsights />
-              <Analytics />
               <Suspense fallback={<Loaging />}>{children}</Suspense>
             </ToastWrapper>
           </SessionProviderWrapper>
