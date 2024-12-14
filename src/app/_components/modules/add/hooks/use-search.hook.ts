@@ -11,7 +11,7 @@ type Props = {
 };
 export const useSearch = (props: Props) => {
   const {
-    limit = 10,
+    limit = 16,
     currentCollectionId,
     setCurrentItem,
     setSearchResults,

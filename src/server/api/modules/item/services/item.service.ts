@@ -499,17 +499,21 @@ export async function AddToUser(props: {
   }
 
   let item;
-  switch (collection.name) {
-    case "Serie":
-    case "Film":
-      item = await CreateImdbItem({
-        ctx,
-        id: input.id,
-        collectionId: collection.id,
-      });
-      break;
-    default:
-      throw new Error("Invalid collection name");
+  try {
+    switch (collection.name) {
+      case "Serie":
+      case "Film":
+        item = await CreateImdbItem({
+          ctx,
+          id: input.id,
+          collectionId: collection.id,
+        });
+        break;
+      default:
+        throw new Error("Invalid collection name");
+    }
+  } catch (error) {
+    console.log(error);
   }
 
   if (!item) {

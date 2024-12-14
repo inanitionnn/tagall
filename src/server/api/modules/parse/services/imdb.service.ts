@@ -115,7 +115,6 @@ export async function SearchImdb(
   type: "film" | "series" | "all" = "all",
   limit = 10,
 ): Promise<SearchResultType[]> {
-  // Формування URL запиту з усіма необхідними параметрами
   const url = `https://www.imdb.com/find/?q=${encodeURIComponent(query)}&s=tt&${
     type === "film" ? "ttype=ft" : type === "series" ? "ttype=tv" : ""
   }&ref_=fn_tt`;
