@@ -28,7 +28,7 @@ function ExtractElements<T>(...arrays: Record<string, any>[][]): T[] {
 function FillImdbDetailsResult(props: any): ImdbDetailsResultType {
   return {
     title: props.titleText?.text ?? props.originalTitleText?.text ?? null,
-    image: GetHighQualityImageUrls(props.primaryImage?.url)?.original ?? null,
+    image: GetHighQualityImageUrls(props.primaryImage?.url)?.raw ?? null,
     plot: props.plot?.plotText?.plainText ?? null,
     type: {
       titleType: props.titleType?.id ?? null,
@@ -70,19 +70,18 @@ function FillImdbDetailsResult(props: any): ImdbDetailsResultType {
 function GetHighQualityImageUrls(originalUrl: string | null) {
   if (!originalUrl) return null;
 
-  // Extract the base part of the URL (before the resolution parameters)
   const baseUrlMatch = /(.*?)\._V1/.exec(originalUrl);
-  if (!baseUrlMatch) return { original: originalUrl };
+  if (!baseUrlMatch)
+    return {
+      raw: originalUrl,
+      small: originalUrl,
+    };
 
   const baseUrl = baseUrlMatch[1];
 
   return {
-    small: `${baseUrl}._V1_QL75_UX140_CR0,0,140,207_.jpg`, // 140px width
-    medium: `${baseUrl}._V1_QL75_UX280_CR0,0,280,414_.jpg`, // 280px width
-    large: `${baseUrl}._V1_QL75_UX380_CR0,0,380,562_.jpg`, // 380px width
-    xLarge: `${baseUrl}._V1_QL75_UX500_CR0,0,500,740_.jpg`, // 500px width
-    original: `${baseUrl}._V1_QL75_UY1000_CR0,0,675,1000_.jpg`, // Maximum quality
-    raw: `${baseUrl}._V1_.jpg`, // Original without quality parameters
+    raw: `${baseUrl}._V1_.jpg`,
+    small: `${baseUrl}._V1_QL75_UY600_.jpg`,
   };
 }
 // #endregion Private Functions
@@ -152,7 +151,7 @@ export async function SearchImdb(
         results.push({
           title,
           link: link ? `https://www.imdb.com${link}` : null,
-          image: GetHighQualityImageUrls(image)?.large ?? null,
+          image: GetHighQualityImageUrls(image)?.small ?? null,
           year,
           description: null,
           keywords: actors,
@@ -239,7 +238,7 @@ export async function AdvancedSearchImdb(
       // Get poster URL
       const posterImg = $(element).find(".ipc-image").attr("src");
       if (posterImg) {
-        result.image = GetHighQualityImageUrls(posterImg)?.large ?? null;
+        result.image = GetHighQualityImageUrls(posterImg)?.small ?? null;
       }
 
       // Get movie/show URL
