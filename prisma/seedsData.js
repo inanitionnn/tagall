@@ -32,14 +32,14 @@ export const seedsData = {
     {
       id: "cm3a9so0i000ai1s77en3aul5",
       name: "keywords",
-      priority: 3,
+      priority: 2,
       isFiltering: true,
       collections: ["cm3a9sw1v000gi1s7appi2tju", "cm3bnlve100000ks784yufzt9"],
     },
     {
       id: "cm3a9sqbe000ci1s74wjod48c",
       name: "contentRating",
-      priority: 6,
+      priority: 3,
       isFiltering: true,
       collections: ["cm3a9sw1v000gi1s7appi2tju", "cm3bnlve100000ks784yufzt9"],
     },
