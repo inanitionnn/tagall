@@ -2,13 +2,11 @@
 import { api } from "~/trpc/react";
 import { redirect } from "next/navigation";
 import { Header, Paragraph } from "../../ui";
-import {
-  RATING_NAMES,
-  STATUS_ICONS,
-  STATUS_NAMES,
-} from "../../../../constants";
-import { Star } from "lucide-react";
 import CloudinaryImage from "../../shared/cloudinary-image";
+import { UpdateItemStatusModal } from "./update-item-status-modal";
+import { useState } from "react";
+import { useUpdateItem } from "./hooks/use-update-item.hook";
+import { UpdateItemRatingModal } from "./update-item-rating-modal";
 
 type Props = {
   itemId: string;
@@ -22,7 +20,13 @@ function ItemContainer(props: Props) {
     redirect("/");
   }
 
-  const StatusIcon = STATUS_ICONS[item.status];
+  const [openStatus, setOpenStatus] = useState(false);
+  const [openRating, setOpenRating] = useState(false);
+  const { rating, setRating, setStatus, status, submit } = useUpdateItem({
+    item,
+    setOpenStatus,
+    setOpenRating,
+  });
   return (
     <div className="flex flex-col gap-4 p-8">
       <div className="grid grid-cols-[256px_auto] grid-rows-1 gap-4">
@@ -34,37 +38,31 @@ function ItemContainer(props: Props) {
           )}
         </div>
         <div className="flex h-full flex-col gap-2 rounded-md bg-background p-8 shadow">
-          <Header vtag="h4">{item.name}</Header>
+          <Header vtag="h4">{item.title}</Header>
           <Paragraph className="text-muted-foreground">
             {item.description}
           </Paragraph>
         </div>
       </div>
 
-      <div className="flex w-64 items-center gap-2 rounded-md bg-background p-4 shadow">
-        <Header vtag="h6">Status:</Header>
-        <div className="flex w-full items-center justify-between gap-1">
-          <StatusIcon size={16} />
-          <Paragraph>{STATUS_NAMES[item.status]}</Paragraph>
-        </div>
-      </div>
+      <UpdateItemStatusModal
+        item={item}
+        status={status}
+        open={openStatus}
+        setOpen={setOpenStatus}
+        setItemStatus={setStatus}
+        submit={submit}
+      />
 
-      <div className="flex w-64 items-center gap-2 rounded-md bg-background p-4 shadow">
-        <Header vtag="h6">Rate:</Header>
-        {item.rate ? (
-          <>
-            <div className="flex w-full justify-between">
-              <div className="flex items-center gap-1">
-                <Paragraph className="font-semibold">{item.rate}</Paragraph>
-                <Star size={16} />
-              </div>
-              <Paragraph>{RATING_NAMES[item.rate]}</Paragraph>
-            </div>
-          </>
-        ) : (
-          <Paragraph>None</Paragraph>
-        )}
-      </div>
+      <UpdateItemRatingModal
+        item={item}
+        open={openRating}
+        setOpen={setOpenRating}
+        rating={rating}
+        setRating={setRating}
+        submit={submit}
+      />
+
       <div className="flex w-64 flex-col gap-2 rounded-md bg-background p-4 shadow">
         <div className="flex flex-col">
           <Header vtag="h6">Year:</Header>
