@@ -1,12 +1,12 @@
 import { type Field, type FieldGroup, Prisma } from "@prisma/client";
-import { type ContextType } from "../../../../types";
-import {
+import type { ContextType } from "../../../../types";
+import type {
   UpdateItemInputType,
-  type AddToUserInputType,
-  type GetUserItemInputType,
-  type GetUserItemsInputType,
-  type GetYearsRangeInputType,
-  type ItemType,
+  AddToUserInputType,
+  GetUserItemInputType,
+  GetUserItemsInputType,
+  GetYearsRangeInputType,
+  ItemType,
 } from "../types";
 import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../embedding/services";

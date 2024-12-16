@@ -8,9 +8,9 @@ import {
   ResponsiveModalTrigger,
   Separator,
 } from "../../ui";
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { RATING_NAMES } from "../../../../constants";
-import { ItemType } from "../../../../server/api/modules/item/types";
+import type { ItemType } from "../../../../server/api/modules/item/types";
 import { Star } from "lucide-react";
 
 type Props = {

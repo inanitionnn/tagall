@@ -7,10 +7,10 @@ import {
   ResponsiveModalTrigger,
   Separator,
 } from "../../ui";
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { STATUS_ICONS, STATUS_NAMES } from "../../../../constants";
 import { ItemStatus } from "@prisma/client";
-import { ItemType } from "../../../../server/api/modules/item/types";
+import type { ItemType } from "../../../../server/api/modules/item/types";
 
 type Props = {
   open: boolean;
