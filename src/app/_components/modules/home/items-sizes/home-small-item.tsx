@@ -19,7 +19,7 @@ const HomeSmallItem = (props: Props) => {
         )}
       </div>
       <Header vtag="h6" className="line-clamp-2 leading-tight">
-        {item.name}
+        {item.title}
       </Header>
     </div>
   );

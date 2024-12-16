@@ -26,7 +26,7 @@ const HomeListItem = (props: Props) => {
       <div className="flex w-full flex-col justify-between gap-2 sm:flex-row sm:items-center">
         <div className="flex flex-col xl:min-w-[300px] xl:max-w-[300px]">
           <Header vtag="h6" className="line-clamp-3 leading-tight">
-            {item.name}
+            {item.title}
           </Header>
           <Header
             vtag="h6"

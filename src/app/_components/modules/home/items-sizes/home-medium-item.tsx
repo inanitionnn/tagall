@@ -30,7 +30,7 @@ const HomeMediumItem = (props: Props) => {
           </Header>
 
           <Header vtag="h5" className="line-clamp-3 leading-tight">
-            {item.name}
+            {item.title}
           </Header>
 
           <Header vtag="h6" className="hidden leading-tight sm:block">

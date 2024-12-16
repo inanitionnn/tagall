@@ -2,7 +2,7 @@ import { type ItemStatus } from "@prisma/client";
 
 export type ItemType = {
   id: string;
-  name: string;
+  title: string;
   year: number | null;
   description: string | null;
   image: string | null;
