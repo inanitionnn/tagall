@@ -101,7 +101,7 @@ model Item {
     updatedAt DateTime @updatedAt
 
     parsedId    String
-    name        String
+    title       String
     image       String?
     year        Int?
     description String?
@@ -112,7 +112,7 @@ model Item {
     collectionId String
     userToItems  UserToItem[]
 
-    @@index([name, createdAt, year, id])
+    @@index([title, createdAt, year, id])
 }
 
 model ItemComment {
