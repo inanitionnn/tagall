@@ -1,6 +1,7 @@
 import { type Field, type FieldGroup, Prisma } from "@prisma/client";
 import { type ContextType } from "../../../../types";
 import {
+  UpdateItemInputType,
   type AddToUserInputType,
   type GetUserItemInputType,
   type GetUserItemsInputType,
@@ -115,7 +116,7 @@ async function CreateImdbItem(props: {
       const item = await prisma.item.create({
         data: {
           collectionId: collectionId,
-          name: details.title,
+          title: details.title,
           year: details.year,
           description: details.plot,
           parsedId: id,
@@ -355,7 +356,7 @@ export async function GetUserItems(props: {
       item: {
         select: {
           id: true,
-          name: true,
+          title: true,
           year: true,
           description: true,
           image: true,
@@ -379,7 +380,7 @@ export async function GetUserItems(props: {
 
   return userItems.map((userItems) => ({
     id: userItems.item.id,
-    name: userItems.item.name,
+    title: userItems.item.title,
     description: userItems.item.description,
     year: userItems.item.year,
     image: userItems.item.image,
@@ -410,7 +411,7 @@ export async function GetUserItem(props: {
       item: {
         select: {
           id: true,
-          name: true,
+          title: true,
           year: true,
           description: true,
           image: true,
@@ -435,7 +436,7 @@ export async function GetUserItem(props: {
 
   return {
     id: userItem.item.id,
-    name: userItem.item.name,
+    title: userItem.item.title,
     description: userItem.item.description,
     year: userItem.item.year,
     image: userItem.item.image,
@@ -533,6 +534,38 @@ export async function AddToUser(props: {
   });
 
   return "Item added successfully!";
+}
+
+export async function UpdateItem(props: {
+  ctx: ContextType;
+  input: UpdateItemInputType;
+}) {
+  const { ctx, input } = props;
+
+  const item = await ctx.db.item.findUnique({
+    where: {
+      id: input.id,
+    },
+  });
+
+  if (!item) {
+    throw new Error("Item not found!");
+  }
+
+  await ctx.db.userToItem.update({
+    where: {
+      userId_itemId: {
+        userId: ctx.session.user.id,
+        itemId: input.id,
+      },
+    },
+    data: {
+      rate: input.rate,
+      status: input.status,
+    },
+  });
+
+  return "Item updated successfully!";
 }
 
 // #endregion public functions

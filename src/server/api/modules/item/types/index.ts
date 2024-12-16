@@ -3,3 +3,4 @@ export * from "./add-to-user-input.type";
 export * from "./get-years-range-input.type";
 export * from "./item.type";
 export * from "./get-user-item-input.type";
+export * from "./update-item-input.type";
