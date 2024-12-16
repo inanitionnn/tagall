@@ -1,7 +1,7 @@
 import { ItemStatus } from "@prisma/client";
 import { z } from "zod";
 
-export const AddToUserInputSchema = z.object({
+export const AddToCollectionInputSchema = z.object({
   id: z.string(),
   collectionId: z.string().cuid(),
   rate: z.number().int().min(0).max(10),

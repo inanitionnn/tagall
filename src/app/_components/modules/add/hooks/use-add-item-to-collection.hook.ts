@@ -11,12 +11,12 @@ type Props = {
   setSearchResults: Dispatch<SetStateAction<SearchResultType[]>>;
 };
 
-export const useAddItemToUser = (props: Props) => {
+export const useAddItemToCollection = (props: Props) => {
   const { currentCollectionId, currentItem, setCurrentItem, setSearchResults } =
     props;
   const [rating, setRating] = useState<number[]>([0]);
   const [status, setStatus] = useState<ItemStatus>(ItemStatus.NOTSTARTED);
-  const { mutateAsync } = api.item.addToUser.useMutation();
+  const { mutateAsync } = api.item.addToCollection.useMutation();
 
   const submit = async () => {
     if (!currentItem) return;

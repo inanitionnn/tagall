@@ -2,7 +2,7 @@ import { type Field, type FieldGroup, Prisma } from "@prisma/client";
 import type { ContextType } from "../../../../types";
 import type {
   UpdateItemInputType,
-  AddToUserInputType,
+  AddToCollectionInputType,
   GetUserItemInputType,
   GetUserItemsInputType,
   GetYearsRangeInputType,
@@ -485,9 +485,9 @@ export async function GetYearsRange(props: {
   };
 }
 
-export async function AddToUser(props: {
+export async function AddToCollection(props: {
   ctx: ContextType;
-  input: AddToUserInputType;
+  input: AddToCollectionInputType;
 }) {
   const { ctx, input } = props;
 

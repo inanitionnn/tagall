@@ -17,7 +17,7 @@ import {
 } from "../../../../constants";
 import { ItemStatus } from "@prisma/client";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
-import { useAddItemToUser } from "./hooks/use-add-item-to-user.hook";
+import { useAddItemToCollection } from "./hooks/use-add-item-to-collection.hook";
 
 type Props = {
   open: boolean;
@@ -30,7 +30,7 @@ type Props = {
 const AddItemModal = (props: Props) => {
   const { currentItem, open, setCurrentItem } = props;
   const { rating, setRating, setStatus, status, submit } =
-    useAddItemToUser(props);
+    useAddItemToCollection(props);
 
   return (
     <ResponsiveModal
