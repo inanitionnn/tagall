@@ -287,7 +287,7 @@ export async function GetUserItems(props: {
 
       item: {
         ...(input?.search && {
-          name: {
+          title: {
             contains: input.search,
             mode: "insensitive",
           },
