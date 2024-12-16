@@ -3,10 +3,12 @@ import { api } from "~/trpc/react";
 import { redirect } from "next/navigation";
 import { Header, Paragraph } from "../../ui";
 import CloudinaryImage from "../../shared/cloudinary-image";
-import { UpdateItemStatusModal } from "./update-item-status-modal";
+import { ItemUpdateStatusModal } from "./item-update-status-modal";
 import { useState } from "react";
 import { useUpdateItem } from "./hooks/use-update-item.hook";
-import { UpdateItemRatingModal } from "./update-item-rating-modal";
+import { ItemUpdateRatingModal } from "./item-update-rating-modal";
+import { useDeleteItemFromCollection } from "./hooks/use-delete-item-from-collection.hook";
+import { ItemDeleteModal } from "./item-delete-modal";
 
 type Props = {
   itemId: string;
@@ -22,10 +24,23 @@ function ItemContainer(props: Props) {
 
   const [openStatus, setOpenStatus] = useState(false);
   const [openRating, setOpenRating] = useState(false);
-  const { rating, setRating, setStatus, status, submit } = useUpdateItem({
+  const [openDelete, setOpenDelete] = useState(false);
+
+  const {
+    rating,
+    setRating,
+    setStatus,
+    status,
+    submit: updateItem,
+  } = useUpdateItem({
     item,
     setOpenStatus,
     setOpenRating,
+  });
+
+  const { submit: deleteItem } = useDeleteItemFromCollection({
+    item,
+    setOpen: setOpenDelete,
   });
   return (
     <div className="flex flex-col gap-4 p-8">
@@ -45,22 +60,22 @@ function ItemContainer(props: Props) {
         </div>
       </div>
 
-      <UpdateItemStatusModal
+      <ItemUpdateStatusModal
         item={item}
         status={status}
         open={openStatus}
         setOpen={setOpenStatus}
         setItemStatus={setStatus}
-        submit={submit}
+        submit={updateItem}
       />
 
-      <UpdateItemRatingModal
+      <ItemUpdateRatingModal
         item={item}
         open={openRating}
         setOpen={setOpenRating}
         rating={rating}
         setRating={setRating}
-        submit={submit}
+        submit={updateItem}
       />
 
       <div className="flex w-64 flex-col gap-2 rounded-md bg-background p-4 shadow">
@@ -84,6 +99,12 @@ function ItemContainer(props: Props) {
           </div>
         ))}
       </div>
+
+      <ItemDeleteModal
+        open={openDelete}
+        setOpen={setOpenDelete}
+        submit={deleteItem}
+      />
     </div>
   );
 }

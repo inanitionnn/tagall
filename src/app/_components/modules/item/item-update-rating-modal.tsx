@@ -22,7 +22,7 @@ type Props = {
   submit: () => void;
 };
 
-const UpdateItemRatingModal = (props: Props) => {
+const ItemUpdateRatingModal = (props: Props) => {
   const { item, open, setOpen, rating, setRating, submit } = props;
 
   return (
@@ -80,4 +80,4 @@ const UpdateItemRatingModal = (props: Props) => {
   );
 };
 
-export { UpdateItemRatingModal };
+export { ItemUpdateRatingModal };

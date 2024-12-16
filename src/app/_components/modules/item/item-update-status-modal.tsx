@@ -21,7 +21,7 @@ type Props = {
   submit: () => void;
 };
 
-const UpdateItemStatusModal = (props: Props) => {
+const ItemUpdateStatusModal = (props: Props) => {
   const { item, open, setOpen, status, setItemStatus, submit } = props;
 
   const StatusIcon = STATUS_ICONS[item.status];
@@ -78,4 +78,4 @@ const UpdateItemStatusModal = (props: Props) => {
   );
 };
 
-export { UpdateItemStatusModal };
+export { ItemUpdateStatusModal };
