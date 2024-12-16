@@ -7,6 +7,7 @@ import type {
   GetUserItemsInputType,
   GetYearsRangeInputType,
   ItemType,
+  DeleteFromCollectionInputType,
 } from "../types";
 import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../embedding/services";
@@ -542,9 +543,12 @@ export async function UpdateItem(props: {
 }) {
   const { ctx, input } = props;
 
-  const item = await ctx.db.item.findUnique({
+  const item = await ctx.db.userToItem.findUnique({
     where: {
-      id: input.id,
+      userId_itemId: {
+        userId: ctx.session.user.id,
+        itemId: input.id,
+      },
     },
   });
 
@@ -566,6 +570,37 @@ export async function UpdateItem(props: {
   });
 
   return "Item updated successfully!";
+}
+
+export async function DeleteFromCollection(props: {
+  ctx: ContextType;
+  input: DeleteFromCollectionInputType;
+}) {
+  const { ctx, input } = props;
+
+  const item = await ctx.db.userToItem.findUnique({
+    where: {
+      userId_itemId: {
+        userId: ctx.session.user.id,
+        itemId: input,
+      },
+    },
+  });
+
+  if (!item) {
+    throw new Error("Item not found!");
+  }
+
+  await ctx.db.userToItem.delete({
+    where: {
+      userId_itemId: {
+        userId: ctx.session.user.id,
+        itemId: input,
+      },
+    },
+  });
+
+  return "Item deleted successfully!";
 }
 
 // #endregion public functions
