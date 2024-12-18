@@ -27,14 +27,22 @@ export const seedsData = {
       name: "people",
       priority: 5,
       isFiltering: true,
-      collections: ["cm3a9sw1v000gi1s7appi2tju", "cm3bnlve100000ks784yufzt9"],
+      collections: [
+        "cm3bnlyzw00040ks77yx39ddf",
+        "cm3a9sw1v000gi1s7appi2tju",
+        "cm3bnlve100000ks784yufzt9",
+      ],
     },
     {
       id: "cm3a9so0i000ai1s77en3aul5",
       name: "keywords",
       priority: 2,
       isFiltering: true,
-      collections: ["cm3a9sw1v000gi1s7appi2tju", "cm3bnlve100000ks784yufzt9"],
+      collections: [
+        "cm3bnlyzw00040ks77yx39ddf",
+        "cm3a9sw1v000gi1s7appi2tju",
+        "cm3bnlve100000ks784yufzt9",
+      ],
     },
     {
       id: "cm3a9sqbe000ci1s74wjod48c",
@@ -56,6 +64,20 @@ export const seedsData = {
       priority: 7,
       isFiltering: false,
       collections: ["cm3a9sw1v000gi1s7appi2tju"],
+    },
+    {
+      id: "cm3hvqbhn0000hxs7gckv6nyi",
+      name: "volumes",
+      priority: 8,
+      isFiltering: false,
+      collections: ["cm3bnlyzw00040ks77yx39ddf"],
+    },
+    {
+      id: "cm3hvqbhn0000hxs7gckv6nyi",
+      name: "chapters",
+      priority: 9,
+      isFiltering: false,
+      collections: ["cm3bnlyzw00040ks77yx39ddf"],
     },
   ],
 };
