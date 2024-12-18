@@ -12,6 +12,7 @@ import type {
 import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../embedding/services";
 import { uploadImageByUrl } from "../../files/files.service";
+import { GetAnilistDetailsById } from "../../parse/services/anilist.service";
 
 // #region private functions
 
@@ -87,54 +88,26 @@ function dateToTimeAgoString(date: Date) {
   return "just now";
 }
 
-async function CreateImdbItem(props: {
+async function CreateFields(props: {
   ctx: ContextType;
-  id: string;
   collectionId: string;
+  itemId: string;
+  details: Record<string, any>;
 }) {
-  const { ctx, collectionId, id } = props;
+  const { ctx, collectionId, itemId, details } = props;
 
-  const transactionResult = await ctx.db.$transaction(
+  await ctx.db.$transaction(
     async (prisma) => {
-      const oldItem = await prisma.item.findFirst({
-        where: {
-          parsedId: id,
-        },
-      });
-
-      if (oldItem) {
-        return oldItem;
-      }
-
-      const details = await GetImdbDetailsById(id);
-
-      if (!details.title) {
-        throw new Error("Imdb parse error! Title not found!");
-      }
-
-      const image = await uploadImageByUrl(details.image);
-
-      const item = await prisma.item.create({
-        data: {
-          collectionId: collectionId,
-          title: details.title,
-          year: details.year,
-          description: details.plot,
-          parsedId: id,
-          image: image?.public_id ?? null,
-        },
-      });
-
       for (const [key, value] of Object.entries(details)) {
         if (
           key === "title" ||
           key === "image" ||
           key === "year" ||
-          key === "plot"
+          key === "description"
         ) {
           continue;
         }
-        const fieldGroup = await prisma.fieldGroup.findFirst({
+        const fieldGroup = await ctx.db.fieldGroup.findFirst({
           where: {
             name: key,
             collections: {
@@ -159,14 +132,14 @@ async function CreateImdbItem(props: {
                 fieldGroupId: fieldGroup.id,
                 items: {
                   connect: {
-                    id: item.id,
+                    id: itemId,
                   },
                 },
               },
               update: {
                 items: {
                   connect: {
-                    id: item.id,
+                    id: itemId,
                   },
                 },
               },
@@ -187,14 +160,14 @@ async function CreateImdbItem(props: {
                   fieldGroupId: fieldGroup.id,
                   items: {
                     connect: {
-                      id: item.id,
+                      id: itemId,
                     },
                   },
                 },
                 update: {
                   items: {
                     connect: {
-                      id: item.id,
+                      id: itemId,
                     },
                   },
                 },
@@ -205,6 +178,66 @@ async function CreateImdbItem(props: {
           }
         }
       }
+    },
+    { timeout: 30_000 },
+  );
+}
+
+async function CreateItem(props: {
+  ctx: ContextType;
+  type: "imdb" | "anilist";
+  id: string;
+  collectionId: string;
+}) {
+  const { ctx, collectionId, id } = props;
+
+  const transactionResult = await ctx.db.$transaction(
+    async (prisma) => {
+      const oldItem = await prisma.item.findFirst({
+        where: {
+          parsedId: id,
+        },
+      });
+
+      if (oldItem) {
+        return oldItem;
+      }
+
+      let details;
+      switch (props.type) {
+        case "imdb":
+          details = await GetImdbDetailsById(id);
+          break;
+        case "anilist":
+          details = await GetAnilistDetailsById(id);
+          break;
+        default:
+          throw new Error("Invalid type");
+      }
+
+      if (!details?.title) {
+        throw new Error("Parse error! Title not found!");
+      }
+
+      const image = await uploadImageByUrl(details.image);
+
+      const item = await prisma.item.create({
+        data: {
+          collectionId: collectionId,
+          title: details.title,
+          year: details.year,
+          description: details.description,
+          parsedId: id,
+          image: image?.public_id ?? null,
+        },
+      });
+
+      await CreateFields({
+        collectionId,
+        ctx,
+        details,
+        itemId: item.id,
+      });
 
       await SetEmbedding({
         ctx,
@@ -219,7 +252,6 @@ async function CreateImdbItem(props: {
 
   return transactionResult;
 }
-
 // #endregion private functions
 
 // #region public functions
@@ -505,8 +537,17 @@ export async function AddToCollection(props: {
     switch (collection.name) {
       case "Serie":
       case "Film":
-        item = await CreateImdbItem({
+        item = await CreateItem({
           ctx,
+          type: "imdb",
+          id: input.id,
+          collectionId: collection.id,
+        });
+        break;
+      case "Manga":
+        item = await CreateItem({
+          ctx,
+          type: "anilist",
           id: input.id,
           collectionId: collection.id,
         });
