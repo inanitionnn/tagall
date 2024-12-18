@@ -1,5 +1,6 @@
 import type { ContextType } from "../../../../types";
 import type { SearchInputType, SearchResultType } from "../types";
+import { SearchAnilist } from "./anilist.service";
 import { AdvancedSearchImdb } from "./imdb.service";
 
 export const Search = async (props: {
@@ -21,6 +22,10 @@ export const Search = async (props: {
     }
     case "Serie": {
       items = await AdvancedSearchImdb(input.query, "series", input.limit);
+      break;
+    }
+    case "Manga": {
+      items = await SearchAnilist(input.query, input.limit);
       break;
     }
     default:

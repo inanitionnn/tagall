@@ -2,7 +2,7 @@ export type ImdbDetailsResultType = {
   title: string | null;
   year: number | null;
   image: string | null;
-  plot: string | null;
+  description: string | null;
   keywords: string[];
   people: string[];
   runtime: string | null;

@@ -1,8 +1,21 @@
 import { type ImdbDetailsResultType, type SearchResultType } from "../types";
-import { GetHtmlFromUrl } from "./axios.service";
 import * as cheerio from "cheerio";
+import axios from "axios";
 
 // #region Private Functions
+async function GetHtmlFromUrl(url: string): Promise<string> {
+  const response = await axios.get(url, {
+    headers: {
+      "Accept-Language": "en-US,en;q=0.9",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      Accept: "text/html",
+    },
+  });
+
+  return response.data as string;
+}
+
 function ExtractElements<T>(...arrays: Record<string, any>[][]): T[] {
   const getItem = (item: Record<string, any>): T => {
     return (
@@ -29,7 +42,7 @@ function FillImdbDetailsResult(props: any): ImdbDetailsResultType {
   return {
     title: props.titleText?.text ?? props.originalTitleText?.text ?? null,
     image: GetHighQualityImageUrls(props.primaryImage?.url)?.raw ?? null,
-    plot: props.plot?.plotText?.plainText ?? null,
+    description: props.plot?.plotText?.plainText ?? null,
     type: {
       titleType: props.titleType?.id ?? null,
       isSeries: !!props.titleType?.isSeries,
