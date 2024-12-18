@@ -32,7 +32,7 @@ const AddSearchResultItem = (props: Props) => {
           <Paragraph>In Collection</Paragraph>
         </div>
       )}
-      <Header vtag="h5" className="leading-tight sm:hidden">
+      <Header vtag="h5" className="line-clamp-3 leading-tight sm:hidden">
         {searchResult.title}
       </Header>
       <div className="flex h-full">
@@ -50,7 +50,10 @@ const AddSearchResultItem = (props: Props) => {
           )}
         </div>
         <div className="flex w-full flex-col justify-between gap-2 p-6">
-          <Header vtag="h5" className="hidden leading-tight sm:block">
+          <Header
+            vtag="h5"
+            className="line-clamp-3 hidden leading-tight sm:block"
+          >
             {searchResult.title}
           </Header>
 
@@ -61,7 +64,9 @@ const AddSearchResultItem = (props: Props) => {
           )}
 
           <Paragraph>
-            {[searchResult.year, ...searchResult.keywords].join(" • ")}
+            {[searchResult.year, ...searchResult.keywords]
+              .slice(0, 6)
+              .join(" • ")}
           </Paragraph>
         </div>
       </div>

@@ -38,7 +38,7 @@ export async function GetAnilistDetailsById(mediaId: string) {
     startDate,
     tags,
     volumes,
-  } = result.data.Media;
+  } = result.data.data.Media;
 
   return {
     image: coverImage?.extraLarge ?? null,
@@ -64,6 +64,8 @@ export async function SearchAnilist(
     search: query,
     type: "MANGA",
     perPage: limit,
+    sort: [],
+    genreNotIn: ["Hentai"],
   };
 
   const result: AnilistSearchResultType = await axios.post(
@@ -79,11 +81,11 @@ export async function SearchAnilist(
       },
     },
   );
+  console.log(result.data);
 
-  return result.data.Page.media.map((media) => {
+  return result.data.data.Page.media.map((media) => {
     const description = media.description ?? null;
-    const image = media.coverImage?.medium ?? null;
-    const link = `https://anilist.co/manga/${media.id}`;
+    const image = media.coverImage?.large ?? null;
     const parsedId = media.id.toString() ?? null;
     const title = media.title.english ?? media.title.romaji ?? "";
     const year = media.startDate?.year ?? null;
@@ -104,7 +106,6 @@ export async function SearchAnilist(
       description,
       image,
       keywords,
-      link,
       parsedId,
       title,
       year,

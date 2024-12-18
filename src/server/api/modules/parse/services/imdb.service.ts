@@ -163,7 +163,6 @@ export async function SearchImdb(
       if (parsedId) {
         results.push({
           title,
-          link: link ? `https://www.imdb.com${link}` : null,
           image: GetHighQualityImageUrls(image)?.small ?? null,
           year,
           description: null,
@@ -212,7 +211,6 @@ export async function AdvancedSearchImdb(
         description: null,
         image: null,
         keywords: [],
-        link: null,
         title: null,
         year: null,
         inCollection: false,
@@ -256,11 +254,9 @@ export async function AdvancedSearchImdb(
 
       // Get movie/show URL
       const linkElement = $(element).find(".ipc-title-link-wrapper");
-      if (linkElement.length) {
-        result.link = "https://www.imdb.com" + linkElement.attr("href");
-      }
-
-      result.parsedId = result.link?.match(/\/title\/(tt\d+)/)?.[1] ?? "";
+      const link = "https://www.imdb.com" + linkElement.attr("href");
+      const match = /\/title\/(tt\d+)/.exec(link);
+      result.parsedId = match?.[1] ?? "";
 
       if (result.parsedId) {
         results.push(result);

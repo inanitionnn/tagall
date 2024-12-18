@@ -88,101 +88,6 @@ function dateToTimeAgoString(date: Date) {
   return "just now";
 }
 
-async function CreateFields(props: {
-  ctx: ContextType;
-  collectionId: string;
-  itemId: string;
-  details: Record<string, any>;
-}) {
-  const { ctx, collectionId, itemId, details } = props;
-
-  await ctx.db.$transaction(
-    async (prisma) => {
-      for (const [key, value] of Object.entries(details)) {
-        if (
-          key === "title" ||
-          key === "image" ||
-          key === "year" ||
-          key === "description"
-        ) {
-          continue;
-        }
-        const fieldGroup = await ctx.db.fieldGroup.findFirst({
-          where: {
-            name: key,
-            collections: {
-              some: {
-                id: collectionId,
-              },
-            },
-          },
-        });
-        if (!fieldGroup) {
-          continue;
-        }
-        switch (typeof value) {
-          case "number":
-          case "string": {
-            await prisma.field.upsert({
-              where: {
-                value: String(value),
-              },
-              create: {
-                value: String(value),
-                fieldGroupId: fieldGroup.id,
-                items: {
-                  connect: {
-                    id: itemId,
-                  },
-                },
-              },
-              update: {
-                items: {
-                  connect: {
-                    id: itemId,
-                  },
-                },
-              },
-            });
-            break;
-          }
-          case "object": {
-            if (!Array.isArray(value)) {
-              continue;
-            }
-            for (const field of value) {
-              await prisma.field.upsert({
-                where: {
-                  value: field,
-                },
-                create: {
-                  value: field,
-                  fieldGroupId: fieldGroup.id,
-                  items: {
-                    connect: {
-                      id: itemId,
-                    },
-                  },
-                },
-                update: {
-                  items: {
-                    connect: {
-                      id: itemId,
-                    },
-                  },
-                },
-              });
-            }
-
-            break;
-          }
-        }
-      }
-    },
-    { timeout: 30_000 },
-  );
-}
-
 async function CreateItem(props: {
   ctx: ContextType;
   type: "imdb" | "anilist";
@@ -232,12 +137,86 @@ async function CreateItem(props: {
         },
       });
 
-      await CreateFields({
-        collectionId,
-        ctx,
-        details,
-        itemId: item.id,
-      });
+      for (const [key, value] of Object.entries(details)) {
+        if (
+          key === "title" ||
+          key === "image" ||
+          key === "year" ||
+          key === "description"
+        ) {
+          continue;
+        }
+        const fieldGroup = await prisma.fieldGroup.findFirst({
+          where: {
+            name: key,
+            collections: {
+              some: {
+                id: collectionId,
+              },
+            },
+          },
+        });
+        if (!fieldGroup) {
+          continue;
+        }
+        switch (typeof value) {
+          case "number":
+          case "string": {
+            await prisma.field.upsert({
+              where: {
+                value: String(value),
+              },
+              create: {
+                value: String(value),
+                fieldGroupId: fieldGroup.id,
+                items: {
+                  connect: {
+                    id: item.id,
+                  },
+                },
+              },
+              update: {
+                items: {
+                  connect: {
+                    id: item.id,
+                  },
+                },
+              },
+            });
+            break;
+          }
+          case "object": {
+            if (!Array.isArray(value)) {
+              continue;
+            }
+            for (const field of value) {
+              await prisma.field.upsert({
+                where: {
+                  value: field,
+                },
+                create: {
+                  value: field,
+                  fieldGroupId: fieldGroup.id,
+                  items: {
+                    connect: {
+                      id: item.id,
+                    },
+                  },
+                },
+                update: {
+                  items: {
+                    connect: {
+                      id: item.id,
+                    },
+                  },
+                },
+              });
+            }
+
+            break;
+          }
+        }
+      }
 
       await SetEmbedding({
         ctx,
