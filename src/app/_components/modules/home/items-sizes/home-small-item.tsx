@@ -10,7 +10,7 @@ const HomeSmallItem = (props: Props) => {
   const { item } = props;
 
   return (
-    <div className="flex aspect-[29/48] flex-col gap-2 md:w-full">
+    <div className="flex aspect-[29/40] flex-col gap-2 md:w-full">
       <div className="aspect-[29/40]">
         {item.image ? (
           <CloudinaryImage publicId={item.image} />
