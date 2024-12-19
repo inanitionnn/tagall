@@ -48,7 +48,7 @@ function AddContainer() {
       <div className="grid gap-6 lg:grid-cols-2">
         {searchResults.map((searchResult) => (
           <AddSearchResultItem
-            key={searchResult.link}
+            key={searchResult.parsedId}
             searchResult={searchResult}
             setCurrentItem={setCurrentItem}
           />

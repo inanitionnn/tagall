@@ -81,7 +81,6 @@ export async function SearchAnilist(
       },
     },
   );
-  console.log(result.data);
 
   return result.data.data.Page.media.map((media) => {
     const description = media.description ?? null;
