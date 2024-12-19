@@ -173,52 +173,28 @@ async function CreateItem(props: {
         },
       });
 
-      for (const [key, value] of Object.entries(details)) {
-        if (
-          key === "title" ||
-          key === "image" ||
-          key === "year" ||
-          key === "description"
-        ) {
-          continue;
-        }
-        const fieldGroup = await prisma.fieldGroup.findFirst({
-          where: {
-            name: key,
-            collections: {
-              some: {
-                id: collectionId,
-              },
+      const keys = Object.keys(details).filter(
+        (k) => !["title", "image", "year", "description"].includes(k),
+      );
+      const fieldGroups = await prisma.fieldGroup.findMany({
+        where: {
+          name: {
+            in: keys,
+          },
+          collections: {
+            some: {
+              id: collectionId,
             },
           },
-        });
-        if (!fieldGroup) {
-          continue;
-        }
+        },
+      });
+      const fields: { field: string; fieldGroupId: string }[] = [];
+      for (const fieldGroup of fieldGroups) {
+        const value = details[fieldGroup.name as keyof typeof details]!;
         switch (typeof value) {
           case "number":
           case "string": {
-            await prisma.field.upsert({
-              where: {
-                value: String(value),
-              },
-              create: {
-                value: String(value),
-                fieldGroupId: fieldGroup.id,
-                items: {
-                  connect: {
-                    id: item.id,
-                  },
-                },
-              },
-              update: {
-                items: {
-                  connect: {
-                    id: item.id,
-                  },
-                },
-              },
-            });
+            fields.push({ field: String(value), fieldGroupId: fieldGroup.id });
             break;
           }
           case "object": {
@@ -226,32 +202,38 @@ async function CreateItem(props: {
               continue;
             }
             for (const field of value) {
-              await prisma.field.upsert({
-                where: {
-                  value: field,
-                },
-                create: {
-                  value: field,
-                  fieldGroupId: fieldGroup.id,
-                  items: {
-                    connect: {
-                      id: item.id,
-                    },
-                  },
-                },
-                update: {
-                  items: {
-                    connect: {
-                      id: item.id,
-                    },
-                  },
-                },
+              fields.push({
+                field: String(field),
+                fieldGroupId: fieldGroup.id,
               });
             }
-
             break;
           }
         }
+      }
+
+      for (const { field, fieldGroupId } of fields) {
+        await prisma.field.upsert({
+          where: {
+            value: field,
+          },
+          create: {
+            value: field,
+            fieldGroupId: fieldGroupId,
+            items: {
+              connect: {
+                id: item.id,
+              },
+            },
+          },
+          update: {
+            items: {
+              connect: {
+                id: item.id,
+              },
+            },
+          },
+        });
       }
 
       await SetEmbedding({
