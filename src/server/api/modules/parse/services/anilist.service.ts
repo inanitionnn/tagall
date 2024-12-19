@@ -93,6 +93,7 @@ export async function SearchAnilist(
         .filter(Boolean) as string[]) ?? [];
     const genres = media.genres ?? [];
     const keywords = [
+      media.volumes ? `${media.volumes} volumes` : null,
       media.status,
       media.countryOfOrigin,
       ...genres,

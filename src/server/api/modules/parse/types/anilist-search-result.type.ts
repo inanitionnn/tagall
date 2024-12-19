@@ -11,6 +11,7 @@ export type AnilistSearchResultType = {
           coverImage: {
             large?: string | null;
           };
+          volumes?: number | null;
           genres?: string[] | null;
           tags?: { name: string }[] | null;
           description?: string | null;
