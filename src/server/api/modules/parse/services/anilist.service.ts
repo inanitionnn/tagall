@@ -49,10 +49,8 @@ export async function GetAnilistDetailsById(mediaId: string) {
     chapters,
     volumes,
     people: staff?.nodes.map((node) => node.name.full).filter(Boolean) ?? [],
-    keywords: [
-      ...(tags?.map((tag) => tag.name) ?? []),
-      ...(genres ?? []),
-    ].filter(Boolean),
+    genres: (genres ?? []).filter(Boolean),
+    keywords: tags?.map((tag) => tag.name).filter(Boolean),
   };
 }
 

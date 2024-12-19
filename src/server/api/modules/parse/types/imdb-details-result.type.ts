@@ -4,6 +4,7 @@ export type ImdbDetailsResultType = {
   image: string | null;
   description: string | null;
   keywords: string[];
+  genres: string[];
   people: string[];
   runtime: string | null;
   type: {

@@ -38,9 +38,9 @@ const HomeListItem = (props: Props) => {
 
         <div className="hidden w-full gap-2 xl:flex xl:flex-wrap">
           {item.fieldGroups
-            .find((g) => g.name === "keywords")
+            .find((g) => g.name === "genres")
             ?.fields.filter((f) => f.split(" ").length < 2)
-            .slice(0, 5)
+            .slice(0, 4)
             .map((f) => (
               <Badge key={f} className="px-2 py-0.5 text-sm">
                 {f}
