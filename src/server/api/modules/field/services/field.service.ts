@@ -6,34 +6,35 @@ export const GetFilterFields = async (props: {
   input: GetFilterFieldsInputType;
 }) => {
   const { ctx, input } = props;
+
   return ctx.db.fieldGroup.findMany({
     where: {
       isFiltering: true,
       ...(input?.length && {
-          collections: {
-            some: {
-              id: {
-                in: input,
-              },
+        collections: {
+          some: {
+            id: {
+              in: input,
             },
           },
-        }),
+        },
+      }),
     },
     select: {
       id: true,
       name: true,
       fields: {
         ...(input?.length && {
-            where: {
-              items: {
-                some: {
-                  collectionId: {
-                    in: input,
-                  },
+          where: {
+            items: {
+              some: {
+                collectionId: {
+                  in: input,
                 },
               },
             },
-          }),
+          },
+        }),
         select: {
           id: true,
           value: true,

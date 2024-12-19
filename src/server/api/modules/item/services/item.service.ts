@@ -16,6 +16,31 @@ import { GetAnilistDetailsById } from "../../parse/services/anilist.service";
 
 // #region private functions
 
+async function getFieldIdToFieldGroupIdMap(ctx: ContextType) {
+  const fields = await ctx.db.field.findMany({
+    select: {
+      id: true,
+      fieldGroup: {
+        select: {
+          id: true,
+          name: true,
+          priority: true,
+        },
+      },
+    },
+  });
+
+  const fieldMap = fields.reduce(
+    (acc, field) => {
+      acc[field.id] = field.fieldGroup;
+      return acc;
+    },
+    {} as Record<string, Omit<FieldGroup, "isFiltering">>,
+  );
+
+  return fieldMap;
+}
+
 async function SetEmbedding(props: {
   ctx: ContextType;
   itemId: string;
@@ -35,15 +60,26 @@ async function SetEmbedding(props: {
 }
 
 function FieldsToGroupedFields(
-  fields: Array<Field & { fieldGroup: FieldGroup }>,
+  fields: Field[],
+  fieldIdToFieldGroupMap: Record<string, Omit<FieldGroup, "isFiltering">>,
 ) {
   const groupedFields: Record<
     string,
-    { name: string; priority: number; fields: string[] }
+    {
+      name: string;
+      priority: number;
+      fields: string[];
+    }
   > = {};
 
   fields.forEach((field) => {
-    const { id: groupId, name: groupName, priority } = field.fieldGroup;
+    const fieldGroup = fieldIdToFieldGroupMap[field.id];
+
+    if (!fieldGroup) {
+      throw new Error(`FieldGroup not found for field ID: ${field.id}`);
+    }
+
+    const { id: groupId, name: groupName, priority } = fieldGroup;
 
     if (!groupedFields[groupId]) {
       groupedFields[groupId] = {
@@ -60,7 +96,7 @@ function FieldsToGroupedFields(
     .sort((a, b) => a.priority - b.priority)
     .map((group) => ({
       name: group.name,
-      fields: group.fields.sort(),
+      fields: [...new Set(group.fields)],
     }));
 }
 
@@ -69,11 +105,11 @@ function dateToTimeAgoString(date: Date) {
   const diff = Math.floor((now.getTime() - date.getTime()) / 1000); // Різниця в секундах
 
   const units = [
-    { name: "year", seconds: 365 * 24 * 60 * 60 },
-    { name: "month", seconds: 30 * 24 * 60 * 60 },
-    { name: "week", seconds: 7 * 24 * 60 * 60 },
-    { name: "day", seconds: 24 * 60 * 60 },
-    { name: "hour", seconds: 60 * 60 },
+    { name: "year", seconds: 31536000 },
+    { name: "month", seconds: 2592000 },
+    { name: "week", seconds: 604800 },
+    { name: "day", seconds: 86400 },
+    { name: "hour", seconds: 3600 },
     { name: "minute", seconds: 60 },
     { name: "second", seconds: 1 },
   ];
@@ -318,10 +354,10 @@ export async function GetUserItems(props: {
             }),
           },
         }),
-        ...((includeFieldsIds.length ?? excludeFieldsIds.length) && {
+        ...((includeFieldsIds.length || excludeFieldsIds.length) && {
           fields: {
             ...(includeFieldsIds.length && {
-              every: {
+              some: {
                 id: {
                   in: includeFieldsIds,
                 },
@@ -377,11 +413,7 @@ export async function GetUserItems(props: {
               name: true,
             },
           },
-          fields: {
-            include: {
-              fieldGroup: true,
-            },
-          },
+          fields: true,
         },
       },
     },
@@ -390,7 +422,9 @@ export async function GetUserItems(props: {
     skip: (page - 1) * limit,
   });
 
-  return userItems.map((userItems) => ({
+  const FieldIdToFieldGroupIdMap = await getFieldIdToFieldGroupIdMap(ctx);
+
+  const items = userItems.map((userItems) => ({
     id: userItems.item.id,
     title: userItems.item.title,
     description: userItems.item.description,
@@ -401,8 +435,12 @@ export async function GetUserItems(props: {
     timeAgo: dateToTimeAgoString(userItems.updatedAt),
     updatedAt: userItems.updatedAt,
     collection: userItems.item.collection.name,
-    fieldGroups: FieldsToGroupedFields(userItems.item.fields),
+    fieldGroups: FieldsToGroupedFields(
+      userItems.item.fields,
+      FieldIdToFieldGroupIdMap,
+    ),
   }));
+  return items;
 }
 
 export async function GetUserItem(props: {
@@ -432,11 +470,7 @@ export async function GetUserItem(props: {
               name: true,
             },
           },
-          fields: {
-            include: {
-              fieldGroup: true,
-            },
-          },
+          fields: true,
         },
       },
     },
@@ -445,6 +479,8 @@ export async function GetUserItem(props: {
   if (!userItem) {
     return null;
   }
+
+  const FieldIdToFieldGroupIdMap = await getFieldIdToFieldGroupIdMap(ctx);
 
   return {
     id: userItem.item.id,
@@ -457,7 +493,10 @@ export async function GetUserItem(props: {
     timeAgo: dateToTimeAgoString(userItem.updatedAt),
     updatedAt: userItem.updatedAt,
     collection: userItem.item.collection.name,
-    fieldGroups: FieldsToGroupedFields(userItem.item.fields),
+    fieldGroups: FieldsToGroupedFields(
+      userItem.item.fields,
+      FieldIdToFieldGroupIdMap,
+    ),
   };
 }
 

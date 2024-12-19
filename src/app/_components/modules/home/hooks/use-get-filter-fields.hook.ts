@@ -22,7 +22,7 @@ export const useGetFilterFields = (props: Props) => {
   >([]);
 
   const { data, isLoading, error, refetch } =
-    api.field.getFilterFields.useQuery();
+    api.field.getFilterFields.useQuery(currentCollectionsIds);
 
   useEffect(() => {
     if (data) {

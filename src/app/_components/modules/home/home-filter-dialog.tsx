@@ -80,7 +80,14 @@ const HomeFilterDialog = (props: Props) => {
             <div className="flex max-h-[400px] w-full flex-col gap-8 rounded-sm bg-background p-4 md:max-h-[700px]">
               <div className="flex items-center justify-between">
                 <Header vtag="h4">Filter</Header>
-                <Button onClick={() => setFiltering([])}>Clear</Button>
+                <Button
+                  onClick={() => {
+                    setFiltering([]);
+                    setSearchFilter("");
+                  }}
+                >
+                  Clear
+                </Button>
               </div>
               <div className="relative">
                 <Input
