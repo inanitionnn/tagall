@@ -111,7 +111,11 @@ function HomeContainer() {
         />
       </div>
 
-      <HomeSearch query={searchQuery} setQuery={setSearchQuery} />
+      <HomeSearch
+        isLoading={isLoading}
+        query={searchQuery}
+        setQuery={setSearchQuery}
+      />
 
       <HomeFilterBadges filtering={filtering} setFiltering={setFiltering} />
 
