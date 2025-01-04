@@ -65,6 +65,8 @@ const AddItemModal = (props: Props) => {
               <Paragraph>
                 {[currentItem.year, ...currentItem.keywords]
                   .filter(Boolean)
+                  .filter((item) => String(item).split(" ").length === 1)
+                  .slice(0, 7)
                   .join(" • ")}
               </Paragraph>
             ) : null}
