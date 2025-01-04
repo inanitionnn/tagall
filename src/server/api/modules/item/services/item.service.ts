@@ -41,24 +41,6 @@ async function getFieldIdToFieldGroupIdMap(ctx: ContextType) {
   return fieldMap;
 }
 
-async function SetEmbedding(props: {
-  ctx: ContextType;
-  itemId: string;
-  data: object | string;
-}) {
-  const { ctx, data, itemId } = props;
-  const embedding = await GetEmbedding(data);
-  try {
-    await ctx.db.$executeRaw`
-    UPDATE "Item"
-    SET embedding = ARRAY[${Prisma.join(embedding)}]::float8[]
-    WHERE id = ${itemId};
-  `;
-  } catch (error) {
-    throw error;
-  }
-}
-
 function FieldsToGroupedFields(
   fields: Field[],
   fieldIdToFieldGroupMap: Record<string, Omit<FieldGroup, "isFiltering">>,
@@ -236,11 +218,13 @@ async function CreateItem(props: {
         });
       }
 
-      await SetEmbedding({
-        ctx,
-        itemId: item.id,
-        data: details,
-      });
+      const embedding = await GetEmbedding(details);
+
+      await prisma.$executeRaw`
+        UPDATE "Item"
+        SET embedding = ${JSON.stringify(embedding)}::vector
+        WHERE id = ${item.id};
+      `;
 
       return item;
     },
