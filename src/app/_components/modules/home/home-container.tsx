@@ -33,7 +33,7 @@ function HomeContainer() {
   });
 
   const [currentCollectionsIds, setCurrentCollectionsIds] = useState<string[]>(
-    collections[0]?.id ? [collections[0].id] : [],
+    collections.map((collection) => collection.id),
   );
 
   const debouncedCollectionsIds = useDebounce<string[]>(
