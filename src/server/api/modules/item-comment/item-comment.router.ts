@@ -1,19 +1,19 @@
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
   UpdateItemCommentInputSchema,
   AddItemCommentInputSchema,
   DeleteItemCommentInputSchema,
-} from './schemas';
+} from "./schemas";
 import {
   UpdateItemComment,
   AddItemComment,
   DeleteItemComment,
-} from './services';
+} from "./services";
 
 export const ItemCommentRouter = createTRPCRouter({
   addItemComment: protectedProcedure
     .input(AddItemCommentInputSchema)
-    .query(AddItemComment),
+    .mutation(AddItemComment),
 
   updateItemComment: protectedProcedure
     .input(UpdateItemCommentInputSchema)

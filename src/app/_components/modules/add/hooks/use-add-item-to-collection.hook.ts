@@ -35,10 +35,12 @@ export const useAddItemToCollection = (props: Props) => {
       rate: rating[0] ?? 0,
       status,
       id: currentItem.parsedId,
-      comment: {
-        title: commentTitle,
-        description: commentDescription,
-      },
+      ...(commentTitle && {
+        comment: {
+          title: commentTitle,
+          description: commentDescription,
+        },
+      }),
     });
 
     setCurrentItem(null);

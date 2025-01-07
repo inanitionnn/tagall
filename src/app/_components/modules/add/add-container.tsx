@@ -1,18 +1,18 @@
-'use client';
-import { api } from '~/trpc/react';
-import { useState } from 'react';
-import { AddSearch } from './add-search';
-import { AddSearchResultItem } from './add-search-result-item';
-import { AddItemModal } from './add-item-modal';
-import type { SearchResultType } from '../../../../server/api/modules/parse/types';
-import { AddCollectionsTabs } from './add-collections-tabs';
-import { useSearch } from './hooks/use-search.hook';
+"use client";
+import { api } from "~/trpc/react";
+import { useState } from "react";
+import { AddSearch } from "./add-search";
+import { AddSearchResultItem } from "./add-search-result-item";
+import { AddItemModal } from "./add-item-modal";
+import type { SearchResultType } from "../../../../server/api/modules/parse/types";
+import { AddCollectionsTabs } from "./add-collections-tabs";
+import { useSearch } from "./hooks/use-search.hook";
 
 function AddContainer() {
   const [collections] = api.collection.getAll.useSuspenseQuery();
   const [searchResults, setSearchResults] = useState<SearchResultType[]>([]);
   const [currentCollectionId, setCurrentCollectionId] = useState<string>(
-    collections[0]?.id ?? '',
+    collections[0]?.id ?? "",
   );
   const [currentItem, setCurrentItem] = useState<SearchResultType | null>(null);
 
@@ -23,7 +23,7 @@ function AddContainer() {
   });
 
   return (
-    <div className="flex flex-col gap-8 p-8">
+    <div className="flex max-w-screen-2xl flex-col gap-8 p-8">
       <AddCollectionsTabs
         collections={collections}
         currentCollectionId={currentCollectionId}

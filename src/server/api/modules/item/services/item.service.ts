@@ -576,7 +576,9 @@ export async function AddToCollection(props: {
     await ctx.db.itemComment.create({
       data: {
         title: input.comment.title,
-        description: input.comment?.description,
+        description: input.comment.description
+          ? input.comment.description
+          : null,
         rate: input.rate,
         status: input.status,
         userToItemId: userToItem.id,

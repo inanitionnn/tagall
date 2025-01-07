@@ -1,3 +1,5 @@
+"use client";
+import { ItemType } from "../../../../server/api/modules/item/types";
 import {
   Button,
   Header,
@@ -6,21 +8,25 @@ import {
   ResponsiveModalContent,
   ResponsiveModalTrigger,
   Separator,
-} from '../../ui';
-import type { Dispatch, SetStateAction } from 'react';
+} from "../../ui";
+import { useState } from "react";
+import { useDeleteItemFromCollection } from "./hooks/use-delete-item-from-collection.hook";
 
 type Props = {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  submit: () => void;
+  item: ItemType;
 };
 
 const ItemDeleteModal = (props: Props) => {
-  const { open, setOpen, submit } = props;
+  const { item } = props;
+  const [open, setOpen] = useState(false);
+  const { submit } = useDeleteItemFromCollection({
+    item,
+    setOpen,
+  });
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <div className="flex w-64 cursor-pointer items-center gap-2 rounded-md bg-background p-4 shadow transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-md">
+        <div className="flex cursor-pointer items-center gap-2 rounded-md bg-background p-4 shadow transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-md">
           <Header vtag="h6" className="text-destructive">
             Delete from collection
           </Header>

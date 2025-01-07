@@ -9,20 +9,24 @@ type Props = {
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const useUpdateItem = (props: Props) => {
+export const useAddComment = (props: Props) => {
   const { item, setOpen } = props;
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [rating, setRating] = useState<number[]>([item.rate ?? 0]);
   const [status, setStatus] = useState<ItemStatus>(item.status);
-  const { mutateAsync } = api.item.updateItem.useMutation();
+  const { mutateAsync } = api.itemComment.addItemComment.useMutation();
 
   const utils = api.useUtils();
 
   const submit = async () => {
     const promise = mutateAsync(
       {
+        itemId: item.id,
+        title,
+        description: description || undefined,
         rate: rating[0] ?? 0,
         status,
-        id: item.id,
       },
       {
         onSuccess: () => {
@@ -33,13 +37,10 @@ export const useUpdateItem = (props: Props) => {
 
     setOpen(false);
 
-    item.rate = rating[0] ?? 0;
-    item.status = status;
-
     toast.promise(promise, {
-      loading: `Updating ${item.title}...`,
-      success: `${item.title} updated successfully!`,
-      error: (error) => `Failed to update ${item.title}: ${error.message}`,
+      loading: `Adding comment...`,
+      success: `Comment added successfully!`,
+      error: (error) => `Failed to add comment: ${error.message}`,
     });
   };
 
@@ -48,6 +49,10 @@ export const useUpdateItem = (props: Props) => {
     setRating,
     status,
     setStatus,
+    title,
+    setTitle,
+    description,
+    setDescription,
     submit,
   };
 };

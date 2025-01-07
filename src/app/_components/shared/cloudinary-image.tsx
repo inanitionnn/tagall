@@ -1,6 +1,6 @@
-'use client';
-import { CldImage } from 'next-cloudinary';
-import { cn } from '../../../lib';
+"use client";
+import { CldImage } from "next-cloudinary";
+import { cn } from "../../../lib";
 
 type Props = {
   publicId: string;
@@ -17,9 +17,9 @@ export default function CloudinaryImage(props: Props) {
       src={publicId}
       width={width ?? 290}
       height={height ?? 400}
-      className={cn('aspect-[29/40] rounded-sm object-cover', className)}
+      className={cn("aspect-[29/40] rounded-sm object-cover", className)}
       crop={{
-        type: 'fit',
+        type: "fit",
         source: true,
       }}
     />

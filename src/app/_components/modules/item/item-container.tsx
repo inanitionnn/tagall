@@ -1,14 +1,12 @@
-'use client';
-import { api } from '~/trpc/react';
-import { redirect } from 'next/navigation';
-import { Header, Paragraph } from '../../ui';
-import CloudinaryImage from '../../shared/cloudinary-image';
-import { ItemUpdateStatusModal } from './item-update-status-modal';
-import { useState } from 'react';
-import { useUpdateItem } from './hooks/use-update-item.hook';
-import { ItemUpdateRatingModal } from './item-update-rating-modal';
-import { useDeleteItemFromCollection } from './hooks/use-delete-item-from-collection.hook';
-import { ItemDeleteModal } from './item-delete-modal';
+"use client";
+import { api } from "~/trpc/react";
+import { redirect } from "next/navigation";
+import { Header, Paragraph } from "../../ui";
+import CloudinaryImage from "../../shared/cloudinary-image";
+import { ItemUpdateModal } from "./item-update-modal";
+import { ItemDeleteModal } from "./item-delete-modal";
+import { ItemAddCommentModal } from "./item-add-comment-modal";
+import { ItemUpdateCommentModal } from "./item-update-comment-modal";
 
 type Props = {
   itemId: string;
@@ -19,35 +17,15 @@ function ItemContainer(props: Props) {
   const [item] = api.item.getUserItem.useSuspenseQuery(itemId);
 
   if (!item) {
-    redirect('/');
+    redirect("/");
   }
 
-  const [openStatus, setOpenStatus] = useState(false);
-  const [openRating, setOpenRating] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
-
-  const {
-    rating,
-    setRating,
-    setStatus,
-    status,
-    submit: updateItem,
-  } = useUpdateItem({
-    item,
-    setOpenStatus,
-    setOpenRating,
-  });
-
-  const { submit: deleteItem } = useDeleteItemFromCollection({
-    item,
-    setOpen: setOpenDelete,
-  });
   return (
-    <div className="flex flex-col gap-4 p-8">
-      <div className="grid grid-cols-[256px_auto] grid-rows-1 gap-4">
-        <div className="aspect-[29/40] w-full">
+    <div className="flex max-w-screen-2xl flex-col gap-4 p-8">
+      <div className="grid-cols-[256px_auto] grid-rows-1 gap-4 space-y-4 md:grid md:space-y-0">
+        <div className="w-full md:aspect-[29/40]">
           {item.image ? (
-            <CloudinaryImage publicId={item.image} />
+            <CloudinaryImage publicId={item.image} className="mx-auto" />
           ) : (
             <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />
           )}
@@ -59,52 +37,49 @@ function ItemContainer(props: Props) {
           </Paragraph>
         </div>
       </div>
+      <div className="flex gap-4">
+        <div className="flex flex-col gap-4 md:w-64">
+          <ItemUpdateModal item={item} />
+          <ItemAddCommentModal item={item} />
 
-      <ItemUpdateStatusModal
-        item={item}
-        status={status}
-        open={openStatus}
-        setOpen={setOpenStatus}
-        setItemStatus={setStatus}
-        submit={updateItem}
-      />
-
-      <ItemUpdateRatingModal
-        item={item}
-        open={openRating}
-        setOpen={setOpenRating}
-        rating={rating}
-        setRating={setRating}
-        submit={updateItem}
-      />
-
-      <div className="flex w-64 flex-col gap-2 rounded-md bg-background p-4 shadow">
-        <div className="flex flex-col">
-          <Header vtag="h6">Year:</Header>
-          <Paragraph className="text-muted-foreground">{item.year}</Paragraph>
-        </div>
-        {item.fieldGroups.map((group) => (
-          <div key={group.name} className="flex flex-col">
-            <Header vtag="h6">
-              {group.name
-                .replace(/([a-z])([A-Z])/g, '$1 $2')
-                .replace(/^./, (str) => str.toUpperCase())}
-              :
-            </Header>
-            {group.fields.map((field) => (
-              <Paragraph key={field} className="text-muted-foreground">
-                {field}
-              </Paragraph>
+          <div className="flex flex-col gap-4 md:hidden">
+            {item.comments?.map((comment, index) => (
+              <ItemUpdateCommentModal comment={comment} key={index} />
             ))}
           </div>
-        ))}
-      </div>
 
-      <ItemDeleteModal
-        open={openDelete}
-        setOpen={setOpenDelete}
-        submit={deleteItem}
-      />
+          <div className="flex flex-col gap-2 rounded-md bg-background p-4 shadow md:w-64">
+            <div className="flex flex-col">
+              <Header vtag="h6">Year:</Header>
+              <Paragraph className="text-muted-foreground">
+                {item.year}
+              </Paragraph>
+            </div>
+            {item.fieldGroups.map((group) => (
+              <div key={group.name} className="flex flex-col">
+                <Header vtag="h6">
+                  {group.name
+                    .replace(/([a-z])([A-Z])/g, "$1 $2")
+                    .replace(/^./, (str) => str.toUpperCase())}
+                  :
+                </Header>
+                {group.fields.map((field) => (
+                  <Paragraph key={field} className="text-muted-foreground">
+                    {field}
+                  </Paragraph>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <ItemDeleteModal item={item} />
+        </div>
+        <div className="hidden w-full flex-col gap-4 md:flex">
+          {item.comments?.map((comment, index) => (
+            <ItemUpdateCommentModal comment={comment} key={index} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
