@@ -422,7 +422,6 @@ export async function GetUserItem(props: {
         itemId: input,
       },
     },
-
     include: {
       item: {
         select: {
@@ -437,8 +436,14 @@ export async function GetUserItem(props: {
             },
           },
           fields: true,
+          
         },
       },
+      itemComments: {
+        orderBy: {
+          createdAt: "desc",
+        }
+      }
     },
   });
 
@@ -463,6 +468,15 @@ export async function GetUserItem(props: {
       userItem.item.fields,
       FieldIdToFieldGroupIdMap,
     ),
+    comments: userItem.itemComments.map(comment => ({
+      id: comment.id,
+      title: comment.title,
+      description: comment.description,
+      rate: comment.rate,
+      status: comment.status,
+      timeAgo: dateToTimeAgoString(comment.createdAt),
+      createdAt: comment.createdAt,
+    }))
   };
 }
 
@@ -547,7 +561,7 @@ export async function AddToCollection(props: {
     throw new Error("Something went wrong! Item not found!");
   }
 
-  await ctx.db.userToItem.create({
+  const userToItem = await ctx.db.userToItem.create({
     data: {
       userId: ctx.session.user.id,
       itemId: item.id,
@@ -558,6 +572,18 @@ export async function AddToCollection(props: {
       // },
     },
   });
+
+  if(input.comment){
+    await ctx.db.itemComment.create({
+      data: {
+        title: input.comment.title,
+        description: input.comment?.description,
+        rate: input.comment?.rate,
+        status: input.comment?.status,
+        userToItemId: userToItem.id,
+      },
+    });
+  }
 
   return "Item added successfully!";
 }

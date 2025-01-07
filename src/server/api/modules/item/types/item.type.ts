@@ -15,4 +15,12 @@ export type ItemType = {
     name: string;
     fields: string[];
   }[];
+  comments?: {
+    title: string;
+    description: string | null;
+    rate: number | null;
+    status: ItemStatus;
+    timeAgo: string;
+    createdAt: Date;
+  }[]
 };
