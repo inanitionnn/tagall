@@ -1,9 +1,11 @@
 "use client";
 import Image from "next/image";
 import {
+  AutosizeTextarea,
   Button,
   DualRangeSlider,
   Header,
+  Input,
   Paragraph,
   ResponsiveModal,
   ResponsiveModalContent,
@@ -29,8 +31,17 @@ type Props = {
 
 const AddItemModal = (props: Props) => {
   const { currentItem, open, setCurrentItem } = props;
-  const { rating, setRating, setStatus, status, submit } =
-    useAddItemToCollection(props);
+  const {
+    rating,
+    setRating,
+    setStatus,
+    status,
+    commentDescription,
+    commentTitle,
+    setCommentDescription,
+    setCommentTitle,
+    submit,
+  } = useAddItemToCollection(props);
 
   return (
     <ResponsiveModal
@@ -114,6 +125,35 @@ const AddItemModal = (props: Props) => {
                 max={10}
                 step={1}
               />
+            </div>
+            <Separator />
+            <div className="flex w-full flex-col items-start gap-2">
+              <Paragraph>
+                <b>Add Comment</b>
+              </Paragraph>
+              <Paragraph>
+                <b>Title:</b>
+              </Paragraph>
+              <div className="w-full">
+                <Input
+                  value={commentTitle}
+                  onChange={(e) => setCommentTitle(e.target.value)}
+                  placeholder="1 Season"
+                  max={255}
+                />
+              </div>
+              <Paragraph>
+                <b>Description:</b>
+              </Paragraph>
+              <div className="w-full">
+                <AutosizeTextarea
+                  value={commentDescription}
+                  onChange={(e) => setCommentDescription(e.target.value)}
+                  placeholder="Good show, I liked it"
+                  maxHeight={200}
+                  maxLength={1000}
+                />
+              </div>
             </div>
             <Separator />
             <Button onClick={submit}>Add to collection</Button>

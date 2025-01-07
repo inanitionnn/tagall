@@ -1,5 +1,5 @@
-import { type Field, type FieldGroup } from '@prisma/client';
-import type { ContextType } from '../../../../types';
+import { type Field, type FieldGroup } from "@prisma/client";
+import type { ContextType } from "../../../../types";
 import type {
   UpdateItemInputType,
   AddToCollectionInputType,
@@ -8,11 +8,11 @@ import type {
   GetYearsRangeInputType,
   ItemType,
   DeleteFromCollectionInputType,
-} from '../types';
-import { GetImdbDetailsById } from '../../parse/services';
-import { GetEmbedding } from '../../embedding/services';
-import { uploadImageByUrl } from '../../files/files.service';
-import { GetAnilistDetailsById } from '../../parse/services/anilist.service';
+} from "../types";
+import { GetImdbDetailsById } from "../../parse/services";
+import { GetEmbedding } from "../../embedding/services";
+import { uploadImageByUrl } from "../../files/files.service";
+import { GetAnilistDetailsById } from "../../parse/services/anilist.service";
 
 // #region private functions
 
@@ -35,7 +35,7 @@ async function getFieldIdToFieldGroupIdMap(ctx: ContextType) {
       acc[field.id] = field.fieldGroup;
       return acc;
     },
-    {} as Record<string, Omit<FieldGroup, 'isFiltering'>>,
+    {} as Record<string, Omit<FieldGroup, "isFiltering">>,
   );
 
   return fieldMap;
@@ -43,7 +43,7 @@ async function getFieldIdToFieldGroupIdMap(ctx: ContextType) {
 
 function FieldsToGroupedFields(
   fields: Field[],
-  fieldIdToFieldGroupMap: Record<string, Omit<FieldGroup, 'isFiltering'>>,
+  fieldIdToFieldGroupMap: Record<string, Omit<FieldGroup, "isFiltering">>,
 ) {
   const groupedFields: Record<
     string,
@@ -87,28 +87,28 @@ function dateToTimeAgoString(date: Date) {
   const diff = Math.floor((now.getTime() - date.getTime()) / 1000); // Різниця в секундах
 
   const units = [
-    { name: 'year', seconds: 31536000 },
-    { name: 'month', seconds: 2592000 },
-    { name: 'week', seconds: 604800 },
-    { name: 'day', seconds: 86400 },
-    { name: 'hour', seconds: 3600 },
-    { name: 'minute', seconds: 60 },
-    { name: 'second', seconds: 1 },
+    { name: "year", seconds: 31536000 },
+    { name: "month", seconds: 2592000 },
+    { name: "week", seconds: 604800 },
+    { name: "day", seconds: 86400 },
+    { name: "hour", seconds: 3600 },
+    { name: "minute", seconds: 60 },
+    { name: "second", seconds: 1 },
   ];
 
   for (const unit of units) {
     const interval = Math.floor(diff / unit.seconds);
     if (interval > 0) {
-      return `${interval} ${unit.name}${interval > 1 ? 's' : ''} ago`;
+      return `${interval} ${unit.name}${interval > 1 ? "s" : ""} ago`;
     }
   }
 
-  return 'just now';
+  return "just now";
 }
 
 async function CreateItem(props: {
   ctx: ContextType;
-  type: 'imdb' | 'anilist';
+  type: "imdb" | "anilist";
   id: string;
   collectionId: string;
 }) {
@@ -128,18 +128,18 @@ async function CreateItem(props: {
 
       let details;
       switch (props.type) {
-        case 'imdb':
+        case "imdb":
           details = await GetImdbDetailsById(id);
           break;
-        case 'anilist':
+        case "anilist":
           details = await GetAnilistDetailsById(id);
           break;
         default:
-          throw new Error('Invalid type');
+          throw new Error("Invalid type");
       }
 
       if (!details?.title) {
-        throw new Error('Parse error! Title not found!');
+        throw new Error("Parse error! Title not found!");
       }
 
       const image = await uploadImageByUrl(details.image);
@@ -156,7 +156,7 @@ async function CreateItem(props: {
       });
 
       const keys = Object.keys(details).filter(
-        (k) => !['title', 'image', 'year', 'description'].includes(k),
+        (k) => !["title", "image", "year", "description"].includes(k),
       );
       const fieldGroups = await prisma.fieldGroup.findMany({
         where: {
@@ -174,12 +174,12 @@ async function CreateItem(props: {
       for (const fieldGroup of fieldGroups) {
         const value = details[fieldGroup.name as keyof typeof details]!;
         switch (typeof value) {
-          case 'number':
-          case 'string': {
+          case "number":
+          case "string": {
             fields.push({ field: String(value), fieldGroupId: fieldGroup.id });
             break;
           }
-          case 'object': {
+          case "object": {
             if (!Array.isArray(value)) {
               continue;
             }
@@ -246,30 +246,30 @@ export async function GetUserItems(props: {
   const page = input?.page ?? 1;
 
   const rateFromFilter = input?.filtering
-    ?.filter((filter) => filter.name === 'rate')
-    .find((filter) => filter.type === 'from');
+    ?.filter((filter) => filter.name === "rate")
+    .find((filter) => filter.type === "from");
   const rateToFilter = input?.filtering
-    ?.filter((filter) => filter.name === 'rate')
-    .find((filter) => filter.type === 'to');
+    ?.filter((filter) => filter.name === "rate")
+    .find((filter) => filter.type === "to");
   const yearFromFilter = input?.filtering
-    ?.filter((filter) => filter.name === 'year')
-    .find((filter) => filter.type === 'from');
+    ?.filter((filter) => filter.name === "year")
+    .find((filter) => filter.type === "from");
   const yearToFilter = input?.filtering
-    ?.filter((filter) => filter.name === 'year')
-    .find((filter) => filter.type === 'to');
+    ?.filter((filter) => filter.name === "year")
+    .find((filter) => filter.type === "to");
   const statusIncludeFilter = input?.filtering
-    ?.filter((filter) => filter.name === 'status')
-    .filter((filter) => filter.type === 'include');
+    ?.filter((filter) => filter.name === "status")
+    .filter((filter) => filter.type === "include");
   const statusExcludeFilter = input?.filtering
-    ?.filter((filter) => filter.name === 'status')
-    .filter((filter) => filter.type === 'exclude');
+    ?.filter((filter) => filter.name === "status")
+    .filter((filter) => filter.type === "exclude");
   const fields =
-    input?.filtering?.filter((filter) => filter.name === 'field') ?? [];
+    input?.filtering?.filter((filter) => filter.name === "field") ?? [];
   const includeFieldsIds = fields
-    .filter((filter) => filter.type === 'include')
+    .filter((filter) => filter.type === "include")
     .map((field) => field.fieldId);
   const excludeFieldsIds = fields
-    .filter((filter) => filter.type === 'exclude')
+    .filter((filter) => filter.type === "exclude")
     .map((field) => field.fieldId);
 
   const userItems = await ctx.db.userToItem.findMany({
@@ -277,7 +277,7 @@ export async function GetUserItems(props: {
       userId: ctx.session.user.id,
       ...((rateFromFilter ??
         rateToFilter ??
-        input?.sorting?.name === 'rate') && {
+        input?.sorting?.name === "rate") && {
         rate: {
           ...(rateToFilter && {
             lte: rateToFilter.value,
@@ -302,7 +302,7 @@ export async function GetUserItems(props: {
         ...(input?.search && {
           title: {
             contains: input.search,
-            mode: 'insensitive',
+            mode: "insensitive",
           },
         }),
         ...(input?.collectionsIds?.length && {
@@ -343,23 +343,23 @@ export async function GetUserItems(props: {
 
     ...(input?.sorting && {
       orderBy: {
-        ...(input.sorting.name === 'rate' && {
+        ...(input.sorting.name === "rate" && {
           rate: {
             sort: input.sorting.type,
-            nulls: 'last',
+            nulls: "last",
           },
         }),
-        ...(input.sorting.name === 'status' && {
+        ...(input.sorting.name === "status" && {
           status: input.sorting.type,
         }),
-        ...(input.sorting.name === 'date' && {
+        ...(input.sorting.name === "date" && {
           updatedAt: input.sorting.type,
         }),
-        ...(input.sorting.name === 'year' && {
+        ...(input.sorting.name === "year" && {
           item: {
             year: {
               sort: input.sorting.type,
-              nulls: 'last',
+              nulls: "last",
             },
           },
         }),
@@ -440,7 +440,7 @@ export async function GetUserItem(props: {
       },
       itemComments: {
         orderBy: {
-          createdAt: 'desc',
+          createdAt: "desc",
         },
       },
     },
@@ -526,38 +526,38 @@ export async function AddToCollection(props: {
   });
 
   if (!collection) {
-    throw new Error('Collection not found');
+    throw new Error("Collection not found");
   }
 
   let item;
   try {
     switch (collection.name) {
-      case 'Serie':
-      case 'Film':
+      case "Serie":
+      case "Film":
         item = await CreateItem({
           ctx,
-          type: 'imdb',
+          type: "imdb",
           id: input.id,
           collectionId: collection.id,
         });
         break;
-      case 'Manga':
+      case "Manga":
         item = await CreateItem({
           ctx,
-          type: 'anilist',
+          type: "anilist",
           id: input.id,
           collectionId: collection.id,
         });
         break;
       default:
-        throw new Error('Invalid collection name');
+        throw new Error("Invalid collection name");
     }
   } catch (error) {
     console.log(error);
   }
 
   if (!item) {
-    throw new Error('Something went wrong! Item not found!');
+    throw new Error("Something went wrong! Item not found!");
   }
 
   const userToItem = await ctx.db.userToItem.create({
@@ -577,14 +577,14 @@ export async function AddToCollection(props: {
       data: {
         title: input.comment.title,
         description: input.comment?.description,
-        rate: input.comment?.rate,
-        status: input.comment?.status,
+        rate: input.rate,
+        status: input.status,
         userToItemId: userToItem.id,
       },
     });
   }
 
-  return 'Item added successfully!';
+  return "Item added successfully!";
 }
 
 export async function UpdateItem(props: {
@@ -603,7 +603,7 @@ export async function UpdateItem(props: {
   });
 
   if (!item) {
-    throw new Error('Item not found!');
+    throw new Error("Item not found!");
   }
 
   await ctx.db.userToItem.update({
@@ -619,7 +619,7 @@ export async function UpdateItem(props: {
     },
   });
 
-  return 'Item updated successfully!';
+  return "Item updated successfully!";
 }
 
 export async function DeleteFromCollection(props: {
@@ -638,7 +638,7 @@ export async function DeleteFromCollection(props: {
   });
 
   if (!item) {
-    throw new Error('Item not found!');
+    throw new Error("Item not found!");
   }
 
   await ctx.db.userToItem.delete({
@@ -650,7 +650,7 @@ export async function DeleteFromCollection(props: {
     },
   });
 
-  return 'Item deleted successfully!';
+  return "Item deleted successfully!";
 }
 
 // #endregion public functions

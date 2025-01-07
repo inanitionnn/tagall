@@ -1,5 +1,5 @@
-import { ItemStatus } from '@prisma/client';
-import { z } from 'zod';
+import { ItemStatus } from "@prisma/client";
+import { z } from "zod";
 
 export const AddToCollectionInputSchema = z.object({
   id: z.string(),
@@ -10,8 +10,6 @@ export const AddToCollectionInputSchema = z.object({
     .object({
       title: z.string().min(1).max(255),
       description: z.string().min(1).max(1000).nullable().optional(),
-      rate: z.number().int().min(0).max(10).optional(),
-      status: z.nativeEnum(ItemStatus).optional(),
     })
     .optional(),
   // tags: z.array(z.string().cuid()).optional(),
