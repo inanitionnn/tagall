@@ -21,6 +21,7 @@ function HomeContainer() {
   const [collections] = api.collection.getUserCollections.useSuspenseQuery();
 
   const LIMIT = 26;
+  const DEBOUNCE = 300;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [itemsSize, setItemsSize] = useState<"small" | "medium" | "list">(
@@ -34,9 +35,12 @@ function HomeContainer() {
   const [currentCollectionsIds, setCurrentCollectionsIds] = useState<string[]>(
     collections[0]?.id ? [collections[0].id] : [],
   );
+
+  const debouncedCollectionsIds = useDebounce<string[]>(currentCollectionsIds, DEBOUNCE);
+
   const [searchFilter, setSearchFilter] = useState<string>("");
 
-  const { yearsRange } = useYearsRange({ currentCollectionsIds });
+  const { yearsRange } = useYearsRange({ collectionsIds: debouncedCollectionsIds });
 
   const {
     filtering,
@@ -49,27 +53,27 @@ function HomeContainer() {
     yearsRange,
   });
 
-  const debouncedFiltering = useDebounce(filtering, 500);
-  const debouncedSorting = useDebounce(sorting, 500);
-  const debouncedSearch = useDebounce(searchQuery, 500);
+  const debouncedFiltering = useDebounce(filtering, DEBOUNCE);
+  const debouncedSorting = useDebounce(sorting, DEBOUNCE);
+  const debouncedSearch = useDebounce(searchQuery, DEBOUNCE);
 
   const { items, setPage, hasMore, isLoading, resetPagination } =
     useGetUserItems({
       limit: LIMIT,
-      currentCollectionsIds,
+      collectionsIds: debouncedCollectionsIds,
       sorting: debouncedSorting,
       filtering: debouncedFiltering,
       searchQuery: debouncedSearch,
     });
 
   const { filterFieldGroups } = useGetFilterFields({
-    currentCollectionsIds,
+    collectionsIds: debouncedCollectionsIds,
   });
 
   useEffect(() => {
     resetPagination();
   }, [
-    currentCollectionsIds,
+    debouncedCollectionsIds,
     debouncedFiltering,
     debouncedSorting,
     debouncedSearch,

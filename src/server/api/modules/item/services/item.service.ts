@@ -1,4 +1,4 @@
-import { type Field, type FieldGroup, Prisma } from "@prisma/client";
+import { type Field, type FieldGroup } from "@prisma/client";
 import type { ContextType } from "../../../../types";
 import type {
   UpdateItemInputType,

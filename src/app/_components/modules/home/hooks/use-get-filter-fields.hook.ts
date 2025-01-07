@@ -3,11 +3,11 @@ import { api } from "../../../../../trpc/react";
 import { toast } from "sonner";
 
 type Props = {
-  currentCollectionsIds: string[];
+  collectionsIds: string[];
 };
 
 export const useGetFilterFields = (props: Props) => {
-  const { currentCollectionsIds } = props;
+  const { collectionsIds } = props;
 
   const [filterFieldGroups, setFilterFieldGroups] = useState<
     {
@@ -22,7 +22,7 @@ export const useGetFilterFields = (props: Props) => {
   >([]);
 
   const { data, isLoading, error, refetch } =
-    api.field.getFilterFields.useQuery(currentCollectionsIds);
+    api.field.getFilterFields.useQuery(collectionsIds);
 
   useEffect(() => {
     if (data) {
@@ -38,7 +38,7 @@ export const useGetFilterFields = (props: Props) => {
 
   useEffect(() => {
     refetch();
-  }, [currentCollectionsIds, refetch]);
+  }, [collectionsIds, refetch]);
 
   return {
     isLoading,

@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 type Props = {
   limit: number;
-  currentCollectionsIds: string[];
+  collectionsIds: string[];
   sorting: GetUserItemsSortType;
   filtering: GetUserItemsFilterType;
   searchQuery: string;
@@ -17,7 +17,7 @@ type Props = {
 export const useGetUserItems = (props: Props) => {
   const {
     limit = 10,
-    currentCollectionsIds,
+    collectionsIds,
     sorting,
     filtering,
     searchQuery,
@@ -29,7 +29,7 @@ export const useGetUserItems = (props: Props) => {
   const { data, isLoading, error, refetch } = api.item.getUserItems.useQuery({
     limit,
     page,
-    collectionsIds: currentCollectionsIds,
+    collectionsIds,
     sorting,
     filtering,
     search: searchQuery,

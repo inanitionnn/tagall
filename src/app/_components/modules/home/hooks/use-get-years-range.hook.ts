@@ -3,11 +3,11 @@ import { api } from "../../../../../trpc/react";
 import { toast } from "sonner";
 
 type Props = {
-  currentCollectionsIds: string[];
+  collectionsIds: string[];
 };
 
 export const useYearsRange = (props: Props) => {
-  const { currentCollectionsIds } = props;
+  const { collectionsIds } = props;
 
   const [yearsRange, setYearsRange] = useState<{
     minYear: number;
@@ -15,7 +15,7 @@ export const useYearsRange = (props: Props) => {
   }>({ minYear: 0, maxYear: 0 });
 
   const { data, error, refetch } = api.item.getYearsRange.useQuery(
-    currentCollectionsIds,
+    collectionsIds,
   );
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export const useYearsRange = (props: Props) => {
 
   useEffect(() => {
     refetch();
-  }, [currentCollectionsIds, refetch]);
+  }, [collectionsIds, refetch]);
 
   return {
     yearsRange,
