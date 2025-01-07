@@ -1,4 +1,6 @@
-import { type z } from "zod";
-import { type UpdateItemCommentInputSchema } from "../schemas";
+import { type z } from 'zod';
+import { type UpdateItemCommentInputSchema } from '../schemas';
 
-export type UpdateItemCommentInputType = z.infer<typeof UpdateItemCommentInputSchema>;
+export type UpdateItemCommentInputType = z.infer<
+  typeof UpdateItemCommentInputSchema
+>;

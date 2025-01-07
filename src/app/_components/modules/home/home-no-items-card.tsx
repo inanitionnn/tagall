@@ -1,7 +1,7 @@
-import React from "react";
-import { Button, Header, Paragraph } from "../../ui";
-import Link from "next/link";
-import { Plus } from "lucide-react";
+import React from 'react';
+import { Button, Header, Paragraph } from '../../ui';
+import Link from 'next/link';
+import { Plus } from 'lucide-react';
 
 const HomeNoItemsCard = () => {
   return (
@@ -14,7 +14,7 @@ const HomeNoItemsCard = () => {
       </Paragraph>
 
       <Link href="/add" className="w-full">
-        <Button size={"lg"} className="w-full gap-2">
+        <Button size={'lg'} className="w-full gap-2">
           <Plus size={20} className="stroke-[2.5px]" />
           Add Item
         </Button>

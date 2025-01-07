@@ -1,8 +1,9 @@
-import type { ContextType } from "../../../../types";
+import type { ContextType } from '../../../../types';
 import type {
-AddItemCommentInputType,DeleteItemCommentInputType,UpdateItemCommentInputType
-} from "../types";
-
+  AddItemCommentInputType,
+  DeleteItemCommentInputType,
+  UpdateItemCommentInputType,
+} from '../types';
 
 export async function AddItemComment(props: {
   ctx: ContextType;
@@ -15,9 +16,9 @@ export async function AddItemComment(props: {
   });
 
   if (!item) {
-    throw new Error("Item not found");
+    throw new Error('Item not found');
   }
-  
+
   const userToItem = await ctx.db.userToItem.findUnique({
     where: {
       userId_itemId: {
@@ -28,7 +29,7 @@ export async function AddItemComment(props: {
   });
 
   if (!userToItem) {
-    throw new Error("Item not found in your collection!");
+    throw new Error('Item not found in your collection!');
   }
 
   await ctx.db.item.update({
@@ -38,7 +39,7 @@ export async function AddItemComment(props: {
     data: {
       updatedAt: new Date(),
     },
-  })
+  });
 
   await ctx.db.itemComment.create({
     data: {
@@ -50,7 +51,7 @@ export async function AddItemComment(props: {
     },
   });
 
-  return "Comment created successfully!";
+  return 'Comment created successfully!';
 }
 
 export async function UpdateItemComment(props: {
@@ -64,12 +65,12 @@ export async function UpdateItemComment(props: {
       id: input.id,
     },
     include: {
-      userToItem: true
-    }
+      userToItem: true,
+    },
   });
 
   if (!itemComment) {
-    throw new Error("Comment not found!");
+    throw new Error('Comment not found!');
   }
 
   await ctx.db.item.update({
@@ -79,11 +80,11 @@ export async function UpdateItemComment(props: {
     data: {
       updatedAt: new Date(),
     },
-  })
+  });
 
   await ctx.db.itemComment.update({
     where: {
-     id: input.id,
+      id: input.id,
     },
     data: {
       title: input.title,
@@ -93,7 +94,7 @@ export async function UpdateItemComment(props: {
     },
   });
 
-  return "Comment updated successfully!";
+  return 'Comment updated successfully!';
 }
 
 export async function DeleteItemComment(props: {
@@ -107,12 +108,12 @@ export async function DeleteItemComment(props: {
       id: input,
     },
     include: {
-      userToItem: true
-    }
+      userToItem: true,
+    },
   });
 
   if (!itemComment) {
-    throw new Error("Comment not found!");
+    throw new Error('Comment not found!');
   }
 
   await ctx.db.item.update({
@@ -122,7 +123,7 @@ export async function DeleteItemComment(props: {
     data: {
       updatedAt: new Date(),
     },
-  })
+  });
 
   await ctx.db.itemComment.delete({
     where: {
@@ -130,7 +131,7 @@ export async function DeleteItemComment(props: {
     },
   });
 
-  return "Comment deleted successfully!";
+  return 'Comment deleted successfully!';
 }
 
 // #endregion public functions

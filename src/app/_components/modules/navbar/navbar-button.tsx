@@ -1,9 +1,9 @@
-import Link from "next/link";
-import { Button, Paragraph } from "../../ui";
-import { cn } from "~/lib";
-import { type ComponentPropsWithoutRef } from "react";
+import Link from 'next/link';
+import { Button, Paragraph } from '../../ui';
+import { cn } from '~/lib';
+import { type ComponentPropsWithoutRef } from 'react';
 
-type NavbarButtonProps = ComponentPropsWithoutRef<"button"> & {
+type NavbarButtonProps = ComponentPropsWithoutRef<'button'> & {
   title: string;
   icon: React.ReactNode;
   pathname: string;
@@ -12,23 +12,23 @@ type NavbarButtonProps = ComponentPropsWithoutRef<"button"> & {
 };
 
 const NavbarButtonWithoutLink = (
-  props: Omit<NavbarButtonProps, "pathname" | "isLink">,
+  props: Omit<NavbarButtonProps, 'pathname' | 'isLink'>,
 ) => {
   const { icon, title, isActive, className, ...restProps } = props;
   return (
     <Button
-      size={"navbar"}
-      variant={isActive ? "default" : "ghost"}
-      className={cn("w-full justify-start gap-4", className)}
+      size={'navbar'}
+      variant={isActive ? 'default' : 'ghost'}
+      className={cn('w-full justify-start gap-4', className)}
       {...restProps}
     >
       {icon}
       <Paragraph
-        vsize={"base"}
+        vsize={'base'}
         className={cn(
-          "truncate text-wrap text-start font-medium leading-tight",
+          'truncate text-wrap text-start font-medium leading-tight',
           {
-            "font-semibold": isActive,
+            'font-semibold': isActive,
           },
         )}
       >

@@ -1,11 +1,11 @@
-import { Badge, Header, Paragraph } from "../../../ui";
-import type { ItemType } from "../../../../../server/api/modules/item/types";
+import { Badge, Header, Paragraph } from '../../../ui';
+import type { ItemType } from '../../../../../server/api/modules/item/types';
 import {
   RATING_NAMES,
   STATUS_ICONS,
   STATUS_NAMES,
-} from "../../../../../constants";
-import CloudinaryImage from "../../../shared/cloudinary-image";
+} from '../../../../../constants';
+import CloudinaryImage from '../../../shared/cloudinary-image';
 
 type Props = {
   item: ItemType;
@@ -38,14 +38,14 @@ const HomeMediumItem = (props: Props) => {
           </Header>
         </div>
 
-        <Paragraph vsize={"sm"} className="line-clamp-4 hidden sm:block">
+        <Paragraph vsize={'sm'} className="line-clamp-4 hidden sm:block">
           {item.description}
         </Paragraph>
 
         <div className="hidden flex-wrap gap-2 sm:flex">
           {item.fieldGroups
-            .find((g) => g.name === "genres")
-            ?.fields.filter((f) => f.split(" ").length < 2)
+            .find((g) => g.name === 'genres')
+            ?.fields.filter((f) => f.split(' ').length < 2)
             .slice(0, 4)
             .map((f) => (
               <Badge key={f} className="px-2 py-0.5 text-sm">

@@ -1,7 +1,7 @@
-import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
-import { api } from "../../../../../trpc/react";
-import { toast } from "sonner";
-import type { SearchResultType } from "../../../../../server/api/modules/parse/types";
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
+import { api } from '../../../../../trpc/react';
+import { toast } from 'sonner';
+import type { SearchResultType } from '../../../../../server/api/modules/parse/types';
 
 type Props = {
   currentCollectionId: string;
@@ -17,7 +17,7 @@ export const useSearch = (props: Props) => {
     setSearchResults,
   } = props;
 
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
 
   const { data, isSuccess, isLoading, isError, refetch } =
     api.parse.search.useQuery(
@@ -44,7 +44,7 @@ export const useSearch = (props: Props) => {
 
   useEffect(() => {
     if (isError) {
-      toast.error("Failed to fetch search results");
+      toast.error('Failed to fetch search results');
     }
   }, [isError]);
 

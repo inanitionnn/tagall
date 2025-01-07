@@ -1,12 +1,12 @@
-import axios from "axios";
+import axios from 'axios';
 import type {
   AnilistDetailsResultType,
   AnilistSearchResultType,
   SearchResultType,
-} from "../types";
-import { ANILIST_DETAILS_QUERY, ANILIST_SEARCH_QUERY } from "../constants";
+} from '../types';
+import { ANILIST_DETAILS_QUERY, ANILIST_SEARCH_QUERY } from '../constants';
 
-const url = "https://graphql.anilist.co";
+const url = 'https://graphql.anilist.co';
 
 export async function GetAnilistDetailsById(mediaId: string) {
   const variables = {
@@ -21,8 +21,8 @@ export async function GetAnilistDetailsById(mediaId: string) {
     },
     {
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
     },
   );
@@ -44,7 +44,7 @@ export async function GetAnilistDetailsById(mediaId: string) {
     image: coverImage?.extraLarge ?? null,
     id,
     year: startDate?.year ?? null,
-    title: title.english ?? title.romaji ?? "",
+    title: title.english ?? title.romaji ?? '',
     description,
     chapters,
     volumes,
@@ -60,10 +60,10 @@ export async function SearchAnilist(
 ): Promise<SearchResultType[]> {
   const variables = {
     search: query,
-    type: "MANGA",
+    type: 'MANGA',
     perPage: limit,
     sort: [],
-    genreNotIn: ["Hentai"],
+    genreNotIn: ['Hentai'],
   };
 
   const result: AnilistSearchResultType = await axios.post(
@@ -74,8 +74,8 @@ export async function SearchAnilist(
     },
     {
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
     },
   );
@@ -84,7 +84,7 @@ export async function SearchAnilist(
     const description = media.description ?? null;
     const image = media.coverImage?.large ?? null;
     const parsedId = media.id.toString() ?? null;
-    const title = media.title.english ?? media.title.romaji ?? "";
+    const title = media.title.english ?? media.title.romaji ?? '';
     const year = media.startDate?.year ?? null;
     const tags = media.tags?.map((tag) => tag.name) ?? [];
     const staff =

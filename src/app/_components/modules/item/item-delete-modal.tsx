@@ -6,8 +6,8 @@ import {
   ResponsiveModalContent,
   ResponsiveModalTrigger,
   Separator,
-} from "../../ui";
-import type { Dispatch, SetStateAction } from "react";
+} from '../../ui';
+import type { Dispatch, SetStateAction } from 'react';
 
 type Props = {
   open: boolean;

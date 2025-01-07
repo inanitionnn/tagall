@@ -6,11 +6,11 @@ import {
   ResponsiveModalContent,
   ResponsiveModalTrigger,
   Separator,
-} from "../../ui";
-import type { Dispatch, SetStateAction } from "react";
-import { STATUS_ICONS, STATUS_NAMES } from "../../../../constants";
-import { ItemStatus } from "@prisma/client";
-import type { ItemType } from "../../../../server/api/modules/item/types";
+} from '../../ui';
+import type { Dispatch, SetStateAction } from 'react';
+import { STATUS_ICONS, STATUS_NAMES } from '../../../../constants';
+import { ItemStatus } from '@prisma/client';
+import type { ItemType } from '../../../../server/api/modules/item/types';
 
 type Props = {
   open: boolean;
@@ -48,7 +48,7 @@ const ItemUpdateStatusModal = (props: Props) => {
             <div className="flex w-full items-center justify-between gap-2">
               <Paragraph>
                 <b>Status:</b>
-                {"   "}
+                {'   '}
                 {STATUS_NAMES[status]}
               </Paragraph>
               <div className="flex gap-2">
@@ -59,8 +59,8 @@ const ItemUpdateStatusModal = (props: Props) => {
                     return (
                       <Button
                         key={s}
-                        size={"icon"}
-                        variant={status === s ? "default" : "secondary"}
+                        size={'icon'}
+                        variant={status === s ? 'default' : 'secondary'}
                         onClick={() => setItemStatus(s)}
                       >
                         <IconComponent size={16} />

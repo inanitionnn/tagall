@@ -1,22 +1,22 @@
-import React, { type Dispatch, type SetStateAction } from "react";
+import React, { type Dispatch, type SetStateAction } from 'react';
 import {
   Paragraph,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from "../../ui";
-import { SORT_OPTIONS } from "../../../../constants";
+} from '../../ui';
+import { SORT_OPTIONS } from '../../../../constants';
 
 type Props = {
   sorting: {
-    name: "status" | "date" | "rate" | "year";
-    type: "desc" | "asc";
+    name: 'status' | 'date' | 'rate' | 'year';
+    type: 'desc' | 'asc';
   };
   setSorting: Dispatch<
     SetStateAction<{
-      name: "status" | "date" | "rate" | "year";
-      type: "desc" | "asc";
+      name: 'status' | 'date' | 'rate' | 'year';
+      type: 'desc' | 'asc';
     }>
   >;
 };
@@ -37,7 +37,7 @@ const HomeSortSelect = (props: Props) => {
     >
       <SelectTrigger className="h-14 w-[180px] shadow">
         <div className="flex gap-2">
-          <Paragraph>{sorting.type === "asc" ? "▲" : "▼"}</Paragraph>
+          <Paragraph>{sorting.type === 'asc' ? '▲' : '▼'}</Paragraph>
           <Paragraph className="capitalize">{sorting.name}</Paragraph>
         </div>
       </SelectTrigger>
@@ -48,7 +48,7 @@ const HomeSortSelect = (props: Props) => {
             value={JSON.stringify(option)}
           >
             <div className="flex gap-2">
-              <Paragraph>{option.type === "asc" ? "▲" : "▼"}</Paragraph>
+              <Paragraph>{option.type === 'asc' ? '▲' : '▼'}</Paragraph>
               <Paragraph className="capitalize">{option.name}</Paragraph>
             </div>
           </SelectItem>

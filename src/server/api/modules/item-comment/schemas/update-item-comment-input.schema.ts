@@ -1,5 +1,5 @@
-import { ItemStatus } from "@prisma/client";
-import { z } from "zod";
+import { ItemStatus } from '@prisma/client';
+import { z } from 'zod';
 
 export const UpdateItemCommentInputSchema = z.object({
   id: z.string().cuid(),

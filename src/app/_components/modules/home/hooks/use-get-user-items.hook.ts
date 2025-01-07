@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from 'react';
 import type {
   GetUserItemsFilterType,
   GetUserItemsSortType,
   ItemType,
-} from "../../../../../server/api/modules/item/types";
-import { api } from "../../../../../trpc/react";
-import { toast } from "sonner";
+} from '../../../../../server/api/modules/item/types';
+import { api } from '../../../../../trpc/react';
+import { toast } from 'sonner';
 
 type Props = {
   limit: number;
@@ -15,13 +15,7 @@ type Props = {
   searchQuery: string;
 };
 export const useGetUserItems = (props: Props) => {
-  const {
-    limit = 10,
-    collectionsIds,
-    sorting,
-    filtering,
-    searchQuery,
-  } = props;
+  const { limit = 10, collectionsIds, sorting, filtering, searchQuery } = props;
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [items, setItems] = useState<ItemType[]>([]);

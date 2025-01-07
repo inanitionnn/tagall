@@ -1,14 +1,14 @@
-"use client";
-import { api } from "~/trpc/react";
-import { redirect } from "next/navigation";
-import { Header, Paragraph } from "../../ui";
-import CloudinaryImage from "../../shared/cloudinary-image";
-import { ItemUpdateStatusModal } from "./item-update-status-modal";
-import { useState } from "react";
-import { useUpdateItem } from "./hooks/use-update-item.hook";
-import { ItemUpdateRatingModal } from "./item-update-rating-modal";
-import { useDeleteItemFromCollection } from "./hooks/use-delete-item-from-collection.hook";
-import { ItemDeleteModal } from "./item-delete-modal";
+'use client';
+import { api } from '~/trpc/react';
+import { redirect } from 'next/navigation';
+import { Header, Paragraph } from '../../ui';
+import CloudinaryImage from '../../shared/cloudinary-image';
+import { ItemUpdateStatusModal } from './item-update-status-modal';
+import { useState } from 'react';
+import { useUpdateItem } from './hooks/use-update-item.hook';
+import { ItemUpdateRatingModal } from './item-update-rating-modal';
+import { useDeleteItemFromCollection } from './hooks/use-delete-item-from-collection.hook';
+import { ItemDeleteModal } from './item-delete-modal';
 
 type Props = {
   itemId: string;
@@ -19,7 +19,7 @@ function ItemContainer(props: Props) {
   const [item] = api.item.getUserItem.useSuspenseQuery(itemId);
 
   if (!item) {
-    redirect("/");
+    redirect('/');
   }
 
   const [openStatus, setOpenStatus] = useState(false);
@@ -87,7 +87,7 @@ function ItemContainer(props: Props) {
           <div key={group.name} className="flex flex-col">
             <Header vtag="h6">
               {group.name
-                .replace(/([a-z])([A-Z])/g, "$1 $2")
+                .replace(/([a-z])([A-Z])/g, '$1 $2')
                 .replace(/^./, (str) => str.toUpperCase())}
               :
             </Header>

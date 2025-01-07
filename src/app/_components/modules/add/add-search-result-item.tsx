@@ -1,8 +1,8 @@
-import Image from "next/image";
-import { Header, Paragraph } from "../../ui";
-import type { Dispatch, SetStateAction } from "react";
-import type { SearchResultType } from "../../../../server/api/modules/parse/types";
-import { cn } from "../../../../lib";
+import Image from 'next/image';
+import { Header, Paragraph } from '../../ui';
+import type { Dispatch, SetStateAction } from 'react';
+import type { SearchResultType } from '../../../../server/api/modules/parse/types';
+import { cn } from '../../../../lib';
 
 type Props = {
   searchResult: SearchResultType;
@@ -15,9 +15,9 @@ const AddSearchResultItem = (props: Props) => {
   return (
     <div
       className={cn(
-        "relative flex h-64 flex-col gap-2 rounded-sm bg-background p-4 shadow sm:flex-row",
+        'relative flex h-64 flex-col gap-2 rounded-sm bg-background p-4 shadow sm:flex-row',
         {
-          "cursor-pointer transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg":
+          'cursor-pointer transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg':
             !searchResult.inCollection,
         },
       )}
@@ -40,7 +40,7 @@ const AddSearchResultItem = (props: Props) => {
           {searchResult.image ? (
             <Image
               src={searchResult.image}
-              alt={"cover" + searchResult.title}
+              alt={'cover' + searchResult.title}
               className="aspect-[29/40] rounded-sm object-cover"
               width={170}
               height={260}
@@ -58,7 +58,7 @@ const AddSearchResultItem = (props: Props) => {
           </Header>
 
           {searchResult.description && (
-            <Paragraph vsize={"sm"} className="line-clamp-4">
+            <Paragraph vsize={'sm'} className="line-clamp-4">
               {searchResult.description}
             </Paragraph>
           )}
@@ -66,7 +66,7 @@ const AddSearchResultItem = (props: Props) => {
           <Paragraph>
             {[searchResult.year, ...searchResult.keywords]
               .slice(0, 6)
-              .join(" • ")}
+              .join(' • ')}
           </Paragraph>
         </div>
       </div>

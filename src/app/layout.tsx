@@ -1,28 +1,28 @@
-import "~/styles/globals.css";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Source_Sans_3, Nunito_Sans } from "next/font/google";
-import { type Metadata } from "next";
-import { TRPCReactProvider } from "~/trpc/react";
-import { type Session } from "next-auth";
-import { SessionProviderWrapper } from "./_components/wrappers/session-provider-wrapper";
-import { ToastWrapper } from "./_components/wrappers/toast-wrapper";
-import { Suspense } from "react";
-import Loaging from "./loading";
+import '~/styles/globals.css';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Source_Sans_3, Nunito_Sans } from 'next/font/google';
+import { type Metadata } from 'next';
+import { TRPCReactProvider } from '~/trpc/react';
+import { type Session } from 'next-auth';
+import { SessionProviderWrapper } from './_components/wrappers/session-provider-wrapper';
+import { ToastWrapper } from './_components/wrappers/toast-wrapper';
+import { Suspense } from 'react';
+import Loaging from './loading';
 
 const sourceSansPro = Source_Sans_3({
-  subsets: ["latin"],
-  variable: "--font-source-sans",
+  subsets: ['latin'],
+  variable: '--font-source-sans',
 });
 const nunitoSans = Nunito_Sans({
-  subsets: ["latin"],
-  variable: "--font-nunito-sans",
+  subsets: ['latin'],
+  variable: '--font-nunito-sans',
 });
 
 export const metadata: Metadata = {
-  title: "Tagall",
-  description: "Collect all you want",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  title: 'Tagall',
+  description: 'Collect all you want',
+  icons: [{ rel: 'icon', url: '/favicon.ico' }],
 };
 
 export default function RootLayout({

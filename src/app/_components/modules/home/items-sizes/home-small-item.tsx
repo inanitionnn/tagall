@@ -1,6 +1,6 @@
-import { Header } from "../../../ui";
-import type { ItemType } from "../../../../../server/api/modules/item/types";
-import CloudinaryImage from "../../../shared/cloudinary-image";
+import { Header } from '../../../ui';
+import type { ItemType } from '../../../../../server/api/modules/item/types';
+import CloudinaryImage from '../../../shared/cloudinary-image';
 
 type Props = {
   item: ItemType;

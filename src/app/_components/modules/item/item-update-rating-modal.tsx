@@ -7,11 +7,11 @@ import {
   ResponsiveModalContent,
   ResponsiveModalTrigger,
   Separator,
-} from "../../ui";
-import type { Dispatch, SetStateAction } from "react";
-import { RATING_NAMES } from "../../../../constants";
-import type { ItemType } from "../../../../server/api/modules/item/types";
-import { Star } from "lucide-react";
+} from '../../ui';
+import type { Dispatch, SetStateAction } from 'react';
+import { RATING_NAMES } from '../../../../constants';
+import type { ItemType } from '../../../../server/api/modules/item/types';
+import { Star } from 'lucide-react';
 
 type Props = {
   open: boolean;
@@ -56,7 +56,7 @@ const ItemUpdateRatingModal = (props: Props) => {
             <div className="flex w-full flex-col items-start gap-2">
               <div className="flex w-full items-center justify-between gap-2">
                 <Paragraph>
-                  <b>Rating:</b> {rating[0] ? rating[0] : "None"}
+                  <b>Rating:</b> {rating[0] ? rating[0] : 'None'}
                 </Paragraph>
                 <Paragraph>
                   {rating[0] ? RATING_NAMES[rating[0]] : "Don't know"}

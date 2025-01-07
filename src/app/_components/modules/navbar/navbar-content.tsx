@@ -1,20 +1,20 @@
-"use client";
-import React, { type ComponentPropsWithRef } from "react";
+'use client';
+import React, { type ComponentPropsWithRef } from 'react';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
   Header,
   Separator,
-} from "../../ui";
-import { cn } from "~/lib";
-import { LogIn, UserRound } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
-import { NavbarButton } from "./navbar-button";
-import { NAVBAR_LINKS } from "~/constants";
+} from '../../ui';
+import { cn } from '~/lib';
+import { LogIn, UserRound } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { signIn, useSession } from 'next-auth/react';
+import { NavbarButton } from './navbar-button';
+import { NAVBAR_LINKS } from '~/constants';
 
-type Props = ComponentPropsWithRef<"div">;
+type Props = ComponentPropsWithRef<'div'>;
 
 const NavbarContent = (props: Props) => {
   const { className, ...restProps } = props;
@@ -23,7 +23,7 @@ const NavbarContent = (props: Props) => {
   return (
     <div
       className={cn(
-        "flex h-full flex-col justify-between gap-4 p-6",
+        'flex h-full flex-col justify-between gap-4 p-6',
         className,
       )}
       {...restProps}
@@ -31,9 +31,9 @@ const NavbarContent = (props: Props) => {
       <Header vtag="h3">Tagall</Header>
       <div className="flex flex-col gap-4">
         {Object.values(NAVBAR_LINKS).map((value, index) => {
-          if (value.type === "divider") {
+          if (value.type === 'divider') {
             return <Separator key={index} />;
-          } else if (value.type === "link") {
+          } else if (value.type === 'link') {
             const Icon = value.icon;
             return (
               <NavbarButton
@@ -58,18 +58,18 @@ const NavbarContent = (props: Props) => {
               </AvatarFallback>
             </Avatar>
           }
-          pathname={"/profile"}
-          title={session?.user.name ?? "Profile"}
-          isActive={pathname === "/profile"}
+          pathname={'/profile'}
+          title={session?.user.name ?? 'Profile'}
+          isActive={pathname === '/profile'}
         />
       ) : (
         <NavbarButton
           isLink={false}
           icon={<LogIn />}
-          pathname={"/login"}
-          title={"Login"}
+          pathname={'/login'}
+          title={'Login'}
           isActive={true}
-          onClick={() => signIn("google")}
+          onClick={() => signIn('google')}
         />
       )}
     </div>

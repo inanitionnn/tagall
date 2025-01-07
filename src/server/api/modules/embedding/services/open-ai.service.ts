@@ -1,5 +1,5 @@
-import OpenAI from "openai";
-import { env } from "../../../../../env";
+import OpenAI from 'openai';
+import { env } from '../../../../../env';
 
 const openai = new OpenAI({
   apiKey: env.OPENAI_API_KEY,
@@ -7,21 +7,21 @@ const openai = new OpenAI({
 
 export async function GetEmbedding(data: object | string): Promise<number[]> {
   try {
-    const inputString = typeof data === "string" ? data : JSON.stringify(data);
+    const inputString = typeof data === 'string' ? data : JSON.stringify(data);
 
     const response = await openai.embeddings.create({
-      model: "text-embedding-3-small",
+      model: 'text-embedding-3-small',
       input: inputString,
     });
 
     const embedding = response.data[0]?.embedding;
 
     if (!embedding) {
-      throw new Error("Embedding not found in response");
+      throw new Error('Embedding not found in response');
     }
 
     return embedding;
   } catch {
-    throw new Error("Failed to get embedding");
+    throw new Error('Failed to get embedding');
   }
 }

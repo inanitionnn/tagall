@@ -1,11 +1,11 @@
-import { Badge, Header, Paragraph } from "../../../ui";
-import type { ItemType } from "../../../../../server/api/modules/item/types";
+import { Badge, Header, Paragraph } from '../../../ui';
+import type { ItemType } from '../../../../../server/api/modules/item/types';
 import {
   RATING_NAMES,
   STATUS_ICONS,
   STATUS_NAMES,
-} from "../../../../../constants";
-import CloudinaryImage from "../../../shared/cloudinary-image";
+} from '../../../../../constants';
+import CloudinaryImage from '../../../shared/cloudinary-image';
 
 type Props = {
   item: ItemType;
@@ -32,14 +32,14 @@ const HomeListItem = (props: Props) => {
             vtag="h6"
             className="font-bold leading-tight text-muted-foreground"
           >
-            {[item.collection, item.year].join(" • ")}
+            {[item.collection, item.year].join(' • ')}
           </Header>
         </div>
 
         <div className="hidden w-full gap-2 xl:flex xl:flex-wrap">
           {item.fieldGroups
-            .find((g) => g.name === "genres")
-            ?.fields.filter((f) => f.split(" ").length < 2)
+            .find((g) => g.name === 'genres')
+            ?.fields.filter((f) => f.split(' ').length < 2)
             .slice(0, 4)
             .map((f) => (
               <Badge key={f} className="px-2 py-0.5 text-sm">
@@ -59,7 +59,7 @@ const HomeListItem = (props: Props) => {
           <div className="flex w-24 flex-col items-center">
             <Paragraph className="font-bold">{item.rate}</Paragraph>
             <Paragraph className="font-medium text-muted-foreground">
-              {item.rate ? RATING_NAMES[item.rate] : "None"}
+              {item.rate ? RATING_NAMES[item.rate] : 'None'}
             </Paragraph>
           </div>
 

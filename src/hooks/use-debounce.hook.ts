@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 const areObjectsEqual = (a: unknown, b: unknown): boolean => {
   return JSON.stringify(a) === JSON.stringify(b);

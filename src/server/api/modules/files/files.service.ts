@@ -2,8 +2,8 @@ import {
   v2 as cloudinary,
   type UploadApiErrorResponse,
   type UploadApiResponse,
-} from "cloudinary";
-import { env } from "../../../../env";
+} from 'cloudinary';
+import { env } from '../../../../env';
 
 cloudinary.config({
   secure: true,
@@ -12,7 +12,7 @@ cloudinary.config({
   api_secret: env.CLOUDINARY_API_SECRET,
 });
 
-const CLOUDINARY_FOLDER = "tagall";
+const CLOUDINARY_FOLDER = 'tagall';
 
 export const uploadImageByUrl = async (
   imageUrl: string | null | undefined,
@@ -24,9 +24,9 @@ export const uploadImageByUrl = async (
     return await cloudinary.uploader.upload(imageUrl, {
       folder: CLOUDINARY_FOLDER,
       transformation: [
-        { width: 1000, crop: "scale" },
-        { quality: "auto" },
-        { fetch_format: "auto" },
+        { width: 1000, crop: 'scale' },
+        { quality: 'auto' },
+        { fetch_format: 'auto' },
       ],
     });
   } catch (error) {

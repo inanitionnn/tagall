@@ -1,15 +1,15 @@
-import { type ImdbDetailsResultType, type SearchResultType } from "../types";
-import * as cheerio from "cheerio";
-import axios from "axios";
+import { type ImdbDetailsResultType, type SearchResultType } from '../types';
+import * as cheerio from 'cheerio';
+import axios from 'axios';
 
 // #region Private Functions
 async function GetHtmlFromUrl(url: string): Promise<string> {
   const response = await axios.get(url, {
     headers: {
-      "Accept-Language": "en-US,en;q=0.9",
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-      Accept: "text/html",
+      'Accept-Language': 'en-US,en;q=0.9',
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      Accept: 'text/html',
     },
   });
 
@@ -110,27 +110,27 @@ export async function GetImdbDetailsById(
 
     const $ = cheerio.load(html);
 
-    const nextdataScriptString = $("#__NEXT_DATA__").html();
-    const nextdataScriptJson = JSON.parse(nextdataScriptString ?? "");
+    const nextdataScriptString = $('#__NEXT_DATA__').html();
+    const nextdataScriptJson = JSON.parse(nextdataScriptString ?? '');
     const pageProps = nextdataScriptJson.props.pageProps.aboveTheFoldData;
 
     const metadataScriptString = $('script[type="application/ld+json"]').html();
-    const metadata = JSON.parse(metadataScriptString ?? "");
+    const metadata = JSON.parse(metadataScriptString ?? '');
 
     return FillImdbDetailsResult({ ...pageProps, ...metadata });
   } catch (error) {
     console.error(error);
-    throw new Error("Imdb parse error");
+    throw new Error('Imdb parse error');
   }
 }
 
 export async function SearchImdb(
   query: string,
-  type: "film" | "series" | "all" = "all",
+  type: 'film' | 'series' | 'all' = 'all',
   limit = 10,
 ): Promise<SearchResultType[]> {
   const url = `https://www.imdb.com/find/?q=${encodeURIComponent(query)}&s=tt&${
-    type === "film" ? "ttype=ft" : type === "series" ? "ttype=tv" : ""
+    type === 'film' ? 'ttype=ft' : type === 'series' ? 'ttype=tv' : ''
   }&ref_=fn_tt`;
 
   try {
@@ -138,22 +138,22 @@ export async function SearchImdb(
     const $ = cheerio.load(html);
 
     const results: SearchResultType[] = [];
-    const elements = $("li.find-title-result").slice(0, limit);
+    const elements = $('li.find-title-result').slice(0, limit);
     elements.each((index, element) => {
       const titleElement = $(element).find(
-        ".ipc-metadata-list-summary-item__t",
+        '.ipc-metadata-list-summary-item__t',
       );
       const title = titleElement.text().trim() ?? null;
-      const link = titleElement.attr("href") ?? null;
+      const link = titleElement.attr('href') ?? null;
 
-      const imageElement = $(element).find("img.ipc-image");
-      const image = imageElement.attr("src") ?? null;
+      const imageElement = $(element).find('img.ipc-image');
+      const image = imageElement.attr('src') ?? null;
 
-      const yearElement = $(element).find(".ipc-inline-list__item").first();
+      const yearElement = $(element).find('.ipc-inline-list__item').first();
       const year = parseInt(yearElement.text().trim()) ?? null;
 
       const actorElements = $(element).find(
-        ".ipc-metadata-list-summary-item__stl .ipc-inline-list__item",
+        '.ipc-metadata-list-summary-item__stl .ipc-inline-list__item',
       );
       const actors: string[] = [];
       actorElements.each((_, actorEl) => {
@@ -178,22 +178,22 @@ export async function SearchImdb(
     return results;
   } catch (error) {
     console.error(error);
-    throw new Error("IMDB parse error");
+    throw new Error('IMDB parse error');
   }
 }
 
 export async function AdvancedSearchImdb(
   query: string,
-  type: "film" | "series",
+  type: 'film' | 'series',
   limit = 10,
 ): Promise<SearchResultType[]> {
   let title_type;
   switch (type) {
-    case "film":
-      title_type = "feature,tv_movie,short,tv_short,video";
+    case 'film':
+      title_type = 'feature,tv_movie,short,tv_short,video';
       break;
-    case "series":
-      title_type = "tv_series,tv_miniseries";
+    case 'series':
+      title_type = 'tv_series,tv_miniseries';
       break;
   }
 
@@ -207,7 +207,7 @@ export async function AdvancedSearchImdb(
     const $ = cheerio.load(html);
 
     const results: SearchResultType[] = [];
-    const elements = $(".ipc-metadata-list-summary-item").slice(0, limit);
+    const elements = $('.ipc-metadata-list-summary-item').slice(0, limit);
     elements.each((_, element) => {
       const result: SearchResultType = {
         description: null,
@@ -216,15 +216,15 @@ export async function AdvancedSearchImdb(
         title: null,
         year: null,
         inCollection: false,
-        parsedId: "",
+        parsedId: '',
       };
 
-      const titleElement = $(element).find(".dli-title h3.ipc-title__text");
+      const titleElement = $(element).find('.dli-title h3.ipc-title__text');
       const rawTitle = titleElement.text();
       // result.rank = parseInt(rawTitle.split(".")[0]) ?? null;
-      result.title = rawTitle.split(". ")[1] ?? rawTitle ?? null;
+      result.title = rawTitle.split('. ')[1] ?? rawTitle ?? null;
 
-      const metadata = $(element).find(".dli-title-metadata-item");
+      const metadata = $(element).find('.dli-title-metadata-item');
       metadata.each((index, item) => {
         const text = $(item).text();
         if (index === 0) result.year = parseInt(text) ?? null;
@@ -245,20 +245,20 @@ export async function AdvancedSearchImdb(
       //   result.keywords.push(metacritic);
       // }
 
-      const plotElement = $(element).find(".dli-plot-container");
+      const plotElement = $(element).find('.dli-plot-container');
       result.description = plotElement.text().trim();
 
       // Get poster URL
-      const posterImg = $(element).find(".ipc-image").attr("src");
+      const posterImg = $(element).find('.ipc-image').attr('src');
       if (posterImg) {
         result.image = GetHighQualityImageUrls(posterImg)?.small ?? null;
       }
 
       // Get movie/show URL
-      const linkElement = $(element).find(".ipc-title-link-wrapper");
-      const link = "https://www.imdb.com" + linkElement.attr("href");
+      const linkElement = $(element).find('.ipc-title-link-wrapper');
+      const link = 'https://www.imdb.com' + linkElement.attr('href');
       const match = /\/title\/(tt\d+)/.exec(link);
-      result.parsedId = match?.[1] ?? "";
+      result.parsedId = match?.[1] ?? '';
 
       if (result.parsedId) {
         results.push(result);
@@ -268,7 +268,7 @@ export async function AdvancedSearchImdb(
     return results;
   } catch (error) {
     console.error(error);
-    throw new Error("Imdb parse error");
+    throw new Error('Imdb parse error');
   }
 }
 // #endregion Public Functions

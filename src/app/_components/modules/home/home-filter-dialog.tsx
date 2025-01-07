@@ -1,4 +1,4 @@
-import React, { type Dispatch, type SetStateAction } from "react";
+import React, { type Dispatch, type SetStateAction } from 'react';
 import {
   Button,
   DualRangeSlider,
@@ -8,11 +8,11 @@ import {
   ResponsiveModalContent,
   ResponsiveModalTrigger,
   ScrollArea,
-} from "../../ui";
-import { STATUS_NAMES } from "../../../../constants";
-import { Search, SlidersHorizontal } from "lucide-react";
-import type { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
-import type { ItemStatus } from "@prisma/client";
+} from '../../ui';
+import { STATUS_NAMES } from '../../../../constants';
+import { Search, SlidersHorizontal } from 'lucide-react';
+import type { GetUserItemsFilterType } from '../../../../server/api/modules/item/types';
+import type { ItemStatus } from '@prisma/client';
 
 type Props = {
   searchFilter: string;
@@ -70,7 +70,7 @@ const HomeFilterDialog = (props: Props) => {
       <ResponsiveModal>
         <ResponsiveModalTrigger asChild>
           <div className="inline-flex w-min items-center justify-center gap-2 rounded-md bg-background p-2 text-muted-foreground shadow">
-            <Button size={"icon"} variant={"ghost"}>
+            <Button size={'icon'} variant={'ghost'}>
               <SlidersHorizontal />
             </Button>
           </div>
@@ -83,7 +83,7 @@ const HomeFilterDialog = (props: Props) => {
                 <Button
                   onClick={() => {
                     setFiltering([]);
-                    setSearchFilter("");
+                    setSearchFilter('');
                   }}
                 >
                   Clear
@@ -138,41 +138,41 @@ const HomeFilterDialog = (props: Props) => {
                     {filteredStatusNames.map(([status, name]) => {
                       const typedStatus = status as ItemStatus;
                       const statusFilter = filtering.find(
-                        (f) => f.name === "status" && f.value === typedStatus,
+                        (f) => f.name === 'status' && f.value === typedStatus,
                       );
                       return (
                         <Button
                           key={typedStatus}
                           variant={
-                            statusFilter?.type === "include"
-                              ? "success"
-                              : statusFilter?.type === "exclude"
-                                ? "destructive"
-                                : "ghost"
+                            statusFilter?.type === 'include'
+                              ? 'success'
+                              : statusFilter?.type === 'exclude'
+                                ? 'destructive'
+                                : 'ghost'
                           }
-                          size={"sm"}
+                          size={'sm'}
                           onClick={() =>
                             setFiltering((prev) => {
                               const updatedFiltering = prev.filter(
                                 (f) =>
-                                  f.name !== "status" ||
+                                  f.name !== 'status' ||
                                   f.value !== typedStatus,
                               );
                               const currentFilter = prev.find(
                                 (f) =>
-                                  f.name === "status" &&
+                                  f.name === 'status' &&
                                   f.value === typedStatus,
                               );
                               if (!currentFilter) {
                                 updatedFiltering.push({
-                                  name: "status",
-                                  type: "include",
+                                  name: 'status',
+                                  type: 'include',
                                   value: typedStatus,
                                 });
-                              } else if (currentFilter.type === "include") {
+                              } else if (currentFilter.type === 'include') {
                                 updatedFiltering.push({
-                                  name: "status",
-                                  type: "exclude",
+                                  name: 'status',
+                                  type: 'exclude',
                                   value: typedStatus,
                                 });
                               }
@@ -193,40 +193,40 @@ const HomeFilterDialog = (props: Props) => {
                   <div className="flex flex-wrap gap-2">
                     {fieldGroup.fields.map((field) => {
                       const fieldFilter = filtering.find(
-                        (f) => f.name === "field" && f.value === field.value,
+                        (f) => f.name === 'field' && f.value === field.value,
                       );
                       return (
                         <Button
                           key={field.id}
                           variant={
-                            fieldFilter?.type === "include"
-                              ? "success"
-                              : fieldFilter?.type === "exclude"
-                                ? "destructive"
-                                : "ghost"
+                            fieldFilter?.type === 'include'
+                              ? 'success'
+                              : fieldFilter?.type === 'exclude'
+                                ? 'destructive'
+                                : 'ghost'
                           }
-                          size={"sm"}
+                          size={'sm'}
                           onClick={() =>
                             setFiltering((prev) => {
                               const updatedFiltering = prev.filter(
                                 (f) =>
-                                  f.name !== "field" || f.value !== field.value,
+                                  f.name !== 'field' || f.value !== field.value,
                               );
                               const currentFilter = prev.find(
                                 (f) =>
-                                  f.name === "field" && f.value === field.value,
+                                  f.name === 'field' && f.value === field.value,
                               );
                               if (!currentFilter) {
                                 updatedFiltering.push({
-                                  name: "field",
-                                  type: "include",
+                                  name: 'field',
+                                  type: 'include',
                                   value: field.value,
                                   fieldId: field.id,
                                 });
-                              } else if (currentFilter.type === "include") {
+                              } else if (currentFilter.type === 'include') {
                                 updatedFiltering.push({
-                                  name: "field",
-                                  type: "exclude",
+                                  name: 'field',
+                                  type: 'exclude',
                                   value: field.value,
                                   fieldId: field.id,
                                 });

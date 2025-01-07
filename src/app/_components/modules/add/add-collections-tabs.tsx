@@ -1,6 +1,6 @@
-import type { Dispatch, SetStateAction } from "react";
-import { Button } from "../../ui";
-import type { CollectionType } from "../../../../server/api/modules/collection/types";
+import type { Dispatch, SetStateAction } from 'react';
+import { Button } from '../../ui';
+import type { CollectionType } from '../../../../server/api/modules/collection/types';
 
 type Props = {
   collections: CollectionType[];
@@ -17,7 +17,7 @@ const AddCollectionsTabs = (props: Props) => {
         <Button
           key={collection.id}
           onClick={() => setCurrentCollectionId(collection.id)}
-          variant={currentCollectionId === collection.id ? "default" : "ghost"}
+          variant={currentCollectionId === collection.id ? 'default' : 'ghost'}
         >
           {collection.name}
         </Button>

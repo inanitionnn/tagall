@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import type { GetUserItemsFilterType } from "../../../../../server/api/modules/item/types";
+import { useEffect, useState } from 'react';
+import type { GetUserItemsFilterType } from '../../../../../server/api/modules/item/types';
 
 type Props = {
   yearsRange: {
@@ -20,11 +20,11 @@ export const useItemFilter = (props: Props) => {
 
   useEffect(() => {
     const fromRate = filtering
-      .filter((f) => f.name === "rate")
-      .find((f) => f.type === "from");
+      .filter((f) => f.name === 'rate')
+      .find((f) => f.type === 'from');
     const toRate = filtering
-      .filter((f) => f.name === "rate")
-      .find((f) => f.type === "to");
+      .filter((f) => f.name === 'rate')
+      .find((f) => f.type === 'to');
     const newFilterRates = [fromRate?.value ?? 1, toRate?.value ?? 10];
     if (
       newFilterRates[0] !== filterRates[0] ||
@@ -34,11 +34,11 @@ export const useItemFilter = (props: Props) => {
     }
 
     const fromYear = filtering
-      .filter((f) => f.name === "year")
-      .find((f) => f.type === "from");
+      .filter((f) => f.name === 'year')
+      .find((f) => f.type === 'from');
     const toYear = filtering
-      .filter((f) => f.name === "year")
-      .find((f) => f.type === "to");
+      .filter((f) => f.name === 'year')
+      .find((f) => f.type === 'to');
     const newFilterYears = [
       fromYear?.value ?? yearsRange.minYear,
       toYear?.value ?? yearsRange.maxYear,
@@ -60,15 +60,15 @@ export const useItemFilter = (props: Props) => {
     const toRate = filterRates[1];
     setFiltering((prev) => {
       const updatedFiltering = prev.filter(
-        (f) => f.name !== "rate",
+        (f) => f.name !== 'rate',
       ) as GetUserItemsFilterType;
 
       if (fromRate && fromRate !== 1) {
-        updatedFiltering.push({ name: "rate", type: "from", value: fromRate });
+        updatedFiltering.push({ name: 'rate', type: 'from', value: fromRate });
       }
 
       if (toRate && toRate !== 10) {
-        updatedFiltering.push({ name: "rate", type: "to", value: toRate });
+        updatedFiltering.push({ name: 'rate', type: 'to', value: toRate });
       }
 
       return updatedFiltering;
@@ -80,15 +80,15 @@ export const useItemFilter = (props: Props) => {
     const toYear = filterYears[1];
     setFiltering((prev) => {
       const updatedFiltering = prev.filter(
-        (f) => f.name !== "year",
+        (f) => f.name !== 'year',
       ) as GetUserItemsFilterType;
 
       if (fromYear && fromYear !== yearsRange.minYear) {
-        updatedFiltering.push({ name: "year", type: "from", value: fromYear });
+        updatedFiltering.push({ name: 'year', type: 'from', value: fromYear });
       }
 
       if (toYear && toYear !== yearsRange.maxYear) {
-        updatedFiltering.push({ name: "year", type: "to", value: toYear });
+        updatedFiltering.push({ name: 'year', type: 'to', value: toYear });
       }
 
       return updatedFiltering;

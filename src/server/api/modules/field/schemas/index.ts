@@ -1,1 +1,1 @@
-export * from "./get-filter-fields-input.schema";
+export * from './get-filter-fields-input.schema';
