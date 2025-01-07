@@ -7,8 +7,7 @@ const config = {
   plugins: ['@typescript-eslint'],
   extends: [
     'next/core-web-vitals',
-    "eslint:recommended", 
-    "plugin:prettier/recommended",
+    'eslint:recommended',
     'plugin:@typescript-eslint/recommended-type-checked',
     'plugin:@typescript-eslint/stylistic-type-checked',
     'prettier',
@@ -24,6 +23,7 @@ const config = {
     '@typescript-eslint/no-unsafe-return': 'off',
     '@typescript-eslint/no-unsafe-call': 'off',
     '@typescript-eslint/array-type': 'off',
+    '@typescript-eslint/non-nullable-type-assertion-style': 'off',
     '@typescript-eslint/consistent-type-definitions': 'off',
     '@typescript-eslint/consistent-type-imports': [
       'warn',

@@ -1,6 +1,6 @@
-import React, { type Dispatch, type SetStateAction } from 'react';
-import { Button } from '../../ui';
-import type { CollectionType } from '../../../../server/api/modules/collection/types';
+import React, { type Dispatch, type SetStateAction } from "react";
+import { Button } from "../../ui";
+import type { CollectionType } from "../../../../server/api/modules/collection/types";
 
 type Props = {
   collections: CollectionType[];
@@ -28,7 +28,7 @@ const HomeCollectionsTabs = (props: Props) => {
           key={collection.id}
           onClick={() => onClick(collection.id)}
           variant={
-            currentCollectionsIds.includes(collection.id) ? 'default' : 'ghost'
+            currentCollectionsIds.includes(collection.id) ? "default" : "ghost"
           }
         >
           {collection.name}

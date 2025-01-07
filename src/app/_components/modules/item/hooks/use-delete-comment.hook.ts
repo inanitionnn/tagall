@@ -1,11 +1,11 @@
-import { type Dispatch, type SetStateAction, useState } from "react";
+import { type Dispatch, type SetStateAction } from 'react';
 
-import { api } from "../../../../../trpc/react";
-import { toast } from "sonner";
-import type { ItemType } from "../../../../../server/api/modules/item/types";
+import { api } from '../../../../../trpc/react';
+import { toast } from 'sonner';
+import type { ItemType } from '../../../../../server/api/modules/item/types';
 
 type Props = {
-  comment: NonNullable<ItemType["comments"]>[number];
+  comment: NonNullable<ItemType['comments']>[number];
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 

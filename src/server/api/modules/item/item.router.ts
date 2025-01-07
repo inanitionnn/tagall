@@ -1,4 +1,4 @@
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
   AddToCollectionInputSchema,
   DeleteFromCollectionInputSchema,
@@ -6,7 +6,7 @@ import {
   GetUserItemsInputSchema,
   GetYearsRangeInputSchema,
   UpdateItemInputSchema,
-} from './schemas';
+} from "./schemas";
 import {
   AddToCollection,
   DeleteFromCollection,
@@ -14,7 +14,7 @@ import {
   GetUserItems,
   GetYearsRange,
   UpdateItem,
-} from './services';
+} from "./services";
 
 export const ItemRouter = createTRPCRouter({
   getUserItems: protectedProcedure

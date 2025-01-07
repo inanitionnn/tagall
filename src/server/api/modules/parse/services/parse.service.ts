@@ -1,7 +1,7 @@
-import type { ContextType } from '../../../../types';
-import type { SearchInputType, SearchResultType } from '../types';
-import { SearchAnilist } from './anilist.service';
-import { AdvancedSearchImdb } from './imdb.service';
+import type { ContextType } from "../../../../types";
+import type { SearchInputType, SearchResultType } from "../types";
+import { SearchAnilist } from "./anilist.service";
+import { AdvancedSearchImdb } from "./imdb.service";
 
 export const Search = async (props: {
   ctx: ContextType;
@@ -12,24 +12,24 @@ export const Search = async (props: {
     where: { id: input.collectionId },
   });
   if (!collection) {
-    throw new Error('Collection not found');
+    throw new Error("Collection not found");
   }
   let items: SearchResultType[] = [];
   switch (collection.name) {
-    case 'Film': {
-      items = await AdvancedSearchImdb(input.query, 'film', input.limit);
+    case "Film": {
+      items = await AdvancedSearchImdb(input.query, "film", input.limit);
       break;
     }
-    case 'Serie': {
-      items = await AdvancedSearchImdb(input.query, 'series', input.limit);
+    case "Serie": {
+      items = await AdvancedSearchImdb(input.query, "series", input.limit);
       break;
     }
-    case 'Manga': {
+    case "Manga": {
       items = await SearchAnilist(input.query, input.limit);
       break;
     }
     default:
-      throw new Error('Invalid collection name');
+      throw new Error("Invalid collection name");
   }
   const userItems = await ctx.db.userToItem.findMany({
     where: {

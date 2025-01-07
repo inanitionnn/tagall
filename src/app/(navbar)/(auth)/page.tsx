@@ -1,7 +1,7 @@
-import { api, HydrateClient } from '../../../trpc/server';
-import { HomeContainer } from '../../_components/modules';
+import { api, HydrateClient } from "../../../trpc/server";
+import { HomeContainer } from "../../_components/modules";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   void api.collection.getUserCollections.prefetch();

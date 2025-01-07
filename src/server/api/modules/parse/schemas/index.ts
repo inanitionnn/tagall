@@ -1,1 +1,1 @@
-export * from './search-input.schema';
+export * from "./search-input.schema";

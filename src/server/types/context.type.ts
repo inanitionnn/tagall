@@ -1,11 +1,11 @@
-import type { PrismaClient, Role } from '@prisma/client';
-import type { DefaultArgs } from '@prisma/client/runtime/library';
-import type { ISODateString } from 'next-auth';
+import type { PrismaClient, Role } from "@prisma/client";
+import type { DefaultArgs } from "@prisma/client/runtime/library";
+import type { ISODateString } from "next-auth";
 
 export type ContextType = {
   db: PrismaClient<
     {
-      log: ('query' | 'warn' | 'error')[];
+      log: ("query" | "warn" | "error")[];
     },
     never,
     DefaultArgs

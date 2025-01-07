@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { api } from '../../../../../trpc/react';
-import { toast } from 'sonner';
+import { useEffect, useState } from "react";
+import { api } from "../../../../../trpc/react";
+import { toast } from "sonner";
 
 type Props = {
   collectionsIds: string[];

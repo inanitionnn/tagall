@@ -1,7 +1,7 @@
-import React, { type Dispatch, type SetStateAction } from 'react';
-import { Badge } from '../../ui';
-import type { GetUserItemsFilterType } from '../../../../server/api/modules/item/types';
-import { STATUS_NAMES } from '../../../../constants';
+import React, { type Dispatch, type SetStateAction } from "react";
+import { Badge } from "../../ui";
+import type { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
+import { STATUS_NAMES } from "../../../../constants";
 
 type Props = {
   filtering: GetUserItemsFilterType;
@@ -14,24 +14,24 @@ const HomeFilterBadges = (props: Props) => {
   return (
     <div className="flex flex-wrap gap-2">
       {filtering.map((filter, index) => {
-        let badgeText = '';
+        let badgeText = "";
         switch (filter.name) {
-          case 'rate':
-          case 'year':
+          case "rate":
+          case "year":
             badgeText =
-              filter.type === 'from'
+              filter.type === "from"
                 ? `> ${filter.value}`
                 : `< ${filter.value}`;
             break;
-          case 'status':
+          case "status":
             badgeText =
-              filter.type === 'include'
+              filter.type === "include"
                 ? `+ ${STATUS_NAMES[filter.value].toLowerCase()}`
                 : `- ${STATUS_NAMES[filter.value].toLowerCase()}`;
             break;
-          case 'field':
+          case "field":
             badgeText =
-              filter.type === 'include'
+              filter.type === "include"
                 ? `+ ${filter.value}`
                 : `- ${filter.value}`;
             break;

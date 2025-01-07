@@ -1,6 +1,6 @@
-import { Input, Spinner } from '../../ui';
-import type { Dispatch, SetStateAction } from 'react';
-import { Search } from 'lucide-react';
+import { Input, Spinner } from "../../ui";
+import type { Dispatch, SetStateAction } from "react";
+import { Search } from "lucide-react";
 
 type Props = {
   query: string;
@@ -17,7 +17,7 @@ function AddSearch(props: Props) {
       <Input
         //   type="search"
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
+          if (e.key === "Enter") {
             submit();
           }
         }}

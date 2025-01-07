@@ -1,10 +1,10 @@
-import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
-import { CollectionRouter } from './modules/collection/collection.router';
-import { ParseRouter } from './modules/parse/parse.router';
-import { FieldRouter } from './modules/field/field.router';
-import { ItemRouter } from './modules/item/item.router';
-import { EmbeddingRouter } from './modules/embedding/parse.router';
-import { ItemCommentRouter } from './modules/item-comment/item-comment.router';
+import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
+import { CollectionRouter } from "./modules/collection/collection.router";
+import { ParseRouter } from "./modules/parse/parse.router";
+import { FieldRouter } from "./modules/field/field.router";
+import { ItemRouter } from "./modules/item/item.router";
+import { EmbeddingRouter } from "./modules/embedding/parse.router";
+import { ItemCommentRouter } from "./modules/item-comment/item-comment.router";
 
 /**
  * This is the primary router for your server.

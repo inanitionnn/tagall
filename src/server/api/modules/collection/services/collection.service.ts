@@ -1,9 +1,9 @@
-import type { ContextType } from '../../../../types';
+import type { ContextType } from "../../../../types";
 
 export const GetAll = async (props: { ctx: ContextType }) => {
   const { ctx } = props;
   return ctx.db.collection.findMany({
-    orderBy: [{ priority: 'asc' }],
+    orderBy: [{ priority: "asc" }],
   });
 };
 
@@ -22,6 +22,6 @@ export const GetUserCollections = async (props: { ctx: ContextType }) => {
         },
       },
     },
-    orderBy: [{ priority: 'asc' }],
+    orderBy: [{ priority: "asc" }],
   });
 };

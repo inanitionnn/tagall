@@ -1,6 +1,6 @@
-import { Input, Spinner } from '../../ui';
-import type { Dispatch, SetStateAction } from 'react';
-import { Search } from 'lucide-react';
+import { Input, Spinner } from "../../ui";
+import type { Dispatch, SetStateAction } from "react";
+import { Search } from "lucide-react";
 
 type Props = {
   query: string;

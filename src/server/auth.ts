@@ -1,16 +1,16 @@
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import { type Role } from '@prisma/client';
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { type Role } from "@prisma/client";
 import {
   type DefaultUser,
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
-} from 'next-auth';
-import { type Adapter } from 'next-auth/adapters';
-import GoogleProvider from 'next-auth/providers/google';
+} from "next-auth";
+import { type Adapter } from "next-auth/adapters";
+import GoogleProvider from "next-auth/providers/google";
 
-import { env } from '~/env';
-import { db } from '~/server/db';
+import { env } from "~/env";
+import { db } from "~/server/db";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -18,12 +18,12 @@ import { db } from '~/server/db';
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
       role?: Role;
-    } & DefaultSession['user'];
+    } & DefaultSession["user"];
   }
 
   interface User extends DefaultUser {
@@ -56,7 +56,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   adapter: PrismaAdapter(db) as Adapter,
   providers: [
@@ -64,9 +64,9 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       async profile(profile) {
-        const allowedEmails = ['tarolv3@gmail.com'];
+        const allowedEmails = ["tarolv3@gmail.com"];
         if (!allowedEmails.includes(profile.email)) {
-          throw new Error('Email not allowed ;)');
+          throw new Error("Email not allowed ;)");
         }
         return {
           id: profile.sub,

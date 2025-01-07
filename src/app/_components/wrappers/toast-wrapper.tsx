@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Toaster } from 'sonner';
+import { Toaster } from "sonner";
 
 type Props = {
   children: React.ReactNode;

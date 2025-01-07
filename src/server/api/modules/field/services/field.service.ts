@@ -1,5 +1,5 @@
-import type { ContextType } from '../../../../types';
-import type { GetFilterFieldsInputType } from '../types';
+import type { ContextType } from "../../../../types";
+import type { GetFilterFieldsInputType } from "../types";
 
 export const GetFilterFields = async (props: {
   ctx: ContextType;
@@ -43,7 +43,7 @@ export const GetFilterFields = async (props: {
       priority: true,
     },
     orderBy: {
-      priority: 'asc',
+      priority: "asc",
     },
   });
 };

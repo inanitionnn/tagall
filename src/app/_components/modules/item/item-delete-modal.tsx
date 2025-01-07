@@ -1,5 +1,5 @@
-"use client";
-import { ItemType } from "../../../../server/api/modules/item/types";
+'use client';
+import type { ItemType } from '../../../../server/api/modules/item/types';
 import {
   Button,
   Header,
@@ -8,9 +8,9 @@ import {
   ResponsiveModalContent,
   ResponsiveModalTrigger,
   Separator,
-} from "../../ui";
-import { useState } from "react";
-import { useDeleteItemFromCollection } from "./hooks/use-delete-item-from-collection.hook";
+} from '../../ui';
+import { useState } from 'react';
+import { useDeleteItemFromCollection } from './hooks/use-delete-item-from-collection.hook';
 
 type Props = {
   item: ItemType;

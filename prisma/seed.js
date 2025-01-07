@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client';
-import { seedsData } from './seedsData.js';
+import { PrismaClient } from "@prisma/client";
+import { seedsData } from "./seedsData.js";
 const prisma = new PrismaClient();
 
 async function main() {
@@ -59,10 +59,10 @@ async function main() {
   }
 }
 
-console.log('Seeding database...');
+console.log("Seeding database...");
 main()
   .then(async () => {
-    console.log('Seed data inserted successfully.');
+    console.log("Seed data inserted successfully.");
     await prisma.$disconnect();
   })
   .catch(async (e) => {

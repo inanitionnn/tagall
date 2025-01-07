@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   AutosizeTextarea,
   Button,
@@ -10,16 +10,16 @@ import {
   ResponsiveModalContent,
   ResponsiveModalTrigger,
   Separator,
-} from "../../ui";
-import { useState, type Dispatch, type SetStateAction } from "react";
+} from '../../ui';
+import { useState } from 'react';
 import {
   RATING_NAMES,
   STATUS_ICONS,
   STATUS_NAMES,
-} from "../../../../constants";
-import type { ItemType } from "../../../../server/api/modules/item/types";
-import { ItemStatus } from "@prisma/client";
-import { useAddComment } from "./hooks/use-add-comment.hook";
+} from '../../../../constants';
+import type { ItemType } from '../../../../server/api/modules/item/types';
+import { ItemStatus } from '@prisma/client';
+import { useAddComment } from './hooks/use-add-comment.hook';
 
 type Props = {
   item: ItemType;
@@ -90,7 +90,7 @@ const ItemAddCommentModal = (props: Props) => {
             <div className="flex w-full items-center justify-between gap-2">
               <Paragraph>
                 <b>Status:</b>
-                {"   "}
+                {'   '}
                 {STATUS_NAMES[status]}
               </Paragraph>
               <div className="flex gap-2">
@@ -101,8 +101,8 @@ const ItemAddCommentModal = (props: Props) => {
                     return (
                       <Button
                         key={s}
-                        size={"icon"}
-                        variant={status === s ? "default" : "secondary"}
+                        size={'icon'}
+                        variant={status === s ? 'default' : 'secondary'}
                         onClick={() => setStatus(s)}
                       >
                         <IconComponent size={16} />
@@ -115,7 +115,7 @@ const ItemAddCommentModal = (props: Props) => {
             <div className="flex w-full flex-col items-start gap-2">
               <div className="flex w-full items-center justify-between gap-2">
                 <Paragraph>
-                  <b>Rating:</b> {rating[0] ? rating[0] : "None"}
+                  <b>Rating:</b> {rating[0] ? rating[0] : 'None'}
                 </Paragraph>
                 <Paragraph>
                   {rating[0] ? RATING_NAMES[rating[0]] : "Don't know"}

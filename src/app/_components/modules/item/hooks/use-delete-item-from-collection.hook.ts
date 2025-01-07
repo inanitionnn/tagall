@@ -1,8 +1,8 @@
-import { type Dispatch, type SetStateAction } from 'react';
-import { api } from '../../../../../trpc/react';
-import { toast } from 'sonner';
-import type { ItemType } from '../../../../../server/api/modules/item/types';
-import { useRouter } from 'next/navigation';
+import { type Dispatch, type SetStateAction } from "react";
+import { api } from "../../../../../trpc/react";
+import { toast } from "sonner";
+import type { ItemType } from "../../../../../server/api/modules/item/types";
+import { useRouter } from "next/navigation";
 
 type Props = {
   item: ItemType;
@@ -26,7 +26,7 @@ export const useDeleteItemFromCollection = (props: Props) => {
       error: (error) => `Failed to delete ${item.title}: ${error.message}`,
     });
 
-    router.push('/');
+    router.push("/");
   };
 
   return {
