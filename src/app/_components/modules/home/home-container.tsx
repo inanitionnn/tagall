@@ -21,7 +21,7 @@ function HomeContainer() {
   const [collections] = api.collection.getUserCollections.useSuspenseQuery();
 
   const LIMIT = 26;
-  const DEBOUNCE = 300;
+  const DEBOUNCE = 400;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [itemsSize, setItemsSize] = useState<"small" | "medium" | "list">(
@@ -58,17 +58,18 @@ function HomeContainer() {
     yearsRange,
   });
 
-  const debouncedFiltering = useDebounce(filtering, DEBOUNCE);
-  const debouncedSorting = useDebounce(sorting, DEBOUNCE);
-  const debouncedSearch = useDebounce(searchQuery, DEBOUNCE);
+  const debounce = useDebounce(
+    { currentCollectionsIds, filtering, sorting, searchQuery },
+    DEBOUNCE,
+  );
 
   const { items, setPage, hasMore, isLoading, resetPagination } =
     useGetUserItems({
       limit: LIMIT,
-      collectionsIds: debouncedCollectionsIds,
-      sorting: debouncedSorting,
-      filtering: debouncedFiltering,
-      searchQuery: debouncedSearch,
+      collectionsIds: debounce.currentCollectionsIds,
+      sorting: debounce.sorting,
+      filtering: debounce.filtering,
+      searchQuery: debounce.searchQuery,
     });
 
   const { filterFieldGroups } = useGetFilterFields({
@@ -77,13 +78,7 @@ function HomeContainer() {
 
   useEffect(() => {
     resetPagination();
-  }, [
-    debouncedCollectionsIds,
-    debouncedFiltering,
-    debouncedSorting,
-    debouncedSearch,
-    resetPagination,
-  ]);
+  }, [debounce, resetPagination]);
 
   if (!collections.length) {
     return (
