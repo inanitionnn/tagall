@@ -43,20 +43,23 @@ export const Search = async (props: {
     select: {
       item: {
         select: {
+          id: true,
           parsedId: true,
         },
       },
     },
   });
 
-  const parseIdsSet = new Set(
-    userItems.map((userItem) => userItem.item.parsedId),
-  );
+  const itemsMap = userItems.reduce((acc, userItem) => {
+    acc[userItem.item.parsedId] = userItem.item.id;
+    return acc;
+  }, 
+  {} as Record<string, string>);
 
   return items.map((item) => {
     return {
       ...item,
-      inCollection: parseIdsSet.has(item.parsedId),
+      id: itemsMap[item.parsedId] ?? null,
     };
   });
 };

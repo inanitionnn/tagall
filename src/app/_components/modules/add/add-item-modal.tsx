@@ -62,6 +62,7 @@ const AddItemModal = (props: Props) => {
                 className="aspect-[29/40] rounded-sm object-cover"
                 width={377}
                 height={520}
+                unoptimized={true}
               />
             ) : (
               <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />

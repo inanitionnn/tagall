@@ -164,12 +164,12 @@ export async function SearchImdb(
       const parsedId = link?.match(/\/title\/(tt\d+)/)?.[1];
       if (parsedId) {
         results.push({
+          id: null,
           title,
           image: GetHighQualityImageUrls(image)?.small ?? null,
           year,
           description: null,
           keywords: actors,
-          inCollection: false,
           parsedId,
         });
       }
@@ -210,12 +210,12 @@ export async function AdvancedSearchImdb(
     const elements = $(".ipc-metadata-list-summary-item").slice(0, limit);
     elements.each((_, element) => {
       const result: SearchResultType = {
+        id: null,
         description: null,
         image: null,
         keywords: [],
         title: null,
         year: null,
-        inCollection: false,
         parsedId: "",
       };
 

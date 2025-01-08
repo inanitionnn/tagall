@@ -24,7 +24,7 @@ export const useAddItemToCollection = (props: Props) => {
   const submit = async () => {
     if (!currentItem) return;
 
-    if (currentItem.inCollection) {
+    if (currentItem.id) {
       toast.error(`${currentItem.title} is already in your collection!`);
       setCurrentItem(null);
       return;
@@ -34,7 +34,7 @@ export const useAddItemToCollection = (props: Props) => {
       collectionId: currentCollectionId,
       rate: rating[0] ?? 0,
       status,
-      id: currentItem.parsedId,
+      parsedId: currentItem.parsedId,
       ...(commentTitle && {
         comment: {
           title: commentTitle,
@@ -45,16 +45,9 @@ export const useAddItemToCollection = (props: Props) => {
 
     setCurrentItem(null);
     setSearchResults((prev) =>
-      prev.map((searchResult) => {
-        const isCurrentItem = searchResult.parsedId === currentItem?.parsedId;
-        if (isCurrentItem) {
-          return {
-            ...searchResult,
-            inCollection: true,
-          };
-        }
-        return searchResult;
-      }),
+      prev.filter(
+        (searchResult) => searchResult.parsedId !== currentItem?.parsedId,
+      ),
     );
 
     toast.promise(promise, {

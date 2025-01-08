@@ -7,15 +7,11 @@ type Props = {
   currentCollectionId: string;
   setSearchResults: Dispatch<SetStateAction<SearchResultType[]>>;
   setCurrentItem: Dispatch<SetStateAction<SearchResultType | null>>;
-  limit?: number;
+  limit: number;
 };
 export const useSearch = (props: Props) => {
-  const {
-    limit = 16,
-    currentCollectionId,
-    setCurrentItem,
-    setSearchResults,
-  } = props;
+  const { limit, currentCollectionId, setCurrentItem, setSearchResults } =
+    props;
 
   const [query, setQuery] = useState("");
 

@@ -101,13 +101,13 @@ export async function SearchAnilist(
       ...staff,
     ].filter(Boolean) as string[];
     return {
+      id: null,
       description,
       image,
       keywords,
       parsedId,
       title,
       year,
-      inCollection: false,
     };
   });
 }

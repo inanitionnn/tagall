@@ -15,19 +15,19 @@ const AddSearchResultItem = (props: Props) => {
   return (
     <div
       className={cn(
-        "relative flex h-64 flex-col gap-2 rounded-sm bg-background p-4 shadow sm:flex-row",
+        "relative flex h-64 cursor-pointer flex-col gap-2 rounded-sm bg-background p-4 shadow sm:flex-row",
         {
-          "cursor-pointer transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg":
-            !searchResult.inCollection,
+          "transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg":
+            !searchResult.id,
         },
       )}
       onClick={() => {
-        if (!searchResult.inCollection) {
+        if (!searchResult.id) {
           setCurrentItem(() => searchResult);
         }
       }}
     >
-      {searchResult.inCollection && (
+      {searchResult.id && (
         <div className="absolute bottom-2 left-2 rounded-sm bg-green-500 p-2 text-destructive-foreground">
           <Paragraph>In Collection</Paragraph>
         </div>
@@ -44,6 +44,7 @@ const AddSearchResultItem = (props: Props) => {
               className="aspect-[29/40] rounded-sm object-cover"
               width={170}
               height={260}
+              unoptimized={true}
             />
           ) : (
             <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />

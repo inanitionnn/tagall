@@ -7,6 +7,7 @@ import { AddItemModal } from "./add-item-modal";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { AddCollectionsTabs } from "./add-collections-tabs";
 import { useSearch } from "./hooks/use-search.hook";
+import Link from "next/link";
 
 function AddContainer() {
   const [collections] = api.collection.getAll.useSuspenseQuery();
@@ -16,10 +17,13 @@ function AddContainer() {
   );
   const [currentItem, setCurrentItem] = useState<SearchResultType | null>(null);
 
+  const LIMIT = 16;
+
   const { isLoading, query, setQuery, submit } = useSearch({
     currentCollectionId,
     setSearchResults,
     setCurrentItem,
+    limit: LIMIT,
   });
 
   return (
@@ -46,13 +50,26 @@ function AddContainer() {
         />
       )}
       <div className="grid gap-6 lg:grid-cols-2">
-        {searchResults.map((searchResult) => (
-          <AddSearchResultItem
-            key={searchResult.parsedId}
-            searchResult={searchResult}
-            setCurrentItem={setCurrentItem}
-          />
-        ))}
+        {searchResults.map((searchResult) =>
+          searchResult.id ? (
+            <Link
+              key={searchResult.parsedId}
+              href={`/item/${searchResult.id}`}
+              target="_blank"
+            >
+              <AddSearchResultItem
+                searchResult={searchResult}
+                setCurrentItem={setCurrentItem}
+              />
+            </Link>
+          ) : (
+            <AddSearchResultItem
+              key={searchResult.parsedId}
+              searchResult={searchResult}
+              setCurrentItem={setCurrentItem}
+            />
+          ),
+        )}
       </div>
     </div>
   );

@@ -109,16 +109,16 @@ function dateToTimeAgoString(date: Date) {
 async function CreateItem(props: {
   ctx: ContextType;
   type: "imdb" | "anilist";
-  id: string;
+  parsedId: string;
   collectionId: string;
 }) {
-  const { ctx, collectionId, id } = props;
+  const { ctx, collectionId, parsedId } = props;
 
   const transactionResult = await ctx.db.$transaction(
     async (prisma) => {
       const oldItem = await prisma.item.findFirst({
         where: {
-          parsedId: id,
+          parsedId,
         },
       });
 
@@ -129,10 +129,10 @@ async function CreateItem(props: {
       let details;
       switch (props.type) {
         case "imdb":
-          details = await GetImdbDetailsById(id);
+          details = await GetImdbDetailsById(parsedId);
           break;
         case "anilist":
-          details = await GetAnilistDetailsById(id);
+          details = await GetAnilistDetailsById(parsedId);
           break;
         default:
           throw new Error("Invalid type");
@@ -150,7 +150,7 @@ async function CreateItem(props: {
           title: details.title,
           year: details.year,
           description: details.description,
-          parsedId: id,
+          parsedId,
           image: image?.public_id ?? null,
         },
       });
@@ -537,7 +537,7 @@ export async function AddToCollection(props: {
         item = await CreateItem({
           ctx,
           type: "imdb",
-          id: input.id,
+          parsedId: input.parsedId,
           collectionId: collection.id,
         });
         break;
@@ -545,7 +545,7 @@ export async function AddToCollection(props: {
         item = await CreateItem({
           ctx,
           type: "anilist",
-          id: input.id,
+          parsedId: input.parsedId,
           collectionId: collection.id,
         });
         break;
