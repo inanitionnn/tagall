@@ -112,7 +112,9 @@ model Item {
     collectionId String
     userToItems  UserToItem[]
 
-    @@index([title, createdAt, year, id])
+    @@index([updatedAt, createdAt])
+    @@index([year, title])
+    @@index([parsedId])
 }
 
 model ItemComment {
@@ -120,16 +122,18 @@ model ItemComment {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    title       String
+    title       String?
     description String?
     rate        Int?
     status      ItemStatus @default(COMPLETED)
     private     Boolean    @default(false)
+    isSpoiler   Boolean    @default(false)
 
     userToItem   UserToItem @relation(fields: [userToItemId], references: [id], onDelete: Cascade)
     userToItemId String
 
-    @@index([createdAt, userToItemId, id])
+    @@index([updatedAt, createdAt])
+    @@index([userToItemId])
 }
 
 model UserToItem {
@@ -173,7 +177,7 @@ model Field {
     fieldGroup   FieldGroup @relation(fields: [fieldGroupId], references: [id])
     fieldGroupId String
 
-    @@index([value, id])
+    @@index([value, fieldGroupId])
 }
 
 model Tag {
