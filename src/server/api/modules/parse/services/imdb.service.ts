@@ -41,7 +41,7 @@ function ExtractElements<T>(...arrays: Record<string, any>[][]): T[] {
 function FillImdbDetailsResult(props: any): ImdbDetailsResultType {
   return {
     title: props.titleText?.text ?? props.originalTitleText?.text ?? null,
-    image: GetHighQualityImageUrls(props.primaryImage?.url)?.raw ?? null,
+    image: GetHighQualityImageUrls(props.primaryImage?.url)?.optimized ?? null,
     description: props.plot?.plotText?.plainText ?? null,
     type: {
       titleType: props.titleType?.id ?? null,
@@ -89,6 +89,7 @@ function GetHighQualityImageUrls(originalUrl: string | null) {
   if (!baseUrlMatch)
     return {
       raw: originalUrl,
+      optimized: originalUrl,
       small: originalUrl,
     };
 
@@ -96,6 +97,7 @@ function GetHighQualityImageUrls(originalUrl: string | null) {
 
   return {
     raw: `${baseUrl}._V1_.jpg`,
+    optimized: `${baseUrl}._V1_QL80_UY1080_.jpg`,
     small: `${baseUrl}._V1_QL75_UY600_.jpg`,
   };
 }
