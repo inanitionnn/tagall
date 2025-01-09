@@ -50,11 +50,13 @@ export const Search = async (props: {
     },
   });
 
-  const itemsMap = userItems.reduce((acc, userItem) => {
-    acc[userItem.item.parsedId] = userItem.item.id;
-    return acc;
-  }, 
-  {} as Record<string, string>);
+  const itemsMap = userItems.reduce(
+    (acc, userItem) => {
+      acc[userItem.item.parsedId] = userItem.item.id;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
 
   return items.map((item) => {
     return {

@@ -57,7 +57,7 @@ const ItemUpdateCommentModal = (props: Props) => {
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
         <div className="flex cursor-pointer flex-col gap-4 rounded-md bg-background p-4 shadow transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-md md:p-8">
-          <Header vtag="h6">{comment.title}</Header>
+          {comment.title && <Header vtag="h6">{comment.title}</Header>}
           {comment.description && (
             <Paragraph className="text-muted-foreground">
               {comment.description}

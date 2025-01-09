@@ -20,10 +20,14 @@ export const useAddComment = (props: Props) => {
   const utils = api.useUtils();
 
   const submit = async () => {
+    if (!title && !description) {
+      toast.error(`Title or description is required!`);
+      return;
+    }
     const promise = mutateAsync(
       {
         itemId: item.id,
-        title,
+        title: title || undefined,
         description: description || undefined,
         rate: rating[0] ?? 0,
         status,

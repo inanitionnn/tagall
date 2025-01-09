@@ -17,7 +17,7 @@ export type ItemType = {
   }[];
   comments?: {
     id: string;
-    title: string;
+    title: string | null;
     description: string | null;
     rate: number | null;
     status: ItemStatus;

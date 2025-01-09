@@ -11,7 +11,7 @@ type Props = {
 
 export const useUpdateComment = (props: Props) => {
   const { comment, setOpen } = props;
-  const [title, setTitle] = useState<string>(comment.title);
+  const [title, setTitle] = useState<string>(comment.title ?? "");
   const [description, setDescription] = useState<string>(
     comment.description ?? "",
   );
@@ -22,10 +22,14 @@ export const useUpdateComment = (props: Props) => {
   const utils = api.useUtils();
 
   const submit = async () => {
+    if (!title && !description) {
+      toast.error(`Title or description is required!`);
+      return;
+    }
     const promise = mutateAsync(
       {
         id: comment.id,
-        title,
+        title: title || undefined,
         description: description || undefined,
         rate: rating[0] ?? 0,
         status,

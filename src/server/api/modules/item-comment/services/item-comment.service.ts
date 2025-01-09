@@ -43,7 +43,7 @@ export async function AddItemComment(props: {
 
   await ctx.db.itemComment.create({
     data: {
-      title: input.title,
+      title: input.title ? input.title : null,
       description: input.description ? input.description : null,
       userToItemId: userToItem.id,
       rate: input.rate ? input.rate : null,
@@ -87,7 +87,7 @@ export async function UpdateItemComment(props: {
       id: input.id,
     },
     data: {
-      title: input.title,
+      title: input.title ? input.title : null,
       description: input.description ? input.description : null,
       rate: input.rate,
       status: input.status,
