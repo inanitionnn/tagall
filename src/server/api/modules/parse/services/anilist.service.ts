@@ -87,18 +87,12 @@ export async function SearchAnilist(
     const title = media.title.english ?? media.title.romaji ?? "";
     const year = media.startDate?.year ?? null;
     const tags = media.tags?.map((tag) => tag.name) ?? [];
-    const staff =
-      (media.staff?.nodes
-        .map((node) => node.name.full)
-        .filter(Boolean) as string[]) ?? [];
     const genres = media.genres ?? [];
     const keywords = [
       media.volumes ? `${media.volumes} volumes` : null,
       media.status,
-      media.countryOfOrigin,
       ...genres,
       ...tags,
-      ...staff,
     ].filter(Boolean) as string[];
     return {
       id: null,

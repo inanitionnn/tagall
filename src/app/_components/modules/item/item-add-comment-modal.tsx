@@ -125,7 +125,10 @@ const ItemAddCommentModal = (props: Props) => {
                               <Button
                                 size={"icon"}
                                 variant={status === s ? "default" : "secondary"}
-                                onClick={() => form.setValue("status", s)}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  form.setValue("status", s);
+                                }}
                               >
                                 <IconComponent size={16} />
                               </Button>

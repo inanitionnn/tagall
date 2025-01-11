@@ -179,7 +179,10 @@ const ItemUpdateCommentModal = (props: Props) => {
                               <Button
                                 size={"icon"}
                                 variant={status === s ? "default" : "secondary"}
-                                onClick={() => form.setValue("status", s)}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  form.setValue("status", s);
+                                }}
                               >
                                 <IconComponent size={16} />
                               </Button>
@@ -223,7 +226,13 @@ const ItemUpdateCommentModal = (props: Props) => {
               )}
             />
             <div className="flex w-full items-center gap-4">
-              <Button variant={"destructive"} onClick={deleteComment}>
+              <Button
+                variant={"destructive"}
+                onClick={(e) => {
+                  e.preventDefault();
+                  deleteComment();
+                }}
+              >
                 Delete comment
               </Button>
 

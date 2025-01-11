@@ -17,16 +17,8 @@ query ($search: String!, $type: MediaType, $perPage: Int, $sort: [MediaSort], $g
             description
             status
             volumes
-            countryOfOrigin
             startDate {
                 year
-            }
-            staff {
-                nodes {
-                    name {
-                        full
-                    }
-                }
             }
         }
     }

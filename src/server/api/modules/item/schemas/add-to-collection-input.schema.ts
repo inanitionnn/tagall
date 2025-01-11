@@ -8,7 +8,7 @@ export const AddToCollectionInputSchema = z.object({
   status: z.nativeEnum(ItemStatus),
   comment: z
     .object({
-      title: z.string().min(1).max(255),
+      title: z.string().min(1).max(255).nullable().optional(),
       description: z.string().min(1).max(1000).nullable().optional(),
     })
     .optional(),
