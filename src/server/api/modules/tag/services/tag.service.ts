@@ -23,6 +23,17 @@ export async function GetUserTags(props: {
         },
       },
     },
+    include: {
+      collections: true,
+      _count: {
+        select: {
+          userToItems: true,
+        },
+      },
+    },
+    orderBy: {
+      name: "asc",
+    },
   });
 }
 
@@ -36,9 +47,9 @@ export async function AddTag(props: {
     data: {
       name: input.name,
       userId: ctx.session.user.id,
-      ...(input.collectionIds && {
+      ...(input.collectionsIds?.length && {
         collections: {
-          connect: input.collectionIds?.map((id) => ({ id })),
+          connect: input.collectionsIds?.map((id) => ({ id })),
         },
       }),
     },
@@ -59,9 +70,9 @@ export async function UpdateTag(props: {
     },
     data: {
       name: input.name,
-      ...(input.collectionIds && {
+      ...(input.collectionsIds?.length && {
         collections: {
-          set: input.collectionIds?.map((id) => ({ id })),
+          set: input.collectionsIds?.map((id) => ({ id })),
         },
       }),
     },

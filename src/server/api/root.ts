@@ -5,6 +5,7 @@ import { FieldRouter } from "./modules/field/field.router";
 import { ItemRouter } from "./modules/item/item.router";
 import { EmbeddingRouter } from "./modules/embedding/parse.router";
 import { ItemCommentRouter } from "./modules/item-comment/item-comment.router";
+import { TagRouter } from "./modules/tag/tag.router";
 
 /**
  * This is the primary router for your server.
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   field: FieldRouter,
   embedding: EmbeddingRouter,
   itemComment: ItemCommentRouter,
+  tag: TagRouter,
 });
 
 // export type definition of API
