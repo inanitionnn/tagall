@@ -10,6 +10,12 @@ import {
   ResponsiveModal,
   ResponsiveModalContent,
   Separator,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "../../ui";
 import type { Dispatch, SetStateAction } from "react";
 import {
@@ -31,18 +37,11 @@ type Props = {
 
 const AddItemModal = (props: Props) => {
   const { currentItem, open, setCurrentItem } = props;
-  const {
-    rating,
-    setRating,
-    setStatus,
-    status,
-    commentDescription,
-    commentTitle,
-    setCommentDescription,
-    setCommentTitle,
-    submit,
-  } = useAddItemToCollection(props);
+  const { form, submit } = useAddItemToCollection(props);
 
+  const status = form.watch("status");
+  const rating = form.watch("rate");
+  const details = [currentItem.year, ...currentItem.keywords].filter(Boolean);
   return (
     <ResponsiveModal
       open={open}
@@ -52,9 +51,9 @@ const AddItemModal = (props: Props) => {
         }
       }}
     >
-      <ResponsiveModalContent className="p-0 sm:max-w-2xl md:max-w-2xl lg:max-w-3xl">
-        <div className="flex min-h-64 w-full flex-col justify-center rounded-sm bg-background sm:flex-row sm:p-2">
-          <div className="hidden aspect-[29/40] rounded-sm sm:block">
+      <ResponsiveModalContent className="h-min min-h-64 w-full flex-col justify-center rounded-sm bg-background p-0 sm:flex sm:max-w-2xl sm:flex-row sm:p-4 md:max-w-3xl lg:max-w-4xl">
+        <div className="hidden w-[500px] sm:block">
+          <div className="aspect-[29/40] rounded-sm sm:block">
             {currentItem.image ? (
               <Image
                 src={currentItem.image}
@@ -68,97 +67,156 @@ const AddItemModal = (props: Props) => {
               <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />
             )}
           </div>
-          <div className="flex w-full flex-col justify-between gap-4 p-6 sm:min-w-96">
-            <Header vtag="h4" className="leading-tight">
-              {currentItem.title}
-            </Header>
-            {[currentItem.year, ...currentItem.keywords].filter(Boolean)
-              .length ? (
-              <Paragraph>
-                {[currentItem.year, ...currentItem.keywords]
-                  .filter(Boolean)
-                  .filter((item) => String(item).split(" ").length === 1)
-                  .slice(0, 7)
-                  .join(" • ")}
-              </Paragraph>
-            ) : null}
+          {details.length ? (
+            <Paragraph className="m-4 line-clamp-6">
+              {details.join(" • ")}
+            </Paragraph>
+          ) : null}
+        </div>
+        <div className="flex w-full flex-col justify-between gap-4 p-6">
+          <Header vtag="h4" className="leading-tight">
+            {currentItem.title}
+          </Header>
 
-            <Separator />
-            <div className="flex w-full items-center justify-between gap-2">
-              <Paragraph>
-                <b>Status:</b>
-                {"   "}
-                {STATUS_NAMES[status]}
-              </Paragraph>
-              <div className="flex gap-2">
-                {Object.values(ItemStatus)
-                  .reverse()
-                  .map((s) => {
-                    const IconComponent = STATUS_ICONS[s];
-                    return (
-                      <Button
-                        key={s}
-                        size={"icon"}
-                        variant={status === s ? "default" : "secondary"}
-                        onClick={() => setStatus(s)}
-                      >
-                        <IconComponent size={16} />
-                      </Button>
-                    );
-                  })}
-              </div>
-            </div>
-            <Separator />
-            <div className="flex w-full flex-col items-start gap-2">
-              <div className="flex w-full items-center justify-between gap-2">
-                <Paragraph>
-                  <b>Rating:</b> {rating[0] ? rating[0] : "None"}
-                </Paragraph>
-                <Paragraph>
-                  {rating[0] ? RATING_NAMES[rating[0]] : "Don't know"}
-                </Paragraph>
-              </div>
-              <DualRangeSlider
-                // label={(value) => value}
-                value={rating}
-                onValueChange={setRating}
-                min={0}
-                max={10}
-                step={1}
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(submit)}
+              className="flex w-full flex-col justify-between gap-4"
+            >
+              <FormField
+                control={form.control}
+                name="status"
+                render={() => (
+                  <FormItem>
+                    <div className="flex w-full items-center justify-between gap-2">
+                      <Paragraph>
+                        <FormLabel>Status:</FormLabel>
+                        {"   "}
+                        {STATUS_NAMES[status]}
+                      </Paragraph>
+                      <div className="flex gap-2">
+                        {Object.values(ItemStatus)
+                          .reverse()
+                          .map((s) => {
+                            const IconComponent = STATUS_ICONS[s];
+                            return (
+                              <FormControl key={s}>
+                                <Button
+                                  size={"icon"}
+                                  variant={
+                                    status === s ? "default" : "secondary"
+                                  }
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    form.setValue("status", s);
+                                  }}
+                                >
+                                  <IconComponent size={16} />
+                                </Button>
+                              </FormControl>
+                            );
+                          })}
+                      </div>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <Separator />
-            <div className="flex w-full flex-col items-start gap-2">
-              <Paragraph>
-                <b>Add Comment</b>
-              </Paragraph>
-              <Paragraph>
-                <b>Title:</b>
-              </Paragraph>
-              <div className="w-full">
-                <Input
-                  value={commentTitle}
-                  onChange={(e) => setCommentTitle(e.target.value)}
-                  placeholder="1 Season"
-                  max={255}
-                />
-              </div>
-              <Paragraph>
-                <b>Description:</b>
-              </Paragraph>
-              <div className="w-full">
-                <AutosizeTextarea
-                  value={commentDescription}
-                  onChange={(e) => setCommentDescription(e.target.value)}
-                  placeholder="Good show, I liked it"
-                  maxHeight={200}
-                  maxLength={1000}
-                />
-              </div>
-            </div>
-            <Separator />
-            <Button onClick={submit}>Add to collection</Button>
-          </div>
+
+              <FormField
+                control={form.control}
+                name="rate"
+                render={() => (
+                  <FormItem>
+                    <div className="flex w-full flex-col items-start gap-2">
+                      <div className="flex w-full items-center justify-between gap-2">
+                        <Paragraph>
+                          <FormLabel>Rating:</FormLabel>
+                          {"   "}
+                          {rating}
+                        </Paragraph>
+                        <Paragraph>{RATING_NAMES[rating]}</Paragraph>
+                      </div>
+                      <DualRangeSlider
+                        value={[rating]}
+                        onValueChange={(value) =>
+                          form.setValue("rate", value[0] ?? 0)
+                        }
+                        min={0}
+                        max={10}
+                        step={1}
+                      />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Separator />
+
+              <FormField
+                control={form.control}
+                name="commentTitle"
+                render={() => (
+                  <FormItem>
+                    <div className="flex w-full flex-col items-start gap-2">
+                      <FormLabel>Сomment Title:</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="1 Season"
+                          max={255}
+                          onChange={(e) =>
+                            form.setValue(
+                              "commentTitle",
+                              e.target.value ? e.target.value : null,
+                            )
+                          }
+                          value={form.watch("commentTitle") ?? ""}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="commentDescription"
+                render={() => (
+                  <FormItem>
+                    <div className="flex w-full flex-col items-start gap-2">
+                      <FormLabel>Сomment Description:</FormLabel>
+                      <FormControl>
+                        <AutosizeTextarea
+                          placeholder="Good show, I liked it"
+                          maxHeight={200}
+                          maxLength={1000}
+                          onChange={(e) =>
+                            form.setValue(
+                              "commentDescription",
+                              e.target.value ? e.target.value : null,
+                            )
+                          }
+                          value={form.watch("commentDescription") ?? ""}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Separator />
+              <Button
+                className="w-full"
+                disabled={form.formState.isSubmitting}
+                type="submit"
+              >
+                Add to collection
+              </Button>
+            </form>
+          </Form>
         </div>
       </ResponsiveModalContent>
     </ResponsiveModal>

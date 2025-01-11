@@ -1,8 +1,20 @@
-import { type Dispatch, type SetStateAction, useState } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import type { SearchResultType } from "../../../../../server/api/modules/parse/types";
 import { ItemStatus } from "@prisma/client";
 import { api } from "../../../../../trpc/react";
 import { toast } from "sonner";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const formSchema = z.object({
+  commentTitle: z.string().min(1).max(255).nullable().optional(),
+  commentDescription: z.string().min(1).max(1000).nullable().optional(),
+  rate: z.number().int().min(0).max(10),
+  status: z.nativeEnum(ItemStatus),
+});
+
+type formDataType = z.infer<typeof formSchema>;
 
 type Props = {
   currentItem: SearchResultType | null;
@@ -15,13 +27,20 @@ export const useAddItemToCollection = (props: Props) => {
   const { currentCollectionId, currentItem, setCurrentItem, setSearchResults } =
     props;
 
-  const [commentTitle, setCommentTitle] = useState<string>("");
-  const [commentDescription, setCommentDescription] = useState<string>("");
-  const [rating, setRating] = useState<number[]>([0]);
-  const [status, setStatus] = useState<ItemStatus>(ItemStatus.NOTSTARTED);
   const { mutateAsync } = api.item.addToCollection.useMutation();
 
-  const submit = async () => {
+  const form = useForm<formDataType>({
+    resolver: zodResolver(formSchema),
+    mode: "onBlur",
+    defaultValues: {
+      commentTitle: null,
+      commentDescription: null,
+      rate: 0,
+      status: ItemStatus.NOTSTARTED,
+    },
+  });
+
+  const submit = async (data: formDataType) => {
     if (!currentItem) return;
 
     if (currentItem.id) {
@@ -29,19 +48,21 @@ export const useAddItemToCollection = (props: Props) => {
       setCurrentItem(null);
       return;
     }
-
-    const promise = mutateAsync({
-      collectionId: currentCollectionId,
-      rate: rating[0] ?? 0,
+    const { commentTitle, commentDescription, rate, status } = data;
+    const formData = {
       status,
+      rate,
+      collectionId: currentCollectionId,
       parsedId: currentItem.parsedId,
-      ...(commentTitle && {
+      ...((commentTitle || commentDescription) && {
         comment: {
           title: commentTitle,
           description: commentDescription,
         },
       }),
-    });
+    };
+
+    const promise = mutateAsync(formData);
 
     setCurrentItem(null);
     setSearchResults((prev) =>
@@ -58,14 +79,7 @@ export const useAddItemToCollection = (props: Props) => {
   };
 
   return {
-    rating,
-    setRating,
-    status,
-    setStatus,
-    commentTitle,
-    setCommentTitle,
-    commentDescription,
-    setCommentDescription,
+    form,
     submit,
   };
 };
