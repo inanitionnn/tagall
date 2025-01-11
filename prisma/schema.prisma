@@ -91,6 +91,7 @@ model Collection {
 
     items       Item[]
     fieldGroups FieldGroup[]
+    tags        Tag[]
 
     @@index([priority, id])
 }
@@ -183,12 +184,12 @@ model Field {
 model Tag {
     id String @id @default(cuid())
 
-    name     String
-    priority Int    @default(0)
+    name String
 
     user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId      String
     userToItems UserToItem[]
+    collections Collection[]
 
-    @@index([priority, id])
+    @@index([name])
 }
