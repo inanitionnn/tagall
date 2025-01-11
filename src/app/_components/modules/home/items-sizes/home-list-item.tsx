@@ -1,77 +1,64 @@
-import { Badge, Header, Paragraph } from "../../../ui";
+import { Header, Paragraph } from "../../../ui";
 import type { ItemType } from "../../../../../server/api/modules/item/types";
 import {
   RATING_NAMES,
   STATUS_ICONS,
   STATUS_NAMES,
 } from "../../../../../constants";
-import CloudinaryImage from "../../../shared/cloudinary-image";
 
 type Props = {
   item: ItemType;
+  index: number;
 };
 
 const HomeListItem = (props: Props) => {
-  const { item } = props;
+  const { item, index } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
-    <div className="flex h-36 w-full cursor-pointer gap-2 rounded-sm bg-background p-2 shadow sm:h-20">
-      <div className="aspect-[29/40]">
-        {item.image ? (
-          <CloudinaryImage publicId={item.image} />
-        ) : (
-          <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />
-        )}
+    <>
+      <div className="group flex w-full cursor-pointer gap-6">
+        <Paragraph className="min-w-8 font-medium leading-tight text-muted-foreground group-hover:font-bold group-hover:text-primary">
+          {index}.
+        </Paragraph>
+
+        <Paragraph className="hidden min-w-14 font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary md:block">
+          {item.collection}
+        </Paragraph>
+
+        <Paragraph className="hidden font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary sm:block">
+          {item.year}
+        </Paragraph>
+
+        <Header
+          vtag="h6"
+          className="line-clamp-2 w-full min-w-64 leading-tight"
+        >
+          {item.title}
+        </Header>
+
+        <div className="hidden min-w-32 items-center justify-end gap-2 lg:flex">
+          <Paragraph className="font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary">
+            {STATUS_NAMES[item.status]}
+          </Paragraph>
+          |
+          <ItemStatusIcon className="size-4 stroke-muted-foreground stroke-2 group-hover:stroke-primary group-hover:stroke-[2.5px]" />
+        </div>
+
+        <div className="hidden min-w-32 items-center justify-end gap-2 lg:flex">
+          <Paragraph className="font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary">
+            {item.rate ? RATING_NAMES[item.rate] : "None"}
+          </Paragraph>
+          |
+          <Paragraph className="min-w-4 text-end font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary">
+            {item.rate ?? 0}
+          </Paragraph>
+        </div>
+
+        <Paragraph className="hidden min-w-32 text-end font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary xl:block">
+          {item.timeAgo}
+        </Paragraph>
       </div>
-      <div className="flex w-full flex-col justify-between gap-2 sm:flex-row sm:items-center">
-        <div className="flex flex-col xl:min-w-[300px] xl:max-w-[300px]">
-          <Header vtag="h6" className="line-clamp-3 leading-tight">
-            {item.title}
-          </Header>
-          <Header
-            vtag="h6"
-            className="font-bold leading-tight text-muted-foreground"
-          >
-            {[item.collection, item.year].join(" • ")}
-          </Header>
-        </div>
-
-        <div className="hidden w-full gap-2 xl:flex xl:flex-wrap">
-          {item.fieldGroups
-            .find((g) => g.name === "genres")
-            ?.fields.filter((f) => f.split(" ").length < 2)
-            .slice(0, 4)
-            .map((f) => (
-              <Badge key={f} className="px-2 py-0.5 text-sm">
-                {f}
-              </Badge>
-            ))}
-        </div>
-
-        <div className="flex w-min items-center justify-center gap-4">
-          <div className="flex w-24 flex-col items-center">
-            <ItemStatusIcon className="size-5 stroke-[2.5px]" />
-            <Paragraph className="font-medium text-muted-foreground">
-              {STATUS_NAMES[item.status]}
-            </Paragraph>
-          </div>
-
-          <div className="flex w-24 flex-col items-center">
-            <Paragraph className="font-bold">{item.rate}</Paragraph>
-            <Paragraph className="font-medium text-muted-foreground">
-              {item.rate ? RATING_NAMES[item.rate] : "None"}
-            </Paragraph>
-          </div>
-
-          <div className="hidden w-32 flex-col items-center lg:flex">
-            <Paragraph className="font-bold">{item.timeAgo}</Paragraph>
-            <Paragraph className="font-medium text-muted-foreground">
-              {item.updatedAt.toLocaleDateString()}
-            </Paragraph>
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

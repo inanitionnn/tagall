@@ -24,9 +24,9 @@ function HomeContainer() {
   const DEBOUNCE = 400;
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [itemsSize, setItemsSize] = useState<"small" | "medium" | "list">(
-    "small",
-  );
+  const [itemsSize, setItemsSize] = useState<
+    "small" | "medium" | "list" | "large"
+  >("medium");
   const [sorting, setSorting] = useState<GetUserItemsSortType>({
     type: "desc",
     name: "date",
