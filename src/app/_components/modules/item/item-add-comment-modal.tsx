@@ -45,7 +45,7 @@ const ItemAddCommentModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <div className="flex cursor-pointer rounded-md bg-background p-4 shadow transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-md">
+        <div className="flex cursor-pointer rounded-md bg-background p-4 shadow transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg">
           <Header vtag="h6">Add comment</Header>
         </div>
       </ResponsiveModalTrigger>

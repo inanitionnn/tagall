@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 
 const HomeNoItemsCard = () => {
   return (
-    <div className="flex max-w-xl flex-col gap-6 rounded-lg bg-white p-8 shadow-md">
+    <div className="flex max-w-xl flex-col gap-6 rounded-lg bg-white p-8 shadow">
       <Header vtag="h4">Your collection is currently empty!</Header>
 
       <Paragraph>

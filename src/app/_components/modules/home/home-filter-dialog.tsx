@@ -69,7 +69,7 @@ const HomeFilterDialog = (props: Props) => {
     <>
       <ResponsiveModal>
         <ResponsiveModalTrigger asChild>
-          <div className="inline-flex w-min items-center justify-center gap-2 rounded-md bg-background p-2 text-muted-foreground shadow">
+          <div className="inline-flex w-min items-center justify-center gap-2 rounded-md border border-zinc-300 bg-background p-2 text-muted-foreground shadow focus:border-primary dark:border-zinc-700">
             <Button size={"icon"} variant={"ghost"}>
               <SlidersHorizontal />
             </Button>

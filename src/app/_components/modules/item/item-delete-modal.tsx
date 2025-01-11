@@ -26,7 +26,7 @@ const ItemDeleteModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <div className="flex cursor-pointer items-center gap-2 rounded-md bg-background p-4 shadow transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-md">
+        <div className="flex cursor-pointer items-center gap-2 rounded-md bg-background p-4 shadow transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg">
           <Header vtag="h6" className="text-destructive">
             Delete from collection
           </Header>
