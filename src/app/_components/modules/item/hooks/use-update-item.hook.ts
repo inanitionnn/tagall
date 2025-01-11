@@ -1,8 +1,18 @@
 import { type Dispatch, type SetStateAction, useState } from "react";
-import type { ItemStatus } from "@prisma/client";
+import { ItemStatus } from "@prisma/client";
 import { api } from "../../../../../trpc/react";
 import { toast } from "sonner";
 import type { ItemType } from "../../../../../server/api/modules/item/types";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const formSchema = z.object({
+  rate: z.number().int().min(0).max(10),
+  status: z.nativeEnum(ItemStatus),
+});
+
+type formDataType = z.infer<typeof formSchema>;
 
 type Props = {
   item: ItemType;
@@ -11,30 +21,34 @@ type Props = {
 
 export const useUpdateItem = (props: Props) => {
   const { item, setOpen } = props;
-  const [rating, setRating] = useState<number[]>([item.rate ?? 0]);
-  const [status, setStatus] = useState<ItemStatus>(item.status);
   const { mutateAsync } = api.item.updateItem.useMutation();
 
   const utils = api.useUtils();
 
-  const submit = async () => {
-    const promise = mutateAsync(
-      {
-        rate: rating[0] ?? 0,
-        status,
-        id: item.id,
+  const form = useForm<formDataType>({
+    resolver: zodResolver(formSchema),
+    mode: "onBlur",
+    defaultValues: {
+      rate: item.rate ?? 0,
+      status: item.status,
+    },
+  });
+
+  const submit = async (data: formDataType) => {
+    const formData = {
+      ...data,
+      id: item.id,
+    };
+    const promise = mutateAsync(formData, {
+      onSuccess: () => {
+        utils.item.invalidate();
       },
-      {
-        onSuccess: () => {
-          utils.item.invalidate();
-        },
-      },
-    );
+    });
 
     setOpen(false);
 
-    item.rate = rating[0] ?? 0;
-    item.status = status;
+    item.rate = data.rate;
+    item.status = data.status;
 
     toast.promise(promise, {
       loading: `Updating ${item.title}...`,
@@ -44,10 +58,7 @@ export const useUpdateItem = (props: Props) => {
   };
 
   return {
-    rating,
-    setRating,
-    status,
-    setStatus,
+    form,
     submit,
   };
 };

@@ -11,13 +11,15 @@ const formSchema = z
   .object({
     title: z.string().min(1).max(255).nullable().optional(),
     description: z.string().min(1).max(1000).nullable().optional(),
-    rate: z.number().int().min(0).max(10).optional(),
-    status: z.nativeEnum(ItemStatus).optional(),
+    rate: z.number().int().min(0).max(10),
+    status: z.nativeEnum(ItemStatus),
   })
   .refine((data) => data.title || data.description, {
     message: "Either title or description must be provided.",
     path: ["title"],
   });
+
+type formDataType = z.infer<typeof formSchema>;
 
 type Props = {
   comment: NonNullable<ItemType["comments"]>[number];
@@ -30,7 +32,7 @@ export const useUpdateComment = (props: Props) => {
 
   const utils = api.useUtils();
 
-  const form = useForm({
+  const form = useForm<formDataType>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
     defaultValues: {
@@ -41,7 +43,7 @@ export const useUpdateComment = (props: Props) => {
     },
   });
 
-  const submit = async (data: z.infer<typeof formSchema>) => {
+  const submit = async (data: formDataType) => {
     const formData = {
       ...data,
       id: comment.id,

@@ -9,7 +9,12 @@ import {
   ResponsiveModal,
   ResponsiveModalContent,
   ResponsiveModalTrigger,
-  Separator,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "../../ui";
 import { useState } from "react";
 import {
@@ -29,20 +34,13 @@ const ItemAddCommentModal = (props: Props) => {
   const { item } = props;
   const [open, setOpen] = useState(false);
 
-  const {
-    description,
-    rating,
-    setDescription,
-    setRating,
-    status,
-    setStatus,
-    setTitle,
-    submit,
-    title,
-  } = useAddComment({
+  const { form, submit } = useAddComment({
     item,
     setOpen,
   });
+
+  const status = form.watch("status");
+  const rating = form.watch("rate");
 
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
@@ -52,89 +50,130 @@ const ItemAddCommentModal = (props: Props) => {
         </div>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="p-0 sm:max-w-xl md:max-w-xl lg:max-w-xl">
-        <div className="flex w-full flex-col justify-center rounded-sm bg-background p-2">
-          <div className="flex w-full flex-col justify-between gap-4 p-6 sm:min-w-96">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(submit)}
+            className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-8 sm:min-w-96"
+          >
             <Header vtag="h4" className="leading-tight">
-              Add new comment
+              Add comment
             </Header>
-            <Separator />
-            <div className="flex w-full flex-col items-start gap-2">
-              <Paragraph>
-                <b>Title:</b>
-              </Paragraph>
-              <div className="w-full">
-                <Input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="1 Season"
-                  max={255}
-                />
-              </div>
-            </div>
-            <Separator />
-            <div className="flex w-full flex-col items-start gap-2">
-              <Paragraph>
-                <b>Description:</b>
-              </Paragraph>
-              <div className="w-full">
-                <AutosizeTextarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Good show, I liked it"
-                  maxHeight={200}
-                  maxLength={1000}
-                />
-              </div>
-            </div>
-            <Separator />
-            <div className="flex w-full items-center justify-between gap-2">
-              <Paragraph>
-                <b>Status:</b>
-                {"   "}
-                {STATUS_NAMES[status]}
-              </Paragraph>
-              <div className="flex gap-2">
-                {Object.values(ItemStatus)
-                  .reverse()
-                  .map((s) => {
-                    const IconComponent = STATUS_ICONS[s];
-                    return (
-                      <Button
-                        key={s}
-                        size={"icon"}
-                        variant={status === s ? "default" : "secondary"}
-                        onClick={() => setStatus(s)}
-                      >
-                        <IconComponent size={16} />
-                      </Button>
-                    );
-                  })}
-              </div>
-            </div>
-            <Separator />
-            <div className="flex w-full flex-col items-start gap-2">
-              <div className="flex w-full items-center justify-between gap-2">
-                <Paragraph>
-                  <b>Rating:</b> {rating[0] ? rating[0] : "None"}
-                </Paragraph>
-                <Paragraph>
-                  {rating[0] ? RATING_NAMES[rating[0]] : "Don't know"}
-                </Paragraph>
-              </div>
-              <DualRangeSlider
-                // label={(value) => value}
-                value={rating}
-                onValueChange={setRating}
-                min={0}
-                max={10}
-                step={1}
-              />
-            </div>
-            <Separator />
+            <FormField
+              control={form.control}
+              name="title"
+              render={() => (
+                <FormItem>
+                  <div className="flex w-full flex-col items-start gap-2">
+                    <FormLabel>Title:</FormLabel>
+                    <FormControl>
+                      <Input
+                        autoFocus
+                        placeholder="1 Season"
+                        max={255}
+                        {...form.register("title")}
+                      />
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={() => (
+                <FormItem>
+                  <div className="flex w-full flex-col items-start gap-2">
+                    <FormLabel>Description:</FormLabel>
+                    <FormControl>
+                      <AutosizeTextarea
+                        placeholder="Good show, I liked it"
+                        maxHeight={200}
+                        maxLength={1000}
+                        onChange={(e) =>
+                          form.setValue(
+                            "description",
+                            e.target.value ? e.target.value : null,
+                          )
+                        }
+                        value={form.watch("description") ?? ""}
+                      />
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="status"
+              render={() => (
+                <FormItem>
+                  <div className="flex w-full items-center justify-between gap-2">
+                    <Paragraph>
+                      <FormLabel>Status:</FormLabel>
+                      {"   "}
+                      {STATUS_NAMES[status]}
+                    </Paragraph>
+                    <div className="flex gap-2">
+                      {Object.values(ItemStatus)
+                        .reverse()
+                        .map((s) => {
+                          const IconComponent = STATUS_ICONS[s];
+                          return (
+                            <FormControl key={s}>
+                              <Button
+                                size={"icon"}
+                                variant={status === s ? "default" : "secondary"}
+                                onClick={() => form.setValue("status", s)}
+                              >
+                                <IconComponent size={16} />
+                              </Button>
+                            </FormControl>
+                          );
+                        })}
+                    </div>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="rate"
+              render={() => (
+                <FormItem>
+                  <div className="flex w-full flex-col items-start gap-2">
+                    <div className="flex w-full items-center justify-between gap-2">
+                      <Paragraph>
+                        <FormLabel>Rating:</FormLabel>
+                        {"   "}
+                        {rating}
+                      </Paragraph>
+                      <Paragraph>{RATING_NAMES[rating]}</Paragraph>
+                    </div>
 
-            <Button onClick={submit}>Add to collection</Button>
-          </div>
-        </div>
+                    <DualRangeSlider
+                      // label={(value) => value}
+                      value={[rating]}
+                      onValueChange={(value) =>
+                        form.setValue("rate", value[0] ?? 0)
+                      }
+                      min={0}
+                      max={10}
+                      step={1}
+                    />
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button className="w-full" disabled={form.formState.isSubmitting}>
+              Add comment
+            </Button>
+          </form>
+        </Form>
       </ResponsiveModalContent>
     </ResponsiveModal>
   );
