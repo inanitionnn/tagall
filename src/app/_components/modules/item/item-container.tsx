@@ -30,7 +30,7 @@ function ItemContainer(props: Props) {
             <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />
           )}
         </div>
-        <div className="flex h-full flex-col gap-2 rounded-md border border-zinc-300 bg-background p-8 shadow focus:border-primary dark:border-zinc-700">
+        <div className="flex h-full flex-col gap-2 rounded-lg border border-zinc-300 bg-background p-8 shadow focus:border-primary dark:border-zinc-700">
           <Header vtag="h4">{item.title}</Header>
           <Paragraph className="text-muted-foreground">
             {item.description}
@@ -48,7 +48,7 @@ function ItemContainer(props: Props) {
             ))}
           </div>
 
-          <div className="flex flex-col gap-2 rounded-md border border-zinc-300 bg-background p-4 shadow focus:border-primary dark:border-zinc-700 md:w-64">
+          <div className="flex flex-col gap-2 rounded-lg border border-zinc-300 bg-background p-4 shadow focus:border-primary dark:border-zinc-700 md:w-64">
             <div className="flex flex-col">
               <Header vtag="h6">Year:</Header>
               <Paragraph className="text-muted-foreground">

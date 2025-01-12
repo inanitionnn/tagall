@@ -6,6 +6,7 @@ import {
   STATUS_NAMES,
 } from "../../../../../constants";
 import CloudinaryImage from "../../../shared/cloudinary-image";
+import Container from "../../../shared/container";
 
 type Props = {
   item: ItemType;
@@ -15,7 +16,7 @@ const HomeSmallItem = (props: Props) => {
   const { item } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
-    <div className="flex h-36 w-full cursor-pointer gap-2 rounded-sm bg-background p-2 shadow sm:h-20">
+    <Container className="h-36 cursor-pointer hover:scale-105 sm:h-20">
       <div className="aspect-[29/40]">
         {item.image ? (
           <CloudinaryImage publicId={item.image} />
@@ -71,7 +72,7 @@ const HomeSmallItem = (props: Props) => {
           </div>
         </div>
       </div>
-    </div>
+    </Container>
   );
 };
 

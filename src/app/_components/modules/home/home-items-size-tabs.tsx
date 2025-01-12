@@ -1,6 +1,7 @@
 import React, { type Dispatch, type SetStateAction } from "react";
 import { Button } from "../../ui";
 import { Grid2x2, Grid3x3, Rows3, TableProperties } from "lucide-react";
+import Container from "../../shared/container";
 
 type Props = {
   itemsSize: "medium" | "list" | "small" | "large";
@@ -10,7 +11,7 @@ type Props = {
 const HomeItemsSizeTabs = (props: Props) => {
   const { itemsSize, setItemsSize } = props;
   return (
-    <div className="inline-flex w-min items-center justify-center gap-2 rounded-md border border-zinc-300 bg-background p-2 text-muted-foreground shadow focus:border-primary dark:border-zinc-700">
+    <Container>
       <Button
         onClick={() => setItemsSize("medium")}
         size={"icon"}
@@ -39,7 +40,7 @@ const HomeItemsSizeTabs = (props: Props) => {
       >
         <Rows3 />
       </Button>
-    </div>
+    </Container>
   );
 };
 

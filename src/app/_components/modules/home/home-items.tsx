@@ -8,6 +8,7 @@ import {
   HomeMediumItem,
   HomeSmallItem,
 } from "./items-sizes";
+import Container from "../../shared/container";
 
 type Props = {
   itemsSize: "small" | "medium" | "list" | "large";
@@ -38,13 +39,13 @@ const HomeItems = (props: Props) => {
         </div>
       )}
       {itemsSize === "list" && (
-        <div className="mx-auto grid w-full max-w-screen-xl grid-cols-1 gap-y-1 rounded-sm bg-background p-8 shadow">
+        <Container className="mx-auto grid w-full max-w-screen-xl grid-cols-1 gap-y-1 p-8">
           {items.map((item, index) => (
             <Link key={item.id} href={`/item/${item.id}`} target="_blank">
               <HomeListItem index={index} key={item.id} item={item} />
             </Link>
           ))}
-        </div>
+        </Container>
       )}
       {itemsSize === "large" && (
         <div className="mx-auto grid max-w-screen-2xl grid-cols-1 gap-x-4 gap-y-6 xl:grid-cols-2">

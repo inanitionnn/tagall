@@ -129,7 +129,6 @@ function HomeContainer() {
         hasMore={hasMore}
         isLoading={isLoading}
         next={() => setPage((prev) => prev + 1)}
-        threshold={1}
       >
         {hasMore && (
           <div className="flex w-full items-center justify-center gap-6">

@@ -3,6 +3,7 @@ import { Header, Paragraph } from "../../ui";
 import type { Dispatch, SetStateAction } from "react";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { cn } from "../../../../lib";
+import Container from "../../shared/container";
 
 type Props = {
   searchResult: SearchResultType;
@@ -13,14 +14,10 @@ const AddSearchResultItem = (props: Props) => {
   const { searchResult, setCurrentItem } = props;
 
   return (
-    <div
-      className={cn(
-        "relative flex h-64 cursor-pointer flex-col gap-2 rounded-sm bg-background p-4 shadow sm:flex-row",
-        {
-          "transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg":
-            !searchResult.id,
-        },
-      )}
+    <Container
+      className={cn("relative h-64 cursor-pointer flex-col p-4 sm:flex-row", {
+        "hover:scale-105": !searchResult.id,
+      })}
       onClick={() => {
         if (!searchResult.id) {
           setCurrentItem(() => searchResult);
@@ -71,7 +68,7 @@ const AddSearchResultItem = (props: Props) => {
           </Paragraph>
         </div>
       </div>
-    </div>
+    </Container>
   );
 };
 

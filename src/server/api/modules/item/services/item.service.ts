@@ -367,6 +367,7 @@ export async function GetUserItems(props: {
     }),
 
     include: {
+      tags: true,
       item: {
         select: {
           id: true,
@@ -379,7 +380,7 @@ export async function GetUserItems(props: {
               name: true,
             },
           },
-          fields: true,
+          // fields: true,
         },
       },
     },
@@ -388,7 +389,7 @@ export async function GetUserItems(props: {
     skip: (page - 1) * limit,
   });
 
-  const FieldIdToFieldGroupIdMap = await getFieldIdToFieldGroupIdMap(ctx);
+  // const FieldIdToFieldGroupIdMap = await getFieldIdToFieldGroupIdMap(ctx);
 
   const items = userItems.map((userItems) => ({
     id: userItems.item.id,
@@ -401,11 +402,16 @@ export async function GetUserItems(props: {
     timeAgo: dateToTimeAgoString(userItems.updatedAt),
     updatedAt: userItems.updatedAt,
     collection: userItems.item.collection.name,
-    fieldGroups: FieldsToGroupedFields(
-      userItems.item.fields,
-      FieldIdToFieldGroupIdMap,
-    ),
+    tags: userItems.tags.map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+    })),
+    // fieldGroups: FieldsToGroupedFields(
+    //   userItems.item.fields,
+    //   FieldIdToFieldGroupIdMap,
+    // ),
   }));
+
   return items;
 }
 
@@ -438,6 +444,7 @@ export async function GetUserItem(props: {
           fields: true,
         },
       },
+      tags: true,
       itemComments: {
         orderBy: {
           createdAt: "desc",
@@ -467,6 +474,10 @@ export async function GetUserItem(props: {
       userItem.item.fields,
       FieldIdToFieldGroupIdMap,
     ),
+    tags: userItem.tags.map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+    })),
     comments: userItem.itemComments.map((comment) => ({
       id: comment.id,
       title: comment.title,

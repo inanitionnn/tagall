@@ -16,6 +16,7 @@ import {
 import { useState } from "react";
 import { useAddTag } from "./hooks/use-add-tag.hook";
 import type { CollectionType } from "../../../../server/api/modules/collection/types";
+import Container from "../../shared/container";
 
 type Props = {
   collections: CollectionType[];
@@ -34,9 +35,9 @@ const TagAddModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <div className="inline-flex w-min items-center justify-center gap-2 rounded-md border border-zinc-300 bg-background p-2 shadow focus:border-primary dark:border-zinc-700">
+        <Container className="w-min">
           <Button variant={"ghost"}>Add tag</Button>
-        </div>
+        </Container>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="p-0 sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>
@@ -53,7 +54,7 @@ const TagAddModal = (props: Props) => {
               render={() => (
                 <FormItem>
                   <div className="flex w-full flex-col items-start gap-2">
-                    <FormLabel>name:</FormLabel>
+                    <FormLabel>Name:</FormLabel>
                     <FormControl>
                       <Input
                         autoFocus

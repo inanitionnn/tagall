@@ -11,9 +11,13 @@ export type ItemType = {
   collection: string;
   timeAgo: string;
   updatedAt: Date;
-  fieldGroups: {
+  fieldGroups?: {
     name: string;
     fields: string[];
+  }[];
+  tags: {
+    id: string;
+    name: string;
   }[];
   comments?: {
     id: string;

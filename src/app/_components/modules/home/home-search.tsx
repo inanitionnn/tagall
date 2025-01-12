@@ -18,12 +18,12 @@ function HomeSearch(props: Props) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search elements..."
-        className="w-full rounded-md border border-zinc-300 px-4 py-2 pr-10 shadow focus:border-primary focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+        className="w-full rounded-lg border border-input p-4 pr-10 shadow focus:border-primary focus:outline-none"
       />
       {isLoading ? (
-        <Spinner className="absolute right-3 top-3 h-5 w-5 text-zinc-400 dark:text-zinc-500" />
+        <Spinner className="absolute right-3 top-3 h-5 w-5 text-zinc-400" />
       ) : (
-        <Search className="absolute right-3 top-1/2 z-30 h-5 w-5 -translate-y-1/2 cursor-pointer text-zinc-400 dark:text-zinc-500" />
+        <Search className="absolute right-3 top-1/2 z-30 h-5 w-5 -translate-y-1/2 cursor-pointer text-zinc-400" />
       )}
     </div>
   );

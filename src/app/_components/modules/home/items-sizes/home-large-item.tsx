@@ -1,4 +1,4 @@
-import { Badge, Header, Paragraph } from "../../../ui";
+import { Header, Paragraph } from "../../../ui";
 import type { ItemType } from "../../../../../server/api/modules/item/types";
 import {
   RATING_NAMES,
@@ -6,6 +6,7 @@ import {
   STATUS_NAMES,
 } from "../../../../../constants";
 import CloudinaryImage from "../../../shared/cloudinary-image";
+import Container from "../../../shared/container";
 
 type Props = {
   item: ItemType;
@@ -15,7 +16,7 @@ const HomeLargeItem = (props: Props) => {
   const { item } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
-    <div className="flex h-36 w-full cursor-pointer gap-2 rounded-sm bg-background shadow sm:h-64">
+    <Container className="h-36 cursor-pointer hover:scale-105 sm:h-64">
       <div className="aspect-[29/40]">
         {item.image ? (
           <CloudinaryImage publicId={item.image} className="rounded-l-sm" />
@@ -42,7 +43,7 @@ const HomeLargeItem = (props: Props) => {
           {item.description}
         </Paragraph>
 
-        <div className="hidden flex-wrap gap-2 sm:flex">
+        {/* <div className="hidden flex-wrap gap-2 sm:flex">
           {item.fieldGroups
             .find((g) => g.name === "genres")
             ?.fields.filter((f) => f.split(" ").length < 2)
@@ -52,7 +53,7 @@ const HomeLargeItem = (props: Props) => {
                 {f}
               </Badge>
             ))}
-        </div>
+        </div> */}
         <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2">
             {item.rate ? (
@@ -79,7 +80,7 @@ const HomeLargeItem = (props: Props) => {
           </div>
         </div>
       </div>
-    </div>
+    </Container>
   );
 };
 

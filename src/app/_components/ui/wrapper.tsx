@@ -9,7 +9,7 @@ const Wrapper = forwardRef<HTMLDivElement, Props>((props, ref) => {
     <div
       ref={ref}
       className={cn(
-        "flex w-full flex-col gap-4 rounded-md border p-6",
+        "flex w-full flex-col gap-4 rounded-lg border p-6",
         className,
       )}
       {...restProps}

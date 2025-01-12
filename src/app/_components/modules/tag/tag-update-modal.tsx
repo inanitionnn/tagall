@@ -20,6 +20,7 @@ import type { TagType } from "../../../../server/api/modules/tag/types/tag.type"
 import { useUpdateTag } from "./hooks/use-update-tag.hook";
 import type { CollectionType } from "../../../../server/api/modules/collection/types";
 import { useDeleteTag } from "./hooks/use-delete-tag.hook";
+import Container from "../../shared/container";
 
 type Props = {
   tag: TagType;
@@ -44,7 +45,7 @@ const TagUpdateModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <div className="flex cursor-pointer flex-col gap-4 rounded-md border border-zinc-300 bg-background p-4 shadow focus:border-primary dark:border-zinc-700">
+        <Container className="cursor-pointer flex-col gap-4 p-4 hover:scale-105">
           <div className="flex items-center justify-between">
             <Header vtag="h5" className="leading-tight">
               {tag.name}
@@ -64,7 +65,7 @@ const TagUpdateModal = (props: Props) => {
               </Badge>
             ))}
           </div>
-        </div>
+        </Container>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="p-0 sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>

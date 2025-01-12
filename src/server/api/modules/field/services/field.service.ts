@@ -35,6 +35,9 @@ export const GetFilterFields = async (props: {
             },
           },
         }),
+        orderBy: {
+          value: "asc",
+        },
         select: {
           id: true,
           value: true,

@@ -13,6 +13,7 @@ import { STATUS_NAMES } from "../../../../constants";
 import { Search, SlidersHorizontal } from "lucide-react";
 import type { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
 import type { ItemStatus } from "@prisma/client";
+import Container from "../../shared/container";
 
 type Props = {
   searchFilter: string;
@@ -69,11 +70,11 @@ const HomeFilterDialog = (props: Props) => {
     <>
       <ResponsiveModal>
         <ResponsiveModalTrigger asChild>
-          <div className="inline-flex w-min items-center justify-center gap-2 rounded-md border border-zinc-300 bg-background p-2 text-muted-foreground shadow focus:border-primary dark:border-zinc-700">
+          <Container>
             <Button size={"icon"} variant={"ghost"}>
               <SlidersHorizontal />
             </Button>
-          </div>
+          </Container>
         </ResponsiveModalTrigger>
         <ResponsiveModalContent className="p-4 sm:max-w-2xl md:max-w-2xl lg:max-w-3xl [&>button]:hidden">
           <ScrollArea type="always" className="max-h-[95%]">
@@ -94,7 +95,7 @@ const HomeFilterDialog = (props: Props) => {
                   value={searchFilter}
                   onChange={(e) => setSearchFilter(e.target.value)}
                   placeholder="Search..."
-                  className="w-full rounded-md border border-zinc-300 px-4 py-2 pr-10 focus:border-primary focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                  className="w-full rounded-lg border border-zinc-300 px-4 py-2 pr-10 focus:border-primary focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
                 />
 
                 <Search className="absolute right-3 top-1/2 z-30 h-5 w-5 -translate-y-1/2 cursor-pointer text-zinc-400 dark:text-zinc-500" />
