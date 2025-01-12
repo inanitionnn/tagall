@@ -9,6 +9,7 @@ import { ItemAddCommentModal } from "./item-add-comment-modal";
 import { ItemUpdateCommentModal } from "./item-update-comment-modal";
 import Container from "../../shared/container";
 import { ItemUpdateTagsModal } from "./item-update-tags-modal";
+import { useGetUserTags } from "../tag/hooks/use-get-user-tags.hook";
 
 type Props = {
   itemId: string;
@@ -22,7 +23,9 @@ function ItemContainer(props: Props) {
     redirect("/");
   }
 
-  const [tags] = api.tag.getUserTags.useSuspenseQuery([item.collectionId!]);
+  const { tags } = useGetUserTags({
+    collectionsIds: [item.collectionId!],
+  });
 
   return (
     <div className="flex max-w-screen-2xl flex-col gap-4 p-8">
