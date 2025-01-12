@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const formSchema = z.object({
   rate: z.number().int().min(0).max(10),
   status: z.nativeEnum(ItemStatus),
+  tagsIds: z.array(z.string().cuid()),
 });
 
 type formDataType = z.infer<typeof formSchema>;
@@ -31,6 +32,7 @@ export const useUpdateItem = (props: Props) => {
     defaultValues: {
       rate: item.rate ?? 0,
       status: item.status,
+      tagsIds: item.tags.map((tag) => tag.id),
     },
   });
 
@@ -39,6 +41,7 @@ export const useUpdateItem = (props: Props) => {
       ...data,
       id: item.id,
     };
+
     const promise = mutateAsync(formData, {
       onSuccess: () => {
         utils.item.invalidate();

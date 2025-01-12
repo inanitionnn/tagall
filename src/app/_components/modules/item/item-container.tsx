@@ -8,6 +8,7 @@ import { ItemDeleteModal } from "./item-delete-modal";
 import { ItemAddCommentModal } from "./item-add-comment-modal";
 import { ItemUpdateCommentModal } from "./item-update-comment-modal";
 import Container from "../../shared/container";
+import { ItemUpdateTagsModal } from "./item-update-tags-modal";
 
 type Props = {
   itemId: string;
@@ -20,6 +21,8 @@ function ItemContainer(props: Props) {
   if (!item) {
     redirect("/");
   }
+
+  const [tags] = api.tag.getUserTags.useSuspenseQuery([item.collectionId!]);
 
   return (
     <div className="flex max-w-screen-2xl flex-col gap-4 p-8">
@@ -38,7 +41,6 @@ function ItemContainer(props: Props) {
 
           <ItemUpdateModal item={item} />
           <ItemAddCommentModal item={item} />
-          <ItemAddCommentModal item={item} />
         </div>
 
         <div className="flex w-full flex-col gap-4">
@@ -48,14 +50,8 @@ function ItemContainer(props: Props) {
               {item.description}
             </Paragraph>
           </Container>
-          {item.tags.length ? (
-            <Container className="flex-col p-4">
-              <Header vtag="h6">Tags:</Header>
-              <Paragraph className="text-muted-foreground">
-                {item.tags.map((tag) => tag.name).join(", ")}
-              </Paragraph>
-            </Container>
-          ) : null}
+
+          <ItemUpdateTagsModal tags={tags} item={item} />
 
           {item.comments?.map((comment, index) => (
             <ItemUpdateCommentModal comment={comment} key={index} />

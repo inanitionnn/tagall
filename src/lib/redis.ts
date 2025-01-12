@@ -22,9 +22,10 @@ export async function getOrSetCache<T>(
 
 export async function deleteCacheByPrefix(keyPrefix: string) {
   let cursor = 0;
+
   do {
     const [nextCursor, keys] = await redis.scan(cursor, {
-      match: `${keyPrefix}:*`,
+      match: `${keyPrefix}*`,
       count: 100,
     });
 
