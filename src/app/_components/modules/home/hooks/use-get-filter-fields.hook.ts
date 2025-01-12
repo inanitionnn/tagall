@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../../../../../trpc/react";
 import { toast } from "sonner";
+import type { FilterFieldsType } from "../../../../../server/api/modules/field/types";
 
 type Props = {
   collectionsIds: string[];
@@ -10,15 +11,7 @@ export const useGetFilterFields = (props: Props) => {
   const { collectionsIds } = props;
 
   const [filterFieldGroups, setFilterFieldGroups] = useState<
-    {
-      fields: {
-        value: string;
-        id: string;
-      }[];
-      id: string;
-      name: string;
-      priority: number;
-    }[]
+    FilterFieldsType[]
   >([]);
 
   const { data, isLoading, error, refetch } =

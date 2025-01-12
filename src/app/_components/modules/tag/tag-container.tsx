@@ -9,7 +9,7 @@ import { TagUpdateModal } from "./tag-update-modal";
 import { useGetUserTags } from "./hooks/use-get-user-tags.hook";
 
 function TagContainer() {
-  const [collections] = api.collection.getUserCollections.useSuspenseQuery();
+  const [collections] = api.collection.getAll.useSuspenseQuery();
 
   const DEBOUNCE = 200;
 

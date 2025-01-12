@@ -13,6 +13,7 @@ import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../embedding/services";
 import { uploadImageByUrl } from "../../files/files.service";
 import { GetAnilistDetailsById } from "../../parse/services/anilist.service";
+import { deleteCacheByPrefix, getOrSetCache } from "../../../../../lib/redis";
 
 // #region private functions
 
@@ -242,6 +243,7 @@ export async function GetUserItems(props: {
   input: GetUserItemsInputType;
 }): Promise<ItemType[]> {
   const { ctx, input } = props;
+  const redisKey = `item:GetUserItems:${ctx.session.user.id}:${JSON.stringify(input)}`;
   const limit = input?.limit ?? 20;
   const page = input?.page ?? 1;
 
@@ -272,157 +274,153 @@ export async function GetUserItems(props: {
     .filter((filter) => filter.type === "exclude")
     .map((field) => field.fieldId);
 
-  const userItems = await ctx.db.userToItem.findMany({
-    where: {
-      userId: ctx.session.user.id,
-      ...((rateFromFilter ??
-        rateToFilter ??
-        input?.sorting?.name === "rate") && {
-        rate: {
-          ...(rateToFilter && {
-            lte: rateToFilter.value,
-          }),
-          ...(rateFromFilter && {
-            gte: rateFromFilter.value,
-          }),
-        },
-      }),
-      ...((statusIncludeFilter?.length ?? statusExcludeFilter?.length) && {
-        status: {
-          ...(statusIncludeFilter && {
-            in: statusIncludeFilter.map((filter) => filter.value),
-          }),
-          ...(statusExcludeFilter && {
-            notIn: statusExcludeFilter.map((filter) => filter.value),
-          }),
-        },
-      }),
+  const promise = ctx.db.userToItem
+    .findMany({
+      where: {
+        userId: ctx.session.user.id,
+        ...((rateFromFilter ??
+          rateToFilter ??
+          input?.sorting?.name === "rate") && {
+          rate: {
+            ...(rateToFilter && {
+              lte: rateToFilter.value,
+            }),
+            ...(rateFromFilter && {
+              gte: rateFromFilter.value,
+            }),
+          },
+        }),
+        ...((statusIncludeFilter?.length ?? statusExcludeFilter?.length) && {
+          status: {
+            ...(statusIncludeFilter && {
+              in: statusIncludeFilter.map((filter) => filter.value),
+            }),
+            ...(statusExcludeFilter && {
+              notIn: statusExcludeFilter.map((filter) => filter.value),
+            }),
+          },
+        }),
 
-      ...(input?.tagsIds?.length && {
-        tags: {
-          some: {
-            id: {
-              in: input.tagsIds,
+        ...(input?.tagsIds?.length && {
+          tags: {
+            some: {
+              id: {
+                in: input.tagsIds,
+              },
             },
           },
-        },
-      }),
+        }),
 
-      item: {
-        ...(input?.search && {
-          title: {
-            contains: input.search,
-            mode: "insensitive",
-          },
-        }),
-        ...(input?.collectionsIds?.length && {
-          collectionId: {
-            in: input?.collectionsIds,
-          },
-        }),
-        ...((yearFromFilter ?? yearToFilter) && {
-          year: {
-            ...(yearToFilter && {
-              lte: yearToFilter.value,
-            }),
-            ...(yearFromFilter && {
-              gte: yearFromFilter.value,
-            }),
-          },
-        }),
-        ...((includeFieldsIds.length || excludeFieldsIds.length) && {
-          fields: {
-            ...(includeFieldsIds.length && {
-              some: {
-                id: {
-                  in: includeFieldsIds,
-                },
-              },
-            }),
-            ...(excludeFieldsIds.length && {
-              none: {
-                id: {
-                  in: excludeFieldsIds,
-                },
-              },
-            }),
-          },
-        }),
-      },
-    },
-
-    ...(input?.sorting && {
-      orderBy: {
-        ...(input.sorting.name === "rate" && {
-          rate: {
-            sort: input.sorting.type,
-            nulls: "last",
-          },
-        }),
-        ...(input.sorting.name === "status" && {
-          status: input.sorting.type,
-        }),
-        ...(input.sorting.name === "date" && {
-          updatedAt: input.sorting.type,
-        }),
-        ...(input.sorting.name === "year" && {
-          item: {
+        item: {
+          ...(input?.search && {
+            title: {
+              contains: input.search,
+              mode: "insensitive",
+            },
+          }),
+          ...(input?.collectionsIds?.length && {
+            collectionId: {
+              in: input?.collectionsIds,
+            },
+          }),
+          ...((yearFromFilter ?? yearToFilter) && {
             year: {
+              ...(yearToFilter && {
+                lte: yearToFilter.value,
+              }),
+              ...(yearFromFilter && {
+                gte: yearFromFilter.value,
+              }),
+            },
+          }),
+          ...((includeFieldsIds.length || excludeFieldsIds.length) && {
+            fields: {
+              ...(includeFieldsIds.length && {
+                some: {
+                  id: {
+                    in: includeFieldsIds,
+                  },
+                },
+              }),
+              ...(excludeFieldsIds.length && {
+                none: {
+                  id: {
+                    in: excludeFieldsIds,
+                  },
+                },
+              }),
+            },
+          }),
+        },
+      },
+
+      ...(input?.sorting && {
+        orderBy: {
+          ...(input.sorting.name === "rate" && {
+            rate: {
               sort: input.sorting.type,
               nulls: "last",
             },
-          },
-        }),
-      },
-    }),
-
-    include: {
-      tags: true,
-      item: {
-        select: {
-          id: true,
-          title: true,
-          year: true,
-          description: true,
-          image: true,
-          collection: {
-            select: {
-              name: true,
+          }),
+          ...(input.sorting.name === "status" && {
+            status: input.sorting.type,
+          }),
+          ...(input.sorting.name === "date" && {
+            updatedAt: input.sorting.type,
+          }),
+          ...(input.sorting.name === "year" && {
+            item: {
+              year: {
+                sort: input.sorting.type,
+                nulls: "last",
+              },
             },
+          }),
+        },
+      }),
+
+      include: {
+        tags: true,
+        item: {
+          select: {
+            id: true,
+            title: true,
+            year: true,
+            description: true,
+            image: true,
+            collection: {
+              select: {
+                name: true,
+              },
+            },
+            // fields: true,
           },
-          // fields: true,
         },
       },
-    },
 
-    take: limit,
-    skip: (page - 1) * limit,
-  });
+      take: limit,
+      skip: (page - 1) * limit,
+    })
+    .then((userItems) => {
+      return userItems.map((userItems) => ({
+        id: userItems.item.id,
+        title: userItems.item.title,
+        description: userItems.item.description,
+        year: userItems.item.year,
+        image: userItems.item.image,
+        rate: userItems.rate,
+        status: userItems.status,
+        timeAgo: dateToTimeAgoString(userItems.updatedAt),
+        updatedAt: userItems.updatedAt,
+        collection: userItems.item.collection.name,
+        tags: userItems.tags.map((tag) => ({
+          id: tag.id,
+          name: tag.name,
+        })),
+      }));
+    });
 
-  // const FieldIdToFieldGroupIdMap = await getFieldIdToFieldGroupIdMap(ctx);
-
-  const items = userItems.map((userItems) => ({
-    id: userItems.item.id,
-    title: userItems.item.title,
-    description: userItems.item.description,
-    year: userItems.item.year,
-    image: userItems.item.image,
-    rate: userItems.rate,
-    status: userItems.status,
-    timeAgo: dateToTimeAgoString(userItems.updatedAt),
-    updatedAt: userItems.updatedAt,
-    collection: userItems.item.collection.name,
-    tags: userItems.tags.map((tag) => ({
-      id: tag.id,
-      name: tag.name,
-    })),
-    // fieldGroups: FieldsToGroupedFields(
-    //   userItems.item.fields,
-    //   FieldIdToFieldGroupIdMap,
-    // ),
-  }));
-
-  return items;
+  return getOrSetCache<ItemType[]>(redisKey, promise);
 }
 
 export async function GetUserItem(props: {
@@ -431,75 +429,79 @@ export async function GetUserItem(props: {
 }): Promise<ItemType | null> {
   const { ctx, input } = props;
 
-  const userItem = await ctx.db.userToItem.findUnique({
-    where: {
-      userId_itemId: {
-        userId: ctx.session.user.id,
-        itemId: input,
+  const redisKey = `item:GetUserItem:${ctx.session.user.id}:${input}`;
+
+  const promise = ctx.db.userToItem
+    .findUnique({
+      where: {
+        userId_itemId: {
+          userId: ctx.session.user.id,
+          itemId: input,
+        },
       },
-    },
-    include: {
-      item: {
-        select: {
-          id: true,
-          title: true,
-          year: true,
-          description: true,
-          image: true,
-          collection: {
-            select: {
-              id: true,
-              name: true,
+      include: {
+        item: {
+          select: {
+            id: true,
+            title: true,
+            year: true,
+            description: true,
+            image: true,
+            collection: {
+              select: {
+                id: true,
+                name: true,
+              },
             },
+            fields: true,
           },
-          fields: true,
+        },
+        tags: true,
+        itemComments: {
+          orderBy: {
+            createdAt: "desc",
+          },
         },
       },
-      tags: true,
-      itemComments: {
-        orderBy: {
-          createdAt: "desc",
-        },
-      },
-    },
-  });
+    })
+    .then(async (userItem) => {
+      if (!userItem) {
+        return null;
+      }
+      const FieldIdToFieldGroupIdMap = await getFieldIdToFieldGroupIdMap(ctx);
+      return {
+        id: userItem.item.id,
+        title: userItem.item.title,
+        description: userItem.item.description,
+        year: userItem.item.year,
+        image: userItem.item.image,
+        rate: userItem.rate,
+        status: userItem.status,
+        timeAgo: dateToTimeAgoString(userItem.updatedAt),
+        updatedAt: userItem.updatedAt,
+        collection: userItem.item.collection.name,
+        collectionId: userItem.item.collection.id,
+        fieldGroups: FieldsToGroupedFields(
+          userItem.item.fields,
+          FieldIdToFieldGroupIdMap,
+        ),
+        tags: userItem.tags.map((tag) => ({
+          id: tag.id,
+          name: tag.name,
+        })),
+        comments: userItem.itemComments.map((comment) => ({
+          id: comment.id,
+          title: comment.title,
+          description: comment.description,
+          rate: comment.rate,
+          status: comment.status,
+          timeAgo: dateToTimeAgoString(comment.createdAt),
+          createdAt: comment.createdAt,
+        })),
+      };
+    });
 
-  if (!userItem) {
-    return null;
-  }
-
-  const FieldIdToFieldGroupIdMap = await getFieldIdToFieldGroupIdMap(ctx);
-
-  return {
-    id: userItem.item.id,
-    title: userItem.item.title,
-    description: userItem.item.description,
-    year: userItem.item.year,
-    image: userItem.item.image,
-    rate: userItem.rate,
-    status: userItem.status,
-    timeAgo: dateToTimeAgoString(userItem.updatedAt),
-    updatedAt: userItem.updatedAt,
-    collection: userItem.item.collection.name,
-    collectionId: userItem.item.collection.id,
-    fieldGroups: FieldsToGroupedFields(
-      userItem.item.fields,
-      FieldIdToFieldGroupIdMap,
-    ),
-    tags: userItem.tags.map((tag) => ({
-      id: tag.id,
-      name: tag.name,
-    })),
-    comments: userItem.itemComments.map((comment) => ({
-      id: comment.id,
-      title: comment.title,
-      description: comment.description,
-      rate: comment.rate,
-      status: comment.status,
-      timeAgo: dateToTimeAgoString(comment.createdAt),
-      createdAt: comment.createdAt,
-    })),
-  };
+  return getOrSetCache<ItemType | null>(redisKey, promise);
 }
 
 export async function GetYearsRange(props: {
@@ -508,34 +510,40 @@ export async function GetYearsRange(props: {
 }) {
   const { ctx, input } = props;
 
-  const yearRange = await ctx.db.item.aggregate({
-    _min: {
-      year: true,
-    },
-    _max: {
-      year: true,
-    },
-    where: {
-      year: {
-        not: null,
-      },
-      userToItems: {
-        some: {
-          userId: ctx.session.user.id,
-        },
-      },
-      ...(input?.length && {
-        collectionId: {
-          in: input,
-        },
-      }),
-    },
-  });
+  const redisKey = `item:GetYearsRange:${ctx.session.user.id}:${JSON.stringify(input)}`;
 
-  return {
-    minYear: yearRange._min.year,
-    maxYear: yearRange._max.year,
-  };
+  const promise = ctx.db.item
+    .aggregate({
+      _min: {
+        year: true,
+      },
+      _max: {
+        year: true,
+      },
+      where: {
+        year: {
+          not: null,
+        },
+        userToItems: {
+          some: {
+            userId: ctx.session.user.id,
+          },
+        },
+        ...(input?.length && {
+          collectionId: {
+            in: input,
+          },
+        }),
+      },
+    })
+    .then((yearRange) => {
+      return {
+        minYear: yearRange._min.year,
+        maxYear: yearRange._max.year,
+      };
+    });
+
+  return getOrSetCache(redisKey, promise);
 }
 
 export async function AddToCollection(props: {
@@ -611,6 +619,11 @@ export async function AddToCollection(props: {
     });
   }
 
+  const userItemsKey = `item:GetUserItems:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(userItemsKey);
+  const userYearsRangeKey = `item:GetYearsRange:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(userYearsRangeKey);
+
   return "Item added successfully!";
 }
 
@@ -649,6 +662,11 @@ export async function UpdateItem(props: {
     },
   });
 
+  const userItemsKey = `item:GetUserItems:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(userItemsKey);
+  const userItemKey = `item:GetUserItem:${ctx.session.user.id}:${input.id}`;
+  await deleteCacheByPrefix(userItemKey);
+
   return "Item updated successfully!";
 }
 
@@ -679,6 +697,13 @@ export async function DeleteFromCollection(props: {
       },
     },
   });
+
+  const userItemsKey = `item:GetUserItems:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(userItemsKey);
+  const userItemKey = `item:GetUserItem:${ctx.session.user.id}:${input}`;
+  await deleteCacheByPrefix(userItemKey);
+  const userYearsRangeKey = `item:GetYearsRange:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(userYearsRangeKey);
 
   return "Item deleted successfully!";
 }

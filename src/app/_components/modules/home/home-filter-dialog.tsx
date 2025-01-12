@@ -15,20 +15,13 @@ import type { GetUserItemsFilterType } from "../../../../server/api/modules/item
 import type { ItemStatus } from "@prisma/client";
 import Container from "../../shared/container";
 import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
+import type { FilterFieldsType } from "../../../../server/api/modules/field/types";
 
 type Props = {
   searchFilter: string;
   tags: TagType[];
   setSearchFilter: Dispatch<SetStateAction<string>>;
-  filterFieldGroups: {
-    fields: {
-      value: string;
-      id: string;
-    }[];
-    id: string;
-    name: string;
-    priority: number;
-  }[];
+  filterFieldGroups: FilterFieldsType[];
   yearsRange: {
     minYear: number;
     maxYear: number;

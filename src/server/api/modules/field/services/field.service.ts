@@ -1,13 +1,17 @@
+import { getOrSetCache } from "../../../../../lib/redis";
 import type { ContextType } from "../../../../types";
 import type { GetFilterFieldsInputType } from "../types";
+import type { FilterFieldsType } from "../types";
 
 export const GetFilterFields = async (props: {
   ctx: ContextType;
   input: GetFilterFieldsInputType;
-}) => {
+}): Promise<FilterFieldsType[]> => {
   const { ctx, input } = props;
 
-  return ctx.db.fieldGroup.findMany({
+  const redisKey = `field:GetFilterFields:${JSON.stringify(input)}`;
+
+  const promise = ctx.db.fieldGroup.findMany({
     where: {
       isFiltering: true,
       ...(input?.length && {
@@ -49,4 +53,6 @@ export const GetFilterFields = async (props: {
       priority: "asc",
     },
   });
+
+  return getOrSetCache<FilterFieldsType[]>(redisKey, promise);
 };
