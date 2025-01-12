@@ -19,7 +19,6 @@ export const useYearsRange = (props: Props) => {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
       setYearsRange({
         minYear: data.minYear ?? 0,
         maxYear: data.maxYear ?? 0,

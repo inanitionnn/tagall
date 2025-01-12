@@ -65,8 +65,9 @@ const HomeSmallItem = (props: Props) => {
 
           <div className="hidden w-32 flex-col items-center lg:flex">
             <Paragraph className="font-bold">{item.timeAgo}</Paragraph>
+
             <Paragraph className="font-medium text-muted-foreground">
-              {item.updatedAt.toLocaleDateString()}
+              {new Date(item.updatedAt).toLocaleDateString()}
             </Paragraph>
           </div>
         </div>
