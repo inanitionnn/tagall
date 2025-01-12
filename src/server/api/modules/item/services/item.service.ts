@@ -247,162 +247,160 @@ export async function GetUserItems(props: {
   const limit = input?.limit ?? 20;
   const page = input?.page ?? 1;
 
-  const rateFromFilter = input?.filtering
-    ?.filter((filter) => filter.name === "rate")
-    .find((filter) => filter.type === "from");
-  const rateToFilter = input?.filtering
-    ?.filter((filter) => filter.name === "rate")
-    .find((filter) => filter.type === "to");
-  const yearFromFilter = input?.filtering
-    ?.filter((filter) => filter.name === "year")
-    .find((filter) => filter.type === "from");
-  const yearToFilter = input?.filtering
-    ?.filter((filter) => filter.name === "year")
-    .find((filter) => filter.type === "to");
-  const statusIncludeFilter = input?.filtering
-    ?.filter((filter) => filter.name === "status")
-    .filter((filter) => filter.type === "include");
-  const statusExcludeFilter = input?.filtering
-    ?.filter((filter) => filter.name === "status")
-    .filter((filter) => filter.type === "exclude");
-  const fields =
-    input?.filtering?.filter((filter) => filter.name === "field") ?? [];
-  const includeFieldsIds = fields
-    .filter((filter) => filter.type === "include")
-    .map((field) => field.fieldId);
-  const excludeFieldsIds = fields
-    .filter((filter) => filter.type === "exclude")
-    .map((field) => field.fieldId);
-
-  const promise = ctx.db.userToItem
-    .findMany({
-      where: {
-        userId: ctx.session.user.id,
-        ...((rateFromFilter ??
-          rateToFilter ??
-          input?.sorting?.name === "rate") && {
-          rate: {
-            ...(rateToFilter && {
-              lte: rateToFilter.value,
-            }),
-            ...(rateFromFilter && {
-              gte: rateFromFilter.value,
-            }),
-          },
-        }),
-        ...((statusIncludeFilter?.length ?? statusExcludeFilter?.length) && {
-          status: {
-            ...(statusIncludeFilter && {
-              in: statusIncludeFilter.map((filter) => filter.value),
-            }),
-            ...(statusExcludeFilter && {
-              notIn: statusExcludeFilter.map((filter) => filter.value),
-            }),
-          },
-        }),
-
-        ...(input?.tagsIds?.length && {
-          tags: {
-            some: {
-              id: {
-                in: input.tagsIds,
-              },
-            },
-          },
-        }),
-
-        item: {
-          ...(input?.search && {
-            title: {
-              contains: input.search,
-              mode: "insensitive",
-            },
-          }),
-          ...(input?.collectionsIds?.length && {
-            collectionId: {
-              in: input?.collectionsIds,
-            },
-          }),
-          ...((yearFromFilter ?? yearToFilter) && {
-            year: {
-              ...(yearToFilter && {
-                lte: yearToFilter.value,
+  const promise = new Promise<ItemType[]>((resolve) => {
+    (async () => {
+      const rateFromFilter = input?.filtering
+        ?.filter((filter) => filter.name === "rate")
+        .find((filter) => filter.type === "from");
+      const rateToFilter = input?.filtering
+        ?.filter((filter) => filter.name === "rate")
+        .find((filter) => filter.type === "to");
+      const yearFromFilter = input?.filtering
+        ?.filter((filter) => filter.name === "year")
+        .find((filter) => filter.type === "from");
+      const yearToFilter = input?.filtering
+        ?.filter((filter) => filter.name === "year")
+        .find((filter) => filter.type === "to");
+      const statusIncludeFilter = input?.filtering
+        ?.filter((filter) => filter.name === "status")
+        .filter((filter) => filter.type === "include");
+      const statusExcludeFilter = input?.filtering
+        ?.filter((filter) => filter.name === "status")
+        .filter((filter) => filter.type === "exclude");
+      const fields =
+        input?.filtering?.filter((filter) => filter.name === "field") ?? [];
+      const includeFieldsIds = fields
+        .filter((filter) => filter.type === "include")
+        .map((field) => field.fieldId);
+      const excludeFieldsIds = fields
+        .filter((filter) => filter.type === "exclude")
+        .map((field) => field.fieldId);
+      const userItems = await ctx.db.userToItem.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          ...((rateFromFilter ??
+            rateToFilter ??
+            input?.sorting?.name === "rate") && {
+            rate: {
+              ...(rateToFilter && {
+                lte: rateToFilter.value,
               }),
-              ...(yearFromFilter && {
-                gte: yearFromFilter.value,
+              ...(rateFromFilter && {
+                gte: rateFromFilter.value,
               }),
             },
           }),
-          ...((includeFieldsIds.length || excludeFieldsIds.length) && {
-            fields: {
-              ...(includeFieldsIds.length && {
+          ...((statusIncludeFilter?.length ?? statusExcludeFilter?.length) && {
+            status: {
+              ...(statusIncludeFilter && {
+                in: statusIncludeFilter.map((filter) => filter.value),
+              }),
+              ...(statusExcludeFilter && {
+                notIn: statusExcludeFilter.map((filter) => filter.value),
+              }),
+            },
+          }),
+
+          ...(input?.tagsIds?.length && {
+            AND: input.tagsIds.map((tagId) => ({
+              tags: {
                 some: {
-                  id: {
-                    in: includeFieldsIds,
+                  id: tagId,
+                },
+              },
+            })),
+          }),
+
+          item: {
+            ...(input?.search && {
+              title: {
+                contains: input.search,
+                mode: "insensitive",
+              },
+            }),
+            ...(input?.collectionsIds?.length && {
+              collectionId: {
+                in: input?.collectionsIds,
+              },
+            }),
+            ...((yearFromFilter ?? yearToFilter) && {
+              year: {
+                ...(yearToFilter && {
+                  lte: yearToFilter.value,
+                }),
+                ...(yearFromFilter && {
+                  gte: yearFromFilter.value,
+                }),
+              },
+            }),
+            ...(includeFieldsIds.length && {
+              AND: includeFieldsIds.map((id) => ({
+                fields: {
+                  some: {
+                    id,
                   },
                 },
-              }),
-              ...(excludeFieldsIds.length && {
+              })),
+            }),
+            ...(excludeFieldsIds.length && {
+              fields: {
                 none: {
                   id: {
                     in: excludeFieldsIds,
                   },
                 },
-              }),
-            },
-          }),
+              },
+            }),
+          },
         },
-      },
 
-      ...(input?.sorting && {
-        orderBy: {
-          ...(input.sorting.name === "rate" && {
-            rate: {
-              sort: input.sorting.type,
-              nulls: "last",
-            },
-          }),
-          ...(input.sorting.name === "status" && {
-            status: input.sorting.type,
-          }),
-          ...(input.sorting.name === "date" && {
-            updatedAt: input.sorting.type,
-          }),
-          ...(input.sorting.name === "year" && {
-            item: {
-              year: {
+        ...(input?.sorting && {
+          orderBy: {
+            ...(input.sorting.name === "rate" && {
+              rate: {
                 sort: input.sorting.type,
                 nulls: "last",
               },
-            },
-          }),
-        },
-      }),
+            }),
+            ...(input.sorting.name === "status" && {
+              status: input.sorting.type,
+            }),
+            ...(input.sorting.name === "date" && {
+              updatedAt: input.sorting.type,
+            }),
+            ...(input.sorting.name === "year" && {
+              item: {
+                year: {
+                  sort: input.sorting.type,
+                  nulls: "last",
+                },
+              },
+            }),
+          },
+        }),
 
-      include: {
-        tags: true,
-        item: {
-          select: {
-            id: true,
-            title: true,
-            year: true,
-            description: true,
-            image: true,
-            collection: {
-              select: {
-                name: true,
+        include: {
+          tags: true,
+          item: {
+            select: {
+              id: true,
+              title: true,
+              year: true,
+              description: true,
+              image: true,
+              collection: {
+                select: {
+                  name: true,
+                },
               },
             },
-            // fields: true,
           },
         },
-      },
 
-      take: limit,
-      skip: (page - 1) * limit,
-    })
-    .then((userItems) => {
-      return userItems.map((userItems) => ({
+        take: limit,
+        skip: (page - 1) * limit,
+      });
+      const response = userItems.map((userItems) => ({
         id: userItems.item.id,
         title: userItems.item.title,
         description: userItems.item.description,
@@ -418,7 +416,9 @@ export async function GetUserItems(props: {
           name: tag.name,
         })),
       }));
-    });
+      return resolve(response);
+    })();
+  });
 
   return getOrSetCache<ItemType[]>(redisKey, promise);
 }

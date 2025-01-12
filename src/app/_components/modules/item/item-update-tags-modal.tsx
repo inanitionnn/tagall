@@ -18,7 +18,7 @@ import { useState } from "react";
 import type { ItemType } from "../../../../server/api/modules/item/types";
 import Container from "../../shared/container";
 import { useUpdateItem } from "./hooks/use-update-item.hook";
-import { TagType } from "../../../../server/api/modules/tag/types/tag.type";
+import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
 
 type Props = {
   item: ItemType;
@@ -43,7 +43,7 @@ const ItemUpdateTagsModal = (props: Props) => {
           <Header vtag="h6">Tags:</Header>
           <div className="flex flex-wrap gap-2">
             {item.tags.map((tag) => (
-              <Badge>{tag.name}</Badge>
+              <Badge key={tag.id}>{tag.name}</Badge>
             ))}
           </div>
         </Container>
