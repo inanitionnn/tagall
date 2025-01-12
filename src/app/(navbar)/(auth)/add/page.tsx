@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Add() {
   void api.collection.getAll.prefetch();
+  void api.tag.getUserTags.prefetch();
 
   return (
     <HydrateClient>

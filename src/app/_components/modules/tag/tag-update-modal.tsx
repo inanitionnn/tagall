@@ -47,7 +47,7 @@ const TagUpdateModal = (props: Props) => {
       <ResponsiveModalTrigger asChild>
         <Container className="cursor-pointer flex-col gap-4 p-4 hover:scale-105">
           <div className="flex items-center justify-between">
-            <Header vtag="h5" className="leading-tight">
+            <Header vtag="h5" className=" ">
               {tag.name}
             </Header>
             <Paragraph className="text-muted-foreground">
@@ -73,7 +73,7 @@ const TagUpdateModal = (props: Props) => {
             onSubmit={form.handleSubmit(submit)}
             className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-8 sm:min-w-96"
           >
-            <Header vtag="h4" className="leading-tight">
+            <Header vtag="h4" className=" ">
               Update tag
             </Header>
             <FormField

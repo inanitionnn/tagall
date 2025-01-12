@@ -17,7 +17,10 @@ export default function CloudinaryImage(props: Props) {
       src={publicId}
       width={width ?? 290}
       height={height ?? 400}
-      className={cn("aspect-[29/40] rounded-sm object-cover", className)}
+      className={cn(
+        "aspect-[29/40] rounded-lg border border-input object-cover shadow-sm",
+        className,
+      )}
       crop={{
         type: "fit",
         source: true,

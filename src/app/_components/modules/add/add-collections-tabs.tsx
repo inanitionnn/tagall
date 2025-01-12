@@ -5,20 +5,20 @@ import Container from "../../shared/container";
 
 type Props = {
   collections: CollectionType[];
-  currentCollectionId: string;
-  setCurrentCollectionId: Dispatch<SetStateAction<string>>;
+  selectedCollectionId: string;
+  setSelectedCollectionId: Dispatch<SetStateAction<string>>;
 };
 
 const AddCollectionsTabs = (props: Props) => {
-  const { collections, currentCollectionId, setCurrentCollectionId } = props;
+  const { collections, selectedCollectionId, setSelectedCollectionId } = props;
 
   return (
     <Container className="w-min">
       {collections.map((collection) => (
         <Button
           key={collection.id}
-          onClick={() => setCurrentCollectionId(collection.id)}
-          variant={currentCollectionId === collection.id ? "default" : "ghost"}
+          onClick={() => setSelectedCollectionId(collection.id)}
+          variant={selectedCollectionId === collection.id ? "default" : "ghost"}
         >
           {collection.name}
         </Button>

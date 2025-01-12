@@ -40,5 +40,6 @@ export const GetUserItemsInputSchema = z
     filtering: GetUserItemsFilterSchema.optional(),
     sorting: GetUserItemsSortSchema.optional(),
     search: z.string().optional(),
+    tagsIds: z.array(z.string().cuid()).optional(),
   })
   .optional();

@@ -13,12 +13,12 @@ function TagContainer() {
 
   const DEBOUNCE = 200;
 
-  const [currentCollectionsIds, setCurrentCollectionsIds] = useState<string[]>(
-    collections.map((collection) => collection.id),
-  );
+  const [selectedCollectionsIds, setselectedCollectionsIds] = useState<
+    string[]
+  >(collections.map((collection) => collection.id));
 
   const debouncedCollectionsIds = useDebounce<string[]>(
-    currentCollectionsIds,
+    selectedCollectionsIds,
     DEBOUNCE,
   );
 
@@ -31,8 +31,8 @@ function TagContainer() {
       <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap justify-between gap-4">
         <TagCollectionsTabs
           collections={collections}
-          currentCollectionsIds={currentCollectionsIds}
-          setCurrentCollectionsIds={setCurrentCollectionsIds}
+          selectedCollectionsIds={selectedCollectionsIds}
+          setselectedCollectionsIds={setselectedCollectionsIds}
         />
         <TagAddModal collections={collections} />
       </div>

@@ -5,16 +5,16 @@ import Container from "../../shared/container";
 
 type Props = {
   collections: CollectionType[];
-  currentCollectionsIds: string[];
-  setCurrentCollectionsIds: Dispatch<SetStateAction<string[]>>;
+  selectedCollectionsIds: string[];
+  setselectedCollectionsIds: Dispatch<SetStateAction<string[]>>;
 };
 
 const HomeCollectionsTabs = (props: Props) => {
-  const { collections, currentCollectionsIds, setCurrentCollectionsIds } =
+  const { collections, selectedCollectionsIds, setselectedCollectionsIds } =
     props;
 
   const onClick = (collectionId: string) => {
-    setCurrentCollectionsIds((prev) => {
+    setselectedCollectionsIds((prev) => {
       if (prev.includes(collectionId)) {
         return prev.filter((id) => id !== collectionId);
       }
@@ -29,7 +29,7 @@ const HomeCollectionsTabs = (props: Props) => {
           key={collection.id}
           onClick={() => onClick(collection.id)}
           variant={
-            currentCollectionsIds.includes(collection.id) ? "default" : "ghost"
+            selectedCollectionsIds.includes(collection.id) ? "default" : "ghost"
           }
         >
           {collection.name}

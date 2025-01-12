@@ -26,58 +26,60 @@ import {
 import { ItemStatus } from "@prisma/client";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { useAddItemToCollection } from "./hooks/use-add-item-to-collection.hook";
+import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
 
 type Props = {
   open: boolean;
-  currentItem: SearchResultType;
-  currentCollectionId: string;
-  setCurrentItem: Dispatch<SetStateAction<SearchResultType | null>>;
+  tags: TagType[];
+  selectedItem: SearchResultType;
+  selectedCollectionId: string;
+  setSelectedItem: Dispatch<SetStateAction<SearchResultType | null>>;
   setSearchResults: Dispatch<SetStateAction<SearchResultType[]>>;
 };
 
 const AddItemModal = (props: Props) => {
-  const { currentItem, open, setCurrentItem } = props;
+  const { selectedItem, open, setSelectedItem, tags } = props;
   const { form, submit } = useAddItemToCollection(props);
 
   const status = form.watch("status");
   const rating = form.watch("rate");
-  const details = [currentItem.year, ...currentItem.keywords].filter(Boolean);
+  const tagsIds = form.watch("tagsIds");
+  const details = [selectedItem.year, ...selectedItem.keywords].filter(Boolean);
   return (
     <ResponsiveModal
       open={open}
       onOpenChange={(open) => {
         if (!open) {
-          setCurrentItem(null);
+          setSelectedItem(null);
         }
       }}
     >
       <ResponsiveModalContent className="h-min min-h-64 w-full flex-col justify-center rounded-sm bg-background p-0 sm:flex sm:max-w-2xl sm:flex-row sm:p-4 md:max-w-3xl lg:max-w-4xl">
-        <div className="hidden w-[500px] sm:block">
-          <div className="aspect-[29/40] rounded-sm sm:block">
-            {currentItem.image ? (
-              <Image
-                src={currentItem.image}
-                alt={"cover" + currentItem.title}
-                className="aspect-[29/40] rounded-sm object-cover"
-                width={377}
-                height={520}
-                unoptimized={true}
-              />
-            ) : (
-              <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />
-            )}
+        <div className="flex flex-col gap-4 p-4 sm:w-[400px] lg:w-[500px]">
+          <Header vtag="h4">{selectedItem.title}</Header>
+          <div className="hidden sm:block">
+            <div className="aspect-[29/40] rounded-sm sm:block">
+              {selectedItem.image ? (
+                <Image
+                  src={selectedItem.image}
+                  alt={"cover" + selectedItem.title}
+                  className="aspect-[29/40] rounded-sm object-cover"
+                  width={377}
+                  height={520}
+                  unoptimized={true}
+                />
+              ) : (
+                <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />
+              )}
+            </div>
+            {details.length ? (
+              <Paragraph className="m-4 line-clamp-6">
+                {details.join(" • ")}
+              </Paragraph>
+            ) : null}
           </div>
-          {details.length ? (
-            <Paragraph className="m-4 line-clamp-6">
-              {details.join(" • ")}
-            </Paragraph>
-          ) : null}
         </div>
-        <div className="flex w-full flex-col justify-between gap-4 p-6">
-          <Header vtag="h4" className="leading-tight">
-            {currentItem.title}
-          </Header>
-
+        <div className="w-full p-6">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(submit)}
@@ -88,7 +90,7 @@ const AddItemModal = (props: Props) => {
                 name="status"
                 render={() => (
                   <FormItem>
-                    <div className="flex w-full items-center justify-between gap-2">
+                    <div className="flex flex-col gap-2">
                       <Paragraph>
                         <FormLabel>Status:</FormLabel>
                         {"   "}
@@ -146,6 +148,45 @@ const AddItemModal = (props: Props) => {
                         max={10}
                         step={1}
                       />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tagsIds"
+                render={() => (
+                  <FormItem>
+                    <div className="flex w-full flex-col gap-2">
+                      <FormLabel>Tags:</FormLabel>
+
+                      <div className="flex flex-wrap gap-2">
+                        {tags.map((tag) => (
+                          <FormControl key={tag.id}>
+                            <Button
+                              size={"sm"}
+                              variant={
+                                tagsIds?.find((c) => c === tag.id)
+                                  ? "default"
+                                  : "secondary"
+                              }
+                              onClick={(e) => {
+                                e.preventDefault();
+                                form.setValue(
+                                  "tagsIds",
+                                  tagsIds.includes(tag.id)
+                                    ? tagsIds.filter((c) => c !== tag.id)
+                                    : [...tagsIds, tag.id],
+                                );
+                              }}
+                            >
+                              {tag.name}
+                            </Button>
+                          </FormControl>
+                        ))}
+                      </div>
                     </div>
                     <FormMessage />
                   </FormItem>

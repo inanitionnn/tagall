@@ -27,6 +27,7 @@ import { ItemStatus } from "@prisma/client";
 import { Star } from "lucide-react";
 import { useUpdateComment } from "./hooks/use-update-comment.hook";
 import { useDeleteComment } from "./hooks/use-delete-comment.hook";
+import Container from "../../shared/container";
 
 type Props = {
   comment: NonNullable<ItemType["comments"]>[number];
@@ -54,7 +55,7 @@ const ItemUpdateCommentModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <div className="flex cursor-pointer flex-col gap-4 rounded-lg border border-zinc-300 bg-background p-4 shadow transition-all duration-500 ease-in-out hover:scale-105 focus:border-primary dark:border-zinc-700 md:p-8">
+        <Container className="w-full cursor-pointer flex-col p-4 hover:scale-105">
           {comment.title && <Header vtag="h6">{comment.title}</Header>}
           {comment.description && (
             <Paragraph className="text-muted-foreground">
@@ -95,7 +96,7 @@ const ItemUpdateCommentModal = (props: Props) => {
           <Paragraph className="text-center text-muted-foreground">
             {comment.timeAgo}
           </Paragraph>
-        </div>
+        </Container>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="p-0 sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>
@@ -103,7 +104,7 @@ const ItemUpdateCommentModal = (props: Props) => {
             onSubmit={form.handleSubmit(submit)}
             className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-8 sm:min-w-96"
           >
-            <Header vtag="h4" className="leading-tight">
+            <Header vtag="h4" className=" ">
               Update comment
             </Header>
             <FormField

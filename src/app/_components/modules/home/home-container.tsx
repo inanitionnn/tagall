@@ -16,6 +16,7 @@ import { useDebounce } from "../../../../hooks";
 import { HomeFilterBadges } from "./home-filter-badges";
 import { HomeNoItemsCard } from "./home-no-items-card";
 import { HomeSearch } from "./home-search";
+import { useGetUserTags } from "../tag/hooks/use-get-user-tags.hook";
 
 function HomeContainer() {
   const [collections] = api.collection.getUserCollections.useSuspenseQuery();
@@ -32,14 +33,20 @@ function HomeContainer() {
     name: "date",
   });
 
-  const [currentCollectionsIds, setCurrentCollectionsIds] = useState<string[]>(
-    collections.map((collection) => collection.id),
-  );
+  const [selectedCollectionsIds, setselectedCollectionsIds] = useState<
+    string[]
+  >(collections.map((collection) => collection.id));
 
   const debouncedCollectionsIds = useDebounce<string[]>(
-    currentCollectionsIds,
+    selectedCollectionsIds,
     DEBOUNCE,
   );
+
+  const { tags } = useGetUserTags({
+    collectionsIds: debouncedCollectionsIds,
+  });
+
+  const [selectedTagsIds, setSelectedTagsIds] = useState<string[]>([]);
 
   const [searchFilter, setSearchFilter] = useState<string>("");
 
@@ -59,17 +66,24 @@ function HomeContainer() {
   });
 
   const debounce = useDebounce(
-    { currentCollectionsIds, filtering, sorting, searchQuery },
+    {
+      selectedCollectionsIds,
+      filtering,
+      sorting,
+      searchQuery,
+      selectedTagsIds,
+    },
     DEBOUNCE,
   );
 
   const { items, setPage, hasMore, isLoading, resetPagination } =
     useGetUserItems({
       limit: LIMIT,
-      collectionsIds: debounce.currentCollectionsIds,
+      collectionsIds: debounce.selectedCollectionsIds,
       sorting: debounce.sorting,
       filtering: debounce.filtering,
       searchQuery: debounce.searchQuery,
+      tagsIds: debounce.selectedTagsIds,
     });
 
   const { filterFieldGroups } = useGetFilterFields({
@@ -93,15 +107,17 @@ function HomeContainer() {
       <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap justify-between gap-4">
         <HomeCollectionsTabs
           collections={collections}
-          currentCollectionsIds={currentCollectionsIds}
-          setCurrentCollectionsIds={setCurrentCollectionsIds}
+          selectedCollectionsIds={selectedCollectionsIds}
+          setselectedCollectionsIds={setselectedCollectionsIds}
         />
+        <HomeItemsSizeTabs itemsSize={itemsSize} setItemsSize={setItemsSize} />
 
         <HomeSortSelect setSorting={setSorting} sorting={sorting} />
 
-        <HomeItemsSizeTabs itemsSize={itemsSize} setItemsSize={setItemsSize} />
-
         <HomeFilterDialog
+          tags={tags}
+          selectedTagsIds={selectedTagsIds}
+          setSelectedTagsIds={setSelectedTagsIds}
           searchFilter={searchFilter}
           setSearchFilter={setSearchFilter}
           filterRates={filterRates}
@@ -121,7 +137,13 @@ function HomeContainer() {
         setQuery={setSearchQuery}
       />
 
-      <HomeFilterBadges filtering={filtering} setFiltering={setFiltering} />
+      <HomeFilterBadges
+        tags={tags}
+        selectedTagsIds={selectedTagsIds}
+        setSelectedTagsIds={setSelectedTagsIds}
+        filtering={filtering}
+        setFiltering={setFiltering}
+      />
 
       <HomeItems items={items} itemsSize={itemsSize} />
 

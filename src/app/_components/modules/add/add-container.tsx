@@ -8,21 +8,30 @@ import type { SearchResultType } from "../../../../server/api/modules/parse/type
 import { AddCollectionsTabs } from "./add-collections-tabs";
 import { useSearch } from "./hooks/use-search.hook";
 import Link from "next/link";
+import { useGetUserTags } from "../tag/hooks/use-get-user-tags.hook";
 
 function AddContainer() {
   const [collections] = api.collection.getAll.useSuspenseQuery();
+
   const [searchResults, setSearchResults] = useState<SearchResultType[]>([]);
-  const [currentCollectionId, setCurrentCollectionId] = useState<string>(
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string>(
     collections[0]?.id ?? "",
   );
-  const [currentItem, setCurrentItem] = useState<SearchResultType | null>(null);
+
+  const { tags } = useGetUserTags({
+    collectionsIds: [selectedCollectionId],
+  });
+
+  const [selectedItem, setSelectedItem] = useState<SearchResultType | null>(
+    null,
+  );
 
   const LIMIT = 16;
 
   const { isLoading, query, setQuery, submit } = useSearch({
-    currentCollectionId,
+    selectedCollectionId,
     setSearchResults,
-    setCurrentItem,
+    setSelectedItem,
     limit: LIMIT,
   });
 
@@ -30,8 +39,8 @@ function AddContainer() {
     <div className="flex max-w-screen-2xl flex-col gap-8 p-8">
       <AddCollectionsTabs
         collections={collections}
-        currentCollectionId={currentCollectionId}
-        setCurrentCollectionId={setCurrentCollectionId}
+        selectedCollectionId={selectedCollectionId}
+        setSelectedCollectionId={setSelectedCollectionId}
       />
       <AddSearch
         isLoading={isLoading}
@@ -40,12 +49,13 @@ function AddContainer() {
         submit={submit}
       />
 
-      {currentItem && (
+      {selectedItem && (
         <AddItemModal
-          currentItem={currentItem}
-          open={!!currentItem}
-          currentCollectionId={currentCollectionId}
-          setCurrentItem={setCurrentItem}
+          tags={tags}
+          selectedItem={selectedItem}
+          open={!!selectedItem}
+          selectedCollectionId={selectedCollectionId}
+          setSelectedItem={setSelectedItem}
           setSearchResults={setSearchResults}
         />
       )}
@@ -59,14 +69,14 @@ function AddContainer() {
             >
               <AddSearchResultItem
                 searchResult={searchResult}
-                setCurrentItem={setCurrentItem}
+                setSelectedItem={setSelectedItem}
               />
             </Link>
           ) : (
             <AddSearchResultItem
               key={searchResult.parsedId}
               searchResult={searchResult}
-              setCurrentItem={setCurrentItem}
+              setSelectedItem={setSelectedItem}
             />
           ),
         )}

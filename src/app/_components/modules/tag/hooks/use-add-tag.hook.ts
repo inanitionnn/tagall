@@ -42,6 +42,8 @@ export const useAddTag = (props: Props) => {
 
     setOpen(false);
 
+    form.reset();
+
     toast.promise(promise, {
       loading: `Adding tag...`,
       success: `Tag added successfully!`,

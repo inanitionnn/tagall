@@ -25,12 +25,9 @@ const NavbarButtonWithoutLink = (
       {icon}
       <Paragraph
         vsize={"base"}
-        className={cn(
-          "truncate text-wrap text-start font-medium leading-tight",
-          {
-            "font-semibold": isActive,
-          },
-        )}
+        className={cn("truncate text-wrap text-start font-medium", {
+          "font-semibold": isActive,
+        })}
       >
         {title}
       </Paragraph>

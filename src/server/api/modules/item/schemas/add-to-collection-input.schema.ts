@@ -12,5 +12,5 @@ export const AddToCollectionInputSchema = z.object({
       description: z.string().min(1).max(1000).nullable().optional(),
     })
     .optional(),
-  // tags: z.array(z.string().cuid()).optional(),
+  tagsIds: z.array(z.string().cuid()).optional(),
 });

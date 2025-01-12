@@ -7,11 +7,11 @@ import Container from "../../shared/container";
 
 type Props = {
   searchResult: SearchResultType;
-  setCurrentItem: Dispatch<SetStateAction<SearchResultType | null>>;
+  setSelectedItem: Dispatch<SetStateAction<SearchResultType | null>>;
 };
 
 const AddSearchResultItem = (props: Props) => {
-  const { searchResult, setCurrentItem } = props;
+  const { searchResult, setSelectedItem } = props;
 
   return (
     <Container
@@ -20,7 +20,7 @@ const AddSearchResultItem = (props: Props) => {
       })}
       onClick={() => {
         if (!searchResult.id) {
-          setCurrentItem(() => searchResult);
+          setSelectedItem(() => searchResult);
         }
       }}
     >
@@ -29,7 +29,7 @@ const AddSearchResultItem = (props: Props) => {
           <Paragraph>In Collection</Paragraph>
         </div>
       )}
-      <Header vtag="h5" className="line-clamp-3 leading-tight sm:hidden">
+      <Header vtag="h5" className="line-clamp-3 sm:hidden">
         {searchResult.title}
       </Header>
       <div className="flex h-full">
@@ -48,10 +48,7 @@ const AddSearchResultItem = (props: Props) => {
           )}
         </div>
         <div className="flex w-full flex-col justify-between gap-2 p-6">
-          <Header
-            vtag="h5"
-            className="line-clamp-3 hidden leading-tight sm:block"
-          >
+          <Header vtag="h5" className="line-clamp-3 hidden sm:block">
             {searchResult.title}
           </Header>
 

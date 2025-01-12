@@ -12,20 +12,25 @@ const formSchema = z.object({
   commentDescription: z.string().min(1).max(1000).nullable().optional(),
   rate: z.number().int().min(0).max(10),
   status: z.nativeEnum(ItemStatus),
+  tagsIds: z.array(z.string().cuid()),
 });
 
 type formDataType = z.infer<typeof formSchema>;
 
 type Props = {
-  currentItem: SearchResultType | null;
-  currentCollectionId: string;
-  setCurrentItem: Dispatch<SetStateAction<SearchResultType | null>>;
+  selectedItem: SearchResultType | null;
+  selectedCollectionId: string;
+  setSelectedItem: Dispatch<SetStateAction<SearchResultType | null>>;
   setSearchResults: Dispatch<SetStateAction<SearchResultType[]>>;
 };
 
 export const useAddItemToCollection = (props: Props) => {
-  const { currentCollectionId, currentItem, setCurrentItem, setSearchResults } =
-    props;
+  const {
+    selectedCollectionId,
+    selectedItem,
+    setSelectedItem,
+    setSearchResults,
+  } = props;
 
   const { mutateAsync } = api.item.addToCollection.useMutation();
 
@@ -37,23 +42,25 @@ export const useAddItemToCollection = (props: Props) => {
       commentDescription: null,
       rate: 0,
       status: ItemStatus.NOTSTARTED,
+      tagsIds: [],
     },
   });
 
   const submit = async (data: formDataType) => {
-    if (!currentItem) return;
+    if (!selectedItem) return;
 
-    if (currentItem.id) {
-      toast.error(`${currentItem.title} is already in your collection!`);
-      setCurrentItem(null);
+    if (selectedItem.id) {
+      toast.error(`${selectedItem.title} is already in your collection!`);
+      setSelectedItem(null);
       return;
     }
-    const { commentTitle, commentDescription, rate, status } = data;
+    const { commentTitle, commentDescription, rate, status, tagsIds } = data;
     const formData = {
       status,
       rate,
-      collectionId: currentCollectionId,
-      parsedId: currentItem.parsedId,
+      collectionId: selectedCollectionId,
+      tagsIds: tagsIds,
+      parsedId: selectedItem.parsedId,
       ...((commentTitle || commentDescription) && {
         comment: {
           title: commentTitle,
@@ -64,17 +71,19 @@ export const useAddItemToCollection = (props: Props) => {
 
     const promise = mutateAsync(formData);
 
-    setCurrentItem(null);
+    setSelectedItem(null);
     setSearchResults((prev) =>
       prev.filter(
-        (searchResult) => searchResult.parsedId !== currentItem?.parsedId,
+        (searchResult) => searchResult.parsedId !== selectedItem?.parsedId,
       ),
     );
 
+    form.reset();
+
     toast.promise(promise, {
-      loading: `Adding ${currentItem.title}...`,
-      success: `${currentItem.title} added successfully!`,
-      error: (error) => `Failed to add ${currentItem.title}: ${error.message}`,
+      loading: `Adding ${selectedItem.title}...`,
+      success: `${selectedItem.title} added successfully!`,
+      error: (error) => `Failed to add ${selectedItem.title}: ${error.message}`,
     });
   };
 

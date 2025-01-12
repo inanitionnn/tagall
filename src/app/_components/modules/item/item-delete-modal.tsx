@@ -11,6 +11,7 @@ import {
 } from "../../ui";
 import { useState } from "react";
 import { useDeleteItemFromCollection } from "./hooks/use-delete-item-from-collection.hook";
+import Container from "../../shared/container";
 
 type Props = {
   item: ItemType;
@@ -26,16 +27,16 @@ const ItemDeleteModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <div className="flex cursor-pointer items-center gap-2 rounded-lg border border-zinc-300 bg-background p-4 shadow transition-all duration-500 ease-in-out hover:scale-105 focus:border-primary dark:border-zinc-700">
+        <Container className="w-full cursor-pointer gap-2 p-4 hover:scale-105">
           <Header vtag="h6" className="text-destructive">
             Delete from collection
           </Header>
-        </div>
+        </Container>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="p-0 sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <div className="flex w-full flex-col justify-center rounded-sm bg-background p-2">
           <div className="flex w-full flex-col justify-between gap-4 p-6 sm:min-w-96">
-            <Header vtag="h4" className="leading-tight">
+            <Header vtag="h4" className=" ">
               Delete from collection
             </Header>
             <Separator />

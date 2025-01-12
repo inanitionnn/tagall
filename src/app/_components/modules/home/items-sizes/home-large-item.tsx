@@ -1,4 +1,4 @@
-import { Header, Paragraph } from "../../../ui";
+import { Badge, Header, Paragraph } from "../../../ui";
 import type { ItemType } from "../../../../../server/api/modules/item/types";
 import {
   RATING_NAMES,
@@ -26,51 +26,48 @@ const HomeLargeItem = (props: Props) => {
       </div>
       <div className="flex w-full flex-col justify-between gap-2 p-2">
         <div className="flex flex-col">
-          <Header vtag="h6" className="leading-tight text-muted-foreground">
-            {item.collection}
-          </Header>
+          <div className="flex justify-between gap-2">
+            <Header vtag="h5" className="line-clamp-2">
+              {item.title}
+            </Header>
+            <Header vtag="h6" className="font-bold text-muted-foreground">
+              {item.collection}
+            </Header>
+          </div>
 
-          <Header vtag="h5" className="line-clamp-3 leading-tight">
-            {item.title}
-          </Header>
-
-          <Header vtag="h6" className="hidden leading-tight sm:block">
+          <Paragraph className="hidden font-semibold text-muted-foreground sm:block">
             {item.year}
-          </Header>
+          </Paragraph>
         </div>
 
         <Paragraph vsize={"sm"} className="line-clamp-4 hidden sm:block">
           {item.description}
         </Paragraph>
 
-        {/* <div className="hidden flex-wrap gap-2 sm:flex">
-          {item.fieldGroups
-            .find((g) => g.name === "genres")
-            ?.fields.filter((f) => f.split(" ").length < 2)
-            .slice(0, 4)
-            .map((f) => (
-              <Badge key={f} className="px-2 py-0.5 text-sm">
-                {f}
+        {item.tags.length ? (
+          <div className="hidden flex-wrap gap-2 sm:flex">
+            {item.tags.map((tag) => (
+              <Badge key={tag.id} className="px-2 py-0.5 text-sm">
+                {tag.name}
               </Badge>
             ))}
-        </div> */}
-        <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
-          <div className="flex items-center gap-2">
-            {item.rate ? (
-              <>
-                <Paragraph className="w-5 text-center font-bold">
-                  {item.rate}
-                </Paragraph>
-                <Paragraph className="font-medium text-muted-foreground">
-                  {RATING_NAMES[item.rate]}
-                </Paragraph>
-              </>
-            ) : (
-              <Paragraph className="font-medium text-muted-foreground">
-                None
-              </Paragraph>
-            )}
           </div>
+        ) : null}
+
+        <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
+          {item.rate ? (
+            <div className="flex items-center gap-2">
+              <Paragraph className="w-5 text-center font-bold">
+                {item.rate}
+              </Paragraph>
+              <Paragraph className="font-medium text-muted-foreground">
+                {RATING_NAMES[item.rate]}
+              </Paragraph>
+            </div>
+          ) : (
+            <div />
+          )}
+
           <div className="flex items-center gap-2">
             <ItemStatusIcon className="block size-5 w-5 stroke-[2.5px] sm:hidden" />
             <Paragraph className="font-medium text-muted-foreground">

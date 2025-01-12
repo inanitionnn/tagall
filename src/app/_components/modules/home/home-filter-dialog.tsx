@@ -14,9 +14,11 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import type { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
 import type { ItemStatus } from "@prisma/client";
 import Container from "../../shared/container";
+import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
 
 type Props = {
   searchFilter: string;
+  tags: TagType[];
   setSearchFilter: Dispatch<SetStateAction<string>>;
   filterFieldGroups: {
     fields: {
@@ -37,15 +39,20 @@ type Props = {
   setFilterYears: Dispatch<SetStateAction<number[]>>;
   filtering: GetUserItemsFilterType;
   setFiltering: Dispatch<SetStateAction<GetUserItemsFilterType>>;
+  selectedTagsIds: string[];
+  setSelectedTagsIds: Dispatch<SetStateAction<string[]>>;
 };
 
 const HomeFilterDialog = (props: Props) => {
   const {
+    tags,
+    selectedTagsIds,
     yearsRange,
     filterFieldGroups,
     filterRates,
     filterYears,
     filtering,
+    setSelectedTagsIds,
     setFilterRates,
     setFilterYears,
     setFiltering,
@@ -159,18 +166,18 @@ const HomeFilterDialog = (props: Props) => {
                                   f.name !== "status" ||
                                   f.value !== typedStatus,
                               );
-                              const currentFilter = prev.find(
+                              const selectedFilter = prev.find(
                                 (f) =>
                                   f.name === "status" &&
                                   f.value === typedStatus,
                               );
-                              if (!currentFilter) {
+                              if (!selectedFilter) {
                                 updatedFiltering.push({
                                   name: "status",
                                   type: "include",
                                   value: typedStatus,
                                 });
-                              } else if (currentFilter.type === "include") {
+                              } else if (selectedFilter.type === "include") {
                                 updatedFiltering.push({
                                   name: "status",
                                   type: "exclude",
@@ -188,6 +195,33 @@ const HomeFilterDialog = (props: Props) => {
                   </div>
                 </div>
               )}
+              {!!tags.length && (
+                <div className="flex flex-col gap-2">
+                  <Header vtag="h6">Tags</Header>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <Button
+                        key={tag.id}
+                        variant={
+                          selectedTagsIds.includes(tag.id) ? "success" : "ghost"
+                        }
+                        size={"sm"}
+                        onClick={() =>
+                          setSelectedTagsIds((prev) => {
+                            if (prev.includes(tag.id)) {
+                              return prev.filter((id) => id !== tag.id);
+                            }
+                            return [...prev, tag.id];
+                          })
+                        }
+                      >
+                        {tag.name}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {filteredFieldGroups.map((fieldGroup) => (
                 <div key={fieldGroup.id} className="flex flex-col gap-2">
                   <Header vtag="h6">{fieldGroup.name}</Header>
@@ -213,18 +247,18 @@ const HomeFilterDialog = (props: Props) => {
                                 (f) =>
                                   f.name !== "field" || f.value !== field.value,
                               );
-                              const currentFilter = prev.find(
+                              const selectedFilter = prev.find(
                                 (f) =>
                                   f.name === "field" && f.value === field.value,
                               );
-                              if (!currentFilter) {
+                              if (!selectedFilter) {
                                 updatedFiltering.push({
                                   name: "field",
                                   type: "include",
                                   value: field.value,
                                   fieldId: field.id,
                                 });
-                              } else if (currentFilter.type === "include") {
+                              } else if (selectedFilter.type === "include") {
                                 updatedFiltering.push({
                                   name: "field",
                                   type: "exclude",

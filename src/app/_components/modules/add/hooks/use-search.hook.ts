@@ -4,13 +4,13 @@ import { toast } from "sonner";
 import type { SearchResultType } from "../../../../../server/api/modules/parse/types";
 
 type Props = {
-  currentCollectionId: string;
+  selectedCollectionId: string;
   setSearchResults: Dispatch<SetStateAction<SearchResultType[]>>;
-  setCurrentItem: Dispatch<SetStateAction<SearchResultType | null>>;
+  setSelectedItem: Dispatch<SetStateAction<SearchResultType | null>>;
   limit: number;
 };
 export const useSearch = (props: Props) => {
-  const { limit, currentCollectionId, setCurrentItem, setSearchResults } =
+  const { limit, selectedCollectionId, setSelectedItem, setSearchResults } =
     props;
 
   const [query, setQuery] = useState("");
@@ -18,7 +18,7 @@ export const useSearch = (props: Props) => {
   const { data, isSuccess, isLoading, isError, refetch } =
     api.parse.search.useQuery(
       {
-        collectionId: currentCollectionId,
+        collectionId: selectedCollectionId,
         query,
         limit: limit,
       },
@@ -27,7 +27,7 @@ export const useSearch = (props: Props) => {
 
   const submit = () => {
     if (!isLoading && query.length >= 1) {
-      setCurrentItem(null);
+      setSelectedItem(null);
       refetch();
     }
   };
@@ -45,11 +45,11 @@ export const useSearch = (props: Props) => {
   }, [isError]);
 
   useEffect(() => {
-    if (currentCollectionId) {
+    if (selectedCollectionId) {
       setSearchResults([]);
-      setCurrentItem(null);
+      setSelectedItem(null);
     }
-  }, [currentCollectionId, setSearchResults, setCurrentItem]);
+  }, [selectedCollectionId, setSearchResults, setSelectedItem]);
 
   return {
     query,

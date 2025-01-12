@@ -17,7 +17,7 @@ const HomeListItem = (props: Props) => {
   return (
     <>
       <div className="group flex w-full cursor-pointer gap-6">
-        <Paragraph className="min-w-8 font-medium leading-tight text-muted-foreground group-hover:font-bold group-hover:text-primary">
+        <Paragraph className="min-w-8 font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary">
           {index}.
         </Paragraph>
 
@@ -29,10 +29,7 @@ const HomeListItem = (props: Props) => {
           {item.year}
         </Paragraph>
 
-        <Header
-          vtag="h6"
-          className="line-clamp-2 w-full min-w-64 leading-tight"
-        >
+        <Header vtag="h6" className="line-clamp-2 w-full min-w-64">
           {item.title}
         </Header>
 

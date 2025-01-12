@@ -9,13 +9,21 @@ import { toast } from "sonner";
 
 type Props = {
   limit: number;
+  tagsIds: string[];
   collectionsIds: string[];
   sorting: GetUserItemsSortType;
   filtering: GetUserItemsFilterType;
   searchQuery: string;
 };
 export const useGetUserItems = (props: Props) => {
-  const { limit = 10, collectionsIds, sorting, filtering, searchQuery } = props;
+  const {
+    limit = 10,
+    collectionsIds,
+    sorting,
+    tagsIds,
+    filtering,
+    searchQuery,
+  } = props;
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [items, setItems] = useState<ItemType[]>([]);
@@ -27,6 +35,7 @@ export const useGetUserItems = (props: Props) => {
     sorting,
     filtering,
     search: searchQuery,
+    tagsIds,
   });
 
   useEffect(() => {

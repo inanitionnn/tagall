@@ -1,4 +1,4 @@
-import { Header, Paragraph } from "../../../ui";
+import { Badge, Header, Paragraph } from "../../../ui";
 import type { ItemType } from "../../../../../server/api/modules/item/types";
 import {
   RATING_NAMES,
@@ -16,7 +16,7 @@ const HomeSmallItem = (props: Props) => {
   const { item } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
-    <Container className="h-36 cursor-pointer hover:scale-105 sm:h-20">
+    <Container className="h-36 cursor-pointer hover:scale-105 sm:h-24">
       <div className="aspect-[29/40]">
         {item.image ? (
           <CloudinaryImage publicId={item.image} />
@@ -25,29 +25,24 @@ const HomeSmallItem = (props: Props) => {
         )}
       </div>
       <div className="flex w-full flex-col justify-between gap-2 sm:flex-row sm:items-center">
-        <div className="flex flex-col xl:min-w-[300px] xl:max-w-[300px]">
-          <Header vtag="h6" className="line-clamp-3 leading-tight">
+        <div className="flex flex-col gap-1 xl:min-w-[300px] xl:max-w-[300px]">
+          <Header vtag="h6" className="line-clamp-3">
             {item.title}
           </Header>
-          <Header
-            vtag="h6"
-            className="font-bold leading-tight text-muted-foreground"
-          >
+          <Paragraph className="font-semibold text-muted-foreground">
             {[item.collection, item.year].join(" • ")}
-          </Header>
+          </Paragraph>
         </div>
-        {/* 
-        <div className="hidden w-full gap-2 xl:flex xl:flex-wrap">
-          {item.fieldGroups
-            .find((g) => g.name === "genres")
-            ?.fields.filter((f) => f.split(" ").length < 2)
-            .slice(0, 4)
-            .map((f) => (
-              <Badge key={f} className="px-2 py-0.5 text-sm">
-                {f}
+
+        {item.tags.length ? (
+          <div className="hidden w-full gap-2 xl:flex xl:flex-wrap">
+            {item.tags.map((tag) => (
+              <Badge key={tag.id} className="px-2 py-0.5 text-sm">
+                {tag.name}
               </Badge>
             ))}
-        </div> */}
+          </div>
+        ) : null}
 
         <div className="flex w-min items-center justify-center gap-4">
           <div className="flex w-24 flex-col items-center">

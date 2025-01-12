@@ -25,6 +25,7 @@ import {
 import type { ItemType } from "../../../../server/api/modules/item/types";
 import { ItemStatus } from "@prisma/client";
 import { useAddComment } from "./hooks/use-add-comment.hook";
+import Container from "../../shared/container";
 
 type Props = {
   item: ItemType;
@@ -45,9 +46,9 @@ const ItemAddCommentModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <div className="flex cursor-pointer rounded-lg border border-zinc-300 bg-background p-4 shadow transition-all duration-500 ease-in-out hover:scale-105 focus:border-primary dark:border-zinc-700">
+        <Container className="w-full cursor-pointer p-4 hover:scale-105">
           <Header vtag="h6">Add comment</Header>
-        </div>
+        </Container>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="p-0 sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>
@@ -55,7 +56,7 @@ const ItemAddCommentModal = (props: Props) => {
             onSubmit={form.handleSubmit(submit)}
             className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-8 sm:min-w-96"
           >
-            <Header vtag="h4" className="leading-tight">
+            <Header vtag="h4" className=" ">
               Add comment
             </Header>
             <FormField

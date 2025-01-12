@@ -9,6 +9,7 @@ export type ItemType = {
   rate: number | null;
   status: ItemStatus;
   collection: string;
+  collectionId?: string;
   timeAgo: string;
   updatedAt: Date;
   fieldGroups?: {

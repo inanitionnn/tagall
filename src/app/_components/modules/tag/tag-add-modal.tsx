@@ -45,7 +45,7 @@ const TagAddModal = (props: Props) => {
             onSubmit={form.handleSubmit(submit)}
             className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-8 sm:min-w-96"
           >
-            <Header vtag="h4" className="leading-tight">
+            <Header vtag="h4" className=" ">
               Add tag
             </Header>
             <FormField

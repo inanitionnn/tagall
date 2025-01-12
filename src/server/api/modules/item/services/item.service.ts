@@ -298,6 +298,16 @@ export async function GetUserItems(props: {
         },
       }),
 
+      ...(input?.tagsIds?.length && {
+        tags: {
+          some: {
+            id: {
+              in: input.tagsIds,
+            },
+          },
+        },
+      }),
+
       item: {
         ...(input?.search && {
           title: {
@@ -438,6 +448,7 @@ export async function GetUserItem(props: {
           image: true,
           collection: {
             select: {
+              id: true,
               name: true,
             },
           },
@@ -470,6 +481,7 @@ export async function GetUserItem(props: {
     timeAgo: dateToTimeAgoString(userItem.updatedAt),
     updatedAt: userItem.updatedAt,
     collection: userItem.item.collection.name,
+    collectionId: userItem.item.collection.id,
     fieldGroups: FieldsToGroupedFields(
       userItem.item.fields,
       FieldIdToFieldGroupIdMap,
@@ -577,9 +589,11 @@ export async function AddToCollection(props: {
       itemId: item.id,
       rate: input.rate ? input.rate : null,
       status: input.status,
-      // tags: {
-      //   connect: input.tags?.map((tag) => ({ id: tag })),
-      // },
+      ...(input.tagsIds?.length && {
+        tags: {
+          connect: input.tagsIds.map((tag) => ({ id: tag })),
+        },
+      }),
     },
   });
 
@@ -629,6 +643,9 @@ export async function UpdateItem(props: {
     data: {
       rate: input.rate,
       status: input.status,
+      ...(input.tagsIds && {
+        tags: { set: input.tagsIds.map((tag) => ({ id: tag })) },
+      }),
     },
   });
 

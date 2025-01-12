@@ -24,6 +24,7 @@ import type { ItemType } from "../../../../server/api/modules/item/types";
 import { Star } from "lucide-react";
 import { useUpdateItem } from "./hooks/use-update-item.hook";
 import { ItemStatus } from "@prisma/client";
+import Container from "../../shared/container";
 
 type Props = {
   item: ItemType;
@@ -47,7 +48,7 @@ const ItemUpdateModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <div className="flex cursor-pointer flex-col gap-2 rounded-lg border border-zinc-300 bg-background p-4 shadow transition-all duration-500 ease-in-out hover:scale-105 focus:border-primary dark:border-zinc-700">
+        <Container className="w-full cursor-pointer flex-col p-4 hover:scale-105">
           <div className="flex items-center gap-2">
             <Header vtag="h6">Status:</Header>
             <div className="flex w-full items-center justify-between gap-1">
@@ -71,7 +72,7 @@ const ItemUpdateModal = (props: Props) => {
               <Paragraph>None</Paragraph>
             )}
           </div>
-        </div>
+        </Container>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="p-0 sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>
@@ -79,7 +80,7 @@ const ItemUpdateModal = (props: Props) => {
             onSubmit={form.handleSubmit(submit)}
             className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-8 sm:min-w-96"
           >
-            <Header vtag="h4" className="leading-tight">
+            <Header vtag="h4" className=" ">
               Update item
             </Header>
             <FormField

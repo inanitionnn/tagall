@@ -9,7 +9,7 @@ type Props = {
 
 export const useGetUserTags = (props: Props) => {
   const { collectionsIds } = props;
-  const { data, isError, isSuccess, isLoading, refetch } =
+  const { data, isError, isSuccess } =
     api.tag.getUserTags.useQuery(collectionsIds);
 
   const [tags, setTags] = useState<TagType[]>([]);
@@ -28,7 +28,5 @@ export const useGetUserTags = (props: Props) => {
 
   return {
     tags,
-    isLoading,
-    refetch,
   };
 };
