@@ -12,11 +12,11 @@ const HomeMediumItem = (props: Props) => {
 
   return (
     <Container className="h-full flex-col hover:scale-105 md:w-full">
-      <div className="aspect-[29/40]">
+      <div className="aspect-[27/40]">
         {item.image ? (
           <CloudinaryImage publicId={item.image} />
         ) : (
-          <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />
+          <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
         )}
       </div>
       <div className="flex h-full items-center justify-center p-2">

@@ -28,11 +28,11 @@ function ItemContainer(props: Props) {
       </Container>
       <div className="flex flex-col gap-4 md:flex-row">
         <div className="flex min-w-64 flex-col items-center gap-4 md:max-w-64">
-          <div className="md:aspect-[29/40]">
+          <div className="md:aspect-[27/40]">
             {item.image ? (
               <CloudinaryImage publicId={item.image} className="mx-auto" />
             ) : (
-              <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />
+              <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
             )}
           </div>
 

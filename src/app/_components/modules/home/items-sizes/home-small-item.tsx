@@ -17,11 +17,11 @@ const HomeSmallItem = (props: Props) => {
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
     <Container className="h-36 cursor-pointer hover:scale-105 sm:h-24">
-      <div className="aspect-[29/40]">
+      <div className="aspect-[27/40]">
         {item.image ? (
           <CloudinaryImage publicId={item.image} />
         ) : (
-          <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />
+          <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
         )}
       </div>
       <div className="flex w-full flex-col justify-between gap-2 sm:flex-row sm:items-center">

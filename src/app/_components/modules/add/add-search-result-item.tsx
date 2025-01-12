@@ -15,7 +15,7 @@ const AddSearchResultItem = (props: Props) => {
 
   return (
     <Container
-      className={cn("relative h-64 cursor-pointer flex-col p-4 sm:flex-row", {
+      className={cn("relative h-80 cursor-pointer flex-col p-4 sm:flex-row", {
         "hover:scale-105": !searchResult.id,
       })}
       onClick={() => {
@@ -33,18 +33,18 @@ const AddSearchResultItem = (props: Props) => {
         {searchResult.title}
       </Header>
       <div className="flex h-full">
-        <div className="aspect-[29/40]">
+        <div className="aspect-[27/40]">
           {searchResult.image ? (
             <Image
               src={searchResult.image}
               alt={"cover" + searchResult.title}
-              className="aspect-[29/40] rounded-sm object-cover"
-              width={170}
-              height={260}
+              className="aspect-[27/40] rounded-sm object-cover"
+              width={210}
+              height={290}
               unoptimized={true}
             />
           ) : (
-            <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />
+            <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
           )}
         </div>
         <div className="flex w-full flex-col justify-between gap-2 p-6">
@@ -60,7 +60,7 @@ const AddSearchResultItem = (props: Props) => {
 
           <Paragraph>
             {[searchResult.year, ...searchResult.keywords]
-              .slice(0, 6)
+              .slice(0, 5)
               .join(" • ")}
           </Paragraph>
         </div>
