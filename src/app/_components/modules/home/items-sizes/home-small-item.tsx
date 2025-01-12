@@ -25,17 +25,17 @@ const HomeSmallItem = (props: Props) => {
         )}
       </div>
       <div className="flex w-full flex-col justify-between gap-2 sm:flex-row sm:items-center">
-        <div className="flex flex-col gap-1 xl:min-w-[300px] xl:max-w-[300px]">
-          <Header vtag="h6" className="line-clamp-3">
+        <div className="flex items-start justify-between gap-1 p-2 sm:flex-col xl:min-w-[300px] xl:max-w-[300px]">
+          <Header vtag="h6" className="line-clamp-2">
             {item.title}
           </Header>
-          <Paragraph className="font-semibold text-muted-foreground">
+          <Paragraph className="whitespace-nowrap font-semibold text-muted-foreground sm:block">
             {[item.collection, item.year].join(" • ")}
           </Paragraph>
         </div>
 
         {item.tags.length ? (
-          <div className="hidden w-full gap-2 xl:flex xl:flex-wrap">
+          <div className="flex w-full flex-wrap gap-2">
             {item.tags.map((tag) => (
               <Badge key={tag.id} className="px-2 py-0.5 text-sm">
                 {tag.name}
@@ -44,20 +44,24 @@ const HomeSmallItem = (props: Props) => {
           </div>
         ) : null}
 
-        <div className="flex w-min items-center justify-center gap-4">
-          <div className="flex w-24 flex-col items-center">
+        <div className="flex items-center justify-between gap-4 p-2 sm:w-min sm:justify-center">
+          <div className="flex items-center gap-2 sm:w-24 sm:flex-col">
             <ItemStatusIcon className="size-5 stroke-[2.5px]" />
             <Paragraph className="font-medium text-muted-foreground">
               {STATUS_NAMES[item.status]}
             </Paragraph>
           </div>
 
-          <div className="flex w-24 flex-col items-center">
-            <Paragraph className="font-bold">{item.rate}</Paragraph>
-            <Paragraph className="font-medium text-muted-foreground">
-              {item.rate ? RATING_NAMES[item.rate] : "None"}
-            </Paragraph>
-          </div>
+          {item.rate ? (
+            <div className="flex items-center gap-2 sm:w-24 sm:flex-col">
+              <Paragraph className="font-bold">{item.rate}</Paragraph>
+              <Paragraph className="font-medium text-muted-foreground">
+                {RATING_NAMES[item.rate]}
+              </Paragraph>
+            </div>
+          ) : (
+            <div />
+          )}
 
           <div className="hidden w-32 flex-col items-center lg:flex">
             <Paragraph className="font-bold">{item.timeAgo}</Paragraph>

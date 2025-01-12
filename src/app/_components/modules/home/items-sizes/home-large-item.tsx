@@ -19,7 +19,7 @@ const HomeLargeItem = (props: Props) => {
     <Container className="h-36 cursor-pointer hover:scale-105 sm:h-64">
       <div className="aspect-[29/40]">
         {item.image ? (
-          <CloudinaryImage publicId={item.image} className="rounded-l-sm" />
+          <CloudinaryImage publicId={item.image} />
         ) : (
           <div className="aspect-[29/40] rounded-sm bg-primary object-cover" />
         )}
@@ -35,7 +35,7 @@ const HomeLargeItem = (props: Props) => {
             </Header>
           </div>
 
-          <Paragraph className="hidden font-semibold text-muted-foreground sm:block">
+          <Paragraph className="font-semibold text-muted-foreground">
             {item.year}
           </Paragraph>
         </div>
@@ -54,7 +54,7 @@ const HomeLargeItem = (props: Props) => {
           </div>
         ) : null}
 
-        <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
+        <div className="flex flex-row items-center justify-between gap-1">
           {item.rate ? (
             <div className="flex items-center gap-2">
               <Paragraph className="w-5 text-center font-bold">
@@ -69,7 +69,7 @@ const HomeLargeItem = (props: Props) => {
           )}
 
           <div className="flex items-center gap-2">
-            <ItemStatusIcon className="block size-5 w-5 stroke-[2.5px] sm:hidden" />
+            <ItemStatusIcon className="block size-5 w-5 stroke-[2px] sm:hidden" />
             <Paragraph className="font-medium text-muted-foreground">
               {STATUS_NAMES[item.status]}
             </Paragraph>
