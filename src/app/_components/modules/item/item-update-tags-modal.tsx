@@ -39,7 +39,7 @@ const ItemUpdateTagsModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <Container className="hover:scape-105 cursor-pointer flex-col p-4">
+        <Container className="cursor-pointer flex-col p-4 hover:scale-105">
           <Header vtag="h6">Tags:</Header>
           <div className="flex flex-wrap gap-2">
             {item.tags.map((tag) => (
