@@ -9,7 +9,7 @@ export function ToastWrapper(props: Props) {
   const { children } = props;
   return (
     <>
-      <Toaster position="top-right" expand={true} />
+      <Toaster position="bottom-right" expand={true} />
       {children}
     </>
   );
