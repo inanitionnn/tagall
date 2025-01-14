@@ -44,8 +44,8 @@ const HomeSmallItem = (props: Props) => {
           </div>
         ) : null}
 
-        <div className="flex items-center justify-between gap-4 p-2 sm:w-min sm:justify-center">
-          <div className="flex items-center gap-2 sm:w-24 sm:flex-col">
+        <div className="flex items-center justify-between gap-2 p-2 sm:w-min sm:justify-center sm:gap-4">
+          <div className="flex items-center gap-1 sm:w-24 sm:flex-col sm:gap-2">
             <ItemStatusIcon className="size-5 stroke-[2.5px]" />
             <Paragraph className="font-medium text-muted-foreground">
               {STATUS_NAMES[item.status]}
@@ -53,7 +53,7 @@ const HomeSmallItem = (props: Props) => {
           </div>
 
           {item.rate ? (
-            <div className="flex items-center gap-2 sm:w-24 sm:flex-col">
+            <div className="flex items-center gap-1 sm:w-24 sm:flex-col sm:gap-2">
               <Paragraph className="font-bold">{item.rate}</Paragraph>
               <Paragraph className="font-medium text-muted-foreground">
                 {RATING_NAMES[item.rate]}

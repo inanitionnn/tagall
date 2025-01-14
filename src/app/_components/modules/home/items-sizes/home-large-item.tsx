@@ -54,7 +54,7 @@ const HomeLargeItem = (props: Props) => {
           </div>
         ) : null}
 
-        <div className="flex flex-row items-center justify-between gap-1">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           {item.rate ? (
             <div className="flex items-center gap-2">
               <Paragraph className="w-5 text-center font-bold">

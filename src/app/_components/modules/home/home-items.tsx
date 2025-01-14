@@ -30,7 +30,7 @@ const HomeItems = (props: Props) => {
         </div>
       )}
       {itemsSize === "medium" && (
-        <div className="mx-auto grid max-w-screen-2xl grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-4 md:grid-cols-5 xl:grid-cols-6">
+        <div className="xl2:grid-cols-6 mx-auto grid max-w-screen-2xl grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
           {items.map((item) => (
             <Link key={item.id} href={`/item/${item.id}`} target="_blank">
               <HomeMediumItem key={item.id} item={item} />
