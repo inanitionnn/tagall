@@ -28,7 +28,7 @@ export const GetUserItemsFilterSchema = z.array(
 );
 
 export const GetUserItemsSortSchema = z.object({
-  name: z.enum(["rate", "status", "date", "year"]),
+  name: z.enum(["rate", "status", "date", "year", "title"]),
   type: z.enum(["asc", "desc"]),
 });
 

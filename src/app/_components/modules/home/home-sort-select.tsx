@@ -10,12 +10,12 @@ import { SORT_OPTIONS } from "../../../../constants";
 
 type Props = {
   sorting: {
-    name: "status" | "date" | "rate" | "year";
+    name: "status" | "date" | "rate" | "year" | "title";
     type: "desc" | "asc";
   };
   setSorting: Dispatch<
     SetStateAction<{
-      name: "status" | "date" | "rate" | "year";
+      name: "status" | "date" | "rate" | "year" | "title";
       type: "desc" | "asc";
     }>
   >;

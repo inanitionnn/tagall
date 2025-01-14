@@ -36,43 +36,43 @@ export const Search = async (props: {
         default:
           return reject(new Error("Collection not found"));
       }
-      const userItems = await ctx.db.userToItem.findMany({
-        where: {
-          userId: ctx.session.user.id,
-          item: {
-            parsedId: {
-              in: items.map((item) => item.parsedId),
-            },
-          },
-        },
-        select: {
-          item: {
-            select: {
-              id: true,
-              parsedId: true,
-            },
-          },
-        },
-      });
-
-      const itemsMap = userItems.reduce(
-        (acc, userItem) => {
-          acc[userItem.item.parsedId] = userItem.item.id;
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
-
-      return resolve(
-        items.map((item) => {
-          return {
-            ...item,
-            id: itemsMap[item.parsedId] ?? null,
-          };
-        }),
-      );
+      return resolve(items);
     })();
   });
 
-  return getOrSetCache<SearchResultType[]>(redisKey, promise);
+  const items = await getOrSetCache<SearchResultType[]>(redisKey, promise);
+
+  const userItems = await ctx.db.userToItem.findMany({
+    where: {
+      userId: ctx.session.user.id,
+      item: {
+        parsedId: {
+          in: items.map((item) => item.parsedId),
+        },
+      },
+    },
+    select: {
+      item: {
+        select: {
+          id: true,
+          parsedId: true,
+        },
+      },
+    },
+  });
+
+  const itemsMap = userItems.reduce(
+    (acc, userItem) => {
+      acc[userItem.item.parsedId] = userItem.item.id;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
+  return items.map((item) => {
+    return {
+      ...item,
+      id: itemsMap[item.parsedId] ?? null,
+    };
+  });
 };

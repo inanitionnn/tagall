@@ -246,7 +246,6 @@ export async function GetUserItems(props: {
   const redisKey = `item:GetUserItems:${ctx.session.user.id}:${JSON.stringify(input)}`;
   const limit = input?.limit ?? 20;
   const page = input?.page ?? 1;
-
   const promise = new Promise<ItemType[]>((resolve) => {
     (async () => {
       const rateFromFilter = input?.filtering
@@ -275,11 +274,12 @@ export async function GetUserItems(props: {
       const excludeFieldsIds = fields
         .filter((filter) => filter.type === "exclude")
         .map((field) => field.fieldId);
+
       const userItems = await ctx.db.userToItem.findMany({
         where: {
           userId: ctx.session.user.id,
-          ...((rateFromFilter ??
-            rateToFilter ??
+          ...((rateFromFilter ||
+            rateToFilter ||
             input?.sorting?.name === "rate") && {
             rate: {
               ...(rateToFilter && {
@@ -290,13 +290,15 @@ export async function GetUserItems(props: {
               }),
             },
           }),
-          ...((statusIncludeFilter?.length ?? statusExcludeFilter?.length) && {
+          ...((statusIncludeFilter?.length || statusExcludeFilter?.length) && {
             status: {
-              ...(statusIncludeFilter && {
+              ...(statusIncludeFilter?.length && {
                 in: statusIncludeFilter.map((filter) => filter.value),
               }),
-              ...(statusExcludeFilter && {
-                notIn: statusExcludeFilter.map((filter) => filter.value),
+              ...(statusExcludeFilter?.length && {
+                not: {
+                  in: statusExcludeFilter.map((filter) => filter.value),
+                },
               }),
             },
           }),
@@ -323,7 +325,7 @@ export async function GetUserItems(props: {
                 in: input?.collectionsIds,
               },
             }),
-            ...((yearFromFilter ?? yearToFilter) && {
+            ...((yearFromFilter || yearToFilter) && {
               year: {
                 ...(yearToFilter && {
                   lte: yearToFilter.value,
@@ -374,6 +376,11 @@ export async function GetUserItems(props: {
                   sort: input.sorting.type,
                   nulls: "last",
                 },
+              },
+            }),
+            ...(input.sorting.name === "title" && {
+              item: {
+                title: input.sorting.type,
               },
             }),
           },
