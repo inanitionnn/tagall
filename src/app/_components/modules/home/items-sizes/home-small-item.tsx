@@ -60,7 +60,7 @@ const HomeSmallItem = (props: Props) => {
               </Paragraph>
             </div>
           ) : (
-            <div />
+            <div className="sm:w-24" />
           )}
 
           <div className="hidden w-32 flex-col items-center lg:flex">
