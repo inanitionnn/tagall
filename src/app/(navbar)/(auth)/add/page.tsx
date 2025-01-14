@@ -1,5 +1,6 @@
 import { api, HydrateClient } from "../../../../trpc/server";
 import { AddContainer } from "../../../_components/modules";
+import BackgroundImage from "../../../_components/shared/background-image";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +10,9 @@ export default async function Add() {
 
   return (
     <HydrateClient>
-      <AddContainer />
+      <BackgroundImage image="/posters6.webp">
+        <AddContainer />
+      </BackgroundImage>
     </HydrateClient>
   );
 }

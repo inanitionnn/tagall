@@ -39,7 +39,7 @@ export default function RootLayout({
     >
       <SpeedInsights />
       <Analytics />
-      <body className="bg-muted">
+      <body>
         <TRPCReactProvider>
           <SessionProviderWrapper session={session}>
             <ToastWrapper>

@@ -1,5 +1,6 @@
 import { api, HydrateClient } from "../../../trpc/server";
 import { HomeContainer } from "../../_components/modules";
+import BackgroundImage from "../../_components/shared/background-image";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,9 @@ export default async function Home() {
   void api.field.getFilterFields.prefetch();
   return (
     <HydrateClient>
-      <HomeContainer />
+      <BackgroundImage image="/posters3.webp">
+        <HomeContainer />
+      </BackgroundImage>
     </HydrateClient>
   );
 }

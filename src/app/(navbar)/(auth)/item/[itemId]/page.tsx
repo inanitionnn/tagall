@@ -1,5 +1,6 @@
 import { api, HydrateClient } from "../../../../../trpc/server";
 import { ItemContainer } from "../../../../_components/modules/item/item-container";
+import BackgroundImage from "../../../../_components/shared/background-image";
 
 export default async function Item({ params }: { params: { itemId: string } }) {
   const { itemId } = params;
@@ -8,7 +9,9 @@ export default async function Item({ params }: { params: { itemId: string } }) {
 
   return (
     <HydrateClient>
-      <ItemContainer itemId={itemId} />
+      <BackgroundImage image="/posters9.webp">
+        <ItemContainer itemId={itemId} />
+      </BackgroundImage>
     </HydrateClient>
   );
 }
