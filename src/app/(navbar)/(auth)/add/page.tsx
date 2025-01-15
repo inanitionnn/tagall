@@ -10,7 +10,7 @@ export default async function Add() {
 
   return (
     <HydrateClient>
-      <BackgroundImage image="/posters6.webp">
+      <BackgroundImage image="/posters8.webp">
         <AddContainer />
       </BackgroundImage>
     </HydrateClient>

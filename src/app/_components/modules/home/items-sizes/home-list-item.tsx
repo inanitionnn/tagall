@@ -31,7 +31,7 @@ const HomeListItem = (props: Props) => {
 
         <Header
           vtag="h6"
-          className="line-clamp-3 w-full min-w-64 whitespace-break-spaces text-wrap font-bold leading-snug group-hover:text-primary"
+          className="line-clamp-3 w-full whitespace-break-spaces text-wrap font-bold leading-snug group-hover:text-primary sm:min-w-64"
         >
           {item.title}
         </Header>
