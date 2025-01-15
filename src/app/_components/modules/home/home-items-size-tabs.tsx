@@ -13,18 +13,19 @@ const HomeItemsSizeTabs = (props: Props) => {
   return (
     <Container>
       <Button
+        onClick={() => setItemsSize("large")}
+        size={"icon"}
+        variant={itemsSize === "large" ? "default" : "ghost"}
+        className="hidden sm:flex"
+      >
+        <Grid2x2 />
+      </Button>
+      <Button
         onClick={() => setItemsSize("medium")}
         size={"icon"}
         variant={itemsSize === "medium" ? "default" : "ghost"}
       >
         <Grid3x3 />
-      </Button>
-      <Button
-        onClick={() => setItemsSize("large")}
-        size={"icon"}
-        variant={itemsSize === "large" ? "default" : "ghost"}
-      >
-        <Grid2x2 />
       </Button>
       <Button
         onClick={() => setItemsSize("small")}

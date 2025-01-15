@@ -29,7 +29,10 @@ const HomeListItem = (props: Props) => {
           {item.year}
         </Paragraph>
 
-        <Header vtag="h6" className="line-clamp-2 w-full min-w-64">
+        <Header
+          vtag="h6"
+          className="line-clamp-3 w-full min-w-64 whitespace-break-spaces text-wrap font-bold leading-snug group-hover:text-primary"
+        >
           {item.title}
         </Header>
 

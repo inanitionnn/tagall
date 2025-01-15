@@ -238,7 +238,7 @@ const ItemUpdateCommentModal = (props: Props) => {
               </Button>
 
               <Button className="w-full" disabled={form.formState.isSubmitting}>
-                Add comment
+                Update comment
               </Button>
             </div>
           </form>

@@ -16,8 +16,8 @@ const HomeLargeItem = (props: Props) => {
   const { item } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
-    <Container className="h-36 cursor-pointer hover:scale-105 sm:h-64">
-      <div className="aspect-[27/40]">
+    <Container className="h-fit cursor-pointer hover:scale-105 sm:h-64">
+      <div className="aspect-[27/40] h-36 sm:h-full">
         {item.image ? (
           <CloudinaryImage publicId={item.image} />
         ) : (
@@ -40,12 +40,14 @@ const HomeLargeItem = (props: Props) => {
           </Paragraph>
         </div>
 
-        <Paragraph vsize={"sm"} className="line-clamp-4 hidden sm:block">
-          {item.description}
-        </Paragraph>
+        <div className="hidden sm:block">
+          <Paragraph vsize={"sm"} className="line-clamp-4">
+            {item.description}
+          </Paragraph>
+        </div>
 
         {item.tags.length ? (
-          <div className="hidden flex-wrap gap-2 sm:flex">
+          <div className="flex flex-wrap gap-2">
             {item.tags.map((tag) => (
               <Badge key={tag.id} className="px-2 py-0.5 text-sm">
                 {tag.name}

@@ -14,7 +14,7 @@ const BackgroundImage = (props: Props) => {
         height={1080}
         objectFit="cover"
         objectPosition="center"
-        className="fixed inset-0 -z-10 h-screen w-full object-cover opacity-[0.13]"
+        className="fixed inset-0 -z-10 h-screen w-full object-cover opacity-[0.10]"
         {...restProps}
       />
 
