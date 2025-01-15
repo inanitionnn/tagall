@@ -6,6 +6,16 @@ import type {
 } from "../types";
 import { ANILIST_DETAILS_QUERY, ANILIST_SEARCH_QUERY } from "../constants";
 
+function cleanText(input: string): string {
+  const withoutTags = input.replace(/<[^>]*>/g, "");
+
+  const withoutSource = withoutTags.replace(/\(.*?Source.*?\)/gi, "");
+
+  const normalized = withoutSource.replace(/\s+/g, " ").trim();
+
+  return normalized;
+}
+
 const url = "https://graphql.anilist.co";
 
 export async function GetAnilistDetailsById(mediaId: string) {
@@ -45,7 +55,7 @@ export async function GetAnilistDetailsById(mediaId: string) {
     id,
     year: startDate?.year ?? null,
     title: title.english ?? title.romaji ?? "",
-    description,
+    description: cleanText(description ?? ""),
     chapters,
     volumes,
     people: staff?.nodes.map((node) => node.name.full).filter(Boolean) ?? [],
@@ -96,7 +106,7 @@ export async function SearchAnilist(
     ].filter(Boolean) as string[];
     return {
       id: null,
-      description,
+      description: cleanText(description ?? ""),
       image,
       keywords,
       parsedId,
