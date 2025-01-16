@@ -17,4 +17,5 @@ export type ImdbDetailsResultType = {
   contentRating: string | null;
   rating: number | null;
   production: string[];
+  reviews: string[];
 };

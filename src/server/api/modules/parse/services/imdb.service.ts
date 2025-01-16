@@ -19,14 +19,15 @@ async function GetHtmlFromUrl(url: string): Promise<string> {
 function ExtractElements<T>(...arrays: Record<string, any>[][]): T[] {
   const getItem = (item: Record<string, any>): T => {
     return (
-      item.id ||
-      item.name ||
-      item.genre?.text ||
-      item.node?.text ||
-      item.name?.nameText?.text ||
-      item.node?.primaryText?.text ||
+      item.credits?.map((credit: any) => credit?.name?.nameText?.text)?.[0] ||
+      item.node?.text?.originalText?.plainText ||
       item.node?.company?.companyText?.text ||
-      item.credits?.map((credit: any) => credit?.name?.nameText?.text)?.[0]
+      item.node?.primaryText?.text ||
+      item.name?.nameText?.text ||
+      item.node?.text ||
+      item.genre?.text ||
+      item.name ||
+      item.id
     );
   };
 
@@ -49,6 +50,7 @@ function FillImdbDetailsResult(props: any): ImdbDetailsResultType {
       isEpisode: !!props.titleType?.isEpisode,
       canHaveEpisodes: !!props.titleType?.canHaveEpisodes,
     },
+    reviews: ExtractElements<string>(props.featuredReviews.edges),
     // year: {
     //   release: props.releaseYear?.year ?? null,
     //   end: props.releaseYear?.endYear ?? null,
@@ -101,6 +103,7 @@ function GetHighQualityImageUrls(originalUrl: string | null) {
     small: `${baseUrl}._V1_QL75_UY600_.jpg`,
   };
 }
+
 // #endregion Private Functions
 
 // #region Public Functions
