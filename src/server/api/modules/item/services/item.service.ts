@@ -8,6 +8,7 @@ import type {
   ItemType,
   DeleteFromCollectionInputType,
   ItemSmallType,
+  GetRandomUserItemsInputType,
 } from "../types";
 import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../embedding/services";
@@ -197,9 +198,7 @@ export async function GetUserItems(props: {
       const userItems = await ctx.db.userToItem.findMany({
         where: {
           userId: ctx.session.user.id,
-          ...((rateFromFilter ||
-            rateToFilter ||
-            input?.sorting?.name === "rate") && {
+          ...((rateFromFilter || rateToFilter) && {
             rate: {
               ...(rateToFilter && {
                 lte: rateToFilter.value,
@@ -644,6 +643,137 @@ export async function SearchItemByText(props: {
   });
 
   return ItemResponse.transformItems(nearestUserItems);
+}
+
+export async function GetRandomUserItems(props: {
+  ctx: ContextType;
+  input: GetRandomUserItemsInputType;
+}): Promise<ItemSmallType[]> {
+  const { ctx, input } = props;
+
+  const limit = input?.limit ?? 12;
+
+  const rateFromFilter = input?.filtering
+    ?.filter((filter) => filter.name === "rate")
+    .find((filter) => filter.type === "from");
+  const rateToFilter = input?.filtering
+    ?.filter((filter) => filter.name === "rate")
+    .find((filter) => filter.type === "to");
+  const yearFromFilter = input?.filtering
+    ?.filter((filter) => filter.name === "year")
+    .find((filter) => filter.type === "from");
+  const yearToFilter = input?.filtering
+    ?.filter((filter) => filter.name === "year")
+    .find((filter) => filter.type === "to");
+  const statusIncludeFilter = input?.filtering
+    ?.filter((filter) => filter.name === "status")
+    .filter((filter) => filter.type === "include");
+  const statusExcludeFilter = input?.filtering
+    ?.filter((filter) => filter.name === "status")
+    .filter((filter) => filter.type === "exclude");
+  const fields =
+    input?.filtering?.filter((filter) => filter.name === "field") ?? [];
+  const includeFieldsIds = fields
+    .filter((filter) => filter.type === "include")
+    .map((field) => field.fieldId);
+  const excludeFieldsIds = fields
+    .filter((filter) => filter.type === "exclude")
+    .map((field) => field.fieldId);
+
+  const radndomUserItems = await ctx.db.userToItem.findManyRandom(limit, {
+    where: {
+      userId: ctx.session.user.id,
+      ...((rateFromFilter || rateToFilter) && {
+        rate: {
+          ...(rateToFilter && {
+            lte: rateToFilter.value,
+          }),
+          ...(rateFromFilter && {
+            gte: rateFromFilter.value,
+          }),
+        },
+      }),
+      ...((statusIncludeFilter?.length || statusExcludeFilter?.length) && {
+        status: {
+          ...(statusIncludeFilter?.length && {
+            in: statusIncludeFilter.map((filter) => filter.value),
+          }),
+          ...(statusExcludeFilter?.length && {
+            not: {
+              in: statusExcludeFilter.map((filter) => filter.value),
+            },
+          }),
+        },
+      }),
+
+      ...(input?.tagsIds?.length && {
+        AND: input.tagsIds.map((tagId) => ({
+          tags: {
+            some: {
+              id: tagId,
+            },
+          },
+        })),
+      }),
+
+      item: {
+        ...(input?.collectionsIds?.length && {
+          collectionId: {
+            in: input?.collectionsIds,
+          },
+        }),
+        ...((yearFromFilter || yearToFilter) && {
+          year: {
+            ...(yearToFilter && {
+              lte: yearToFilter.value,
+            }),
+            ...(yearFromFilter && {
+              gte: yearFromFilter.value,
+            }),
+          },
+        }),
+        ...(includeFieldsIds.length && {
+          AND: includeFieldsIds.map((id) => ({
+            fields: {
+              some: {
+                id,
+              },
+            },
+          })),
+        }),
+        ...(excludeFieldsIds.length && {
+          fields: {
+            none: {
+              id: {
+                in: excludeFieldsIds,
+              },
+            },
+          },
+        }),
+      },
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  const userItems = await ctx.db.userToItem.findMany({
+    where: {
+      id: {
+        in: radndomUserItems.map((item) => item.id),
+      },
+    },
+    include: {
+      tags: true,
+      item: {
+        include: {
+          collection: true,
+        },
+      },
+    },
+  });
+
+  return ItemResponse.transformItems(userItems);
 }
 
 // #endregion public functions

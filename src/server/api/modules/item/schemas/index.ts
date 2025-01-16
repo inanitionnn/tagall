@@ -5,3 +5,4 @@ export * from "./get-user-item-input.schema";
 export * from "./update-item-input.schema";
 export * from "./delete-from-collection-input.schema";
 export * from "./search-item-by-text-input.schema";
+export * from "./get-random-user-items-input.schema";

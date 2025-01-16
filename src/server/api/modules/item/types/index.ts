@@ -6,3 +6,4 @@ export * from "./get-user-item-input.type";
 export * from "./update-item-input.type";
 export * from "./delete-from-collection-input.type";
 export * from "./item-small.type";
+export * from "./get-random-user-items-input.type";

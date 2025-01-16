@@ -1,15 +1,9 @@
-import type { PrismaClient, Role } from "@prisma/client";
-import type { DefaultArgs } from "@prisma/client/runtime/library";
+import type { PrismaClient, Role, Prisma } from "@prisma/client";
 import type { ISODateString } from "next-auth";
+import { dbType } from "../db";
 
 export type ContextType = {
-  db: PrismaClient<
-    {
-      log: ("query" | "warn" | "error")[];
-    },
-    never,
-    DefaultArgs
-  >;
+  db: dbType;
   session: {
     user: {
       id: string;

@@ -2,6 +2,7 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
   AddToCollectionInputSchema,
   DeleteFromCollectionInputSchema,
+  GetRandomUserItemsInputSchema,
   GetUserItemInputSchema,
   GetUserItemsInputSchema,
   GetYearsRangeInputSchema,
@@ -11,6 +12,7 @@ import {
 import {
   AddToCollection,
   DeleteFromCollection,
+  GetRandomUserItems,
   GetUserItem,
   GetUserItems,
   GetYearsRange,
@@ -22,6 +24,10 @@ export const ItemRouter = createTRPCRouter({
   getUserItems: protectedProcedure
     .input(GetUserItemsInputSchema)
     .query(GetUserItems),
+
+  getRandomUserItems: protectedProcedure
+    .input(GetRandomUserItemsInputSchema)
+    .query(GetRandomUserItems),
 
   getUserItem: protectedProcedure
     .input(GetUserItemInputSchema)
