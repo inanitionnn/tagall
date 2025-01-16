@@ -1,5 +1,5 @@
 import { api, HydrateClient } from "../../../../trpc/server";
-import { TagContainer } from "../../../_components/modules/tag/tag-container";
+import { TagContainer } from "../../../_components/modules/";
 import BackgroundImage from "../../../_components/shared/background-image";
 
 export default async function Tag() {

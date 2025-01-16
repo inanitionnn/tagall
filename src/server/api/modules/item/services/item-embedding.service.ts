@@ -10,7 +10,7 @@ export const GetNearestItemsIds = async (props: {
   const result = await ctx.db.$queryRaw<{ id: string }[]>`
     SELECT id
     FROM "Item"
-    ORDER BY (embedding <-> ${JSON.stringify(embedding)}::vector) ASC
+    ORDER BY (embedding <-> ${JSON.stringify(embedding)}::vector)
     LIMIT ${limit + 1};
   `;
 

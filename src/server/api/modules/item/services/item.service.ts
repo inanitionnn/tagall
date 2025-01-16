@@ -621,13 +621,16 @@ export async function SearchItemByText(props: {
   const nearestItemsIds = await GetNearestItemsIds({
     ctx,
     embedding,
+    limit: 12,
   });
 
   const nearestUserItems = await ctx.db.userToItem.findMany({
     where: {
       userId: ctx.session.user.id,
-      id: {
-        in: nearestItemsIds,
+      item: {
+        id: {
+          in: nearestItemsIds,
+        },
       },
     },
     include: {
