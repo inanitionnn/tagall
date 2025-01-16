@@ -377,8 +377,10 @@ export async function GetUserItem(props: {
       const nearestUserItems = await ctx.db.userToItem.findMany({
         where: {
           userId: ctx.session.user.id,
-          id: {
-            in: nearestItemsIds,
+          item: {
+            id: {
+              in: nearestItemsIds,
+            },
           },
         },
         include: {
