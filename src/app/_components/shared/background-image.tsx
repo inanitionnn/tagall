@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef } from "react";
 import Image from "next/image";
 
 type Props = ComponentPropsWithoutRef<"div"> & { image: string };

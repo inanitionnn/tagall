@@ -8,11 +8,13 @@ export type ItemType = {
   image: string | null;
   rate: number | null;
   status: ItemStatus;
-  collection: string;
-  collectionId?: string;
+  collection: {
+    id: string;
+    name: string;
+  };
   timeAgo: string;
   updatedAt: Date;
-  fieldGroups?: {
+  fieldGroups: {
     name: string;
     fields: string[];
   }[];
@@ -20,7 +22,7 @@ export type ItemType = {
     id: string;
     name: string;
   }[];
-  comments?: {
+  comments: {
     id: string;
     title: string | null;
     description: string | null;
@@ -28,5 +30,16 @@ export type ItemType = {
     status: ItemStatus;
     timeAgo: string;
     createdAt: Date;
+  }[];
+  similarItems: {
+    id: string;
+    title: string;
+    image: string | null;
+    year: number | null;
+    description: string | null;
+    collection: {
+      id: string;
+      name: string;
+    };
   }[];
 };

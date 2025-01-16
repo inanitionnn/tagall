@@ -1,5 +1,5 @@
 import { Header, Paragraph } from "../../../ui";
-import type { ItemType } from "../../../../../server/api/modules/item/types";
+import type { ItemsType } from "../../../../../server/api/modules/item/types";
 import {
   RATING_NAMES,
   STATUS_ICONS,
@@ -7,12 +7,13 @@ import {
 } from "../../../../../constants";
 
 type Props = {
-  item: ItemType;
+  item: ItemsType[number];
   index: number;
+  selectedCollectionsIds: string[];
 };
 
 const HomeListItem = (props: Props) => {
-  const { item, index } = props;
+  const { item, index, selectedCollectionsIds } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
     <>
@@ -21,9 +22,11 @@ const HomeListItem = (props: Props) => {
           {index}.
         </Paragraph>
 
-        <Paragraph className="hidden min-w-14 font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary md:block">
-          {item.collection}
-        </Paragraph>
+        {selectedCollectionsIds.length > 1 ? (
+          <Paragraph className="hidden min-w-14 font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary md:block lg:hidden xl:block">
+            {item.collection.name}
+          </Paragraph>
+        ) : null}
 
         <Paragraph className="hidden font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary sm:block">
           {item.year}
@@ -36,19 +39,25 @@ const HomeListItem = (props: Props) => {
           {item.title}
         </Header>
 
-        <div className="hidden min-w-32 items-center justify-end gap-2 lg:flex">
-          <Paragraph className="font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary">
+        <div className="hidden items-center justify-end gap-2 md:flex lg:min-w-32">
+          <Paragraph className="whitespace-nowrap font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary">
             {STATUS_NAMES[item.status]}
           </Paragraph>
-          |
-          <ItemStatusIcon className="size-4 stroke-muted-foreground stroke-2 group-hover:stroke-primary group-hover:stroke-[2.5px]" />
+          <Paragraph className="hidden font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary lg:block">
+            |
+          </Paragraph>
+
+          <ItemStatusIcon className="hidden size-4 stroke-muted-foreground stroke-2 group-hover:stroke-primary group-hover:stroke-[2.5px] lg:block" />
         </div>
 
-        <div className="hidden min-w-32 items-center justify-end gap-2 lg:flex">
-          <Paragraph className="font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary">
+        <div className="hidden items-center justify-end gap-2 md:flex lg:min-w-32">
+          <Paragraph className="hidden font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary lg:block">
             {item.rate ? RATING_NAMES[item.rate] : "None"}
           </Paragraph>
-          |
+          <Paragraph className="hidden font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary lg:block">
+            |
+          </Paragraph>
+
           <Paragraph className="min-w-4 text-end font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary">
             {item.rate ?? 0}
           </Paragraph>

@@ -1,5 +1,5 @@
 import { Badge, Header, Paragraph } from "../../../ui";
-import type { ItemType } from "../../../../../server/api/modules/item/types";
+import type { ItemsType } from "../../../../../server/api/modules/item/types";
 import {
   RATING_NAMES,
   STATUS_ICONS,
@@ -9,11 +9,12 @@ import CloudinaryImage from "../../../shared/cloudinary-image";
 import Container from "../../../shared/container";
 
 type Props = {
-  item: ItemType;
+  item: ItemsType[number];
+  selectedCollectionsIds: string[];
 };
 
 const HomeLargeItem = (props: Props) => {
-  const { item } = props;
+  const { item, selectedCollectionsIds } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
     <Container className="h-fit cursor-pointer hover:scale-105 sm:h-64">
@@ -30,9 +31,11 @@ const HomeLargeItem = (props: Props) => {
             <Header vtag="h5" className="line-clamp-2">
               {item.title}
             </Header>
-            <Header vtag="h6" className="font-bold text-muted-foreground">
-              {item.collection}
-            </Header>
+            {selectedCollectionsIds.length > 1 ? (
+              <Header vtag="h6" className="font-bold text-muted-foreground">
+                {item.collection.name}
+              </Header>
+            ) : null}
           </div>
 
           <Paragraph className="font-semibold text-muted-foreground">

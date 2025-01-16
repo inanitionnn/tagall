@@ -8,12 +8,18 @@ import type {
   GetYearsRangeInputType,
   ItemType,
   DeleteFromCollectionInputType,
+  ItemsType,
 } from "../types";
 import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../embedding/services";
 import { uploadImageByUrl } from "../../files/files.service";
 import { GetAnilistDetailsById } from "../../parse/services/anilist.service";
 import { deleteCacheByPrefix, getOrSetCache } from "../../../../../lib/redis";
+import {
+  UpdateItemEmbedding,
+  GetItemEmbedding,
+  GetNearestItemsIds,
+} from "./item-embedding.service";
 
 // #region private functions
 
@@ -115,6 +121,8 @@ async function CreateItem(props: {
 }) {
   const { ctx, collectionId, parsedId } = props;
 
+  let details: any;
+
   const transactionResult = await ctx.db.$transaction(
     async (prisma) => {
       const oldItem = await prisma.item.findFirst({
@@ -127,7 +135,6 @@ async function CreateItem(props: {
         return oldItem;
       }
 
-      let details;
       switch (props.type) {
         case "imdb":
           details = await GetImdbDetailsById(parsedId);
@@ -218,14 +225,13 @@ async function CreateItem(props: {
           },
         });
       }
-
       const embedding = await GetEmbedding(details);
 
-      await prisma.$executeRaw`
-        UPDATE "Item"
-        SET embedding = ${JSON.stringify(embedding)}::vector
-        WHERE id = ${item.id};
-      `;
+      await UpdateItemEmbedding({
+        ctx,
+        embedding,
+        itemId: transactionResult.id,
+      });
 
       return item;
     },
@@ -241,12 +247,12 @@ async function CreateItem(props: {
 export async function GetUserItems(props: {
   ctx: ContextType;
   input: GetUserItemsInputType;
-}): Promise<ItemType[]> {
+}): Promise<ItemsType> {
   const { ctx, input } = props;
   const redisKey = `item:GetUserItems:${ctx.session.user.id}:${JSON.stringify(input)}`;
   const limit = input?.limit ?? 20;
   const page = input?.page ?? 1;
-  const promise = new Promise<ItemType[]>((resolve) => {
+  const promise = new Promise<ItemsType>((resolve) => {
     (async () => {
       const rateFromFilter = input?.filtering
         ?.filter((filter) => filter.name === "rate")
@@ -397,6 +403,7 @@ export async function GetUserItems(props: {
               image: true,
               collection: {
                 select: {
+                  id: true,
                   name: true,
                 },
               },
@@ -417,7 +424,7 @@ export async function GetUserItems(props: {
         status: userItems.status,
         timeAgo: dateToTimeAgoString(userItems.updatedAt),
         updatedAt: userItems.updatedAt,
-        collection: userItems.item.collection.name,
+        collection: userItems.item.collection,
         tags: userItems.tags.map((tag) => ({
           id: tag.id,
           name: tag.name,
@@ -427,7 +434,7 @@ export async function GetUserItems(props: {
     })();
   });
 
-  return getOrSetCache<ItemType[]>(redisKey, promise);
+  return getOrSetCache<ItemsType>(redisKey, promise);
 }
 
 export async function GetUserItem(props: {
@@ -436,47 +443,87 @@ export async function GetUserItem(props: {
 }): Promise<ItemType | null> {
   const { ctx, input } = props;
 
+  const LIMIT = 8;
+
   const redisKey = `item:GetUserItem:${ctx.session.user.id}:${input}`;
 
-  const promise = ctx.db.userToItem
-    .findUnique({
-      where: {
-        userId_itemId: {
-          userId: ctx.session.user.id,
-          itemId: input,
+  const promise = new Promise<ItemType | null>((resolve) => {
+    (async () => {
+      const userItem = await ctx.db.userToItem.findUnique({
+        where: {
+          userId_itemId: {
+            userId: ctx.session.user.id,
+            itemId: input,
+          },
         },
-      },
-      include: {
-        item: {
-          select: {
-            id: true,
-            title: true,
-            year: true,
-            description: true,
-            image: true,
-            collection: {
-              select: {
-                id: true,
-                name: true,
+        include: {
+          item: {
+            select: {
+              id: true,
+              title: true,
+              year: true,
+              description: true,
+              image: true,
+              collection: {
+                select: {
+                  id: true,
+                  name: true,
+                },
               },
+              fields: true,
             },
-            fields: true,
+          },
+          tags: true,
+          itemComments: {
+            orderBy: {
+              createdAt: "desc",
+            },
           },
         },
-        tags: true,
-        itemComments: {
-          orderBy: {
-            createdAt: "desc",
-          },
-        },
-      },
-    })
-    .then(async (userItem) => {
+      });
+
       if (!userItem) {
-        return null;
+        return resolve(null);
       }
+
+      const itemEmbedding = await GetItemEmbedding({
+        ctx,
+        itemId: input,
+      });
+
+      const nearestItemsIds = await GetNearestItemsIds({
+        ctx,
+        embedding: itemEmbedding,
+        limit: LIMIT,
+      });
+
+      const nearestItems = await ctx.db.item.findMany({
+        where: {
+          id: {
+            in: nearestItemsIds,
+          },
+        },
+        orderBy: {
+          title: "asc",
+        },
+        select: {
+          id: true,
+          title: true,
+          year: true,
+          description: true,
+          image: true,
+          collection: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+
       const FieldIdToFieldGroupIdMap = await getFieldIdToFieldGroupIdMap(ctx);
-      return {
+
+      return resolve({
         id: userItem.item.id,
         title: userItem.item.title,
         description: userItem.item.description,
@@ -486,8 +533,7 @@ export async function GetUserItem(props: {
         status: userItem.status,
         timeAgo: dateToTimeAgoString(userItem.updatedAt),
         updatedAt: userItem.updatedAt,
-        collection: userItem.item.collection.name,
-        collectionId: userItem.item.collection.id,
+        collection: userItem.item.collection,
         fieldGroups: FieldsToGroupedFields(
           userItem.item.fields,
           FieldIdToFieldGroupIdMap,
@@ -505,8 +551,10 @@ export async function GetUserItem(props: {
           timeAgo: dateToTimeAgoString(comment.createdAt),
           createdAt: comment.createdAt,
         })),
-      };
-    });
+        similarItems: nearestItems,
+      });
+    })();
+  });
 
   return getOrSetCache<ItemType | null>(redisKey, promise);
 }

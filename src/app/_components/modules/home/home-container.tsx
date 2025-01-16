@@ -103,8 +103,8 @@ function HomeContainer() {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-8">
-      <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap justify-between gap-4">
+    <div className="mx-auto flex max-w-screen-2xl flex-col gap-6 p-8">
+      <div className="flex flex-wrap justify-between gap-4">
         <HomeCollectionsTabs
           collections={collections}
           selectedCollectionsIds={selectedCollectionsIds}
@@ -145,7 +145,11 @@ function HomeContainer() {
         setFiltering={setFiltering}
       />
 
-      <HomeItems items={items} itemsSize={itemsSize} />
+      <HomeItems
+        items={items}
+        itemsSize={itemsSize}
+        selectedCollectionsIds={selectedCollectionsIds}
+      />
 
       <InfiniteScroll
         hasMore={hasMore}

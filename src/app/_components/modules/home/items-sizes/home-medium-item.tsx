@@ -1,10 +1,10 @@
 import { Header } from "../../../ui";
-import type { ItemType } from "../../../../../server/api/modules/item/types";
+import type { ItemsType } from "../../../../../server/api/modules/item/types";
 import CloudinaryImage from "../../../shared/cloudinary-image";
 import Container from "../../../shared/container";
 
 type Props = {
-  item: ItemType;
+  item: ItemsType[number];
 };
 
 const HomeMediumItem = (props: Props) => {

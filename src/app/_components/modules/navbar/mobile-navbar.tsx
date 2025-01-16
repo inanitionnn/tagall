@@ -13,7 +13,7 @@ const MobileNavbar = (props: SheetContentProps) => {
   const { className, ...restProps } = props;
   return (
     <Sheet>
-      <SheetTrigger asChild className="fixed right-6 top-6 z-50 md:hidden">
+      <SheetTrigger asChild className="fixed right-6 top-6 z-50 lg:hidden">
         <Button size={"icon"} variant={"outline"}>
           <Menu />
         </Button>

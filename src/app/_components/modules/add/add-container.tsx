@@ -36,7 +36,7 @@ function AddContainer() {
   });
 
   return (
-    <div className="flex max-w-screen-2xl flex-col gap-8 p-8">
+    <div className="mx-auto flex max-w-screen-2xl flex-col gap-8 p-8">
       <AddCollectionsTabs
         collections={collections}
         selectedCollectionId={selectedCollectionId}

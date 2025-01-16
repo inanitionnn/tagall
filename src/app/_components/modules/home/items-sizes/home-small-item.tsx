@@ -1,5 +1,5 @@
 import { Badge, Header, Paragraph } from "../../../ui";
-import type { ItemType } from "../../../../../server/api/modules/item/types";
+import type { ItemsType } from "../../../../../server/api/modules/item/types";
 import {
   RATING_NAMES,
   STATUS_ICONS,
@@ -9,11 +9,12 @@ import CloudinaryImage from "../../../shared/cloudinary-image";
 import Container from "../../../shared/container";
 
 type Props = {
-  item: ItemType;
+  item: ItemsType[number];
+  selectedCollectionsIds: string[];
 };
 
 const HomeSmallItem = (props: Props) => {
-  const { item } = props;
+  const { item, selectedCollectionsIds } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
     <Container className="h-fit cursor-pointer hover:scale-105 sm:h-24">
@@ -30,12 +31,17 @@ const HomeSmallItem = (props: Props) => {
             {item.title}
           </Header>
           <div className="flex flex-col gap-2 whitespace-nowrap sm:flex-row">
-            <Paragraph className="hidden font-semibold text-muted-foreground sm:block">
-              {item.collection}
-            </Paragraph>
-            <Paragraph className="hidden font-semibold text-muted-foreground sm:block">
-              {" • "}
-            </Paragraph>
+            {selectedCollectionsIds.length > 1 ? (
+              <>
+                <Paragraph className="hidden font-semibold text-muted-foreground sm:block">
+                  {item.collection.name}
+                </Paragraph>
+                <Paragraph className="hidden font-semibold text-muted-foreground sm:block">
+                  {" • "}
+                </Paragraph>
+              </>
+            ) : null}
+
             <Paragraph className="font-semibold text-muted-foreground">
               {item.year}
             </Paragraph>
