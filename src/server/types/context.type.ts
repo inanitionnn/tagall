@@ -1,6 +1,6 @@
-import type { PrismaClient, Role, Prisma } from "@prisma/client";
+import type { Role } from "@prisma/client";
 import type { ISODateString } from "next-auth";
-import { dbType } from "../db";
+import type { dbType } from "../db";
 
 export type ContextType = {
   db: dbType;
