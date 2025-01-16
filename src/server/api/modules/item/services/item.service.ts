@@ -610,4 +610,37 @@ export async function DeleteFromCollection(props: {
   return "Item deleted successfully!";
 }
 
+export async function SearchItemByText(props: {
+  ctx: ContextType;
+  input: SearchItemByTextInputSchema;
+}) {
+  const { ctx, input } = props;
+
+  const embedding = await GetEmbedding(input);
+
+  const nearestItemsIds = await GetNearestItemsIds({
+    ctx,
+    embedding,
+  });
+
+  const nearestUserItems = await ctx.db.userToItem.findMany({
+    where: {
+      userId: ctx.session.user.id,
+      id: {
+        in: nearestItemsIds,
+      },
+    },
+    include: {
+      tags: true,
+      item: {
+        include: {
+          collection: true,
+        },
+      },
+    },
+  });
+
+  return ItemResponse.transformItems(nearestUserItems);
+}
+
 // #endregion public functions

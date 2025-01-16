@@ -5,6 +5,7 @@ import {
   GetUserItemInputSchema,
   GetUserItemsInputSchema,
   GetYearsRangeInputSchema,
+  SearchItemByTextInputSchema,
   UpdateItemInputSchema,
 } from "./schemas";
 import {
@@ -13,6 +14,7 @@ import {
   GetUserItem,
   GetUserItems,
   GetYearsRange,
+  SearchItemByText,
   UpdateItem,
 } from "./services";
 
@@ -40,4 +42,8 @@ export const ItemRouter = createTRPCRouter({
   deleteFromCollection: protectedProcedure
     .input(DeleteFromCollectionInputSchema)
     .mutation(DeleteFromCollection),
+
+  searchItemByText: protectedProcedure
+    .input(SearchItemByTextInputSchema)
+    .mutation(SearchItemByText),
 });
