@@ -21,7 +21,7 @@ import { useGetUserTags } from "../tag/hooks/use-get-user-tags.hook";
 function HomeContainer() {
   const [collections] = api.collection.getUserCollections.useSuspenseQuery();
 
-  const LIMIT = 26;
+  const LIMIT = 30;
   const DEBOUNCE = 400;
 
   const [searchQuery, setSearchQuery] = useState("");
