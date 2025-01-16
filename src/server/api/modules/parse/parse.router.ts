@@ -4,7 +4,4 @@ import { SearchInputSchema } from "./schemas";
 
 export const ParseRouter = createTRPCRouter({
   search: protectedProcedure.input(SearchInputSchema).query(Search),
-  getDetails: protectedProcedure.query(() => {
-    return GetImdbDetailsById("tt1856101");
-  }),
 });
