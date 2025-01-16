@@ -4,3 +4,4 @@ export * from "./home/home-container";
 export * from "./search/search-container";
 export * from "./item/item-container";
 export * from "./tag/tag-container";
+export * from "./random/random-container";
