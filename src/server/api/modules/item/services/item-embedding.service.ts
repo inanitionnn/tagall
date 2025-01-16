@@ -3,9 +3,9 @@ import type { ContextType } from "../../../../types";
 export const GetNearestItemsIds = async (props: {
   ctx: ContextType;
   embedding: number[];
-  limit: number;
+  limit?: number;
 }): Promise<string[]> => {
-  const { ctx, embedding, limit } = props;
+  const { ctx, embedding, limit = 10 } = props;
 
   const result = await ctx.db.$queryRaw<{ id: string }[]>`
     SELECT id

@@ -1,5 +1,5 @@
 import { Header, Paragraph } from "../../../ui";
-import type { ItemsType } from "../../../../../server/api/modules/item/types";
+import type { ItemSmallType } from "../../../../../server/api/modules/item/types";
 import {
   RATING_NAMES,
   STATUS_ICONS,
@@ -7,7 +7,7 @@ import {
 } from "../../../../../constants";
 
 type Props = {
-  item: ItemsType[number];
+  item: ItemSmallType;
   index: number;
   selectedCollectionsIds: string[];
 };

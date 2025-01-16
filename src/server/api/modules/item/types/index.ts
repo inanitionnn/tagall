@@ -5,4 +5,4 @@ export * from "./item.type";
 export * from "./get-user-item-input.type";
 export * from "./update-item-input.type";
 export * from "./delete-from-collection-input.type";
-export * from "./items.type";
+export * from "./item-small.type";

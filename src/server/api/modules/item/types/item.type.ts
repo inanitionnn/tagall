@@ -1,4 +1,5 @@
 import { type ItemStatus } from "@prisma/client";
+import type { ItemSmallType } from "./item-small.type";
 
 export type ItemType = {
   id: string;
@@ -31,15 +32,5 @@ export type ItemType = {
     timeAgo: string;
     createdAt: Date;
   }[];
-  similarItems: {
-    id: string;
-    title: string;
-    image: string | null;
-    year: number | null;
-    description: string | null;
-    collection: {
-      id: string;
-      name: string;
-    };
-  }[];
+  similarItems: ItemSmallType[];
 };

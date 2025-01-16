@@ -1,4 +1,3 @@
-import { type Field, type FieldGroup } from "@prisma/client";
 import type { ContextType } from "../../../../types";
 import type {
   UpdateItemInputType,
@@ -8,7 +7,7 @@ import type {
   GetYearsRangeInputType,
   ItemType,
   DeleteFromCollectionInputType,
-  ItemsType,
+  ItemSmallType,
 } from "../types";
 import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../embedding/services";
@@ -20,98 +19,12 @@ import {
   GetItemEmbedding,
   GetNearestItemsIds,
 } from "./item-embedding.service";
+import type { SearchItemByTextInputSchema } from "../types/search-item-by-text-input.type";
+import { ItemResponseClass } from "../item-response.class";
+
+const ItemResponse = new ItemResponseClass();
 
 // #region private functions
-
-async function getFieldIdToFieldGroupIdMap(ctx: ContextType) {
-  const fields = await ctx.db.field.findMany({
-    select: {
-      id: true,
-      fieldGroup: {
-        select: {
-          id: true,
-          name: true,
-          priority: true,
-        },
-      },
-    },
-  });
-
-  const fieldMap = fields.reduce(
-    (acc, field) => {
-      acc[field.id] = field.fieldGroup;
-      return acc;
-    },
-    {} as Record<string, Omit<FieldGroup, "isFiltering">>,
-  );
-
-  return fieldMap;
-}
-
-function FieldsToGroupedFields(
-  fields: Field[],
-  fieldIdToFieldGroupMap: Record<string, Omit<FieldGroup, "isFiltering">>,
-) {
-  const groupedFields: Record<
-    string,
-    {
-      name: string;
-      priority: number;
-      fields: string[];
-    }
-  > = {};
-
-  fields.forEach((field) => {
-    const fieldGroup = fieldIdToFieldGroupMap[field.id];
-
-    if (!fieldGroup) {
-      throw new Error(`FieldGroup not found for field ID: ${field.id}`);
-    }
-
-    const { id: groupId, name: groupName, priority } = fieldGroup;
-
-    if (!groupedFields[groupId]) {
-      groupedFields[groupId] = {
-        name: groupName,
-        priority,
-        fields: [],
-      };
-    }
-
-    groupedFields[groupId].fields.push(field.value);
-  });
-
-  return Object.values(groupedFields)
-    .sort((a, b) => a.priority - b.priority)
-    .map((group) => ({
-      name: group.name,
-      fields: [...new Set(group.fields)],
-    }));
-}
-
-function dateToTimeAgoString(date: Date) {
-  const now = new Date();
-  const diff = Math.floor((now.getTime() - date.getTime()) / 1000); // Різниця в секундах
-
-  const units = [
-    { name: "year", seconds: 31536000 },
-    { name: "month", seconds: 2592000 },
-    { name: "week", seconds: 604800 },
-    { name: "day", seconds: 86400 },
-    { name: "hour", seconds: 3600 },
-    { name: "minute", seconds: 60 },
-    { name: "second", seconds: 1 },
-  ];
-
-  for (const unit of units) {
-    const interval = Math.floor(diff / unit.seconds);
-    if (interval > 0) {
-      return `${interval} ${unit.name}${interval > 1 ? "s" : ""} ago`;
-    }
-  }
-
-  return "just now";
-}
 
 async function CreateItem(props: {
   ctx: ContextType;
@@ -247,12 +160,12 @@ async function CreateItem(props: {
 export async function GetUserItems(props: {
   ctx: ContextType;
   input: GetUserItemsInputType;
-}): Promise<ItemsType> {
+}): Promise<ItemSmallType[]> {
   const { ctx, input } = props;
   const redisKey = `item:GetUserItems:${ctx.session.user.id}:${JSON.stringify(input)}`;
   const limit = input?.limit ?? 20;
   const page = input?.page ?? 1;
-  const promise = new Promise<ItemsType>((resolve) => {
+  const promise = new Promise<ItemSmallType[]>((resolve) => {
     (async () => {
       const rateFromFilter = input?.filtering
         ?.filter((filter) => filter.name === "rate")
@@ -395,18 +308,8 @@ export async function GetUserItems(props: {
         include: {
           tags: true,
           item: {
-            select: {
-              id: true,
-              title: true,
-              year: true,
-              description: true,
-              image: true,
-              collection: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
+            include: {
+              collection: true,
             },
           },
         },
@@ -414,27 +317,12 @@ export async function GetUserItems(props: {
         take: limit,
         skip: (page - 1) * limit,
       });
-      const response = userItems.map((userItems) => ({
-        id: userItems.item.id,
-        title: userItems.item.title,
-        description: userItems.item.description,
-        year: userItems.item.year,
-        image: userItems.item.image,
-        rate: userItems.rate,
-        status: userItems.status,
-        timeAgo: dateToTimeAgoString(userItems.updatedAt),
-        updatedAt: userItems.updatedAt,
-        collection: userItems.item.collection,
-        tags: userItems.tags.map((tag) => ({
-          id: tag.id,
-          name: tag.name,
-        })),
-      }));
-      return resolve(response);
+
+      return resolve(ItemResponse.transformItems(userItems));
     })();
   });
 
-  return getOrSetCache<ItemsType>(redisKey, promise);
+  return getOrSetCache<ItemSmallType[]>(redisKey, promise);
 }
 
 export async function GetUserItem(props: {
@@ -458,18 +346,8 @@ export async function GetUserItem(props: {
         },
         include: {
           item: {
-            select: {
-              id: true,
-              title: true,
-              year: true,
-              description: true,
-              image: true,
-              collection: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
+            include: {
+              collection: true,
               fields: true,
             },
           },
@@ -497,62 +375,31 @@ export async function GetUserItem(props: {
         limit: LIMIT,
       });
 
-      const nearestItems = await ctx.db.item.findMany({
+      const nearestUserItems = await ctx.db.userToItem.findMany({
         where: {
+          userId: ctx.session.user.id,
           id: {
             in: nearestItemsIds,
           },
         },
-        orderBy: {
-          title: "asc",
-        },
-        select: {
-          id: true,
-          title: true,
-          year: true,
-          description: true,
-          image: true,
-          collection: {
-            select: {
-              id: true,
-              name: true,
+        include: {
+          tags: true,
+          item: {
+            include: {
+              collection: true,
+              fields: true,
             },
           },
         },
       });
 
-      const FieldIdToFieldGroupIdMap = await getFieldIdToFieldGroupIdMap(ctx);
-
-      return resolve({
-        id: userItem.item.id,
-        title: userItem.item.title,
-        description: userItem.item.description,
-        year: userItem.item.year,
-        image: userItem.item.image,
-        rate: userItem.rate,
-        status: userItem.status,
-        timeAgo: dateToTimeAgoString(userItem.updatedAt),
-        updatedAt: userItem.updatedAt,
-        collection: userItem.item.collection,
-        fieldGroups: FieldsToGroupedFields(
-          userItem.item.fields,
-          FieldIdToFieldGroupIdMap,
-        ),
-        tags: userItem.tags.map((tag) => ({
-          id: tag.id,
-          name: tag.name,
-        })),
-        comments: userItem.itemComments.map((comment) => ({
-          id: comment.id,
-          title: comment.title,
-          description: comment.description,
-          rate: comment.rate,
-          status: comment.status,
-          timeAgo: dateToTimeAgoString(comment.createdAt),
-          createdAt: comment.createdAt,
-        })),
-        similarItems: nearestItems,
-      });
+      return resolve(
+        ItemResponse.transformItem({
+          ctx,
+          similarUserItems: nearestUserItems,
+          userItem,
+        }),
+      );
     })();
   });
 

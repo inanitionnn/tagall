@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import type {
   GetUserItemsFilterType,
   GetUserItemsSortType,
-  ItemsType,
+  ItemSmallType,
 } from "../../../../../server/api/modules/item/types";
 import { api } from "../../../../../trpc/react";
 import { toast } from "sonner";
@@ -26,7 +26,7 @@ export const useGetUserItems = (props: Props) => {
   } = props;
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [items, setItems] = useState<ItemsType>([]);
+  const [items, setItems] = useState<ItemSmallType[]>([]);
 
   const { data, isLoading, error, refetch } = api.item.getUserItems.useQuery({
     limit,

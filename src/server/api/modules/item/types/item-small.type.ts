@@ -1,6 +1,6 @@
 import { type ItemStatus } from "@prisma/client";
 
-export type ItemsType = {
+export type ItemSmallType = {
   id: string;
   title: string;
   year: number | null;
@@ -17,4 +17,4 @@ export type ItemsType = {
     id: string;
     name: string;
   }[];
-}[];
+};

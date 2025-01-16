@@ -1,5 +1,5 @@
 import { Badge, Header, Paragraph } from "../../../ui";
-import type { ItemsType } from "../../../../../server/api/modules/item/types";
+import type { ItemSmallType } from "../../../../../server/api/modules/item/types";
 import {
   RATING_NAMES,
   STATUS_ICONS,
@@ -9,7 +9,7 @@ import CloudinaryImage from "../../../shared/cloudinary-image";
 import Container from "../../../shared/container";
 
 type Props = {
-  item: ItemsType[number];
+  item: ItemSmallType;
   selectedCollectionsIds: string[];
 };
 
