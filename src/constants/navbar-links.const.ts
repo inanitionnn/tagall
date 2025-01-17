@@ -48,16 +48,15 @@ const NAVBAR_LINKS: NavbarLinkType[] = [
   {
     type: "divider",
   },
-  {
-    type: "link",
-    icon: Search,
-    href: "/search",
-    title: "Search",
-  },
-  {
-    type: "divider",
-  },
-
+  // {
+  //   type: "link",
+  //   icon: Search,
+  //   href: "/search",
+  //   title: "Search",
+  // },
+  // {
+  //   type: "divider",
+  // },
   {
     type: "link",
     icon: Tags,
