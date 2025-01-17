@@ -20,7 +20,6 @@ function ExtractElements<T>(...arrays: Record<string, any>[][]): T[] {
   const getItem = (item: Record<string, any>): T => {
     return (
       item.credits?.map((credit: any) => credit?.name?.nameText?.text)?.[0] ||
-      item.node?.text?.originalText?.plainText ||
       item.node?.company?.companyText?.text ||
       item.node?.primaryText?.text ||
       item.name?.nameText?.text ||
@@ -50,7 +49,6 @@ function FillImdbDetailsResult(props: any): ImdbDetailsResultType {
       isEpisode: !!props.titleType?.isEpisode,
       canHaveEpisodes: !!props.titleType?.canHaveEpisodes,
     },
-    reviews: ExtractElements<string>(props.featuredReviews.edges),
     // year: {
     //   release: props.releaseYear?.year ?? null,
     //   end: props.releaseYear?.endYear ?? null,
