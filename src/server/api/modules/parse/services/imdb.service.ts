@@ -42,7 +42,7 @@ function FillImdbDetailsResult(props: any): ImdbDetailsResultType {
   return {
     title: props.titleText?.text ?? props.originalTitleText?.text ?? null,
     image: GetHighQualityImageUrls(props.primaryImage?.url)?.optimized ?? null,
-    description: props.plot?.plotText?.plainText ?? null,
+    description: props.summaries[1] || props.plot?.plotText?.plainText || null,
     type: {
       titleType: props.titleType?.id ?? null,
       isSeries: !!props.titleType?.isSeries,
@@ -104,23 +104,41 @@ function GetHighQualityImageUrls(originalUrl: string | null) {
 
 // #endregion Private Functions
 
+function removeSignatures(text: string): string {
+  const signaturePattern = /\s?—[\w\s]+$/gm;
+  return text.replace(signaturePattern, "");
+}
 // #region Public Functions
 export async function GetImdbDetailsById(
   id: string,
 ): Promise<ImdbDetailsResultType> {
   try {
-    const html = await GetHtmlFromUrl(`https://www.imdb.com/title/${id}/`);
+    const plotHtml = await GetHtmlFromUrl(
+      `https://www.imdb.com/title/${id}/plotsummary`,
+    );
+    const $Plot = cheerio.load(plotHtml);
+    const summaries: string[] = [];
+    $Plot('[data-testid="sub-section-summaries"]')
+      .children()
+      .children()
+      .each((_, element) => {
+        const summary = $Plot(element).text().trim();
+        summaries.push(removeSignatures(summary));
+      });
 
-    const $ = cheerio.load(html);
+    const mainHtml = await GetHtmlFromUrl(`https://www.imdb.com/title/${id}/`);
+    const $Main = cheerio.load(mainHtml);
 
-    const nextdataScriptString = $("#__NEXT_DATA__").html();
+    const nextdataScriptString = $Main("#__NEXT_DATA__").html();
     const nextdataScriptJson = JSON.parse(nextdataScriptString ?? "");
     const pageProps = nextdataScriptJson.props.pageProps.aboveTheFoldData;
 
-    const metadataScriptString = $('script[type="application/ld+json"]').html();
+    const metadataScriptString = $Main(
+      'script[type="application/ld+json"]',
+    ).html();
     const metadata = JSON.parse(metadataScriptString ?? "");
 
-    return FillImdbDetailsResult({ ...pageProps, ...metadata });
+    return FillImdbDetailsResult({ ...pageProps, ...metadata, summaries });
   } catch (error) {
     console.error(error);
     throw new Error("Imdb parse error");

@@ -182,7 +182,7 @@ export class ItemResponseClass {
     };
   }
 
-  public async transformItem(props: {
+  public async transformItemDetails(props: {
     ctx: ContextType;
     item: Item & {
       collection: Collection;
@@ -192,16 +192,22 @@ export class ItemResponseClass {
     const { ctx, item } = props;
     const FieldIdToFieldGroupIdMap =
       await this.getFieldIdToFieldGroupIdMap(ctx);
+    const groupedFields = this.fieldsToGroupedFields(
+      item.fields,
+      FieldIdToFieldGroupIdMap,
+    );
+
+    const fieldData: Record<string, any[]> = {};
+    groupedFields.forEach((group) => {
+      fieldData[group.name] = group.fields;
+    });
     return {
       id: item.id,
       title: item.title,
       description: item.description,
       year: item.year,
       collection: item.collection.name,
-      fieldGroups: this.fieldsToGroupedFields(
-        item.fields,
-        FieldIdToFieldGroupIdMap,
-      ),
+      ...fieldData,
     };
   }
 }

@@ -47,9 +47,9 @@ async function UpdateEmbedding(props: {
     throw new Error("Item not found!");
   }
 
-  const embedding = await GetEmbedding(
-    ItemResponse.transformItem({ ctx, item }),
-  );
+  const details = await ItemResponse.transformItemDetails({ ctx, item });
+
+  const embedding = await GetEmbedding(details);
 
   await UpdateItemEmbedding({
     ctx,
@@ -812,6 +812,7 @@ export async function UpdateAllEmbeddings(props: { ctx: ContextType }) {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
     if (item) {
+      console.log(`==============START ${i}=======================`);
       console.log(`${i}) Updating ${item.title}`);
       try {
         await UpdateEmbedding({ ctx, itemId: item.id });
@@ -819,6 +820,7 @@ export async function UpdateAllEmbeddings(props: { ctx: ContextType }) {
         console.log(`Error updating ${item.title}`);
         console.log(error);
       }
+      console.log(`=================END ${i}====================`);
     }
   }
 
