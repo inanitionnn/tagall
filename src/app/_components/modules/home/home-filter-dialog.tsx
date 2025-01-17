@@ -76,202 +76,198 @@ const HomeFilterDialog = (props: Props) => {
             </Button>
           </Container>
         </ResponsiveModalTrigger>
-        <ResponsiveModalContent className="p-4 sm:max-w-2xl md:max-w-2xl lg:max-w-3xl [&>button]:hidden">
-          <ScrollArea type="always" className="max-h-[95%]">
-            <div className="flex max-h-[400px] w-full flex-col gap-8 rounded-sm bg-background p-4 md:max-h-[700px]">
-              <div className="flex items-center justify-between">
-                <Header vtag="h4">Filter</Header>
-                <Button
-                  onClick={() => {
-                    setFiltering([]);
-                    setSearchFilter("");
-                  }}
-                >
-                  Clear
-                </Button>
-              </div>
-              <div className="relative">
-                <Input
-                  value={searchFilter}
-                  onChange={(e) => setSearchFilter(e.target.value)}
-                  placeholder="Search..."
-                  className="w-full rounded-lg border border-zinc-300 px-4 py-2 pr-10 focus:border-primary focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
-                />
+        <ResponsiveModalContent className="sm:max-w-2xl md:max-w-2xl lg:max-w-3xl [&>button]:hidden">
+          <div className="flex max-h-[400px] w-full flex-col gap-8 rounded-sm bg-background p-4 md:max-h-[700px]">
+            <div className="flex items-center justify-between">
+              <Header vtag="h4">Filter</Header>
+              <Button
+                onClick={() => {
+                  setFiltering([]);
+                  setSearchFilter("");
+                }}
+              >
+                Clear
+              </Button>
+            </div>
+            <div className="relative">
+              <Input
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                placeholder="Search..."
+                className="w-full rounded-lg border border-zinc-300 px-4 py-2 pr-10 focus:border-primary focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+              />
 
-                <Search className="absolute right-3 top-1/2 z-30 h-5 w-5 -translate-y-1/2 cursor-pointer text-zinc-400 dark:text-zinc-500" />
+              <Search className="absolute right-3 top-1/2 z-30 h-5 w-5 -translate-y-1/2 cursor-pointer text-zinc-400 dark:text-zinc-500" />
+            </div>
+            {!searchFilter && (
+              <div className="flex flex-col gap-4">
+                <Header vtag="h6">Years</Header>
+                <div className="px-6 pb-8">
+                  <DualRangeSlider
+                    label={(value) => value}
+                    labelPosition="bottom"
+                    value={filterYears}
+                    onValueChange={setFilterYears}
+                    min={yearsRange.minYear}
+                    max={yearsRange.maxYear}
+                    step={1}
+                  />
+                </div>
               </div>
-              {!searchFilter && (
-                <div className="flex flex-col gap-4">
-                  <Header vtag="h6">Years</Header>
-                  <div className="px-6 pb-8">
-                    <DualRangeSlider
-                      label={(value) => value}
-                      labelPosition="bottom"
-                      value={filterYears}
-                      onValueChange={setFilterYears}
-                      min={yearsRange.minYear}
-                      max={yearsRange.maxYear}
-                      step={1}
-                    />
-                  </div>
+            )}
+            {!searchFilter && (
+              <div className="flex flex-col gap-4">
+                <Header vtag="h6">Rate</Header>
+                <div className="px-6 pb-8">
+                  <DualRangeSlider
+                    label={(value) => value}
+                    labelPosition="bottom"
+                    value={filterRates}
+                    onValueChange={setFilterRates}
+                    min={1}
+                    max={10}
+                    step={1}
+                  />
                 </div>
-              )}
-              {!searchFilter && (
-                <div className="flex flex-col gap-4">
-                  <Header vtag="h6">Rate</Header>
-                  <div className="px-6 pb-8">
-                    <DualRangeSlider
-                      label={(value) => value}
-                      labelPosition="bottom"
-                      value={filterRates}
-                      onValueChange={setFilterRates}
-                      min={1}
-                      max={10}
-                      step={1}
-                    />
-                  </div>
-                </div>
-              )}
-              {filteredStatusNames.length > 0 && (
-                <div className="flex flex-col gap-2">
-                  <Header vtag="h6">Status</Header>
-                  <div className="flex flex-wrap gap-2">
-                    {filteredStatusNames.map(([status, name]) => {
-                      const typedStatus = status as ItemStatus;
-                      const statusFilter = filtering.find(
-                        (f) => f.name === "status" && f.value === typedStatus,
-                      );
-                      return (
-                        <Button
-                          key={typedStatus}
-                          variant={
-                            statusFilter?.type === "include"
-                              ? "success"
-                              : statusFilter?.type === "exclude"
-                                ? "destructive"
-                                : "ghost"
-                          }
-                          size={"sm"}
-                          onClick={() =>
-                            setFiltering((prev) => {
-                              const updatedFiltering = prev.filter(
-                                (f) =>
-                                  f.name !== "status" ||
-                                  f.value !== typedStatus,
-                              );
-                              const selectedFilter = prev.find(
-                                (f) =>
-                                  f.name === "status" &&
-                                  f.value === typedStatus,
-                              );
-                              if (!selectedFilter) {
-                                updatedFiltering.push({
-                                  name: "status",
-                                  type: "include",
-                                  value: typedStatus,
-                                });
-                              } else if (selectedFilter.type === "include") {
-                                updatedFiltering.push({
-                                  name: "status",
-                                  type: "exclude",
-                                  value: typedStatus,
-                                });
-                              }
-                              return updatedFiltering;
-                            })
-                          }
-                        >
-                          {name}
-                        </Button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-              {!!tags.length && (
-                <div className="flex flex-col gap-2">
-                  <Header vtag="h6">Tags</Header>
-                  <div className="flex flex-wrap gap-2">
-                    {tags.map((tag) => (
+              </div>
+            )}
+            {filteredStatusNames.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <Header vtag="h6">Status</Header>
+                <div className="flex flex-wrap gap-2">
+                  {filteredStatusNames.map(([status, name]) => {
+                    const typedStatus = status as ItemStatus;
+                    const statusFilter = filtering.find(
+                      (f) => f.name === "status" && f.value === typedStatus,
+                    );
+                    return (
                       <Button
-                        key={tag.id}
+                        key={typedStatus}
                         variant={
-                          selectedTagsIds.includes(tag.id) ? "success" : "ghost"
+                          statusFilter?.type === "include"
+                            ? "success"
+                            : statusFilter?.type === "exclude"
+                              ? "destructive"
+                              : "ghost"
                         }
                         size={"sm"}
                         onClick={() =>
-                          setSelectedTagsIds((prev) => {
-                            if (prev.includes(tag.id)) {
-                              return prev.filter((id) => id !== tag.id);
+                          setFiltering((prev) => {
+                            const updatedFiltering = prev.filter(
+                              (f) =>
+                                f.name !== "status" || f.value !== typedStatus,
+                            );
+                            const selectedFilter = prev.find(
+                              (f) =>
+                                f.name === "status" && f.value === typedStatus,
+                            );
+                            if (!selectedFilter) {
+                              updatedFiltering.push({
+                                name: "status",
+                                type: "include",
+                                value: typedStatus,
+                              });
+                            } else if (selectedFilter.type === "include") {
+                              updatedFiltering.push({
+                                name: "status",
+                                type: "exclude",
+                                value: typedStatus,
+                              });
                             }
-                            return [...prev, tag.id];
+                            return updatedFiltering;
                           })
                         }
                       >
-                        {tag.name}
+                        {name}
                       </Button>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
+            )}
+            {!!tags.length && (
+              <div className="flex flex-col gap-2">
+                <Header vtag="h6">Tags</Header>
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <Button
+                      key={tag.id}
+                      variant={
+                        selectedTagsIds.includes(tag.id) ? "success" : "ghost"
+                      }
+                      size={"sm"}
+                      onClick={() =>
+                        setSelectedTagsIds((prev) => {
+                          if (prev.includes(tag.id)) {
+                            return prev.filter((id) => id !== tag.id);
+                          }
+                          return [...prev, tag.id];
+                        })
+                      }
+                    >
+                      {tag.name}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-              {filteredFieldGroups.map((fieldGroup) => (
-                <div key={fieldGroup.id} className="flex flex-col gap-2">
-                  <Header vtag="h6">{fieldGroup.name}</Header>
-                  <div className="flex flex-wrap gap-2">
-                    {fieldGroup.fields.map((field) => {
-                      const fieldFilter = filtering.find(
-                        (f) => f.name === "field" && f.value === field.value,
-                      );
-                      return (
-                        <Button
-                          key={field.id}
-                          variant={
-                            fieldFilter?.type === "include"
-                              ? "success"
-                              : fieldFilter?.type === "exclude"
-                                ? "destructive"
-                                : "ghost"
-                          }
-                          size={"sm"}
-                          onClick={() =>
-                            setFiltering((prev) => {
-                              const updatedFiltering = prev.filter(
-                                (f) =>
-                                  f.name !== "field" || f.value !== field.value,
-                              );
-                              const selectedFilter = prev.find(
-                                (f) =>
-                                  f.name === "field" && f.value === field.value,
-                              );
-                              if (!selectedFilter) {
-                                updatedFiltering.push({
-                                  name: "field",
-                                  type: "include",
-                                  value: field.value,
-                                  fieldId: field.id,
-                                });
-                              } else if (selectedFilter.type === "include") {
-                                updatedFiltering.push({
-                                  name: "field",
-                                  type: "exclude",
-                                  value: field.value,
-                                  fieldId: field.id,
-                                });
-                              }
-                              return updatedFiltering;
-                            })
-                          }
-                        >
-                          {field.value}
-                        </Button>
-                      );
-                    })}
-                  </div>
+            {filteredFieldGroups.map((fieldGroup) => (
+              <div key={fieldGroup.id} className="flex flex-col gap-2">
+                <Header vtag="h6">{fieldGroup.name}</Header>
+                <div className="flex flex-wrap gap-2">
+                  {fieldGroup.fields.map((field) => {
+                    const fieldFilter = filtering.find(
+                      (f) => f.name === "field" && f.value === field.value,
+                    );
+                    return (
+                      <Button
+                        key={field.id}
+                        variant={
+                          fieldFilter?.type === "include"
+                            ? "success"
+                            : fieldFilter?.type === "exclude"
+                              ? "destructive"
+                              : "ghost"
+                        }
+                        size={"sm"}
+                        onClick={() =>
+                          setFiltering((prev) => {
+                            const updatedFiltering = prev.filter(
+                              (f) =>
+                                f.name !== "field" || f.value !== field.value,
+                            );
+                            const selectedFilter = prev.find(
+                              (f) =>
+                                f.name === "field" && f.value === field.value,
+                            );
+                            if (!selectedFilter) {
+                              updatedFiltering.push({
+                                name: "field",
+                                type: "include",
+                                value: field.value,
+                                fieldId: field.id,
+                              });
+                            } else if (selectedFilter.type === "include") {
+                              updatedFiltering.push({
+                                name: "field",
+                                type: "exclude",
+                                value: field.value,
+                                fieldId: field.id,
+                              });
+                            }
+                            return updatedFiltering;
+                          })
+                        }
+                      >
+                        {field.value}
+                      </Button>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
-          </ScrollArea>
+              </div>
+            ))}
+          </div>
         </ResponsiveModalContent>
       </ResponsiveModal>
     </>

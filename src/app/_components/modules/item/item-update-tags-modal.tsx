@@ -48,11 +48,11 @@ const ItemUpdateTagsModal = (props: Props) => {
           </div>
         </Container>
       </ResponsiveModalTrigger>
-      <ResponsiveModalContent className="p-0 sm:max-w-xl md:max-w-xl lg:max-w-xl">
+      <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(submit)}
-            className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-8 sm:min-w-96"
+            className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-4 sm:min-w-96"
           >
             <Header vtag="h4" className=" ">
               Update tags

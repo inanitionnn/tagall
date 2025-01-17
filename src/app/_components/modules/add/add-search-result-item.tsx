@@ -15,9 +15,12 @@ const AddSearchResultItem = (props: Props) => {
 
   return (
     <Container
-      className={cn("relative h-80 cursor-pointer flex-col p-4 sm:flex-row", {
-        "hover:scale-105": !searchResult.id,
-      })}
+      className={cn(
+        "relative h-full cursor-pointer flex-col p-4 sm:h-80 sm:flex-row",
+        {
+          "hover:scale-105": !searchResult.id,
+        },
+      )}
       onClick={() => {
         if (!searchResult.id) {
           setSelectedItem(() => searchResult);

@@ -39,11 +39,11 @@ const TagAddModal = (props: Props) => {
           <Button variant={"ghost"}>Add tag</Button>
         </Container>
       </ResponsiveModalTrigger>
-      <ResponsiveModalContent className="p-0 sm:max-w-xl md:max-w-xl lg:max-w-xl">
+      <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(submit)}
-            className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-8 sm:min-w-96"
+            className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-4 sm:min-w-96"
           >
             <Header vtag="h4" className=" ">
               Add tag
@@ -74,10 +74,10 @@ const TagAddModal = (props: Props) => {
               name="collectionsIds"
               render={() => (
                 <FormItem>
-                  <div className="flex w-full items-center justify-between gap-2">
+                  <div className="flex w-full flex-col gap-2">
                     <FormLabel>Collections:</FormLabel>
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       {collections.map((collection) => (
                         <FormControl key={collection.id}>
                           <Button

@@ -53,8 +53,8 @@ const AddItemModal = (props: Props) => {
         }
       }}
     >
-      <ResponsiveModalContent className="h-min min-h-64 p-2 sm:max-w-2xl md:max-w-3xl lg:max-w-4xl">
-        <div className="space-y-6 p-6">
+      <ResponsiveModalContent className="h-min min-h-64 sm:max-w-2xl md:max-w-3xl lg:max-w-4xl">
+        <div className="space-y-6 p-4">
           <Header vtag="h4" className="text-center">
             {selectedItem.title}
           </Header>

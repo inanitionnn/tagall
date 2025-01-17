@@ -33,8 +33,8 @@ const ItemDeleteModal = (props: Props) => {
           </Header>
         </Container>
       </ResponsiveModalTrigger>
-      <ResponsiveModalContent className="p-0 sm:max-w-xl md:max-w-xl lg:max-w-xl">
-        <div className="flex w-full flex-col justify-center rounded-sm bg-background p-2">
+      <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
+        <div className="flex w-full flex-col justify-center rounded-sm bg-background p-4">
           <div className="flex w-full flex-col justify-between gap-4 p-6 sm:min-w-96">
             <Header vtag="h4" className=" ">
               Delete from collection
