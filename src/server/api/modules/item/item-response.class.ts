@@ -136,11 +136,11 @@ export class ItemResponseClass {
     };
   }
 
-  public transformItems(userItems: UserItemSmallType[]): ItemSmallType[] {
+  public transformUserItems(userItems: UserItemSmallType[]): ItemSmallType[] {
     return userItems.map((userItem) => this.transformSmall(userItem));
   }
 
-  public async transformItem(props: {
+  public async transformUserItem(props: {
     ctx: ContextType;
     userItem: UserItemType;
     similarUserItems: UserItemSmallType[];
@@ -178,6 +178,29 @@ export class ItemResponseClass {
       })),
       similarItems: similarUserItems.map((userItem) =>
         this.transformSmall(userItem),
+      ),
+    };
+  }
+
+  public async transformItem(props: {
+    ctx: ContextType;
+    item: Item & {
+      collection: Collection;
+      fields: Field[];
+    };
+  }) {
+    const { ctx, item } = props;
+    const FieldIdToFieldGroupIdMap =
+      await this.getFieldIdToFieldGroupIdMap(ctx);
+    return {
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      year: item.year,
+      collection: item.collection.name,
+      fieldGroups: this.fieldsToGroupedFields(
+        item.fields,
+        FieldIdToFieldGroupIdMap,
       ),
     };
   }

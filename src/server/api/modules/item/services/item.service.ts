@@ -27,6 +27,37 @@ const ItemResponse = new ItemResponseClass();
 
 // #region private functions
 
+async function UpdateEmbedding(props: {
+  ctx: ContextType;
+  itemId: string;
+}): Promise<void> {
+  const { ctx, itemId } = props;
+
+  const item = await ctx.db.item.findUnique({
+    where: {
+      id: itemId,
+    },
+    include: {
+      fields: true,
+      collection: true,
+    },
+  });
+
+  if (!item) {
+    throw new Error("Item not found!");
+  }
+
+  const embedding = await GetEmbedding(
+    ItemResponse.transformItem({ ctx, item }),
+  );
+
+  await UpdateItemEmbedding({
+    ctx,
+    embedding,
+    itemId,
+  });
+}
+
 async function CreateItem(props: {
   ctx: ContextType;
   type: "imdb" | "anilist";
@@ -139,13 +170,6 @@ async function CreateItem(props: {
           },
         });
       }
-      const embedding = await GetEmbedding(details);
-
-      await UpdateItemEmbedding({
-        ctx,
-        embedding,
-        itemId: transactionResult.id,
-      });
 
       return item;
     },
@@ -317,7 +341,7 @@ export async function GetUserItems(props: {
         skip: (page - 1) * limit,
       });
 
-      return resolve(ItemResponse.transformItems(userItems));
+      return resolve(ItemResponse.transformUserItems(userItems));
     })();
   });
 
@@ -395,7 +419,7 @@ export async function GetUserItem(props: {
       });
 
       return resolve(
-        ItemResponse.transformItem({
+        ItemResponse.transformUserItem({
           ctx,
           similarUserItems: nearestUserItems,
           userItem,
@@ -493,6 +517,8 @@ export async function AddToCollection(props: {
   if (!item) {
     throw new Error("Something went wrong! Item not found!");
   }
+
+  await UpdateEmbedding({ ctx, itemId: item.id });
 
   const userToItem = await ctx.db.userToItem.create({
     data: {
@@ -644,7 +670,7 @@ export async function SearchItemByText(props: {
     },
   });
 
-  return ItemResponse.transformItems(nearestUserItems);
+  return ItemResponse.transformUserItems(nearestUserItems);
 }
 
 export async function GetRandomUserItems(props: {
@@ -775,7 +801,28 @@ export async function GetRandomUserItems(props: {
     },
   });
 
-  return ItemResponse.transformItems(userItems);
+  return ItemResponse.transformUserItems(userItems);
+}
+
+export async function UpdateAllEmbeddings(props: { ctx: ContextType }) {
+  const { ctx } = props;
+
+  const items = await ctx.db.item.findMany();
+  console.log(`Found ${items.length} items`);
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item) {
+      console.log(`${i}) Updating ${item.title}`);
+      try {
+        await UpdateEmbedding({ ctx, itemId: item.id });
+      } catch (error) {
+        console.log(`Error updating ${item.title}`);
+        console.log(error);
+      }
+    }
+  }
+
+  console.log("CRON finished");
 }
 
 // #endregion public functions
