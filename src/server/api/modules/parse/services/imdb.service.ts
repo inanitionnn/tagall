@@ -102,12 +102,51 @@ function GetHighQualityImageUrls(originalUrl: string | null) {
   };
 }
 
-// #endregion Private Functions
+function parseQueryString(input: string) {
+  const result: {
+    title: string | null;
+    meta: string | null;
+    year: number | null;
+  } = {
+    title: null,
+    meta: null,
+    year: null,
+  };
+
+  const metaMatch = input.match(/\[([^\]]*)\]/)?.at(1);
+  result.meta = metaMatch || null;
+
+  const yearMatch = input.match(/\((\d{4})\)$/)?.at(1);
+  result.year = yearMatch ? parseInt(yearMatch, 10) : null;
+
+  const titleMatch = input.match(/^(.*?)( \[| \(|$)/)?.at(1);
+  result.title = titleMatch || null;
+
+  return result;
+}
+
+function mergeMeta(meta1: string | null, meta2: string | null): string {
+  const params = new URLSearchParams();
+
+  [meta1, meta2].forEach((meta) => {
+    if (meta) {
+      const metaParams = new URLSearchParams(meta);
+      metaParams.forEach((value, key) => {
+        params.set(key, value);
+      });
+    }
+  });
+
+  return params.toString() ? `?${params.toString()}` : "";
+}
 
 function removeSignatures(text: string): string {
   const signaturePattern = /\s?—[\w\s]+$/gm;
   return text.replace(signaturePattern, "");
 }
+
+// #endregion Private Functions
+
 // #region Public Functions
 export async function GetImdbDetailsById(
   id: string,
@@ -208,19 +247,28 @@ export async function AdvancedSearchImdb(
   type: "film" | "series",
   limit = 10,
 ): Promise<SearchResultType[]> {
-  let title_type;
+  const { meta, title, year } = parseQueryString(query);
+
+  if (!title) throw new Error("Title is required");
+
+  let defaultMeta = `?title=${encodeURIComponent(title)}`;
   switch (type) {
     case "film":
-      title_type = "feature,tv_movie,short,tv_short,video";
+      defaultMeta += `&title_type=${encodeURIComponent("feature,tv_movie,short,tv_short,video")}`;
       break;
     case "series":
-      title_type = "tv_series,tv_miniseries";
+      defaultMeta += `&title_type=${encodeURIComponent("tv_series,tv_miniseries")}`;
       break;
   }
 
-  const url = `https://www.imdb.com/search/title/?title=${encodeURIComponent(
-    query,
-  )}&title_type=${encodeURIComponent(title_type)}`;
+  if (year) {
+    const release_date = `&release_date=${year}-01-01,${year}-12-31`;
+    defaultMeta += release_date;
+  }
+
+  const mergedMeta = mergeMeta(meta, defaultMeta);
+
+  const url = `https://www.imdb.com/search/title/${mergedMeta}`;
 
   try {
     const html = await GetHtmlFromUrl(url);
@@ -242,7 +290,6 @@ export async function AdvancedSearchImdb(
 
       const titleElement = $(element).find(".dli-title h3.ipc-title__text");
       const rawTitle = titleElement.text();
-      // result.rank = parseInt(rawTitle.split(".")[0]) ?? null;
       result.title = rawTitle.split(". ")[1] ?? rawTitle ?? null;
 
       const metadata = $(element).find(".dli-title-metadata-item");
@@ -253,12 +300,12 @@ export async function AdvancedSearchImdb(
         if (index === 2) result.keywords.push(text);
       });
 
-      // const ratingElement = $(element).find(".ratingGroup--imdb-rating");
-      // if (ratingElement.length) {
-      //   const rating =
-      //     ratingElement.find(".ipc-rating-star--rating").text() + " imdb";
-      //   result.keywords.push(rating);
-      // }
+      const ratingElement = $(element).find(".ratingGroup--imdb-rating");
+      if (ratingElement.length) {
+        const rating =
+          ratingElement.find(".ipc-rating-star--rating").text() + " imdb";
+        result.keywords.push(rating);
+      }
 
       // const metacriticElement = $(element).find(".metacritic-score-box");
       // if (metacriticElement.length) {
