@@ -113,13 +113,16 @@ function parseQueryString(input: string) {
     year: null,
   };
 
-  const metaMatch = input.match(/\[([^\]]*)\]/)?.at(1);
+  const metaRegex = /\[([^\]]*)\]/;
+  const metaMatch = metaRegex.exec(input)?.at(1);
   result.meta = metaMatch || null;
 
-  const yearMatch = input.match(/\((\d{4})\)$/)?.at(1);
+  const yearRegex = /\((\d{4})\)$/;
+  const yearMatch = yearRegex.exec(input)?.at(1);
   result.year = yearMatch ? parseInt(yearMatch, 10) : null;
 
-  const titleMatch = input.match(/^(.*?)( \[| \(|$)/)?.at(1);
+  const titleRegex = /^(.*?)( \[| \(|$)/;
+  const titleMatch = titleRegex.exec(input)?.at(1);
   result.title = titleMatch || null;
 
   return result;
