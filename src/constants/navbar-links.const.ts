@@ -1,11 +1,4 @@
-import {
-  BadgePlus,
-  Dices,
-  House,
-  Search,
-  Tags,
-  type LucideIcon,
-} from "lucide-react";
+import { BadgePlus, Dices, House, Tags, type LucideIcon } from "lucide-react";
 
 type NavbarLinkType =
   | {

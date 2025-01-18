@@ -7,7 +7,6 @@ import {
   ResponsiveModal,
   ResponsiveModalContent,
   ResponsiveModalTrigger,
-  ScrollArea,
 } from "../../ui";
 import { STATUS_NAMES } from "../../../../constants";
 import { Search, SlidersHorizontal } from "lucide-react";
