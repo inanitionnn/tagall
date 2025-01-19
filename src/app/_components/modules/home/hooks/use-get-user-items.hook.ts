@@ -24,28 +24,34 @@ const isLetter = (char: string): boolean => {
 const groupByKey = (item: ItemSmallType, sorting: GetUserItemsSortType) => {
   let key: string | number | null = null;
   switch (sorting.name) {
-    case "year":
+    case "year": {
       key = item.year;
       break;
-    case "rate":
+    }
+    case "rate": {
       key = item.rate;
       break;
-    case "title":
+    }
+    case "title": {
       const firstCharacter = item.title.charAt(0);
       if (isLetter(firstCharacter)) {
         key = firstCharacter;
       }
       break;
-    case "date":
+    }
+    case "date": {
       const dateType = item.timeAgo.split(" ")[1]!;
       key = `${dateType} ago`;
       break;
-    case "status":
+    }
+    case "status": {
       key = item.status;
       break;
-    default:
-      const _exhaustiveCheck: never = sorting.name;
-      throw new Error(`Unhandled sorting name: ${_exhaustiveCheck}`);
+    }
+    default: {
+      sorting.name satisfies never;
+      throw new Error(`Unhandled sorting name.`);
+    }
   }
   return capitalize(key);
 };
