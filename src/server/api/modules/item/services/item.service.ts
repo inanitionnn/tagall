@@ -299,33 +299,55 @@ export async function GetUserItems(props: {
         },
 
         ...(input?.sorting && {
-          orderBy: {
-            ...(input.sorting.name === "rate" && {
-              rate: {
-                sort: input.sorting.type,
-                nulls: "last",
-              },
-            }),
-            ...(input.sorting.name === "status" && {
-              status: input.sorting.type,
-            }),
-            ...(input.sorting.name === "date" && {
-              updatedAt: input.sorting.type,
-            }),
-            ...(input.sorting.name === "year" && {
-              item: {
-                year: {
+          ...(input.sorting.name === "rate" && {
+            orderBy: [
+              {
+                rate: {
                   sort: input.sorting.type,
                   nulls: "last",
                 },
               },
-            }),
-            ...(input.sorting.name === "title" && {
-              item: {
-                title: input.sorting.type,
+              { item: { title: "asc" } },
+            ],
+          }),
+          ...(input.sorting.name === "status" && {
+            orderBy: [
+              { status: input.sorting.type },
+              { item: { title: "asc" } },
+            ],
+          }),
+          ...(input.sorting.name === "date" && {
+            orderBy: [
+              { updatedAt: input.sorting.type },
+              { item: { title: "asc" } },
+            ],
+          }),
+          ...(input.sorting.name === "year" && {
+            orderBy: [
+              {
+                item: {
+                  year: {
+                    sort: input.sorting.type,
+                    nulls: "last",
+                  },
+                },
               },
-            }),
-          },
+              { item: { title: "asc" } },
+            ],
+          }),
+          ...(input.sorting.name === "title" && {
+            orderBy: [
+              { item: { title: input.sorting.type } },
+              {
+                item: {
+                  year: {
+                    sort: "desc",
+                    nulls: "last",
+                  },
+                },
+              },
+            ],
+          }),
         }),
 
         include: {

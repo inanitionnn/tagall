@@ -4,7 +4,7 @@ import type { ComponentPropsWithoutRef } from "react";
 
 type Props = ComponentPropsWithoutRef<"div">;
 
-export default function Container(props: Props) {
+const Container = (props: Props) => {
   const { className, children, ...restProps } = props;
   return (
     <div
@@ -18,4 +18,6 @@ export default function Container(props: Props) {
       {children}
     </div>
   );
-}
+};
+
+export default Container;

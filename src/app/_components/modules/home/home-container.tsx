@@ -76,7 +76,7 @@ function HomeContainer() {
     DEBOUNCE,
   );
 
-  const { items, setPage, hasMore, isLoading, resetPagination } =
+  const { groupedItems, setPage, hasMore, isLoading, resetPagination } =
     useGetUserItems({
       limit: LIMIT,
       collectionsIds: debounce.selectedCollectionsIds,
@@ -144,12 +144,16 @@ function HomeContainer() {
         filtering={filtering}
         setFiltering={setFiltering}
       />
-
-      <HomeItems
-        items={items}
-        itemsSize={itemsSize}
-        selectedCollectionsIds={selectedCollectionsIds}
-      />
+      {groupedItems.map((group, index) => (
+        <div key={group.groupBy + index} className="flex flex-col gap-4">
+          <Header vtag="h3">{group.groupBy}</Header>
+          <HomeItems
+            items={group.items}
+            itemsSize={itemsSize}
+            selectedCollectionsIds={selectedCollectionsIds}
+          />
+        </div>
+      ))}
 
       <InfiniteScroll
         hasMore={hasMore}
