@@ -42,7 +42,7 @@ function ItemContainer(props: Props) {
                   <CloudinaryImage
                     publicId={item.image}
                     className="mx-auto"
-                    collectionName={item.collection.name}
+                    folder={item.collection.name}
                   />
                 ) : (
                   <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
@@ -82,7 +82,7 @@ function ItemContainer(props: Props) {
                       {item.image ? (
                         <CloudinaryImage
                           publicId={item.image}
-                          collectionName={item.collection.name}
+                          folder={item.collection.name}
                         />
                       ) : (
                         <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />

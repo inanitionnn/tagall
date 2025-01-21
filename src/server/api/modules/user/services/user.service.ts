@@ -1,7 +1,7 @@
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import { getOrSetCache } from "../../../../../lib/redis";
 import type { ContextType } from "../../../../types";
-import { UpdateUserInputType } from "../types";
+import type { UpdateUserInputType } from "../types";
 
 export async function GetUser(props: { ctx: ContextType }): Promise<User> {
   const { ctx } = props;

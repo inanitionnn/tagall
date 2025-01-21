@@ -5,16 +5,16 @@ import { env } from "../../../env";
 
 type Props = {
   publicId: string;
-  collectionName: string;
+  folder: string;
   width?: number;
   height?: number;
   className?: string;
 };
 
 export default function CloudinaryImage(props: Props) {
-  const { publicId, collectionName, className, height, width } = props;
+  const { publicId, folder, className, height, width } = props;
   const projectFolder = env.NEXT_PUBLIC_CLOUDINARY_FOLDER;
-  const src = `${projectFolder}/${collectionName}/${publicId}`;
+  const src = `${projectFolder}/${folder}/${publicId}`;
   return (
     <CldImage
       loading="lazy"

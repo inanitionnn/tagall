@@ -1,7 +1,15 @@
-"use client";
+import { api, HydrateClient } from "../../../../trpc/server";
+import BackgroundImage from "../../../_components/shared/background-image";
 
-import { signOut } from "next-auth/react";
+import { ProfileContainer } from "../../../_components/modules/profile/profile-container";
 
-export default function Profile() {
-  return <button onClick={() => signOut()}>logout</button>;
+export default async function Profile() {
+  void api.user.getUser.prefetch();
+  return (
+    <HydrateClient>
+      <BackgroundImage image="/posters6.webp">
+        <ProfileContainer />
+      </BackgroundImage>
+    </HydrateClient>
+  );
 }

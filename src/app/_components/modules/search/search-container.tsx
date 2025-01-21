@@ -48,7 +48,7 @@ function SearchContainer() {
                 {item.image ? (
                   <CloudinaryImage
                     publicId={item.image}
-                    collectionName={item.collection.name}
+                    folder={item.collection.name}
                   />
                 ) : (
                   <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
