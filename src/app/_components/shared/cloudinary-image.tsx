@@ -16,8 +16,8 @@ export default function CloudinaryImage(props: Props) {
       loading="lazy"
       alt={`cover ${publicId}`}
       src={publicId}
-      width={width ?? 290}
-      height={height ?? 400}
+      width={width ?? 200}
+      height={height ?? 300}
       className={cn(
         "aspect-[27/40] rounded-lg border border-input object-cover shadow-sm",
         className,

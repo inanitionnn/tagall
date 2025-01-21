@@ -10,8 +10,8 @@ const BackgroundImage = (props: Props) => {
       <Image
         src={image}
         alt="background"
-        width={1920}
-        height={1080}
+        width={1200}
+        height={675}
         className="fixed inset-0 -z-10 h-screen w-full object-cover object-center opacity-[0.10]"
         {...restProps}
       />
