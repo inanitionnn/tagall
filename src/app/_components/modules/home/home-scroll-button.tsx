@@ -25,9 +25,12 @@ function HomeScrollButton() {
       size={"icon"}
       variant={"outline"}
       onClick={scrollToTop}
-      className={cn("fixed bottom-6 right-6 z-50 hover:bg-primary", {
-        hidden: !isVisible,
-      })}
+      className={cn(
+        "fixed bottom-12 right-6 z-50 hover:bg-primary sm:bottom-6",
+        {
+          hidden: !isVisible,
+        },
+      )}
     >
       <MoveUp />
     </Button>
