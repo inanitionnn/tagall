@@ -15,7 +15,9 @@ export async function getOrSetCache<T>(
 
   const data = await promise;
 
-  await redis.set(key, data, { ex: ttl ?? 60 * 10 });
+  const defaultTTL = 60 * 60 * 24 * 3; // 3 days
+
+  await redis.set(key, data, { ex: ttl ?? defaultTTL });
 
   return data;
 }

@@ -450,7 +450,7 @@ export async function GetUserItem(props: {
     })();
   });
 
-  return getOrSetCache<ItemType | null>(redisKey, promise);
+  return getOrSetCache<ItemType | null>(redisKey, promise, 60 * 60);
 }
 
 export async function GetYearsRange(props: {

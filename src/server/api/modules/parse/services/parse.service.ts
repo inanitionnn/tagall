@@ -40,7 +40,11 @@ export const Search = async (props: {
     })();
   });
 
-  const items = await getOrSetCache<SearchResultType[]>(redisKey, promise);
+  const items = await getOrSetCache<SearchResultType[]>(
+    redisKey,
+    promise,
+    60 * 10,
+  );
 
   const userItems = await ctx.db.userToItem.findMany({
     where: {
