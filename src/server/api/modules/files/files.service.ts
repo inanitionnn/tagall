@@ -12,15 +12,23 @@ cloudinary.config({
   api_secret: env.CLOUDINARY_API_SECRET,
 });
 
+function extractId(input: string | null | undefined): string | null {
+  if (!input) return null;
+  const regex = /tagall\/\w+\/(\w+)/;
+  const match = input.match(regex)?.at(1);
+
+  return match ?? null;
+}
+
 export const UploadImageByUrl = async (
   folder: string,
   imageUrl: string | null | undefined,
-): Promise<UploadApiResponse | null> => {
+): Promise<string | null> => {
   if (!imageUrl) {
     return null;
   }
   try {
-    return await cloudinary.uploader.upload(imageUrl, {
+    const response = await cloudinary.uploader.upload(imageUrl, {
       folder: `${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folder}`,
       transformation: [
         { width: 1000, crop: "scale" },
@@ -28,6 +36,7 @@ export const UploadImageByUrl = async (
         { fetch_format: "auto" },
       ],
     });
+    return extractId(response.public_id);
   } catch (error) {
     const err = error as UploadApiErrorResponse;
     throw new Error(`Error uploading image: ${err.message}`);

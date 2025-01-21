@@ -114,7 +114,7 @@ async function CreateItem(props: {
           year: details.year,
           description: details.description,
           parsedId,
-          image: image?.public_id ?? null,
+          image,
         },
       });
 
