@@ -13,6 +13,7 @@ export default function CloudinaryImage(props: Props) {
   const { publicId, className, height, width } = props;
   return (
     <CldImage
+      loading="lazy"
       alt={`cover ${publicId}`}
       src={publicId}
       width={width ?? 290}
