@@ -12,7 +12,7 @@ import type {
 } from "../types";
 import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../embedding/services";
-import { uploadImageByUrl } from "../../files/files.service";
+import { UploadImageByUrl } from "../../files/files.service";
 import { GetAnilistDetailsById } from "../../parse/services/anilist.service";
 import { deleteCacheByPrefix, getOrSetCache } from "../../../../../lib/redis";
 import {
@@ -95,11 +95,21 @@ async function CreateItem(props: {
         throw new Error("Parse error! Title not found!");
       }
 
-      const image = await uploadImageByUrl(details.image);
+      const collection = await prisma.collection.findUnique({
+        where: {
+          id: collectionId,
+        },
+      });
+
+      if (!collection) {
+        throw new Error("Collection not found!");
+      }
+
+      const image = await UploadImageByUrl(collection.name, details.image);
 
       const item = await prisma.item.create({
         data: {
-          collectionId: collectionId,
+          collectionId: collection.id,
           title: details.title,
           year: details.year,
           description: details.description,
@@ -118,7 +128,7 @@ async function CreateItem(props: {
           },
           collections: {
             some: {
-              id: collectionId,
+              id: collection.id,
             },
           },
         },
@@ -846,7 +856,7 @@ export async function UpdateAllEmbeddings(props: { ctx: ContextType }) {
     }
   }
 
-  console.log("CRON finished");
+  console.log("Finished");
 }
 
 // #endregion public functions
