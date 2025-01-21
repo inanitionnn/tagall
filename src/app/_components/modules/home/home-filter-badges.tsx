@@ -72,7 +72,7 @@ const HomeFilterBadges = (props: Props) => {
           </Badge>
         );
       })}
-      {[...filtering, ...selectedTagsIds].length > 1 && (
+      {[...filtering, ...selectedTagsIds].length > 0 && (
         <Badge
           className="cursor-pointer bg-destructive px-2 py-0.5 text-sm"
           onClick={() => {
