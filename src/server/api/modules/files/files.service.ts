@@ -15,7 +15,7 @@ cloudinary.config({
 function extractId(input: string | null | undefined): string | null {
   if (!input) return null;
   const regex = /tagall\/\w+\/(\w+)/;
-  const match = input.match(regex)?.at(1);
+  const match = regex.exec(input)?.at(1);
 
   return match ?? null;
 }

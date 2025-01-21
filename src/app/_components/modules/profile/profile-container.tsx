@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import { Button, Header, Paragraph } from "../../ui";
 import { signOut } from "next-auth/react";
-import { env } from "../../../../env";
 import { api } from "../../../../trpc/react";
 import Container from "../../shared/container";
 import Image from "next/image";
