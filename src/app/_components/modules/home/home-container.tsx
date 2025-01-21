@@ -17,6 +17,7 @@ import { HomeFilterBadges } from "./home-filter-badges";
 import { HomeNoItemsCard } from "./home-no-items-card";
 import { HomeSearch } from "./home-search";
 import { useGetUserTags } from "../tag/hooks/use-get-user-tags.hook";
+import { HomeScrollButton } from "./home-scroll-button";
 
 function HomeContainer() {
   const [collections] = api.collection.getUserCollections.useSuspenseQuery();
@@ -167,6 +168,8 @@ function HomeContainer() {
           </div>
         )}
       </InfiniteScroll>
+
+      <HomeScrollButton />
     </div>
   );
 }
