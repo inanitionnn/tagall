@@ -22,3 +22,5 @@ export * from "./select";
 export * from "./hover-card";
 export * from "./scroll-area";
 export * from "./autosize-text-area";
+export * from "./card";
+export * from "./chart";
