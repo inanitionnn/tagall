@@ -61,3 +61,21 @@ export const MoveFile = async (
     throw new Error(`Error moving image: ${err.message}`);
   }
 };
+
+export const DeleteFile = async (
+  folder: string,
+  publicId: string | null | undefined,
+): Promise<UploadApiResponse | null> => {
+  if (!publicId) {
+    return null;
+  }
+  const baseFolder = env.NEXT_PUBLIC_CLOUDINARY_FOLDER;
+  try {
+    return await cloudinary.uploader.destroy(
+      `${baseFolder}/${folder}/${publicId}`,
+    );
+  } catch (error) {
+    const err = error as UploadApiErrorResponse;
+    throw new Error(`Error deleting image: ${err.message}`);
+  }
+};

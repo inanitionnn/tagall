@@ -1,18 +1,14 @@
 "use client";
 import React, { type ComponentPropsWithRef } from "react";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Header,
-  Separator,
-} from "../../ui";
+import { Avatar, AvatarFallback, Button, Header, Separator } from "../../ui";
 import { cn } from "~/lib";
 import { LogIn, UserRound } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { NavbarButton } from "./navbar-button";
 import { NAVBAR_LINKS } from "~/constants";
+import CloudinaryImage from "../../shared/cloudinary-image";
+import { api } from "../../../../trpc/react";
 
 type Props = ComponentPropsWithRef<"div">;
 
@@ -20,6 +16,7 @@ const NavbarContent = (props: Props) => {
   const { className, ...restProps } = props;
   const pathname = usePathname();
   const { data: session } = useSession();
+  const [user] = api.user.getUser.useSuspenseQuery();
   return (
     <div
       className={cn(
@@ -48,18 +45,34 @@ const NavbarContent = (props: Props) => {
         })}
       </div>
 
-      {session?.user.id ? (
+      {pathname === "/profile" ? (
+        <Button
+          size={"navbar"}
+          variant={"destructive"}
+          className={"h-16 w-full gap-4 text-center font-semibold"}
+          onClick={() => signOut()}
+        >
+          Log out
+        </Button>
+      ) : session?.user.id ? (
         <NavbarButton
           icon={
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>
-                <UserRound />
-              </AvatarFallback>
+              {user?.image ? (
+                <CloudinaryImage
+                  folder={"profile"}
+                  publicId={user.image}
+                  className="aspect-square h-full w-full rounded-full"
+                />
+              ) : (
+                <AvatarFallback>
+                  <UserRound />
+                </AvatarFallback>
+              )}
             </Avatar>
           }
           pathname={"/profile"}
-          title={session?.user.name ?? "Profile"}
+          title={user.name ?? "Profile"}
           isActive={pathname === "/profile"}
         />
       ) : (

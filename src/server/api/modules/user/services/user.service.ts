@@ -1,7 +1,8 @@
 import type { User } from "@prisma/client";
-import { getOrSetCache } from "../../../../../lib/redis";
+import { deleteCacheByPrefix, getOrSetCache } from "../../../../../lib/redis";
 import type { ContextType } from "../../../../types";
 import type { UpdateUserInputType } from "../types";
+import { DeleteFile } from "../../files/files.service";
 
 export async function GetUser(props: { ctx: ContextType }): Promise<User> {
   const { ctx } = props;
@@ -29,7 +30,6 @@ export async function UpdateUser(props: {
   input: UpdateUserInputType;
 }) {
   const { ctx, input } = props;
-
   const user = await ctx.db.user.findUnique({
     where: {
       id: ctx.session.user.id,
@@ -37,6 +37,9 @@ export async function UpdateUser(props: {
   });
   if (!user) {
     throw new Error("User not found");
+  }
+  if (input.image === null && user.image !== null) {
+    await DeleteFile("profile", user.image);
   }
   await ctx.db.user.update({
     where: {
@@ -47,6 +50,9 @@ export async function UpdateUser(props: {
       name: input.name,
     },
   });
+
+  const redisKey = `user:GetUser:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(redisKey);
 
   return "User updated successfully";
 }
