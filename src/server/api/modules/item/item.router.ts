@@ -5,6 +5,7 @@ import {
   GetRandomUserItemsInputSchema,
   GetUserItemInputSchema,
   GetUserItemsInputSchema,
+  GetUserItemsStatsInputSchema,
   GetYearsRangeInputSchema,
   SearchItemByTextInputSchema,
   UpdateItemInputSchema,
@@ -15,6 +16,7 @@ import {
   GetRandomUserItems,
   GetUserItem,
   GetUserItems,
+  GetUserItemsStats,
   GetYearsRange,
   SearchItemByText,
   UpdateItem,
@@ -28,6 +30,10 @@ export const ItemRouter = createTRPCRouter({
   getRandomUserItems: protectedProcedure
     .input(GetRandomUserItemsInputSchema)
     .query(GetRandomUserItems),
+
+  getUserItemsStats: protectedProcedure
+    .input(GetUserItemsStatsInputSchema)
+    .query(GetUserItemsStats),
 
   getUserItem: protectedProcedure
     .input(GetUserItemInputSchema)

@@ -9,6 +9,8 @@ import type {
   DeleteFromCollectionInputType,
   ItemSmallType,
   GetRandomUserItemsInputType,
+  GetUserItemsStatsInputType,
+  ItemsStatsType,
 } from "../types";
 import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../embedding/services";
@@ -22,6 +24,11 @@ import {
 } from "./item-embedding.service";
 import type { SearchItemByTextInputSchema } from "../types/search-item-by-text-input.type";
 import { ItemResponseClass } from "../item-response.class";
+import {
+  getUserItemsDateStats,
+  getUserItemsRateStats,
+  getUserItemsStatusStats,
+} from "./item-stats.service";
 
 const ItemResponse = new ItemResponseClass();
 
@@ -380,6 +387,52 @@ export async function GetUserItems(props: {
   return getOrSetCache<ItemSmallType[]>(redisKey, promise);
 }
 
+export async function GetUserItemsStats(props: {
+  ctx: ContextType;
+  input: GetUserItemsStatsInputType;
+}): Promise<ItemsStatsType> {
+  const { ctx, input } = props;
+  const redisKey = `item:GetUserItemsStats:${ctx.session.user.id}:${JSON.stringify(input)}`;
+  const promise = new Promise<ItemsStatsType>((resolve) => {
+    (async () => {
+      const date = await getUserItemsDateStats({
+        ctx,
+        collectionsIds: input,
+      });
+      const rate = await getUserItemsRateStats({
+        ctx,
+        collectionsIds: input,
+      });
+      const status = await getUserItemsStatusStats({
+        ctx,
+        collectionsIds: input,
+      });
+
+      const all = await ctx.db.userToItem.count({
+        where: {
+          userId: ctx.session.user.id,
+          ...(input?.length && {
+            item: {
+              collectionId: {
+                in: input,
+              },
+            },
+          }),
+        },
+      });
+
+      return resolve({
+        date,
+        rate,
+        status,
+        all,
+      });
+    })();
+  });
+
+  return getOrSetCache<ItemsStatsType>(redisKey, promise);
+}
+
 export async function GetUserItem(props: {
   ctx: ContextType;
   input: GetUserItemInputType;
@@ -627,6 +680,14 @@ export async function UpdateItem(props: {
   await deleteCacheByPrefix(userItemsKey);
   const userItemKey = `item:GetUserItem:${ctx.session.user.id}:${input.id}`;
   await deleteCacheByPrefix(userItemKey);
+  const statsKey = `item:GetUserItemsStats:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(statsKey);
+  const statsDateKey = `itemStats:getUserItemsDateStats:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(statsDateKey);
+  const statsRateKey = `itemStats:getUserItemsRateStats:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(statsRateKey);
+  const statsStatusKey = `itemStats:getUserItemsStatusStats:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(statsStatusKey);
 
   return "Item updated successfully!";
 }
@@ -665,6 +726,14 @@ export async function DeleteFromCollection(props: {
   await deleteCacheByPrefix(userItemKey);
   const userYearsRangeKey = `item:GetYearsRange:${ctx.session.user.id}`;
   await deleteCacheByPrefix(userYearsRangeKey);
+  const statsKey = `item:GetUserItemsStats:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(statsKey);
+  const statsDateKey = `itemStats:getUserItemsDateStats:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(statsDateKey);
+  const statsRateKey = `itemStats:getUserItemsRateStats:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(statsRateKey);
+  const statsStatusKey = `itemStats:getUserItemsStatusStats:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(statsStatusKey);
 
   return "Item deleted successfully!";
 }

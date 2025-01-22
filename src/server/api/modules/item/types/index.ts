@@ -7,3 +7,5 @@ export * from "./update-item-input.type";
 export * from "./delete-from-collection-input.type";
 export * from "./item-small.type";
 export * from "./get-random-user-items-input.type";
+export * from "./get-user-items-stats-input.type";
+export * from "./items-stats.type";
