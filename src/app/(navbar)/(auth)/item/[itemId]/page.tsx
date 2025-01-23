@@ -2,8 +2,6 @@ import { api, HydrateClient } from "../../../../../trpc/server";
 import { ItemContainer } from "../../../../_components/modules";
 import { BackgroundImage } from "../../../../_components/shared";
 
-export const dynamic = "force-dynamic";
-
 export default async function Item({ params }: { params: { itemId: string } }) {
   const { itemId } = params;
   void api.item.getUserItem.prefetch(itemId);

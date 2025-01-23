@@ -30,7 +30,7 @@ function ProfileContainer() {
         selectedCollectionsIds={selectedCollectionsIds}
         setSelectedCollectionsIds={setSelectedCollectionsIds}
       />
-      {isLoading && stats ? (
+      {!isLoading && stats ? (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <ProfileStatusStats all={stats.all} statusStats={stats.status} />
           <ProfileRateStats rateStats={stats.rate} />

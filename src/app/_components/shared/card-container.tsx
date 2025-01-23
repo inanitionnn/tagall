@@ -1,13 +1,14 @@
-"use client";
 import { cn } from "../../../lib";
-import type { ComponentPropsWithoutRef } from "react";
+import { forwardRef, type ComponentPropsWithoutRef } from "react";
 
 type Props = ComponentPropsWithoutRef<"div">;
 
-export const CardContainer = (props: Props) => {
+export const CardContainer = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const { className, children, ...restProps } = props;
+
   return (
     <div
+      ref={ref}
       className={cn(
         "flex gap-2 rounded-lg border border-input bg-background p-2 shadow focus:border-primary",
         "transition-all duration-500 ease-in-out",
@@ -18,4 +19,6 @@ export const CardContainer = (props: Props) => {
       {children}
     </div>
   );
-};
+});
+
+CardContainer.displayName = "CardContainer";

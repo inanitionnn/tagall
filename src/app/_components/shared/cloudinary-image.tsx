@@ -1,4 +1,3 @@
-"use client";
 import { CldImage } from "next-cloudinary";
 import { cn } from "../../../lib";
 import { env } from "../../../env";

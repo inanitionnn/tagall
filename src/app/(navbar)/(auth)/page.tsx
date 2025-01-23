@@ -2,8 +2,6 @@ import { api, HydrateClient } from "../../../trpc/server";
 import { HomeContainer } from "../../_components/modules";
 import { BackgroundImage } from "../../_components/shared";
 
-export const dynamic = "force-dynamic";
-
 export default async function Home() {
   void api.collection.getUserCollections.prefetch();
   void api.item.getUserItems.prefetch();

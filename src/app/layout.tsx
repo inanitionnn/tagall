@@ -9,6 +9,8 @@ import { SessionProviderWrapper } from "./_components/wrappers/session-provider-
 import { ToastWrapper } from "./_components/wrappers/toast-wrapper";
 import { Suspense } from "react";
 import LoadingPage from "./loading";
+import { cloakSSROnlySecret } from "ssr-only-secrets";
+import { headers } from "next/headers";
 
 const sourceSansPro = Source_Sans_3({
   subsets: ["latin"],
@@ -25,20 +27,25 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   params: { session },
 }: Readonly<{
   children: React.ReactNode;
   params: { session: Session | null | undefined };
 }>) {
+  const cookie = new Headers(headers()).get("cookie");
+  const encryptedCookie = await cloakSSROnlySecret(
+    cookie ?? "",
+    "SECRET_CLIENT_COOKIE_VAR",
+  );
   return (
     <html
       lang="en"
       className={`${sourceSansPro.variable} ${nunitoSans.variable}`}
     >
       <body>
-        <TRPCReactProvider>
+        <TRPCReactProvider ssrOnlySecret={encryptedCookie}>
           <SessionProviderWrapper session={session}>
             <ToastWrapper>
               <Suspense fallback={<LoadingPage />}>

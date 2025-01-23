@@ -3,8 +3,6 @@ import { Navbar } from "../_components/modules";
 import LoadingPage from "../loading";
 import { api } from "../../trpc/server";
 
-export const dynamic = "force-dynamic";
-
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {

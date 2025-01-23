@@ -1,4 +1,3 @@
-"use client";
 import { cn } from "../../../lib";
 import type { ComponentPropsWithoutRef } from "react";
 

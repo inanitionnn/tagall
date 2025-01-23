@@ -34,6 +34,7 @@ export const env = createEnv({
     CLOUDINARY_API_SECRET: z.string(),
 
     ALLOWED_EMAILS: z.string(),
+    SECRET_CLIENT_COOKIE_VAR: z.string(),
   },
 
   /**
@@ -66,6 +67,7 @@ export const env = createEnv({
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
     ALLOWED_EMAILS: process.env.ALLOWED_EMAILS,
     NEXT_PUBLIC_CLOUDINARY_FOLDER: process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER,
+    SECRET_CLIENT_COOKIE_VAR: process.env.SECRET_CLIENT_COOKIE_VAR,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

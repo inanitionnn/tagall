@@ -6,7 +6,7 @@ import { createTRPCReact } from "@trpc/react-query";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import { useState } from "react";
 import SuperJSON from "superjson";
-
+import { readSSROnlySecret } from "ssr-only-secrets";
 import { type AppRouter } from "~/server/api/root";
 import { createQueryClient } from "./query-client";
 
@@ -36,7 +36,10 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
-export function TRPCReactProvider(props: { children: React.ReactNode }) {
+export function TRPCReactProvider(props: {
+  ssrOnlySecret: string;
+  children: React.ReactNode;
+}) {
   const queryClient = getQueryClient();
 
   const [trpcClient] = useState(() =>
@@ -50,9 +53,17 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
         unstable_httpBatchStreamLink({
           transformer: SuperJSON,
           url: getBaseUrl() + "/api/trpc",
-          headers: () => {
+          headers: async () => {
             const headers = new Headers();
+            const secret = props.ssrOnlySecret;
+            const value = await readSSROnlySecret(
+              secret,
+              "SECRET_CLIENT_COOKIE_VAR",
+            );
             headers.set("x-trpc-source", "nextjs-react");
+            if (value) {
+              headers.set("cookie", value);
+            }
             return headers;
           },
         }),
