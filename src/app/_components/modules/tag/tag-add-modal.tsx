@@ -15,7 +15,7 @@ import {
 } from "../../ui";
 import { useState } from "react";
 import type { CollectionType } from "../../../../server/api/modules/collection/types";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 import { useAddTag } from "../../../../hooks";
 
 type Props = {

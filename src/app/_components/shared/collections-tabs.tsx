@@ -1,7 +1,7 @@
 import React, { type Dispatch, type SetStateAction } from "react";
 import { Button } from "../ui";
 import type { CollectionType } from "../../../server/api/modules/collection/types";
-import Container from "./container";
+import { Container } from "./container";
 
 type Props = {
   collections: CollectionType[];
@@ -9,7 +9,7 @@ type Props = {
   setSelectedCollectionsIds: Dispatch<SetStateAction<string[]>>;
 };
 
-const CollectionsTabs = (props: Props) => {
+export const CollectionsTabs = (props: Props) => {
   const { collections, selectedCollectionsIds, setSelectedCollectionsIds } =
     props;
 
@@ -38,5 +38,3 @@ const CollectionsTabs = (props: Props) => {
     </Container>
   );
 };
-
-export { CollectionsTabs };

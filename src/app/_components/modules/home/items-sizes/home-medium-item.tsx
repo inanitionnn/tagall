@@ -1,7 +1,6 @@
 import { Header } from "../../../ui";
 import type { ItemSmallType } from "../../../../../server/api/modules/item/types";
-import CloudinaryImage from "../../../shared/cloudinary-image";
-import Container from "../../../shared/container";
+import { Container, CloudinaryImage } from "../../../shared";
 
 type Props = {
   item: ItemSmallType;

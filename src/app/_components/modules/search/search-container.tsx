@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { AutosizeTextarea, Button, Header, Spinner } from "../../ui";
 import { useSearchItemByText } from "../../../../hooks/use-search-item-by-text";
-import Container from "../../shared/container";
+import { Container, CloudinaryImage } from "../../shared";
 import Link from "next/link";
-import CloudinaryImage from "../../shared/cloudinary-image";
 
 function SearchContainer() {
   const [searchText, setSearchText] = useState("");

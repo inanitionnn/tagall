@@ -8,7 +8,7 @@ import {
   ChartLegendContent,
 } from "../../ui";
 import type { ItemsStatsType } from "../../../../server/api/modules/item/types";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 type Props = {

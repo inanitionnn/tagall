@@ -1,27 +1,24 @@
 "use client";
 import { useState } from "react";
-import { Search } from "../../shared/search";
 import { AddSearchResultItem } from "./add-search-result-item";
 import { AddItemModal } from "./add-item-modal";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { AddCollectionsTabs } from "./add-collections-tabs";
 import Link from "next/link";
-import { ScrollButton } from "../../shared/scroll-button";
-import {
-  useGetCollections,
-  useGetUserTags,
-  useParseSearch,
-} from "../../../../hooks";
-import Loading from "../../../loading";
+import { Loading, ScrollButton, Search } from "../../shared";
+import { useGetUserTags, useParseSearch } from "../../../../hooks";
+import { api } from "../../../../trpc/react";
 
 function AddContainer() {
+  const [collections] = api.collection.getAll.useSuspenseQuery();
+
   const [searchResults, setSearchResults] = useState<SearchResultType[]>([]);
   const [selectedItem, setSelectedItem] = useState<SearchResultType | null>(
     null,
   );
-
-  const { collections, selectedCollectionId, setSelectedCollectionId } =
-    useGetCollections();
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string>(
+    collections[0]?.id ?? "",
+  );
 
   const { tags } = useGetUserTags({
     collectionsIds: [selectedCollectionId],

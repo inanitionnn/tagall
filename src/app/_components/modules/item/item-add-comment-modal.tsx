@@ -25,7 +25,7 @@ import {
 import type { ItemType } from "../../../../server/api/modules/item/types";
 import { ItemStatus } from "@prisma/client";
 import { useAddComment } from "../../../../hooks";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 
 type Props = {
   item: ItemType;

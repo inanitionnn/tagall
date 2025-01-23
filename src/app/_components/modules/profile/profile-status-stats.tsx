@@ -8,7 +8,7 @@ import {
   ChartLegendContent,
 } from "../../ui";
 import type { ItemsStatsType } from "../../../../server/api/modules/item/types";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 import { Label, Pie, PieChart } from "recharts";
 
 type Props = {
@@ -46,14 +46,17 @@ const ProfileStatusStats = (props: Props) => {
             color: "hsl(var(--chart-3))",
           },
         }}
-        className="min-h-[200px] w-full"
+        className="min-h-[400px] w-full xl:min-h-[200px]"
       >
         <PieChart>
           <ChartTooltip
             cursor={false}
             content={<ChartTooltipContent hideLabel />}
           />
-          <ChartLegend content={<ChartLegendContent />} />
+          <ChartLegend
+            className="flex-col xl:flex-row"
+            content={<ChartLegendContent />}
+          />
           <Pie
             data={statusStats.map((s) => ({
               ...s,

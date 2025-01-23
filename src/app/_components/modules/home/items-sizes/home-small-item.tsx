@@ -5,8 +5,7 @@ import {
   STATUS_ICONS,
   STATUS_NAMES,
 } from "../../../../../constants";
-import CloudinaryImage from "../../../shared/cloudinary-image";
-import Container from "../../../shared/container";
+import { Container, CloudinaryImage } from "../../../shared";
 
 type Props = {
   item: ItemSmallType;

@@ -3,7 +3,7 @@
 import { TagCollectionsTabs } from "./tag-collections-tabs";
 import { TagAddModal } from "./tag-add-modal";
 import { TagUpdateModal } from "./tag-update-modal";
-import { useGetCollections, useGetUserTags } from "../../../../hooks";
+import { useGetUserCollections, useGetUserTags } from "../../../../hooks";
 
 function TagContainer() {
   const {
@@ -11,7 +11,7 @@ function TagContainer() {
     selectedCollectionsIds,
     setSelectedCollectionsIds,
     debouncedSelectedCollectionsIds,
-  } = useGetCollections();
+  } = useGetUserCollections();
 
   const { tags } = useGetUserTags({
     collectionsIds: debouncedSelectedCollectionsIds,

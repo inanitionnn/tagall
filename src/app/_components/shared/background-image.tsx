@@ -3,7 +3,7 @@ import Image from "next/image";
 
 type Props = ComponentPropsWithoutRef<"div"> & { image: string };
 
-const BackgroundImage = (props: Props) => {
+export const BackgroundImage = (props: Props) => {
   const { children, image, ...restProps } = props;
   return (
     <div className="relative h-full min-h-screen w-full">
@@ -20,5 +20,3 @@ const BackgroundImage = (props: Props) => {
     </div>
   );
 };
-
-export default BackgroundImage;

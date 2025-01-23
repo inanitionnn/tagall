@@ -3,7 +3,7 @@ import { Header, Paragraph } from "../../ui";
 import type { Dispatch, SetStateAction } from "react";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { cn } from "../../../../lib";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 
 type Props = {
   searchResult: SearchResultType;

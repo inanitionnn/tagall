@@ -24,7 +24,7 @@ import type { ItemType } from "../../../../server/api/modules/item/types";
 import { Star } from "lucide-react";
 import { useUpdateItem } from "../../../../hooks";
 import { ItemStatus } from "@prisma/client";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 
 type Props = {
   item: ItemType;

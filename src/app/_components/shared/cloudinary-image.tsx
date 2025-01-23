@@ -11,7 +11,7 @@ type Props = {
   className?: string;
 };
 
-export default function CloudinaryImage(props: Props) {
+export const CloudinaryImage = (props: Props) => {
   const { publicId, folder, className, height, width } = props;
   const projectFolder = env.NEXT_PUBLIC_CLOUDINARY_FOLDER;
   const src = `${projectFolder}/${folder}/${publicId}`;
@@ -32,4 +32,4 @@ export default function CloudinaryImage(props: Props) {
       }}
     />
   );
-}
+};

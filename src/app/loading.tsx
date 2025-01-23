@@ -1,6 +1,6 @@
 import { Header, Spinner } from "~/app/_components/ui";
 
-export default function Loaging() {
+export default function LoadingPage() {
   return (
     <div className="flex h-lvh w-full items-center justify-center gap-6">
       <Spinner size={"large"} />

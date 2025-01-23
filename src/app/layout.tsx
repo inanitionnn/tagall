@@ -8,7 +8,7 @@ import { type Session } from "next-auth";
 import { SessionProviderWrapper } from "./_components/wrappers/session-provider-wrapper";
 import { ToastWrapper } from "./_components/wrappers/toast-wrapper";
 import { Suspense } from "react";
-import Loaging from "./loading";
+import LoadingPage from "./loading";
 
 const sourceSansPro = Source_Sans_3({
   subsets: ["latin"],
@@ -41,7 +41,7 @@ export default function RootLayout({
         <TRPCReactProvider>
           <SessionProviderWrapper session={session}>
             <ToastWrapper>
-              <Suspense fallback={<Loaging />}>
+              <Suspense fallback={<LoadingPage />}>
                 {children}
                 <SpeedInsights />
                 <Analytics />

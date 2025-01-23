@@ -16,4 +16,4 @@ export * from "./use-add-tag.hook";
 export * from "./use-delete-tag.hook";
 export * from "./use-update-tag.hook";
 export * from "./use-get-user-tags.hook";
-export * from "./use-get-collections.hook";
+export * from "./use-get-user-collections.hook";

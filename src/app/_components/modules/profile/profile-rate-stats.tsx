@@ -6,7 +6,7 @@ import {
   ChartTooltipContent,
 } from "../../ui";
 import type { ItemsStatsType } from "../../../../server/api/modules/item/types";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 import {
   Bar,
   BarChart,
@@ -35,7 +35,7 @@ const ProfileRateStats = (props: Props) => {
             color: "hsl(var(--chart-1))",
           },
         }}
-        className="min-h-[200px] w-full"
+        className="h-full min-h-[200px] w-full"
       >
         <BarChart accessibilityLayer data={rateStats.filter((r) => r.rate)}>
           <XAxis
@@ -58,7 +58,7 @@ const ProfileRateStats = (props: Props) => {
           <Bar dataKey="count" fill="var(--color-count)" radius={8}>
             <LabelList
               position="top"
-              offset={12}
+              offset={6}
               className="block fill-muted-foreground md:hidden"
               fontSize={12}
             />

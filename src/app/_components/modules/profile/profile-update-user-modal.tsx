@@ -15,8 +15,7 @@ import {
   Paragraph,
 } from "../../ui";
 import { useRef, useState } from "react";
-import Container from "../../shared/container";
-import CloudinaryImage from "../../shared/cloudinary-image";
+import { Container, CloudinaryImage } from "../../shared";
 import type { User } from "@prisma/client";
 import { useUpdateUser } from "../../../../hooks/use-update-user.hook";
 import Image from "next/image";
@@ -56,23 +55,23 @@ const ProfileUpdateUserModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <Container className="cursor-pointer flex-col gap-4 p-4 hover:scale-105 sm:flex-row sm:gap-8">
+        <Container className="cursor-pointer flex-col items-center gap-4 p-4 hover:scale-105 sm:flex-row sm:gap-8">
           <div className="aspect-square w-28 rounded-full border border-input">
             {user.image ? (
               <CloudinaryImage
                 folder={"profile"}
                 publicId={user.image}
-                className="h-full w-full rounded-full"
+                className="aspect-square h-full w-full rounded-full"
               />
             ) : (
               <>
-                <div className="flex h-full w-full items-center justify-center rounded-full">
+                <div className="flex aspect-square h-full w-full items-center justify-center rounded-full">
                   <UserRound className="size-10" />
                 </div>
               </>
             )}
           </div>
-          <div className="flex flex-col justify-center gap-2">
+          <div className="flex flex-col justify-center gap-2 text-center sm:text-start">
             <Header vtag="h4"> {user.name}</Header>
             <Paragraph className="text-muted-foreground">
               {user.email}

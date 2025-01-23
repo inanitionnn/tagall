@@ -1,9 +1,8 @@
 "use client";
 import { api } from "../../../../trpc/react";
 import { ProfileUpdateUserModal } from "./profile-update-user-modal";
-import Loaging from "../../../loading";
-import { CollectionsTabs } from "../../shared/collections-tabs";
-import { useGetCollections } from "../../../../hooks";
+import { CollectionsTabs, Loading } from "../../shared";
+import { useGetUserCollections } from "../../../../hooks";
 import { ProfileStatusStats } from "./profile-status-stats";
 import { ProfileRateStats } from "./profile-rate-stats";
 import { ProfileDateStats } from "./profile-date-stats";
@@ -17,9 +16,9 @@ function ProfileContainer() {
     selectedCollectionsIds,
     setSelectedCollectionsIds,
     debouncedSelectedCollectionsIds,
-  } = useGetCollections();
+  } = useGetUserCollections();
 
-  const { stats } = useUserItemsStats({
+  const { stats, isLoading } = useUserItemsStats({
     collectionsIds: debouncedSelectedCollectionsIds,
   });
 
@@ -31,14 +30,14 @@ function ProfileContainer() {
         selectedCollectionsIds={selectedCollectionsIds}
         setSelectedCollectionsIds={setSelectedCollectionsIds}
       />
-      {stats ? (
+      {!isLoading && stats ? (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <ProfileStatusStats all={stats.all} statusStats={stats.status} />
           <ProfileRateStats rateStats={stats.rate} />
           <ProfileDateStats dateStats={stats.date} />
         </div>
       ) : (
-        <Loaging />
+        <Loading />
       )}
     </div>
   );

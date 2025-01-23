@@ -2,12 +2,11 @@
 import { api } from "~/trpc/react";
 import { redirect } from "next/navigation";
 import { Header, Paragraph } from "../../ui";
-import CloudinaryImage from "../../shared/cloudinary-image";
 import { ItemUpdateModal } from "./item-update-modal";
 import { ItemDeleteModal } from "./item-delete-modal";
 import { ItemAddCommentModal } from "./item-add-comment-modal";
 import { ItemUpdateCommentModal } from "./item-update-comment-modal";
-import Container from "../../shared/container";
+import { Container, CloudinaryImage } from "../../shared";
 import { ItemUpdateTagsModal } from "./item-update-tags-modal";
 import Link from "next/link";
 import { useGetUserTags } from "../../../../hooks";

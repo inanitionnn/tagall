@@ -1,18 +1,21 @@
 "use client";
 import { useState } from "react";
-import { CollectionsTabs } from "../../shared/collections-tabs";
 import type { GetUserItemsSortType } from "../../../../server/api/modules/item/types";
-import { Header, InfiniteScroll, Spinner } from "../../ui";
+import { Header, InfiniteScroll } from "../../ui";
 import { HomeItemsSizeTabs, type ItemsSize } from "./home-items-size-tabs";
 import { HomeSortSelect } from "./home-sort-select";
 import { HomeItems } from "./home-items";
-import { FilterDialog } from "../../shared/filter-dialog";
 import { HomeFilterBadges } from "./home-filter-badges";
 import { HomeNoItemsCard } from "./home-no-items-card";
-import { ScrollButton } from "../../shared/scroll-button";
-import { Search } from "../../shared/search";
 import {
-  useGetCollections,
+  Search,
+  FilterDialog,
+  ScrollButton,
+  CollectionsTabs,
+  Loading,
+} from "../../shared";
+import {
+  useGetUserCollections,
   useGetFilterFields,
   useGetUserItems,
   useGetUserTags,
@@ -35,7 +38,7 @@ function HomeContainer() {
     selectedCollectionsIds,
     setSelectedCollectionsIds,
     debouncedSelectedCollectionsIds,
-  } = useGetCollections();
+  } = useGetUserCollections();
 
   const { tags } = useGetUserTags({
     collectionsIds: debouncedSelectedCollectionsIds,
@@ -134,12 +137,7 @@ function HomeContainer() {
         isLoading={isLoading}
         next={() => setPage((prev) => prev + 1)}
       >
-        {hasMore && (
-          <div className="flex w-full items-center justify-center gap-6">
-            <Spinner size={"medium"} />
-            <Header vtag="h5">loading</Header>
-          </div>
-        )}
+        {hasMore && <Loading />}
       </InfiniteScroll>
 
       <ScrollButton />

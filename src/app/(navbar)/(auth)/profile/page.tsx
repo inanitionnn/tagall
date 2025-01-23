@@ -1,6 +1,6 @@
 import { api, HydrateClient } from "../../../../trpc/server";
-import BackgroundImage from "../../../_components/shared/background-image";
-import { ProfileContainer } from "../../../_components/modules/profile/profile-container";
+import { BackgroundImage } from "../../../_components/shared";
+import { ProfileContainer } from "../../../_components/modules";
 
 export const dynamic = "force-dynamic";
 

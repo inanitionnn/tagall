@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Navbar } from "../_components/modules";
-import Loaging from "../loading";
+import LoadingPage from "../loading";
 import { api } from "../../trpc/server";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export default function RootLayout({
   return (
     <>
       <Navbar>
-        <Suspense fallback={<Loaging />}>{children}</Suspense>
+        <Suspense fallback={<LoadingPage />}>{children}</Suspense>
       </Navbar>
     </>
   );

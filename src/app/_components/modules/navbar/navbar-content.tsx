@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { NavbarButton } from "./navbar-button";
 import { NAVBAR_LINKS } from "~/constants";
-import CloudinaryImage from "../../shared/cloudinary-image";
+import { CloudinaryImage } from "../../shared";
 import { api } from "../../../../trpc/react";
 
 type Props = ComponentPropsWithRef<"div">;

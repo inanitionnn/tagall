@@ -26,7 +26,7 @@ import type { ItemType } from "../../../../server/api/modules/item/types";
 import { ItemStatus } from "@prisma/client";
 import { Star } from "lucide-react";
 import { useDeleteComment, useUpdateComment } from "../../../../hooks";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 
 type Props = {
   comment: NonNullable<ItemType["comments"]>[number];

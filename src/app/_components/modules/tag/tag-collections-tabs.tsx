@@ -1,7 +1,7 @@
 import React, { type Dispatch, type SetStateAction } from "react";
 import { Button } from "../../ui";
 import type { CollectionType } from "../../../../server/api/modules/collection/types";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 
 type Props = {
   collections: CollectionType[];

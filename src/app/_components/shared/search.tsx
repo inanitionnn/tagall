@@ -9,7 +9,7 @@ type Props = {
   isLoading: boolean;
 };
 
-function Search(props: Props) {
+export const Search = (props: Props) => {
   const { isLoading, query, setQuery, submit } = props;
 
   const handleSubmit = () => {
@@ -39,5 +39,4 @@ function Search(props: Props) {
       )}
     </div>
   );
-}
-export { Search };
+};

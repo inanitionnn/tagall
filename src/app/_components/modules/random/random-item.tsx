@@ -1,6 +1,5 @@
 import Link from "next/link";
-import Container from "../../shared/container";
-import CloudinaryImage from "../../shared/cloudinary-image";
+import { Container, CloudinaryImage } from "../../shared";
 import { Header } from "../../ui";
 import type { ItemSmallType } from "../../../../server/api/modules/item/types";
 

@@ -4,7 +4,7 @@ import { cn } from "../../../lib";
 import { Button } from "../ui";
 import { MoveUp } from "lucide-react";
 
-function ScrollButton() {
+export const ScrollButton = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -35,6 +35,4 @@ function ScrollButton() {
       <MoveUp />
     </Button>
   );
-}
-
-export { ScrollButton };
+};

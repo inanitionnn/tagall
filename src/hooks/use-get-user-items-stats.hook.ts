@@ -12,7 +12,8 @@ export const useUserItemsStats = (props: Props) => {
 
   const [stats, setStats] = useState<ItemsStatsType | null>(null);
 
-  const { data, error } = api.item.getUserItemsStats.useQuery(collectionsIds);
+  const { data, error, isLoading } =
+    api.item.getUserItemsStats.useQuery(collectionsIds);
 
   useEffect(() => {
     if (data) {
@@ -28,5 +29,6 @@ export const useUserItemsStats = (props: Props) => {
 
   return {
     stats,
+    isLoading,
   };
 };

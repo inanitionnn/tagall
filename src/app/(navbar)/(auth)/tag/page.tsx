@@ -1,6 +1,6 @@
 import { api, HydrateClient } from "../../../../trpc/server";
 import { TagContainer } from "../../../_components/modules/";
-import BackgroundImage from "../../../_components/shared/background-image";
+import { BackgroundImage } from "../../../_components/shared";
 
 export default async function Tag() {
   void api.collection.getAll.prefetch();

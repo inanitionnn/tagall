@@ -16,7 +16,7 @@ import {
 } from "../../ui";
 import { useState } from "react";
 import type { ItemType } from "../../../../server/api/modules/item/types";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 import { useUpdateItem } from "../../../../hooks";
 import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
 

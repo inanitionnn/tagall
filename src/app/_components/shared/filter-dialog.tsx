@@ -12,9 +12,9 @@ import { STATUS_NAMES } from "../../../constants";
 import { Search, SlidersHorizontal } from "lucide-react";
 import type { GetUserItemsFilterType } from "../../../server/api/modules/item/types";
 import type { ItemStatus } from "@prisma/client";
-import Container from "./container";
 import type { TagType } from "../../../server/api/modules/tag/types/tag.type";
 import type { FilterFieldsType } from "../../../server/api/modules/field/types";
+import { Container } from "./container";
 
 type Props = {
   searchFilter: string;
@@ -35,7 +35,7 @@ type Props = {
   setSelectedTagsIds: Dispatch<SetStateAction<string[]>>;
 };
 
-const FilterDialog = (props: Props) => {
+export const FilterDialog = (props: Props) => {
   const {
     tags,
     selectedTagsIds,
@@ -272,5 +272,3 @@ const FilterDialog = (props: Props) => {
     </>
   );
 };
-
-export { FilterDialog };

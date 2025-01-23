@@ -18,7 +18,7 @@ import {
 import { useState } from "react";
 import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
 import type { CollectionType } from "../../../../server/api/modules/collection/types";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 import { useDeleteTag, useUpdateTag } from "../../../../hooks";
 
 type Props = {

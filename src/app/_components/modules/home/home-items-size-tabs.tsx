@@ -1,7 +1,7 @@
 import React, { type Dispatch, type SetStateAction } from "react";
 import { Button } from "../../ui";
 import { Grid2x2, Grid3x3, Rows3, TableProperties } from "lucide-react";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 
 export type ItemsSize = "medium" | "list" | "small" | "large";
 

@@ -1,17 +1,19 @@
 "use client";
 import { useState } from "react";
-import Container from "../../shared/container";
+import {
+  Container,
+  CollectionsTabs,
+  FilterDialog,
+  Loading,
+} from "../../shared";
 import { Button, DualRangeSlider, Spinner } from "../../ui";
 import { Dices } from "lucide-react";
 import { HomeNoItemsCard } from "../home/home-no-items-card";
-import { CollectionsTabs } from "../../shared/collections-tabs";
-import { FilterDialog } from "../../shared/filter-dialog";
 import { HomeFilterBadges } from "../home/home-filter-badges";
-import Loading from "../../../loading";
 import {
-  useGetCollections,
   useGetFilterFields,
   useGetRandomUserItems,
+  useGetUserCollections,
   useGetUserTags,
   useParseFiltering,
   useYearsRange,
@@ -28,7 +30,7 @@ function RandomContainer() {
     selectedCollectionsIds,
     setSelectedCollectionsIds,
     debouncedSelectedCollectionsIds,
-  } = useGetCollections();
+  } = useGetUserCollections();
 
   const { tags } = useGetUserTags({
     collectionsIds: debouncedSelectedCollectionsIds,

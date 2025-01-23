@@ -7,7 +7,7 @@ import {
   HomeMediumItem,
   HomeSmallItem,
 } from "./items-sizes";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 
 type Props = {
   itemsSize: "small" | "medium" | "list" | "large";

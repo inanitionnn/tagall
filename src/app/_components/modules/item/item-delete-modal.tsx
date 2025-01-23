@@ -11,7 +11,7 @@ import {
 } from "../../ui";
 import { useState } from "react";
 import { useDeleteItemFromCollection } from "../../../../hooks";
-import Container from "../../shared/container";
+import { Container } from "../../shared";
 
 type Props = {
   item: ItemType;
