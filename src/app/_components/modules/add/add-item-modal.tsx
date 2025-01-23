@@ -26,6 +26,7 @@ import { ItemStatus } from "@prisma/client";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { useAddItemToCollection } from "./hooks/use-add-item-to-collection.hook";
 import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
+import { NonNullable, Truthy } from "../../../../lib";
 
 type Props = {
   open: boolean;
@@ -43,7 +44,7 @@ const AddItemModal = (props: Props) => {
   const status = form.watch("status");
   const rating = form.watch("rate");
   const tagsIds = form.watch("tagsIds");
-  const details = [selectedItem.year, ...selectedItem.keywords].filter(Boolean);
+  const details = [selectedItem.year, ...selectedItem.keywords].filter(Truthy);
   return (
     <ResponsiveModal
       open={open}

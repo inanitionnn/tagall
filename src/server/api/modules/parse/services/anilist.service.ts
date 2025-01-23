@@ -5,6 +5,7 @@ import type {
   SearchResultType,
 } from "../types";
 import { ANILIST_DETAILS_QUERY, ANILIST_SEARCH_QUERY } from "../constants";
+import { Truthy } from "../../../../../lib";
 
 function cleanText(input: string): string {
   const withoutTags = input.replace(/<[^>]*>/g, "");
@@ -58,9 +59,9 @@ export async function GetAnilistDetailsById(mediaId: string) {
     description: cleanText(description ?? ""),
     chapters,
     volumes,
-    people: staff?.nodes.map((node) => node.name.full).filter(Boolean) ?? [],
-    genres: (genres ?? []).filter(Boolean),
-    keywords: tags?.map((tag) => tag.name).filter(Boolean),
+    people: staff?.nodes.map((node) => node.name.full).filter(Truthy) ?? [],
+    genres: (genres ?? []).filter(Truthy),
+    keywords: tags?.map((tag) => tag.name).filter(Truthy),
   };
 }
 
@@ -103,7 +104,7 @@ export async function SearchAnilist(
       media.status,
       ...genres,
       ...tags,
-    ].filter(Boolean) as string[];
+    ].filter(Truthy);
     return {
       id: null,
       description: cleanText(description ?? ""),
