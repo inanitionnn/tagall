@@ -24,7 +24,7 @@ import {
 } from "../../../../constants";
 import type { ItemType } from "../../../../server/api/modules/item/types";
 import { ItemStatus } from "@prisma/client";
-import { useAddComment } from "./hooks/use-add-comment.hook";
+import { useAddComment } from "../../../../hooks";
 import Container from "../../shared/container";
 
 type Props = {
@@ -33,6 +33,7 @@ type Props = {
 
 const ItemAddCommentModal = (props: Props) => {
   const { item } = props;
+
   const [open, setOpen] = useState(false);
 
   const { form, submit } = useAddComment({

@@ -14,9 +14,13 @@ type Props = ComponentPropsWithRef<"div">;
 
 const NavbarContent = (props: Props) => {
   const { className, ...restProps } = props;
-  const pathname = usePathname();
-  const { data: session } = useSession();
+
   const [user] = api.user.getUser.useSuspenseQuery();
+
+  const { data: session } = useSession();
+
+  const pathname = usePathname();
+
   return (
     <div
       className={cn(

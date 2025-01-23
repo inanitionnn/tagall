@@ -1,7 +1,7 @@
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
-import { api } from "../../../../../trpc/react";
+import { api } from "../trpc/react";
 import { toast } from "sonner";
-import type { SearchResultType } from "../../../../../server/api/modules/parse/types";
+import type { SearchResultType } from "../server/api/modules/parse/types";
 
 type Props = {
   selectedCollectionId: string;
@@ -9,7 +9,7 @@ type Props = {
   setSelectedItem: Dispatch<SetStateAction<SearchResultType | null>>;
   limit: number;
 };
-export const useSearch = (props: Props) => {
+export const useParseSearch = (props: Props) => {
   const { limit, selectedCollectionId, setSelectedItem, setSearchResults } =
     props;
 

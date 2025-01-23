@@ -3,9 +3,11 @@ import { Button } from "../../ui";
 import { Grid2x2, Grid3x3, Rows3, TableProperties } from "lucide-react";
 import Container from "../../shared/container";
 
+export type ItemsSize = "medium" | "list" | "small" | "large";
+
 type Props = {
-  itemsSize: "medium" | "list" | "small" | "large";
-  setItemsSize: Dispatch<SetStateAction<"medium" | "list" | "small" | "large">>;
+  itemsSize: ItemsSize;
+  setItemsSize: Dispatch<SetStateAction<ItemsSize>>;
 };
 
 const HomeItemsSizeTabs = (props: Props) => {

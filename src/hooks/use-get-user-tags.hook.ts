@@ -1,7 +1,7 @@
-import { api } from "../../../../../trpc/react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
-import type { TagType } from "../../../../../server/api/modules/tag/types/tag.type";
+import type { TagType } from "../server/api/modules/tag/types/tag.type";
+import { api } from "../trpc/react";
 
 type Props = {
   collectionsIds: string[];
@@ -9,10 +9,11 @@ type Props = {
 
 export const useGetUserTags = (props: Props) => {
   const { collectionsIds } = props;
-  const { data, isError, isSuccess } =
-    api.tag.getUserTags.useQuery(collectionsIds);
 
   const [tags, setTags] = useState<TagType[]>([]);
+
+  const { data, isError, isSuccess } =
+    api.tag.getUserTags.useQuery(collectionsIds);
 
   useEffect(() => {
     if (isSuccess) {

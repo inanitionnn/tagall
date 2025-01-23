@@ -1,8 +1,8 @@
-import { type Dispatch, type SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { ItemStatus } from "@prisma/client";
-import { api } from "../../../../../trpc/react";
+import { api } from "../trpc/react";
 import { toast } from "sonner";
-import type { ItemType } from "../../../../../server/api/modules/item/types";
+import type { ItemType } from "../server/api/modules/item/types";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,13 +22,14 @@ const formSchema = z
 type formDataType = z.infer<typeof formSchema>;
 
 type Props = {
-  comment: NonNullable<ItemType["comments"]>[number];
+  item: ItemType;
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const useUpdateComment = (props: Props) => {
-  const { comment, setOpen } = props;
-  const { mutateAsync } = api.itemComment.updateItemComment.useMutation();
+export const useAddComment = (props: Props) => {
+  const { item, setOpen } = props;
+
+  const { mutateAsync } = api.itemComment.addItemComment.useMutation();
 
   const utils = api.useUtils();
 
@@ -36,17 +37,17 @@ export const useUpdateComment = (props: Props) => {
     resolver: zodResolver(formSchema),
     mode: "onBlur",
     defaultValues: {
-      title: comment.title,
-      description: comment.description,
-      rate: comment.rate ?? 0,
-      status: comment.status,
+      title: null,
+      description: null,
+      rate: item.rate ?? 0,
+      status: item.status,
     },
   });
 
   const submit = async (data: formDataType) => {
     const formData = {
       ...data,
-      id: comment.id,
+      itemId: item.id,
     };
 
     const promise = mutateAsync(formData, {
@@ -57,10 +58,12 @@ export const useUpdateComment = (props: Props) => {
 
     setOpen(false);
 
+    form.reset();
+
     toast.promise(promise, {
-      loading: `Updating comment...`,
-      success: `Comment updated successfully!`,
-      error: (error) => `Failed to update comment: ${error.message}`,
+      loading: `Adding comment...`,
+      success: `Comment added successfully!`,
+      error: (error) => `Failed to add comment: ${error.message}`,
     });
   };
 

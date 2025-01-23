@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 import type { ItemType } from "../../../../server/api/modules/item/types";
 import Container from "../../shared/container";
-import { useUpdateItem } from "./hooks/use-update-item.hook";
+import { useUpdateItem } from "../../../../hooks";
 import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
 
 type Props = {
@@ -27,6 +27,7 @@ type Props = {
 
 const ItemUpdateTagsModal = (props: Props) => {
   const { item, tags } = props;
+
   const [open, setOpen] = useState(false);
 
   const { form, submit } = useUpdateItem({

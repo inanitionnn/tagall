@@ -1,58 +1,52 @@
 "use client";
-import { api } from "~/trpc/react";
-import { useEffect, useState } from "react";
-import { HomeCollectionsTabs } from "./home-collections-tabs";
+import { useState } from "react";
+import { CollectionsTabs } from "../../shared/collections-tabs";
 import type { GetUserItemsSortType } from "../../../../server/api/modules/item/types";
 import { Header, InfiniteScroll, Spinner } from "../../ui";
-import { HomeItemsSizeTabs } from "./home-items-size-tabs";
+import { HomeItemsSizeTabs, type ItemsSize } from "./home-items-size-tabs";
 import { HomeSortSelect } from "./home-sort-select";
 import { HomeItems } from "./home-items";
-import { useYearsRange } from "./hooks/use-get-years-range.hook";
-import { useGetUserItems } from "./hooks/use-get-user-items.hook";
-import { HomeFilterDialog } from "./home-filter-dialog";
-import { useGetFilterFields } from "./hooks/use-get-filter-fields.hook";
-import { useItemFilter } from "./hooks/use-item-filter.hook";
-import { useDebounce } from "../../../../hooks";
+import { FilterDialog } from "../../shared/filter-dialog";
 import { HomeFilterBadges } from "./home-filter-badges";
 import { HomeNoItemsCard } from "./home-no-items-card";
-import { HomeSearch } from "./home-search";
-import { useGetUserTags } from "../tag/hooks/use-get-user-tags.hook";
-import { HomeScrollButton } from "./home-scroll-button";
+import { ScrollButton } from "../../shared/scroll-button";
+import { Search } from "../../shared/search";
+import {
+  useGetCollections,
+  useGetFilterFields,
+  useGetUserItems,
+  useGetUserTags,
+  useParseFiltering,
+  useYearsRange,
+} from "../../../../hooks";
 
 function HomeContainer() {
-  const [collections] = api.collection.getUserCollections.useSuspenseQuery();
-
-  const LIMIT = 30;
-  const DEBOUNCE = 400;
-
   const [searchQuery, setSearchQuery] = useState("");
-  const [itemsSize, setItemsSize] = useState<
-    "small" | "medium" | "list" | "large"
-  >("medium");
+  const [itemsSize, setItemsSize] = useState<ItemsSize>("medium");
   const [sorting, setSorting] = useState<GetUserItemsSortType>({
     type: "desc",
     name: "date",
   });
-
-  const [selectedCollectionsIds, setselectedCollectionsIds] = useState<
-    string[]
-  >(collections.map((collection) => collection.id));
-
-  const debouncedCollectionsIds = useDebounce<string[]>(
-    selectedCollectionsIds,
-    DEBOUNCE,
-  );
-
-  const { tags } = useGetUserTags({
-    collectionsIds: debouncedCollectionsIds,
-  });
-
   const [selectedTagsIds, setSelectedTagsIds] = useState<string[]>([]);
-
   const [searchFilter, setSearchFilter] = useState<string>("");
 
+  const {
+    collections,
+    selectedCollectionsIds,
+    setSelectedCollectionsIds,
+    debouncedSelectedCollectionsIds,
+  } = useGetCollections();
+
+  const { tags } = useGetUserTags({
+    collectionsIds: debouncedSelectedCollectionsIds,
+  });
+
   const { yearsRange } = useYearsRange({
-    collectionsIds: debouncedCollectionsIds,
+    collectionsIds: debouncedSelectedCollectionsIds,
+  });
+
+  const { filterFieldGroups } = useGetFilterFields({
+    collectionsIds: debouncedSelectedCollectionsIds,
   });
 
   const {
@@ -62,38 +56,17 @@ function HomeContainer() {
     setFilterRates,
     setFilterYears,
     setFiltering,
-  } = useItemFilter({
+  } = useParseFiltering({
     yearsRange,
   });
 
-  const debounce = useDebounce(
-    {
-      selectedCollectionsIds,
-      filtering,
-      sorting,
-      searchQuery,
-      selectedTagsIds,
-    },
-    DEBOUNCE,
-  );
-
-  const { groupedItems, setPage, hasMore, isLoading, resetPagination } =
-    useGetUserItems({
-      limit: LIMIT,
-      collectionsIds: debounce.selectedCollectionsIds,
-      sorting: debounce.sorting,
-      filtering: debounce.filtering,
-      searchQuery: debounce.searchQuery,
-      tagsIds: debounce.selectedTagsIds,
-    });
-
-  const { filterFieldGroups } = useGetFilterFields({
-    collectionsIds: debouncedCollectionsIds,
+  const { groupedItems, setPage, hasMore, isLoading } = useGetUserItems({
+    collectionsIds: selectedCollectionsIds,
+    sorting,
+    filtering,
+    searchQuery,
+    tagsIds: selectedTagsIds,
   });
-
-  useEffect(() => {
-    resetPagination();
-  }, [debounce, resetPagination]);
 
   if (!collections.length) {
     return (
@@ -106,16 +79,16 @@ function HomeContainer() {
   return (
     <div className="mx-auto flex max-w-screen-2xl flex-col gap-6 p-8">
       <div className="flex flex-wrap justify-between gap-4">
-        <HomeCollectionsTabs
+        <CollectionsTabs
           collections={collections}
           selectedCollectionsIds={selectedCollectionsIds}
-          setselectedCollectionsIds={setselectedCollectionsIds}
+          setSelectedCollectionsIds={setSelectedCollectionsIds}
         />
         <HomeItemsSizeTabs itemsSize={itemsSize} setItemsSize={setItemsSize} />
 
         <HomeSortSelect setSorting={setSorting} sorting={sorting} />
 
-        <HomeFilterDialog
+        <FilterDialog
           tags={tags}
           selectedTagsIds={selectedTagsIds}
           setSelectedTagsIds={setSelectedTagsIds}
@@ -132,7 +105,7 @@ function HomeContainer() {
         />
       </div>
 
-      <HomeSearch
+      <Search
         isLoading={isLoading}
         query={searchQuery}
         setQuery={setSearchQuery}
@@ -169,7 +142,7 @@ function HomeContainer() {
         )}
       </InfiniteScroll>
 
-      <HomeScrollButton />
+      <ScrollButton />
     </div>
   );
 }

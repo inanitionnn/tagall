@@ -18,7 +18,7 @@ import { useRef, useState } from "react";
 import Container from "../../shared/container";
 import CloudinaryImage from "../../shared/cloudinary-image";
 import type { User } from "@prisma/client";
-import { useUpdateUser } from "./hooks/use-update-user.hook";
+import { useUpdateUser } from "../../../../hooks/use-update-user.hook";
 import Image from "next/image";
 import { UserRound } from "lucide-react";
 

@@ -9,8 +9,8 @@ import { ItemAddCommentModal } from "./item-add-comment-modal";
 import { ItemUpdateCommentModal } from "./item-update-comment-modal";
 import Container from "../../shared/container";
 import { ItemUpdateTagsModal } from "./item-update-tags-modal";
-import { useGetUserTags } from "../tag/hooks/use-get-user-tags.hook";
 import Link from "next/link";
+import { useGetUserTags } from "../../../../hooks";
 
 type Props = {
   itemId: string;

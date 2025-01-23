@@ -1,8 +1,8 @@
 import { type Dispatch, type SetStateAction } from "react";
 import { ItemStatus } from "@prisma/client";
-import { api } from "../../../../../trpc/react";
+import { api } from "../trpc/react";
 import { toast } from "sonner";
-import type { ItemType } from "../../../../../server/api/modules/item/types";
+import type { ItemType } from "../server/api/modules/item/types";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,6 +28,7 @@ type Props = {
 
 export const useUpdateComment = (props: Props) => {
   const { comment, setOpen } = props;
+
   const { mutateAsync } = api.itemComment.updateItemComment.useMutation();
 
   const utils = api.useUtils();

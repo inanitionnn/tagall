@@ -1,29 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useDebounce } from "../../../../hooks";
-import { api } from "../../../../trpc/react";
 import { TagCollectionsTabs } from "./tag-collections-tabs";
 import { TagAddModal } from "./tag-add-modal";
 import { TagUpdateModal } from "./tag-update-modal";
-import { useGetUserTags } from "./hooks/use-get-user-tags.hook";
+import { useGetCollections, useGetUserTags } from "../../../../hooks";
 
 function TagContainer() {
-  const [collections] = api.collection.getAll.useSuspenseQuery();
-
-  const DEBOUNCE = 200;
-
-  const [selectedCollectionsIds, setselectedCollectionsIds] = useState<
-    string[]
-  >(collections.map((collection) => collection.id));
-
-  const debouncedCollectionsIds = useDebounce<string[]>(
+  const {
+    collections,
     selectedCollectionsIds,
-    DEBOUNCE,
-  );
+    setSelectedCollectionsIds,
+    debouncedSelectedCollectionsIds,
+  } = useGetCollections();
 
   const { tags } = useGetUserTags({
-    collectionsIds: debouncedCollectionsIds,
+    collectionsIds: debouncedSelectedCollectionsIds,
   });
 
   return (
@@ -32,7 +23,7 @@ function TagContainer() {
         <TagCollectionsTabs
           collections={collections}
           selectedCollectionsIds={selectedCollectionsIds}
-          setselectedCollectionsIds={setselectedCollectionsIds}
+          setSelectedCollectionsIds={setSelectedCollectionsIds}
         />
         <TagAddModal collections={collections} />
       </div>

@@ -24,9 +24,9 @@ import {
 } from "../../../../constants";
 import { ItemStatus } from "@prisma/client";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
-import { useAddItemToCollection } from "./hooks/use-add-item-to-collection.hook";
-import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
-import { NonNullable, Truthy } from "../../../../lib";
+import type { TagType } from "../../../../server/api/modules/tag/types";
+import { Truthy } from "../../../../lib";
+import { useAddItemToCollection } from "../../../../hooks";
 
 type Props = {
   open: boolean;
@@ -39,6 +39,7 @@ type Props = {
 
 const AddItemModal = (props: Props) => {
   const { selectedItem, open, setSelectedItem, tags } = props;
+
   const { form, submit } = useAddItemToCollection(props);
 
   const status = form.watch("status");

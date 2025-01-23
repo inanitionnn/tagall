@@ -1,10 +1,10 @@
-import { api } from "../../../../../trpc/react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Dispatch, SetStateAction } from "react";
-import type { TagType } from "../../../../../server/api/modules/tag/types/tag.type";
+import type { TagType } from "../server/api/modules/tag/types/tag.type";
+import { api } from "../trpc/react";
 
 const formSchema = z.object({
   name: z.string().min(1).max(255),
@@ -22,6 +22,7 @@ type Props = {
 
 export const useUpdateTag = (props: Props) => {
   const { tag, setOpen } = props;
+
   const { mutateAsync } = api.tag.updateTag.useMutation();
 
   const utils = api.useUtils();

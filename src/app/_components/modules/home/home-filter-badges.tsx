@@ -2,7 +2,7 @@ import React, { type Dispatch, type SetStateAction } from "react";
 import { Badge } from "../../ui";
 import type { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
 import { STATUS_NAMES } from "../../../../constants";
-import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
+import type { TagType } from "../../../../server/api/modules/tag/types";
 
 type Props = {
   tags: TagType[];

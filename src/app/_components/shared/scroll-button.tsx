@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { cn } from "../../../../lib";
-import { Button } from "../../ui";
+import { cn } from "../../../lib";
+import { Button } from "../ui";
 import { MoveUp } from "lucide-react";
 
-function HomeScrollButton() {
+function ScrollButton() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -37,4 +37,4 @@ function HomeScrollButton() {
   );
 }
 
-export { HomeScrollButton };
+export { ScrollButton };

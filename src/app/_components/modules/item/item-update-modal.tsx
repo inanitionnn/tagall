@@ -22,7 +22,7 @@ import {
 } from "../../../../constants";
 import type { ItemType } from "../../../../server/api/modules/item/types";
 import { Star } from "lucide-react";
-import { useUpdateItem } from "./hooks/use-update-item.hook";
+import { useUpdateItem } from "../../../../hooks";
 import { ItemStatus } from "@prisma/client";
 import Container from "../../shared/container";
 

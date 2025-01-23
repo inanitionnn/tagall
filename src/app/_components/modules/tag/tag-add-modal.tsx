@@ -14,9 +14,9 @@ import {
   FormMessage,
 } from "../../ui";
 import { useState } from "react";
-import { useAddTag } from "./hooks/use-add-tag.hook";
 import type { CollectionType } from "../../../../server/api/modules/collection/types";
 import Container from "../../shared/container";
+import { useAddTag } from "../../../../hooks";
 
 type Props = {
   collections: CollectionType[];
@@ -24,6 +24,7 @@ type Props = {
 
 const TagAddModal = (props: Props) => {
   const { collections } = props;
+
   const [open, setOpen] = useState(false);
 
   const { form, submit } = useAddTag({

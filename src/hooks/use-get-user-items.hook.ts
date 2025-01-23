@@ -1,16 +1,106 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import type {
   GetUserItemsFilterType,
   GetUserItemsSortType,
   ItemSmallType,
-} from "../../../../../server/api/modules/item/types";
-import { api } from "../../../../../trpc/react";
+} from "../server/api/modules/item/types";
+import { api } from "../trpc/react";
 import { toast } from "sonner";
+import { useDebounce } from "./use-debounce.hook";
 
 type GroupedItems = {
   groupBy: string;
   items: ItemSmallType[];
 };
+
+type Props = {
+  limit?: number;
+  debounce?: number;
+  tagsIds: string[];
+  collectionsIds: string[];
+  sorting: GetUserItemsSortType;
+  filtering: GetUserItemsFilterType;
+  searchQuery: string;
+};
+
+export const useGetUserItems = (props: Props) => {
+  const {
+    limit,
+    debounce,
+    collectionsIds,
+    sorting,
+    tagsIds,
+    filtering,
+    searchQuery,
+  } = props;
+
+  const LIMIT = limit || 30;
+  const DEBOUNCE = debounce || 400;
+
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
+
+  const debounceObj = useDebounce(
+    {
+      collectionsIds,
+      filtering,
+      sorting,
+      searchQuery,
+      tagsIds,
+    },
+    DEBOUNCE,
+  );
+
+  const { data, isLoading, error, refetch } = api.item.getUserItems.useQuery({
+    limit: LIMIT,
+    page,
+    collectionsIds: debounceObj.collectionsIds,
+    sorting: debounceObj.sorting,
+    filtering: debounceObj.filtering,
+    search: debounceObj.searchQuery,
+    tagsIds: debounceObj.tagsIds,
+  });
+
+  useEffect(() => {
+    if (data) {
+      if (data.length < LIMIT) {
+        setHasMore(false);
+      }
+      if (page === 1) {
+        setGroupedItems(() => groupItems(data, [], sorting));
+      } else {
+        setGroupedItems((prev) => groupItems(data, prev, sorting));
+      }
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (hasMore) {
+      refetch();
+    }
+  }, [page]);
+
+  useEffect(() => {
+    setPage(1);
+    setHasMore(true);
+  }, [debounceObj]);
+
+  return {
+    groupedItems,
+    setPage,
+    hasMore,
+    isLoading,
+  };
+};
+
+// #region Helper functions
 
 const capitalize = (val: string | number | null) => {
   if (!val) return "#";
@@ -89,73 +179,4 @@ const groupItems = (
   return groupedArray;
 };
 
-type Props = {
-  limit: number;
-  tagsIds: string[];
-  collectionsIds: string[];
-  sorting: GetUserItemsSortType;
-  filtering: GetUserItemsFilterType;
-  searchQuery: string;
-};
-
-export const useGetUserItems = (props: Props) => {
-  const {
-    limit = 10,
-    collectionsIds,
-    sorting,
-    tagsIds,
-    filtering,
-    searchQuery,
-  } = props;
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
-
-  const { data, isLoading, error, refetch } = api.item.getUserItems.useQuery({
-    limit,
-    page,
-    collectionsIds,
-    sorting,
-    filtering,
-    search: searchQuery,
-    tagsIds,
-  });
-
-  useEffect(() => {
-    if (data) {
-      if (data.length < limit) {
-        setHasMore(false);
-      }
-      if (page === 1) {
-        setGroupedItems(() => groupItems(data, [], sorting));
-      } else {
-        setGroupedItems((prev) => groupItems(data, prev, sorting));
-      }
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error.message);
-    }
-  }, [error]);
-
-  useEffect(() => {
-    if (hasMore) {
-      refetch();
-    }
-  }, [page]);
-
-  const resetPagination = useCallback(() => {
-    setPage(1);
-    setHasMore(true);
-  }, []);
-
-  return {
-    groupedItems,
-    setPage,
-    hasMore,
-    isLoading,
-    resetPagination,
-  };
-};
+// #endregion Helper functions

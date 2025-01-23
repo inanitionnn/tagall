@@ -1,6 +1,5 @@
 import React from "react";
 import type { ItemSmallType } from "../../../../server/api/modules/item/types";
-
 import Link from "next/link";
 import {
   HomeListItem,

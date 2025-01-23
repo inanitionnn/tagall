@@ -17,10 +17,9 @@ import {
 } from "../../ui";
 import { useState } from "react";
 import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
-import { useUpdateTag } from "./hooks/use-update-tag.hook";
 import type { CollectionType } from "../../../../server/api/modules/collection/types";
-import { useDeleteTag } from "./hooks/use-delete-tag.hook";
 import Container from "../../shared/container";
+import { useDeleteTag, useUpdateTag } from "../../../../hooks";
 
 type Props = {
   tag: TagType;
@@ -29,12 +28,14 @@ type Props = {
 
 const TagUpdateModal = (props: Props) => {
   const { tag, collections } = props;
+
   const [open, setOpen] = useState(false);
 
   const { form, submit } = useUpdateTag({
     tag,
     setOpen,
   });
+
   const { submit: deleteSubmit } = useDeleteTag({
     tag,
     setOpen,

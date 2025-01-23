@@ -7,14 +7,14 @@ import {
   ResponsiveModal,
   ResponsiveModalContent,
   ResponsiveModalTrigger,
-} from "../../ui";
-import { STATUS_NAMES } from "../../../../constants";
+} from "../ui";
+import { STATUS_NAMES } from "../../../constants";
 import { Search, SlidersHorizontal } from "lucide-react";
-import type { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
+import type { GetUserItemsFilterType } from "../../../server/api/modules/item/types";
 import type { ItemStatus } from "@prisma/client";
-import Container from "../../shared/container";
-import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
-import type { FilterFieldsType } from "../../../../server/api/modules/field/types";
+import Container from "./container";
+import type { TagType } from "../../../server/api/modules/tag/types/tag.type";
+import type { FilterFieldsType } from "../../../server/api/modules/field/types";
 
 type Props = {
   searchFilter: string;
@@ -35,7 +35,7 @@ type Props = {
   setSelectedTagsIds: Dispatch<SetStateAction<string[]>>;
 };
 
-const HomeFilterDialog = (props: Props) => {
+const FilterDialog = (props: Props) => {
   const {
     tags,
     selectedTagsIds,
@@ -273,4 +273,4 @@ const HomeFilterDialog = (props: Props) => {
   );
 };
 
-export { HomeFilterDialog };
+export { FilterDialog };

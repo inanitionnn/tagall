@@ -6,15 +6,15 @@ import Container from "../../shared/container";
 type Props = {
   collections: CollectionType[];
   selectedCollectionsIds: string[];
-  setselectedCollectionsIds: Dispatch<SetStateAction<string[]>>;
+  setSelectedCollectionsIds: Dispatch<SetStateAction<string[]>>;
 };
 
 const TagCollectionsTabs = (props: Props) => {
-  const { collections, selectedCollectionsIds, setselectedCollectionsIds } =
+  const { collections, selectedCollectionsIds, setSelectedCollectionsIds } =
     props;
 
   const onClick = (collectionId: string) => {
-    setselectedCollectionsIds((prev) => {
+    setSelectedCollectionsIds((prev) => {
       if (prev.includes(collectionId)) {
         return prev.filter((id) => id !== collectionId);
       }

@@ -10,7 +10,7 @@ import {
   Separator,
 } from "../../ui";
 import { useState } from "react";
-import { useDeleteItemFromCollection } from "./hooks/use-delete-item-from-collection.hook";
+import { useDeleteItemFromCollection } from "../../../../hooks";
 import Container from "../../shared/container";
 
 type Props = {
@@ -19,7 +19,9 @@ type Props = {
 
 const ItemDeleteModal = (props: Props) => {
   const { item } = props;
+
   const [open, setOpen] = useState(false);
+
   const { submit } = useDeleteItemFromCollection({
     item,
     setOpen,

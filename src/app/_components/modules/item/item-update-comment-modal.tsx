@@ -25,8 +25,7 @@ import {
 import type { ItemType } from "../../../../server/api/modules/item/types";
 import { ItemStatus } from "@prisma/client";
 import { Star } from "lucide-react";
-import { useUpdateComment } from "./hooks/use-update-comment.hook";
-import { useDeleteComment } from "./hooks/use-delete-comment.hook";
+import { useDeleteComment, useUpdateComment } from "../../../../hooks";
 import Container from "../../shared/container";
 
 type Props = {
@@ -35,6 +34,7 @@ type Props = {
 
 const ItemUpdateCommentModal = (props: Props) => {
   const { comment } = props;
+
   const [open, setOpen] = useState(false);
 
   const { form, submit } = useUpdateComment({

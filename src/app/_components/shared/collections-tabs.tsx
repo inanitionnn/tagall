@@ -1,20 +1,20 @@
 import React, { type Dispatch, type SetStateAction } from "react";
-import { Button } from "../../ui";
-import type { CollectionType } from "../../../../server/api/modules/collection/types";
-import Container from "../../shared/container";
+import { Button } from "../ui";
+import type { CollectionType } from "../../../server/api/modules/collection/types";
+import Container from "./container";
 
 type Props = {
   collections: CollectionType[];
   selectedCollectionsIds: string[];
-  setselectedCollectionsIds: Dispatch<SetStateAction<string[]>>;
+  setSelectedCollectionsIds: Dispatch<SetStateAction<string[]>>;
 };
 
-const HomeCollectionsTabs = (props: Props) => {
-  const { collections, selectedCollectionsIds, setselectedCollectionsIds } =
+const CollectionsTabs = (props: Props) => {
+  const { collections, selectedCollectionsIds, setSelectedCollectionsIds } =
     props;
 
   const onClick = (collectionId: string) => {
-    setselectedCollectionsIds((prev) => {
+    setSelectedCollectionsIds((prev) => {
       if (prev.includes(collectionId)) {
         return prev.filter((id) => id !== collectionId);
       }
@@ -39,4 +39,4 @@ const HomeCollectionsTabs = (props: Props) => {
   );
 };
 
-export { HomeCollectionsTabs };
+export { CollectionsTabs };
