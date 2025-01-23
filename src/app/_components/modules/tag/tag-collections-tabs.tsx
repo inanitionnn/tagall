@@ -1,7 +1,7 @@
 import React, { type Dispatch, type SetStateAction } from "react";
 import { Button } from "../../ui";
 import type { CollectionType } from "../../../../server/api/modules/collection/types";
-import { Container } from "../../shared";
+import { CardContainer } from "../../shared";
 
 type Props = {
   collections: CollectionType[];
@@ -23,7 +23,7 @@ const TagCollectionsTabs = (props: Props) => {
   };
 
   return (
-    <Container className="w-min">
+    <CardContainer className="w-min">
       {collections.map((collection) => (
         <Button
           key={collection.id}
@@ -35,7 +35,7 @@ const TagCollectionsTabs = (props: Props) => {
           {collection.name}
         </Button>
       ))}
-    </Container>
+    </CardContainer>
   );
 };
 

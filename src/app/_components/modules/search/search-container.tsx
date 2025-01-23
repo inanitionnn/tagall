@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AutosizeTextarea, Button, Header, Spinner } from "../../ui";
 import { useSearchItemByText } from "../../../../hooks/use-search-item-by-text";
-import { Container, CloudinaryImage } from "../../shared";
+import { CardContainer, CloudinaryImage, Container } from "../../shared";
 import Link from "next/link";
 
 function SearchContainer() {
@@ -14,8 +14,8 @@ function SearchContainer() {
   const submit = () => mutate(searchText);
 
   return (
-    <div className="mx-auto max-w-screen-2xl p-8">
-      <Container className="flex-col">
+    <Container>
+      <CardContainer className="flex-col">
         <AutosizeTextarea
           autoFocus
           placeholder="Manga about samurais"
@@ -37,11 +37,11 @@ function SearchContainer() {
             "Search"
           )}
         </Button>
-      </Container>
+      </CardContainer>
       <div className="mx-auto grid max-w-screen-2xl grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         {items.map((item) => (
           <Link key={item.id} href={`/item/${item.id}`} target="_blank">
-            <Container
+            <CardContainer
               key={item.id}
               className="h-full flex-col hover:scale-105 md:w-full"
             >
@@ -60,11 +60,11 @@ function SearchContainer() {
                   {item.title}
                 </Header>
               </div>
-            </Container>
+            </CardContainer>
           </Link>
         ))}
       </div>
-    </div>
+    </Container>
   );
 }
 export { SearchContainer };

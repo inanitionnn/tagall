@@ -4,6 +4,7 @@ import { TagCollectionsTabs } from "./tag-collections-tabs";
 import { TagAddModal } from "./tag-add-modal";
 import { TagUpdateModal } from "./tag-update-modal";
 import { useGetUserCollections, useGetUserTags } from "../../../../hooks";
+import { Container } from "../../shared";
 
 function TagContainer() {
   const {
@@ -18,7 +19,7 @@ function TagContainer() {
   });
 
   return (
-    <div className="flex flex-col gap-6 p-8">
+    <Container>
       <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap justify-between gap-4">
         <TagCollectionsTabs
           collections={collections}
@@ -32,7 +33,7 @@ function TagContainer() {
           <TagUpdateModal key={tag.id} tag={tag} collections={collections} />
         ))}
       </div>
-    </div>
+    </Container>
   );
 }
 export { TagContainer };

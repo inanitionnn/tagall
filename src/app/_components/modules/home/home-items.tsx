@@ -7,7 +7,7 @@ import {
   HomeMediumItem,
   HomeSmallItem,
 } from "./items-sizes";
-import { Container } from "../../shared";
+import { CardContainer } from "../../shared";
 
 type Props = {
   itemsSize: "small" | "medium" | "list" | "large";
@@ -57,7 +57,7 @@ const HomeItems = (props: Props) => {
       )}
 
       {itemsSize === "list" && (
-        <Container className="mx-auto grid w-full max-w-screen-xl grid-cols-1 gap-y-1 p-8">
+        <CardContainer className="mx-auto grid w-full max-w-screen-xl grid-cols-1 gap-y-1 p-8">
           {items.map((item, index) => (
             <Link key={item.id} href={`/item/${item.id}`} target="_blank">
               <HomeListItem
@@ -68,7 +68,7 @@ const HomeItems = (props: Props) => {
               />
             </Link>
           ))}
-        </Container>
+        </CardContainer>
       )}
     </>
   );

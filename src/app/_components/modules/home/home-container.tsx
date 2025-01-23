@@ -13,6 +13,7 @@ import {
   ScrollButton,
   CollectionsTabs,
   Loading,
+  Container,
 } from "../../shared";
 import {
   useGetUserCollections,
@@ -80,7 +81,7 @@ function HomeContainer() {
   }
 
   return (
-    <div className="mx-auto flex max-w-screen-2xl flex-col gap-6 p-8">
+    <Container>
       <div className="flex flex-wrap justify-between gap-4">
         <CollectionsTabs
           collections={collections}
@@ -141,7 +142,7 @@ function HomeContainer() {
       </InfiniteScroll>
 
       <ScrollButton />
-    </div>
+    </Container>
   );
 }
 export { HomeContainer };

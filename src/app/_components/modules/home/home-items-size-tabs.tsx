@@ -1,7 +1,7 @@
 import React, { type Dispatch, type SetStateAction } from "react";
 import { Button } from "../../ui";
 import { Grid2x2, Grid3x3, Rows3, TableProperties } from "lucide-react";
-import { Container } from "../../shared";
+import { CardContainer } from "../../shared";
 
 export type ItemsSize = "medium" | "list" | "small" | "large";
 
@@ -13,7 +13,7 @@ type Props = {
 const HomeItemsSizeTabs = (props: Props) => {
   const { itemsSize, setItemsSize } = props;
   return (
-    <Container>
+    <CardContainer>
       <Button
         onClick={() => setItemsSize("large")}
         size={"icon"}
@@ -43,7 +43,7 @@ const HomeItemsSizeTabs = (props: Props) => {
       >
         <Rows3 />
       </Button>
-    </Container>
+    </CardContainer>
   );
 };
 

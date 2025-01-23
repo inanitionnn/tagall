@@ -18,7 +18,7 @@ import {
 import { useState } from "react";
 import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
 import type { CollectionType } from "../../../../server/api/modules/collection/types";
-import { Container } from "../../shared";
+import { CardContainer } from "../../shared";
 import { useDeleteTag, useUpdateTag } from "../../../../hooks";
 
 type Props = {
@@ -46,7 +46,7 @@ const TagUpdateModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <Container className="cursor-pointer flex-col gap-4 p-4 hover:scale-105">
+        <CardContainer className="cursor-pointer flex-col gap-4 p-4 hover:scale-105">
           <div className="flex items-center justify-between">
             <Header vtag="h5" className=" ">
               {tag.name}
@@ -66,7 +66,7 @@ const TagUpdateModal = (props: Props) => {
               </Badge>
             ))}
           </div>
-        </Container>
+        </CardContainer>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>

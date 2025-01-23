@@ -8,7 +8,7 @@ import {
   ChartLegendContent,
 } from "../../ui";
 import type { ItemsStatsType } from "../../../../server/api/modules/item/types";
-import { Container } from "../../shared";
+import { CardContainer } from "../../shared";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 type Props = {
@@ -19,7 +19,7 @@ const ProfileDateStats = (props: Props) => {
   const { dateStats } = props;
 
   return (
-    <Container className="flex-col pb-6 pr-8">
+    <CardContainer className="flex-col pb-6 pr-8">
       <Header className="p-4" vtag="h4">
         By Date
       </Header>
@@ -80,7 +80,7 @@ const ProfileDateStats = (props: Props) => {
           />
         </AreaChart>
       </ChartContainer>
-    </Container>
+    </CardContainer>
   );
 };
 

@@ -15,7 +15,7 @@ import {
   Paragraph,
 } from "../../ui";
 import { useRef, useState } from "react";
-import { Container, CloudinaryImage } from "../../shared";
+import { CardContainer, CloudinaryImage } from "../../shared";
 import type { User } from "@prisma/client";
 import { useUpdateUser } from "../../../../hooks/use-update-user.hook";
 import Image from "next/image";
@@ -55,7 +55,7 @@ const ProfileUpdateUserModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <Container className="cursor-pointer flex-col items-center gap-4 p-4 hover:scale-105 sm:flex-row sm:gap-8">
+        <CardContainer className="cursor-pointer flex-col items-center gap-4 p-4 hover:scale-105 sm:flex-row sm:gap-8">
           <div className="aspect-square w-28 rounded-full border border-input">
             {user.image ? (
               <CloudinaryImage
@@ -77,7 +77,7 @@ const ProfileUpdateUserModal = (props: Props) => {
               {user.email}
             </Paragraph>
           </div>
-        </Container>
+        </CardContainer>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>
@@ -124,7 +124,7 @@ const ProfileUpdateUserModal = (props: Props) => {
                   />
                   <div className="flex flex-col gap-2">
                     <FormLabel>Image:</FormLabel>
-                    <Container
+                    <CardContainer
                       className="flex cursor-pointer justify-between gap-2 px-4"
                       onClick={openFilePicker}
                     >
@@ -152,7 +152,7 @@ const ProfileUpdateUserModal = (props: Props) => {
                           </div>
                         )}
                       </div>
-                    </Container>
+                    </CardContainer>
                     <Button
                       variant={"destructive"}
                       onClick={(e) => {

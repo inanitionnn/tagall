@@ -6,7 +6,7 @@ import {
   ChartTooltipContent,
 } from "../../ui";
 import type { ItemsStatsType } from "../../../../server/api/modules/item/types";
-import { Container } from "../../shared";
+import { CardContainer } from "../../shared";
 import {
   Bar,
   BarChart,
@@ -24,7 +24,7 @@ const ProfileRateStats = (props: Props) => {
   const { rateStats } = props;
 
   return (
-    <Container className="flex-col pb-6 pr-8">
+    <CardContainer className="flex-col pb-6 pr-8">
       <Header className="p-4" vtag="h4">
         By Rate
       </Header>
@@ -65,7 +65,7 @@ const ProfileRateStats = (props: Props) => {
           </Bar>
         </BarChart>
       </ChartContainer>
-    </Container>
+    </CardContainer>
   );
 };
 

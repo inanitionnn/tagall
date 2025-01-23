@@ -8,7 +8,7 @@ import {
   ChartLegendContent,
 } from "../../ui";
 import type { ItemsStatsType } from "../../../../server/api/modules/item/types";
-import { Container } from "../../shared";
+import { CardContainer } from "../../shared";
 import { Label, Pie, PieChart } from "recharts";
 
 type Props = {
@@ -20,7 +20,7 @@ const ProfileStatusStats = (props: Props) => {
   const { all, statusStats } = props;
 
   return (
-    <Container className="flex-col pb-6 pr-8">
+    <CardContainer className="flex-col pb-6 pr-8">
       <Header className="pl-4 pt-4" vtag="h4">
         By Status
       </Header>
@@ -99,7 +99,7 @@ const ProfileStatusStats = (props: Props) => {
           </Pie>
         </PieChart>
       </ChartContainer>
-    </Container>
+    </CardContainer>
   );
 };
 

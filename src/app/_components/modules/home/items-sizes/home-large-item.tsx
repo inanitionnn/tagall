@@ -5,7 +5,7 @@ import {
   STATUS_ICONS,
   STATUS_NAMES,
 } from "../../../../../constants";
-import { Container, CloudinaryImage } from "../../../shared";
+import { CardContainer, CloudinaryImage } from "../../../shared";
 
 type Props = {
   item: ItemSmallType;
@@ -16,7 +16,7 @@ const HomeLargeItem = (props: Props) => {
   const { item, selectedCollectionsIds } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
-    <Container className="h-fit cursor-pointer hover:scale-105 sm:h-64">
+    <CardContainer className="h-fit cursor-pointer hover:scale-105 sm:h-64">
       <div className="aspect-[27/40] h-36 sm:h-full">
         {item.image ? (
           <CloudinaryImage
@@ -84,7 +84,7 @@ const HomeLargeItem = (props: Props) => {
           </div>
         </div>
       </div>
-    </Container>
+    </CardContainer>
   );
 };
 

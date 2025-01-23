@@ -3,7 +3,7 @@ import { Header, Paragraph } from "../../ui";
 import type { Dispatch, SetStateAction } from "react";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { cn } from "../../../../lib";
-import { Container } from "../../shared";
+import { CardContainer } from "../../shared";
 
 type Props = {
   searchResult: SearchResultType;
@@ -14,7 +14,7 @@ const AddSearchResultItem = (props: Props) => {
   const { searchResult, setSelectedItem } = props;
 
   return (
-    <Container
+    <CardContainer
       className={cn(
         "relative h-full cursor-pointer flex-col p-4 sm:h-80 sm:flex-row",
         {
@@ -68,7 +68,7 @@ const AddSearchResultItem = (props: Props) => {
           </Paragraph>
         </div>
       </div>
-    </Container>
+    </CardContainer>
   );
 };
 

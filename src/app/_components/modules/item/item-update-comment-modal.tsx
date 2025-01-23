@@ -26,7 +26,7 @@ import type { ItemType } from "../../../../server/api/modules/item/types";
 import { ItemStatus } from "@prisma/client";
 import { Star } from "lucide-react";
 import { useDeleteComment, useUpdateComment } from "../../../../hooks";
-import { Container } from "../../shared";
+import { CardContainer } from "../../shared";
 
 type Props = {
   comment: NonNullable<ItemType["comments"]>[number];
@@ -55,7 +55,7 @@ const ItemUpdateCommentModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <Container className="w-full cursor-pointer flex-col p-4 hover:scale-105">
+        <CardContainer className="w-full cursor-pointer flex-col p-4 hover:scale-105">
           {comment.title && <Header vtag="h6">{comment.title}</Header>}
           {comment.description && (
             <Paragraph className="text-muted-foreground">
@@ -96,7 +96,7 @@ const ItemUpdateCommentModal = (props: Props) => {
           <Paragraph className="text-center text-muted-foreground">
             {comment.timeAgo}
           </Paragraph>
-        </Container>
+        </CardContainer>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>

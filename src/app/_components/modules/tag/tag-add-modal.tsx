@@ -15,7 +15,7 @@ import {
 } from "../../ui";
 import { useState } from "react";
 import type { CollectionType } from "../../../../server/api/modules/collection/types";
-import { Container } from "../../shared";
+import { CardContainer } from "../../shared";
 import { useAddTag } from "../../../../hooks";
 
 type Props = {
@@ -36,9 +36,9 @@ const TagAddModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <Container className="w-min">
+        <CardContainer className="w-min">
           <Button variant={"ghost"}>Add tag</Button>
-        </Container>
+        </CardContainer>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>

@@ -25,7 +25,7 @@ import {
 import type { ItemType } from "../../../../server/api/modules/item/types";
 import { ItemStatus } from "@prisma/client";
 import { useAddComment } from "../../../../hooks";
-import { Container } from "../../shared";
+import { CardContainer } from "../../shared";
 
 type Props = {
   item: ItemType;
@@ -47,9 +47,9 @@ const ItemAddCommentModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <Container className="w-full cursor-pointer p-4 hover:scale-105">
+        <CardContainer className="w-full cursor-pointer p-4 hover:scale-105">
           <Header vtag="h6">Add comment</Header>
-        </Container>
+        </CardContainer>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>

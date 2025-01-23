@@ -24,7 +24,7 @@ import type { ItemType } from "../../../../server/api/modules/item/types";
 import { Star } from "lucide-react";
 import { useUpdateItem } from "../../../../hooks";
 import { ItemStatus } from "@prisma/client";
-import { Container } from "../../shared";
+import { CardContainer } from "../../shared";
 
 type Props = {
   item: ItemType;
@@ -48,7 +48,7 @@ const ItemUpdateModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <Container className="w-full cursor-pointer flex-col p-4 hover:scale-105">
+        <CardContainer className="w-full cursor-pointer flex-col p-4 hover:scale-105">
           <div className="flex items-center gap-2">
             <Header vtag="h6">Status:</Header>
             <div className="flex w-full items-center justify-between gap-1">
@@ -72,7 +72,7 @@ const ItemUpdateModal = (props: Props) => {
               <Paragraph>None</Paragraph>
             )}
           </div>
-        </Container>
+        </CardContainer>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>

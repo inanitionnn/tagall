@@ -5,7 +5,7 @@ import { AddItemModal } from "./add-item-modal";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { AddCollectionsTabs } from "./add-collections-tabs";
 import Link from "next/link";
-import { Loading, ScrollButton, Search } from "../../shared";
+import { Container, Loading, ScrollButton, Search } from "../../shared";
 import { useGetUserTags, useParseSearch } from "../../../../hooks";
 import { api } from "../../../../trpc/react";
 
@@ -32,7 +32,7 @@ function AddContainer() {
   });
 
   return (
-    <div className="mx-auto flex max-w-screen-2xl flex-col gap-8 p-8">
+    <Container>
       <AddCollectionsTabs
         collections={collections}
         selectedCollectionId={selectedCollectionId}
@@ -84,7 +84,7 @@ function AddContainer() {
       )}
 
       <ScrollButton />
-    </div>
+    </Container>
   );
 }
 export { AddContainer };

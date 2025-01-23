@@ -16,7 +16,7 @@ import {
 } from "../../ui";
 import { useState } from "react";
 import type { ItemType } from "../../../../server/api/modules/item/types";
-import { Container } from "../../shared";
+import { CardContainer } from "../../shared";
 import { useUpdateItem } from "../../../../hooks";
 import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
 
@@ -40,14 +40,14 @@ const ItemUpdateTagsModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <Container className="cursor-pointer flex-col p-4 hover:scale-105">
+        <CardContainer className="cursor-pointer flex-col p-4 hover:scale-105">
           <Header vtag="h6">Tags:</Header>
           <div className="flex flex-wrap gap-2">
             {item.tags.map((tag) => (
               <Badge key={tag.id}>{tag.name}</Badge>
             ))}
           </div>
-        </Container>
+        </CardContainer>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>

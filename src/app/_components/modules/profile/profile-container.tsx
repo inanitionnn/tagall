@@ -1,7 +1,7 @@
 "use client";
 import { api } from "../../../../trpc/react";
 import { ProfileUpdateUserModal } from "./profile-update-user-modal";
-import { CollectionsTabs, Loading } from "../../shared";
+import { CollectionsTabs, Container, Loading } from "../../shared";
 import { useGetUserCollections } from "../../../../hooks";
 import { ProfileStatusStats } from "./profile-status-stats";
 import { ProfileRateStats } from "./profile-rate-stats";
@@ -23,14 +23,14 @@ function ProfileContainer() {
   });
 
   return (
-    <div className="mx-auto flex max-w-screen-xl flex-col gap-6 p-8">
+    <Container>
       <ProfileUpdateUserModal user={user} />
       <CollectionsTabs
         collections={collections}
         selectedCollectionsIds={selectedCollectionsIds}
         setSelectedCollectionsIds={setSelectedCollectionsIds}
       />
-      {!isLoading && stats ? (
+      {isLoading && stats ? (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <ProfileStatusStats all={stats.all} statusStats={stats.status} />
           <ProfileRateStats rateStats={stats.rate} />
@@ -39,7 +39,7 @@ function ProfileContainer() {
       ) : (
         <Loading />
       )}
-    </div>
+    </Container>
   );
 }
 export { ProfileContainer };

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Container, CloudinaryImage } from "../../shared";
+import { CardContainer, CloudinaryImage } from "../../shared";
 import { Header } from "../../ui";
 import type { ItemSmallType } from "../../../../server/api/modules/item/types";
 
@@ -12,7 +12,7 @@ function RandomItem(props: Props) {
 
   return (
     <Link key={item.id} href={`/item/${item.id}`} target="_blank">
-      <Container
+      <CardContainer
         key={item.id}
         className="h-full flex-col hover:scale-105 md:w-full"
       >
@@ -31,7 +31,7 @@ function RandomItem(props: Props) {
             {item.title}
           </Header>
         </div>
-      </Container>
+      </CardContainer>
     </Link>
   );
 }

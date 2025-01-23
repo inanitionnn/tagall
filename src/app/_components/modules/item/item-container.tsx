@@ -6,7 +6,7 @@ import { ItemUpdateModal } from "./item-update-modal";
 import { ItemDeleteModal } from "./item-delete-modal";
 import { ItemAddCommentModal } from "./item-add-comment-modal";
 import { ItemUpdateCommentModal } from "./item-update-comment-modal";
-import { Container, CloudinaryImage } from "../../shared";
+import { CardContainer, CloudinaryImage, Container } from "../../shared";
 import { ItemUpdateTagsModal } from "./item-update-tags-modal";
 import Link from "next/link";
 import { useGetUserTags } from "../../../../hooks";
@@ -28,10 +28,10 @@ function ItemContainer(props: Props) {
   });
 
   return (
-    <div className="mx-auto flex max-w-screen-2xl flex-col gap-4 p-8">
-      <Container className="p-4">
+    <Container>
+      <CardContainer className="p-4">
         <Header vtag="h4">{item.title}</Header>
-      </Container>
+      </CardContainer>
       <div className="flex flex-col gap-4 md:flex-row">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 md:flex-row">
@@ -40,7 +40,7 @@ function ItemContainer(props: Props) {
                 {item.image ? (
                   <CloudinaryImage
                     publicId={item.image}
-                    className="mx-auto"
+                    className="mx-auto w-full"
                     folder={item.collection.name}
                   />
                 ) : (
@@ -53,12 +53,12 @@ function ItemContainer(props: Props) {
             </div>
 
             <div className="flex w-full flex-col gap-4">
-              <Container className="flex-col p-4">
+              <CardContainer className="flex-col p-4">
                 <Header vtag="h6">Plot:</Header>
-                <Paragraph className="text-muted-foreground">
+                <Paragraph className="line-clamp-[16] text-muted-foreground">
                   {item.description}
                 </Paragraph>
-              </Container>
+              </CardContainer>
 
               <ItemUpdateTagsModal tags={tags} item={item} />
 
@@ -67,13 +67,13 @@ function ItemContainer(props: Props) {
               ))}
             </div>
           </div>
-          <Container className="flex-col gap-4 p-4">
+          <CardContainer className="flex-col gap-4 p-4">
             <Header vtag="h6">Similar Items:</Header>
 
             <div className="mx-auto grid max-w-screen-2xl grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5">
               {item.similarItems.map((item) => (
                 <Link key={item.id} href={`/item/${item.id}`}>
-                  <Container
+                  <CardContainer
                     key={item.id}
                     className="h-full flex-col hover:scale-105 md:w-full"
                   >
@@ -92,14 +92,14 @@ function ItemContainer(props: Props) {
                         {item.title}
                       </Header>
                     </div>
-                  </Container>
+                  </CardContainer>
                 </Link>
               ))}
             </div>
-          </Container>
+          </CardContainer>
         </div>
         <div className="flex flex-col gap-4 md:w-64">
-          <Container className="w-full flex-col gap-4 p-4 md:w-64">
+          <CardContainer className="w-full flex-col gap-4 p-4 md:w-64">
             <div className="flex flex-col">
               <Header vtag="h6">Collection:</Header>
               <Paragraph className="text-muted-foreground">
@@ -127,12 +127,12 @@ function ItemContainer(props: Props) {
                 ))}
               </div>
             ))}
-          </Container>
+          </CardContainer>
 
           <ItemDeleteModal item={item} />
         </div>
       </div>
-    </div>
+    </Container>
   );
 }
 export { ItemContainer };

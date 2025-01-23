@@ -1,6 +1,6 @@
 import { Header } from "../../../ui";
 import type { ItemSmallType } from "../../../../../server/api/modules/item/types";
-import { Container, CloudinaryImage } from "../../../shared";
+import { CardContainer, CloudinaryImage } from "../../../shared";
 
 type Props = {
   item: ItemSmallType;
@@ -10,7 +10,7 @@ const HomeMediumItem = (props: Props) => {
   const { item } = props;
 
   return (
-    <Container className="h-full flex-col hover:scale-105 md:w-full">
+    <CardContainer className="h-full flex-col hover:scale-105 md:w-full">
       <div className="aspect-[27/40]">
         {item.image ? (
           <CloudinaryImage
@@ -26,7 +26,7 @@ const HomeMediumItem = (props: Props) => {
           {item.title}
         </Header>
       </div>
-    </Container>
+    </CardContainer>
   );
 };
 

@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import {
-  Container,
+  CardContainer,
   CollectionsTabs,
+  Container,
   FilterDialog,
   Loading,
 } from "../../shared";
@@ -70,7 +71,7 @@ function RandomContainer() {
   }
 
   return (
-    <div className="mx-auto flex max-w-screen-2xl flex-col gap-6 p-8">
+    <Container>
       <div className="flex flex-wrap justify-between gap-4">
         <CollectionsTabs
           collections={collections}
@@ -78,7 +79,7 @@ function RandomContainer() {
           setSelectedCollectionsIds={setSelectedCollectionsIds}
         />
 
-        <Container className="flex w-80 items-center">
+        <CardContainer className="flex w-80 items-center">
           <DualRangeSlider
             value={[limit]}
             onValueChange={(value) => setLimit(value[0] ?? 10)}
@@ -88,7 +89,7 @@ function RandomContainer() {
             labelPosition="bottom"
             step={1}
           />
-        </Container>
+        </CardContainer>
 
         <FilterDialog
           tags={tags}
@@ -105,7 +106,7 @@ function RandomContainer() {
           yearsRange={yearsRange}
           filterFieldGroups={filterFieldGroups}
         />
-        <Container className="w-32">
+        <CardContainer className="w-32">
           <Button onClick={() => refetch()} className="w-full">
             {isLoading ? (
               <Spinner className="h-5 w-5 text-primary-foreground" />
@@ -113,7 +114,7 @@ function RandomContainer() {
               <Dices />
             )}
           </Button>
-        </Container>
+        </CardContainer>
       </div>
 
       <HomeFilterBadges
@@ -133,7 +134,7 @@ function RandomContainer() {
       ) : (
         <Loading />
       )}
-    </div>
+    </Container>
   );
 }
 export { RandomContainer };
