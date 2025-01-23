@@ -21,7 +21,7 @@ const HomeItems = (props: Props) => {
   return (
     <>
       {itemsSize === "large" && (
-        <div className="mx-auto grid max-w-screen-2xl grid-cols-1 gap-x-4 gap-y-6 xl:grid-cols-2">
+        <div className="mx-auto grid grid-cols-1 gap-x-4 gap-y-6 xl:grid-cols-2">
           {items.map((item) => (
             <Link key={item.id} href={`/item/${item.id}`} target="_blank">
               <HomeLargeItem
@@ -34,7 +34,7 @@ const HomeItems = (props: Props) => {
         </div>
       )}
       {itemsSize === "medium" && (
-        <div className="mx-auto grid max-w-screen-2xl grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        <div className="mx-auto grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {items.map((item) => (
             <Link key={item.id} href={`/item/${item.id}`} target="_blank">
               <HomeMediumItem key={item.id} item={item} />
@@ -43,7 +43,7 @@ const HomeItems = (props: Props) => {
         </div>
       )}
       {itemsSize === "small" && (
-        <div className="mx-auto grid w-full max-w-screen-xl grid-cols-1 gap-y-4">
+        <div className="mx-auto grid w-full grid-cols-1 gap-y-4">
           {items.map((item) => (
             <Link key={item.id} href={`/item/${item.id}`} target="_blank">
               <HomeSmallItem
@@ -57,7 +57,7 @@ const HomeItems = (props: Props) => {
       )}
 
       {itemsSize === "list" && (
-        <CardContainer className="mx-auto grid w-full max-w-screen-xl grid-cols-1 gap-y-1 p-8">
+        <CardContainer className="mx-auto grid w-full grid-cols-1 gap-y-1 p-8">
           {items.map((item, index) => (
             <Link key={item.id} href={`/item/${item.id}`} target="_blank">
               <HomeListItem
