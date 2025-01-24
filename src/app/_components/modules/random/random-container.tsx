@@ -60,6 +60,7 @@ function RandomContainer() {
     collectionsIds: selectedCollectionsIds,
     filtering,
     tagsIds: selectedTagsIds,
+    limit,
   });
 
   if (!collections.length) {
