@@ -223,7 +223,7 @@ function ParseAdvancedSearch(props: {
 
     const titleElement = $(element).find(".dli-title h3.ipc-title__text");
     const rawTitle = titleElement.text();
-    result.title = rawTitle.split(". ")[1] ?? rawTitle ?? null;
+    result.title = rawTitle.split(". ").slice(1).join(". ") ?? rawTitle ?? null;
 
     const metadata = $(element).find(".dli-title-metadata-item");
     metadata.each((index, item) => {
