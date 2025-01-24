@@ -27,7 +27,7 @@ export const useParseSearch = (props: Props) => {
     api.parse.search.useQuery(
       {
         collectionId: selectedCollectionId,
-        query,
+        query: query.toLowerCase().trim(),
         isAdvancedSearch,
         limit: LIMIT,
       },
