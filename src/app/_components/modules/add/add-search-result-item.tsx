@@ -16,7 +16,7 @@ const AddSearchResultItem = (props: Props) => {
   return (
     <CardContainer
       className={cn(
-        "relative h-full cursor-pointer flex-col p-4 sm:h-80 sm:flex-row",
+        "relative h-fit cursor-pointer flex-col p-4 sm:h-80 sm:flex-row",
         {
           "hover:scale-105": !searchResult.id,
         },
