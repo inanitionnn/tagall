@@ -5,13 +5,21 @@ import { AddItemModal } from "./add-item-modal";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { AddCollectionsTabs } from "./add-collections-tabs";
 import Link from "next/link";
-import { Container, Loading, ScrollButton, Search } from "../../shared";
+import {
+  CardContainer,
+  Container,
+  Loading,
+  ScrollButton,
+  Search,
+} from "../../shared";
 import { useGetUserTags, useParseSearch } from "../../../../hooks";
 import { api } from "../../../../trpc/react";
+import { Label, Paragraph, Switch } from "../../ui";
 
 function AddContainer() {
   const [collections] = api.collection.getAll.useSuspenseQuery();
 
+  const [isAdvancedSearch, setIsAdvancedSearch] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResultType[]>([]);
   const [selectedItem, setSelectedItem] = useState<SearchResultType | null>(
     null,
@@ -29,15 +37,29 @@ function AddContainer() {
     setSearchResults,
     setSelectedItem,
     limit: 10,
+    isAdvancedSearch,
   });
 
   return (
     <Container>
-      <AddCollectionsTabs
-        collections={collections}
-        selectedCollectionId={selectedCollectionId}
-        setSelectedCollectionId={setSelectedCollectionId}
-      />
+      <div className="flex flex-wrap justify-between gap-4">
+        <AddCollectionsTabs
+          collections={collections}
+          selectedCollectionId={selectedCollectionId}
+          setSelectedCollectionId={setSelectedCollectionId}
+        />
+        <CardContainer className="items-center p-4">
+          <Label htmlFor="advanced-search">
+            <Paragraph>Advanced search</Paragraph>
+          </Label>
+          <Switch
+            id="advanced-search"
+            checked={isAdvancedSearch}
+            onCheckedChange={setIsAdvancedSearch}
+          />
+        </CardContainer>
+      </div>
+
       <Search
         isLoading={isLoading}
         query={query}

@@ -371,14 +371,19 @@ export async function GetImdbDetailsById(
 export async function SearchImdb(
   props: ImdbSearchInputType,
 ): Promise<SearchResultType[]> {
-  const { query, type = "all", limit = 10 } = props;
+  const { query, isQuickSearch = false, type = "all", limit = 10 } = props;
   const { meta, title, year } = parseQueryString(query);
 
-  const quickSearchHtml = await GetQuickSearchHtml({ type, title, year });
-  const quickSearchResults = ParseQuickSearch({
-    html: quickSearchHtml,
-    limit: 4,
-  });
+  const quickSearchResults = [];
+  if (isQuickSearch) {
+    const quickSearchHtml = await GetQuickSearchHtml({ type, title, year });
+    quickSearchResults.push(
+      ...ParseQuickSearch({
+        html: quickSearchHtml,
+        limit: 4,
+      }),
+    );
+  }
 
   const advancedSearchHtml = await GetAdvancedSearchHtml({
     type,

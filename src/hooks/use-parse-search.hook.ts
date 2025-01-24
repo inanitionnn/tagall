@@ -4,14 +4,22 @@ import { toast } from "sonner";
 import type { SearchResultType } from "../server/api/modules/parse/types";
 
 type Props = {
+  isAdvancedSearch: boolean;
   selectedCollectionId: string;
   setSearchResults: Dispatch<SetStateAction<SearchResultType[]>>;
   setSelectedItem: Dispatch<SetStateAction<SearchResultType | null>>;
-  limit: number;
+  limit?: number;
 };
 export const useParseSearch = (props: Props) => {
-  const { limit, selectedCollectionId, setSelectedItem, setSearchResults } =
-    props;
+  const {
+    limit,
+    selectedCollectionId,
+    isAdvancedSearch,
+    setSelectedItem,
+    setSearchResults,
+  } = props;
+
+  const LIMIT = limit || 10;
 
   const [query, setQuery] = useState("");
 
@@ -20,7 +28,8 @@ export const useParseSearch = (props: Props) => {
       {
         collectionId: selectedCollectionId,
         query,
-        limit: limit,
+        isAdvancedSearch,
+        limit: LIMIT,
       },
       { enabled: false },
     );

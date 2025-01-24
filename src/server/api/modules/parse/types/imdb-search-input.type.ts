@@ -10,4 +10,5 @@ export type ImdbSearchInputType = {
   query: string;
   type?: SearchType;
   limit?: number;
+  isQuickSearch?: boolean;
 };

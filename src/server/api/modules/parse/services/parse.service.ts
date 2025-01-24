@@ -26,6 +26,7 @@ export const Search = async (props: {
             query: input.query,
             type: "film",
             limit: input.limit,
+            isQuickSearch: input.isAdvancedSearch,
           });
           break;
         }
@@ -34,6 +35,7 @@ export const Search = async (props: {
             query: input.query,
             type: "series",
             limit: input.limit,
+            isQuickSearch: input.isAdvancedSearch,
           });
           break;
         }
