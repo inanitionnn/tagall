@@ -2,7 +2,7 @@ import { getOrSetCache } from "../../../../../lib/redis";
 import type { ContextType } from "../../../../types";
 import type { SearchInputType, SearchResultType } from "../types";
 import { SearchAnilist } from "./anilist.service";
-import { AdvancedSearchImdb } from "./imdb.service";
+import { SearchImdb } from "./imdb.service";
 
 export const Search = async (props: {
   ctx: ContextType;
@@ -22,11 +22,19 @@ export const Search = async (props: {
       let items: SearchResultType[] = [];
       switch (collection.name) {
         case "Film": {
-          items = await AdvancedSearchImdb(input.query, "film", input.limit);
+          items = await SearchImdb({
+            query: input.query,
+            type: "film",
+            limit: input.limit,
+          });
           break;
         }
         case "Serie": {
-          items = await AdvancedSearchImdb(input.query, "series", input.limit);
+          items = await SearchImdb({
+            query: input.query,
+            type: "series",
+            limit: input.limit,
+          });
           break;
         }
         case "Manga": {
