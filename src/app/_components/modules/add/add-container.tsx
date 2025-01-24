@@ -28,7 +28,7 @@ function AddContainer() {
     selectedCollectionId,
     setSearchResults,
     setSelectedItem,
-    limit: 16,
+    limit: 10,
   });
 
   return (
