@@ -46,7 +46,7 @@ export const useGetUserItems = (props: Props) => {
       collectionsIds,
       filtering,
       sorting,
-      searchQuery,
+      searchQuery: searchQuery.toLowerCase().trim(),
       tagsIds,
     },
     DEBOUNCE,
