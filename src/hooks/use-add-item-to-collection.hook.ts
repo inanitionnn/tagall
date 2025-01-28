@@ -46,6 +46,8 @@ export const useAddItemToCollection = (props: Props) => {
     },
   });
 
+  const utils = api.useUtils();
+
   const submit = async (data: formDataType) => {
     if (!selectedItem) return;
 
@@ -69,7 +71,11 @@ export const useAddItemToCollection = (props: Props) => {
       }),
     };
 
-    const promise = mutateAsync(formData);
+    const promise = mutateAsync(formData, {
+      onSuccess: () => {
+        utils.item.invalidate();
+      },
+    });
 
     setSelectedItem(null);
     setSearchResults((prev) =>
