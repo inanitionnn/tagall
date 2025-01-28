@@ -125,9 +125,8 @@ async function CreateItem(props: {
         },
       });
 
-      const keys = Object.keys(details).filter(
-        (k) => !["title", "image", "year", "description"].includes(k),
-      );
+      const keys = Object.keys(details);
+
       const fieldGroups = await prisma.fieldGroup.findMany({
         where: {
           name: {
