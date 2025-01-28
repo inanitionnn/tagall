@@ -11,47 +11,81 @@ export const GetFilterFields = async (props: {
 
   const redisKey = `field:GetFilterFields:${JSON.stringify(input)}`;
 
-  const promise = ctx.db.fieldGroup.findMany({
-    where: {
-      isFiltering: true,
-      ...(input?.length && {
-        collections: {
-          some: {
-            id: {
-              in: input,
+  const MINIMUM_ITEMS = 10;
+
+  const promise = new Promise<FilterFieldsType[]>((resolve) => {
+    (async () => {
+      const fieldsIdsWithMinimumItems = await ctx.db.field
+        .findMany({
+          select: {
+            id: true,
+            fieldGroup: {
+              select: {
+                collections: true,
+                isFiltering: true,
+              },
             },
-          },
-        },
-      }),
-    },
-    select: {
-      id: true,
-      name: true,
-      fields: {
-        ...(input?.length && {
-          where: {
-            items: {
-              some: {
-                collectionId: {
-                  in: input,
+            _count: {
+              select: {
+                items: {
+                  where: {
+                    collectionId: {
+                      in: input,
+                    },
+                  },
                 },
               },
             },
           },
-        }),
-        orderBy: {
-          value: "asc",
+        })
+        .then((fields) =>
+          fields
+            .filter((field) => field._count.items >= MINIMUM_ITEMS)
+            .map((field) => field.id),
+        );
+
+      const fieldGroups = await ctx.db.fieldGroup.findMany({
+        where: {
+          isFiltering: true,
+          ...(input?.length && {
+            collections: {
+              some: {
+                id: {
+                  in: input,
+                },
+              },
+            },
+          }),
         },
         select: {
           id: true,
-          value: true,
+          name: true,
+          priority: true,
+          fields: {
+            where: {
+              id: {
+                in: fieldsIdsWithMinimumItems,
+              },
+            },
+            orderBy: {
+              value: "asc",
+            },
+            select: {
+              id: true,
+              value: true,
+            },
+          },
+          _count: {
+            select: { fields: true },
+          },
         },
-      },
-      priority: true,
-    },
-    orderBy: {
-      priority: "asc",
-    },
+        orderBy: {
+          priority: "asc",
+        },
+      });
+
+      resolve(fieldGroups.filter((fieldGroup) => fieldGroup._count.fields > 0));
+    })();
   });
 
   return getOrSetCache<FilterFieldsType[]>(redisKey, promise);

@@ -56,14 +56,14 @@ export const seedsData = {
       id: "cm3a9sse6000ei1s7cvwshatu",
       name: "production",
       priority: 4,
-      isFiltering: false,
+      isFiltering: true,
       collections: ["cm3a9sw1v000gi1s7appi2tju", "cm3bnlve100000ks784yufzt9"],
     },
     {
       id: "cm3a9sm6c0008i1s7ekkm28ed",
       name: "people",
       priority: 5,
-      isFiltering: false,
+      isFiltering: true,
       collections: [
         "cm3bnlyzw00040ks77yx39ddf",
         "cm3a9sw1v000gi1s7appi2tju",
