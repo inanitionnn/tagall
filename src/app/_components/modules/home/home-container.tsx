@@ -62,6 +62,7 @@ function HomeContainer() {
     setFiltering,
   } = useParseFiltering({
     yearsRange,
+    collectionsIds: debouncedSelectedCollectionsIds,
   });
 
   const { groupedItems, setPage, hasMore, isLoading } = useGetUserItems({

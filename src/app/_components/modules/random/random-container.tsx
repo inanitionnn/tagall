@@ -54,6 +54,7 @@ function RandomContainer() {
     setFiltering,
   } = useParseFiltering({
     yearsRange,
+    collectionsIds: debouncedSelectedCollectionsIds,
   });
 
   const { items, refetch, isLoading } = useGetRandomUserItems({
