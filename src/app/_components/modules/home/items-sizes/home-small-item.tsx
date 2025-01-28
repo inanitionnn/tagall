@@ -53,7 +53,7 @@ const HomeSmallItem = (props: Props) => {
         {item.tags.length ? (
           <div className="flex w-full flex-wrap gap-2">
             {item.tags.map((tag) => (
-              <Badge key={tag.id} className="px-2 py-0.5 text-sm">
+              <Badge key={tag.id} className="text-sm">
                 {tag.name}
               </Badge>
             ))}

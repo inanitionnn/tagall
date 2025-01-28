@@ -13,19 +13,19 @@ import {
   ResponsiveModalContent,
   ResponsiveModalTrigger,
   Badge,
-} from "../../ui";
+} from "../ui";
 import { useState } from "react";
-import type { ItemType } from "../../../../server/api/modules/item/types";
-import { CardContainer } from "../../shared";
-import { useUpdateItem } from "../../../../hooks";
-import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
+import type { ItemSmallType } from "../../../server/api/modules/item/types";
+import { CardContainer } from ".";
+import { useUpdateItem } from "../../../hooks";
+import type { TagType } from "../../../server/api/modules/tag/types/tag.type";
 
 type Props = {
-  item: ItemType;
+  item: ItemSmallType;
   tags: TagType[];
 };
 
-const ItemUpdateTagsModal = (props: Props) => {
+const UpdateTagsModal = (props: Props) => {
   const { item, tags } = props;
 
   const [open, setOpen] = useState(false);
@@ -56,7 +56,7 @@ const ItemUpdateTagsModal = (props: Props) => {
             className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-4 sm:min-w-96"
           >
             <Header vtag="h4" className=" ">
-              Update tags
+              {item.title}
             </Header>
 
             <FormField
@@ -98,7 +98,7 @@ const ItemUpdateTagsModal = (props: Props) => {
             />
 
             <Button className="w-full" disabled={form.formState.isSubmitting}>
-              Update
+              Update tags
             </Button>
           </form>
         </Form>
@@ -107,4 +107,4 @@ const ItemUpdateTagsModal = (props: Props) => {
   );
 };
 
-export { ItemUpdateTagsModal };
+export { UpdateTagsModal };

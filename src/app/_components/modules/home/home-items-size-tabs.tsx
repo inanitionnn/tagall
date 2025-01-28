@@ -1,9 +1,15 @@
 import React, { type Dispatch, type SetStateAction } from "react";
 import { Button } from "../../ui";
-import { Grid2x2, Grid3x3, Rows3, TableProperties } from "lucide-react";
+import {
+  Grid2x2,
+  Grid3x3,
+  Rows3,
+  SquarePen,
+  TableProperties,
+} from "lucide-react";
 import { CardContainer } from "../../shared";
 
-export type ItemsSize = "medium" | "list" | "small" | "large";
+export type ItemsSize = "medium" | "list" | "small" | "large" | "edit";
 
 type Props = {
   itemsSize: ItemsSize;
@@ -42,6 +48,13 @@ const HomeItemsSizeTabs = (props: Props) => {
         variant={itemsSize === "list" ? "default" : "ghost"}
       >
         <Rows3 />
+      </Button>
+      <Button
+        onClick={() => setItemsSize("edit")}
+        size={"icon"}
+        variant={itemsSize === "edit" ? "default" : "ghost"}
+      >
+        <SquarePen />
       </Button>
     </CardContainer>
   );

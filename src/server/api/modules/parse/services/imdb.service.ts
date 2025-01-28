@@ -21,7 +21,7 @@ async function GetHtmlFromUrl(url: string): Promise<string> {
     });
 
     return response.data as string;
-  } catch (error) {
+  } catch {
     throw new Error("IMDB parse error");
   }
 }

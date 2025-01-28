@@ -6,17 +6,21 @@ import {
   HomeLargeItem,
   HomeMediumItem,
   HomeSmallItem,
+  HomeEditItem,
 } from "./items-sizes";
 import { CardContainer } from "../../shared";
+import type { ItemsSize } from "./home-items-size-tabs";
+import type { TagType } from "../../../../server/api/modules/tag/types";
 
 type Props = {
-  itemsSize: "small" | "medium" | "list" | "large";
+  itemsSize: ItemsSize;
   items: ItemSmallType[];
+  tags: TagType[];
   selectedCollectionsIds: string[];
 };
 
 const HomeItems = (props: Props) => {
-  const { itemsSize, items, selectedCollectionsIds } = props;
+  const { itemsSize, items, selectedCollectionsIds, tags } = props;
 
   return (
     <>
@@ -69,6 +73,19 @@ const HomeItems = (props: Props) => {
             </Link>
           ))}
         </CardContainer>
+      )}
+
+      {itemsSize === "edit" && (
+        <div className="mx-auto grid w-full grid-cols-1 gap-4 xl:grid-cols-2">
+          {items.map((item) => (
+            <HomeEditItem
+              key={item.id}
+              item={item}
+              tags={tags}
+              selectedCollectionsIds={selectedCollectionsIds}
+            />
+          ))}
+        </div>
       )}
     </>
   );

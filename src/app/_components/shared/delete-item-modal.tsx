@@ -1,5 +1,8 @@
 "use client";
-import type { ItemType } from "../../../../server/api/modules/item/types";
+import type {
+  ItemSmallType,
+  ItemType,
+} from "../../../server/api/modules/item/types";
 import {
   Button,
   Header,
@@ -8,16 +11,16 @@ import {
   ResponsiveModalContent,
   ResponsiveModalTrigger,
   Separator,
-} from "../../ui";
+} from "../ui";
 import { useState } from "react";
-import { useDeleteItemFromCollection } from "../../../../hooks";
-import { CardContainer } from "../../shared";
+import { useDeleteItemFromCollection } from "../../../hooks";
+import { CardContainer } from ".";
 
 type Props = {
-  item: ItemType;
+  item: ItemType | ItemSmallType;
 };
 
-const ItemDeleteModal = (props: Props) => {
+const DeleteItemModal = (props: Props) => {
   const { item } = props;
 
   const [open, setOpen] = useState(false);
@@ -37,19 +40,16 @@ const ItemDeleteModal = (props: Props) => {
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <div className="flex w-full flex-col justify-center rounded-sm bg-background p-4">
-          <div className="flex w-full flex-col justify-between gap-4 p-6 sm:min-w-96">
-            <Header vtag="h4" className=" ">
-              Delete from collection
-            </Header>
-            <Separator />
-            <div className="flex w-full items-center justify-between gap-2">
-              <Paragraph>
-                Are you sure you want to delete this item? This action cannot be
-                undone.
-              </Paragraph>
-            </div>
-            <Separator />
-            <Button onClick={submit}>Delete</Button>
+          <div className="flex w-full flex-col justify-between gap-8 p-6 sm:min-w-96">
+            <Header vtag="h5">This action cannot be undone!</Header>
+
+            <Paragraph className="line-clamp-5">
+              Are you sure you want to delete &quot;<b>{item.title}</b>&quot;?
+            </Paragraph>
+
+            <Button onClick={submit} variant={"destructive"}>
+              Delete item
+            </Button>
           </div>
         </div>
       </ResponsiveModalContent>
@@ -57,4 +57,4 @@ const ItemDeleteModal = (props: Props) => {
   );
 };
 
-export { ItemDeleteModal };
+export { DeleteItemModal };

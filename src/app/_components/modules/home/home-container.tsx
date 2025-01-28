@@ -127,6 +127,7 @@ function HomeContainer() {
         <div key={group.groupBy + index} className="flex flex-col gap-4">
           <Header vtag="h3">{group.groupBy}</Header>
           <HomeItems
+            tags={tags}
             items={group.items}
             itemsSize={itemsSize}
             selectedCollectionsIds={selectedCollectionsIds}

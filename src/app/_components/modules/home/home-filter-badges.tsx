@@ -20,7 +20,7 @@ const HomeFilterBadges = (props: Props) => {
     <div className="flex flex-wrap gap-2">
       {selectedTagsIds.map((tagId) => (
         <Badge
-          className="cursor-pointer px-2 py-0.5 text-sm hover:bg-destructive"
+          className="cursor-pointer text-sm hover:bg-destructive"
           key={tagId}
           onClick={() =>
             setSelectedTagsIds((prev) => prev.filter((id) => id !== tagId))
@@ -55,7 +55,7 @@ const HomeFilterBadges = (props: Props) => {
 
         return (
           <Badge
-            className="cursor-pointer px-2 py-0.5 text-sm hover:bg-destructive"
+            className="cursor-pointer text-sm hover:bg-destructive"
             key={index}
             onClick={() =>
               setFiltering((prev) =>
@@ -74,7 +74,7 @@ const HomeFilterBadges = (props: Props) => {
       })}
       {[...filtering, ...selectedTagsIds].length > 0 && (
         <Badge
-          className="cursor-pointer bg-destructive px-2 py-0.5 text-sm"
+          className="cursor-pointer bg-destructive text-sm"
           onClick={() => {
             setFiltering([]);
             setSelectedTagsIds([]);

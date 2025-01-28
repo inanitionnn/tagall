@@ -2,12 +2,16 @@
 import { api } from "~/trpc/react";
 import { redirect } from "next/navigation";
 import { Header, Paragraph } from "../../ui";
-import { ItemUpdateModal } from "./item-update-modal";
-import { ItemDeleteModal } from "./item-delete-modal";
-import { ItemAddCommentModal } from "./item-add-comment-modal";
 import { ItemUpdateCommentModal } from "./item-update-comment-modal";
-import { CardContainer, CloudinaryImage, Container } from "../../shared";
-import { ItemUpdateTagsModal } from "./item-update-tags-modal";
+import {
+  AddCommentModal,
+  CardContainer,
+  CloudinaryImage,
+  Container,
+  DeleteItemModal,
+  UpdateItemModal,
+  UpdateTagsModal,
+} from "../../shared";
 import Link from "next/link";
 import { useGetUserTags } from "../../../../hooks";
 
@@ -48,8 +52,8 @@ function ItemContainer(props: Props) {
                 )}
               </div>
 
-              <ItemUpdateModal item={item} />
-              <ItemAddCommentModal item={item} />
+              <UpdateItemModal item={item} />
+              <AddCommentModal item={item} />
             </div>
 
             <div className="flex w-full flex-col gap-4">
@@ -60,7 +64,7 @@ function ItemContainer(props: Props) {
                 </Paragraph>
               </CardContainer>
 
-              <ItemUpdateTagsModal tags={tags} item={item} />
+              <UpdateTagsModal tags={tags} item={item} />
 
               {item.comments?.map((comment, index) => (
                 <ItemUpdateCommentModal comment={comment} key={index} />
@@ -129,7 +133,7 @@ function ItemContainer(props: Props) {
             ))}
           </CardContainer>
 
-          <ItemDeleteModal item={item} />
+          <DeleteItemModal item={item} />
         </div>
       </div>
     </Container>

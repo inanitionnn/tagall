@@ -16,8 +16,8 @@ const HomeLargeItem = (props: Props) => {
   const { item, selectedCollectionsIds } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
-    <CardContainer className="h-fit cursor-pointer hover:scale-105 sm:h-64">
-      <div className="aspect-[27/40] h-36 sm:h-full">
+    <CardContainer className="h-fit cursor-pointer hover:scale-105">
+      <div className="aspect-[27/40] h-36 sm:h-52">
         {item.image ? (
           <CloudinaryImage
             publicId={item.image}
@@ -54,7 +54,7 @@ const HomeLargeItem = (props: Props) => {
         {item.tags.length ? (
           <div className="flex flex-wrap gap-2">
             {item.tags.map((tag) => (
-              <Badge key={tag.id} className="px-2 py-0.5 text-sm">
+              <Badge key={tag.id} className="text-sm">
                 {tag.name}
               </Badge>
             ))}

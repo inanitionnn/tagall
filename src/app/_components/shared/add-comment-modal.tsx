@@ -1,8 +1,10 @@
 "use client";
 import {
+  AutosizeTextarea,
   Button,
   DualRangeSlider,
   Header,
+  Input,
   Paragraph,
   ResponsiveModal,
   ResponsiveModalContent,
@@ -13,29 +15,27 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../ui";
+} from "../ui";
 import { useState } from "react";
-import {
-  RATING_NAMES,
-  STATUS_ICONS,
-  STATUS_NAMES,
-} from "../../../../constants";
-import type { ItemType } from "../../../../server/api/modules/item/types";
-import { Star } from "lucide-react";
-import { useUpdateItem } from "../../../../hooks";
+import { RATING_NAMES, STATUS_ICONS, STATUS_NAMES } from "../../../constants";
+import type {
+  ItemSmallType,
+  ItemType,
+} from "../../../server/api/modules/item/types";
 import { ItemStatus } from "@prisma/client";
-import { CardContainer } from "../../shared";
+import { useAddComment } from "../../../hooks";
+import { CardContainer } from ".";
 
 type Props = {
-  item: ItemType;
+  item: ItemType | ItemSmallType;
 };
 
-const ItemUpdateModal = (props: Props) => {
+const AddCommentModal = (props: Props) => {
   const { item } = props;
 
   const [open, setOpen] = useState(false);
 
-  const { form, submit } = useUpdateItem({
+  const { form, submit } = useAddComment({
     item,
     setOpen,
   });
@@ -43,35 +43,11 @@ const ItemUpdateModal = (props: Props) => {
   const status = form.watch("status");
   const rating = form.watch("rate");
 
-  const StatusIcon = STATUS_ICONS[item.status];
-
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <CardContainer className="w-full cursor-pointer flex-col p-4 hover:scale-105">
-          <div className="flex items-center gap-2">
-            <Header vtag="h6">Status:</Header>
-            <div className="flex w-full items-center justify-between gap-1">
-              <StatusIcon size={16} />
-              <Paragraph>{STATUS_NAMES[item.status]}</Paragraph>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Header vtag="h6">Rate:</Header>
-            {item.rate ? (
-              <>
-                <div className="flex w-full justify-between">
-                  <div className="flex items-center gap-1">
-                    <Paragraph className="font-semibold">{item.rate}</Paragraph>
-                    <Star size={16} />
-                  </div>
-                  <Paragraph>{RATING_NAMES[item.rate]}</Paragraph>
-                </div>
-              </>
-            ) : (
-              <Paragraph>None</Paragraph>
-            )}
-          </div>
+        <CardContainer className="w-full cursor-pointer p-4 hover:scale-105">
+          <Header vtag="h6">Add comment</Header>
         </CardContainer>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
@@ -80,9 +56,55 @@ const ItemUpdateModal = (props: Props) => {
             onSubmit={form.handleSubmit(submit)}
             className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-4 sm:min-w-96"
           >
-            <Header vtag="h4" className=" ">
-              Update item
+            <Header vtag="h4" className="line-clamp-2">
+              {item.title}
             </Header>
+            <FormField
+              control={form.control}
+              name="title"
+              render={() => (
+                <FormItem>
+                  <div className="flex w-full flex-col items-start gap-2">
+                    <FormLabel>Title:</FormLabel>
+                    <FormControl>
+                      <Input
+                        autoFocus
+                        placeholder="1 Season"
+                        max={255}
+                        {...form.register("title")}
+                      />
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={() => (
+                <FormItem>
+                  <div className="flex w-full flex-col items-start gap-2">
+                    <FormLabel>Description:</FormLabel>
+                    <FormControl>
+                      <AutosizeTextarea
+                        placeholder="Good show, I liked it"
+                        maxHeight={200}
+                        maxLength={1000}
+                        onChange={(e) =>
+                          form.setValue(
+                            "description",
+                            e.target.value ? e.target.value : null,
+                          )
+                        }
+                        value={form.watch("description") ?? ""}
+                      />
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="status"
@@ -152,7 +174,7 @@ const ItemUpdateModal = (props: Props) => {
             />
 
             <Button className="w-full" disabled={form.formState.isSubmitting}>
-              Update item
+              Add comment
             </Button>
           </form>
         </Form>
@@ -161,4 +183,4 @@ const ItemUpdateModal = (props: Props) => {
   );
 };
 
-export { ItemUpdateModal };
+export { AddCommentModal };

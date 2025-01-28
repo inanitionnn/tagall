@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { ItemStatus } from "@prisma/client";
 import { api } from "../trpc/react";
 import { toast } from "sonner";
-import type { ItemType } from "../server/api/modules/item/types";
+import type { ItemSmallType, ItemType } from "../server/api/modules/item/types";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +16,7 @@ const formSchema = z.object({
 type formDataType = z.infer<typeof formSchema>;
 
 type Props = {
-  item: ItemType;
+  item: ItemType | ItemSmallType;
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
