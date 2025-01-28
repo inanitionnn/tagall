@@ -26,8 +26,15 @@ type UserItemSmallType = UserToItem & {
   };
 };
 
+type FieldIdToFieldGroupIdMapType = Record<
+  string,
+  Omit<FieldGroup, "isFiltering">
+>;
+
 export class ItemResponseClass {
-  private async getFieldIdToFieldGroupIdMap(ctx: ContextType) {
+  private async getFieldIdToFieldGroupIdMap(
+    ctx: ContextType,
+  ): Promise<FieldIdToFieldGroupIdMapType> {
     const fields = await ctx.db.field.findMany({
       select: {
         id: true,
@@ -136,18 +143,11 @@ export class ItemResponseClass {
     };
   }
 
-  public transformUserItems(userItems: UserItemSmallType[]): ItemSmallType[] {
-    return userItems.map((userItem) => this.transformSmall(userItem));
-  }
-
-  public async transformUserItem(props: {
-    ctx: ContextType;
-    userItem: UserItemType;
-    similarUserItems: UserItemSmallType[];
-  }): Promise<ItemType> {
-    const { ctx, userItem, similarUserItems } = props;
-    const FieldIdToFieldGroupIdMap =
-      await this.getFieldIdToFieldGroupIdMap(ctx);
+  private transformBig(
+    userItem: UserItemType,
+    similarUserItems: UserItemSmallType[],
+    fieldIdToFieldGroupIdMap: FieldIdToFieldGroupIdMapType,
+  ): ItemType {
     return {
       id: userItem.item.id,
       title: userItem.item.title,
@@ -161,7 +161,7 @@ export class ItemResponseClass {
       collection: userItem.item.collection,
       fieldGroups: this.fieldsToGroupedFields(
         userItem.item.fields,
-        FieldIdToFieldGroupIdMap,
+        fieldIdToFieldGroupIdMap,
       ),
       tags: userItem.tags.map((tag) => ({
         id: tag.id,
@@ -180,6 +180,35 @@ export class ItemResponseClass {
         this.transformSmall(userItem),
       ),
     };
+  }
+
+  public transformSmallUserItems(
+    userItems: UserItemSmallType[],
+  ): ItemSmallType[] {
+    return userItems.map((userItem) => this.transformSmall(userItem));
+  }
+
+  public async transformBigUserItem(props: {
+    ctx: ContextType;
+    userItem: UserItemType;
+    similarUserItems: UserItemSmallType[];
+  }): Promise<ItemType> {
+    const { ctx, userItem, similarUserItems } = props;
+    const fieldGroupIdMap = await this.getFieldIdToFieldGroupIdMap(ctx);
+    return this.transformBig(userItem, similarUserItems, fieldGroupIdMap);
+  }
+
+  public async transformBigUserItems(props: {
+    ctx: ContextType;
+    userItems: UserItemType[];
+    similarUserItems: UserItemSmallType[];
+  }): Promise<ItemType[]> {
+    const { ctx, userItems, similarUserItems } = props;
+    const fieldGroupIdMap = await this.getFieldIdToFieldGroupIdMap(ctx);
+    const items = userItems.map((userItem) =>
+      this.transformBig(userItem, similarUserItems, fieldGroupIdMap),
+    );
+    return items;
   }
 
   public async transformItemDetails(props: {

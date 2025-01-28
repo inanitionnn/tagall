@@ -379,7 +379,7 @@ export async function GetUserItems(props: {
         skip: (page - 1) * limit,
       });
 
-      return resolve(ItemResponse.transformUserItems(userItems));
+      return resolve(ItemResponse.transformSmallUserItems(userItems));
     })();
   });
 
@@ -503,7 +503,7 @@ export async function GetUserItem(props: {
       });
 
       return resolve(
-        ItemResponse.transformUserItem({
+        ItemResponse.transformBigUserItem({
           ctx,
           similarUserItems: nearestUserItems,
           userItem,
@@ -770,7 +770,7 @@ export async function SearchItemByText(props: {
     },
   });
 
-  return ItemResponse.transformUserItems(nearestUserItems);
+  return ItemResponse.transformSmallUserItems(nearestUserItems);
 }
 
 export async function GetRandomUserItems(props: {
@@ -901,7 +901,7 @@ export async function GetRandomUserItems(props: {
     },
   });
 
-  return ItemResponse.transformUserItems(userItems);
+  return ItemResponse.transformSmallUserItems(userItems);
 }
 
 export async function UpdateAllEmbeddings(props: { ctx: ContextType }) {
