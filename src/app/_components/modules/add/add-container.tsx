@@ -49,7 +49,7 @@ function AddContainer() {
           setSelectedCollectionId={setSelectedCollectionId}
         />
         <CardContainer className="items-center p-4">
-          <Label htmlFor="advanced-search">
+          <Label htmlFor="advanced-search" className="cursor-pointer">
             <Paragraph>Advanced search</Paragraph>
           </Label>
           <Switch
