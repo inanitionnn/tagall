@@ -9,6 +9,7 @@ import type {
 } from "@prisma/client";
 import type { ContextType } from "../../../types";
 import type { ItemSmallType, ItemType } from "./types";
+import { getOrSetCache } from "../../../../lib";
 
 type UserItemType = UserToItem & {
   tags: Tag[];
@@ -35,28 +36,35 @@ export class ItemResponseClass {
   private async getFieldIdToFieldGroupIdMap(
     ctx: ContextType,
   ): Promise<FieldIdToFieldGroupIdMapType> {
-    const fields = await ctx.db.field.findMany({
-      select: {
-        id: true,
-        fieldGroup: {
+    const redisKey = `item:getFieldIdToFieldGroupIdMap:${ctx.session.user.id}`;
+    const promise = new Promise<FieldIdToFieldGroupIdMapType>((resolve) => {
+      (async () => {
+        const fields = await ctx.db.field.findMany({
           select: {
             id: true,
-            name: true,
-            priority: true,
+            fieldGroup: {
+              select: {
+                id: true,
+                name: true,
+                priority: true,
+              },
+            },
           },
-        },
-      },
+        });
+
+        const fieldMap = fields.reduce(
+          (acc, field) => {
+            acc[field.id] = field.fieldGroup;
+            return acc;
+          },
+          {} as Record<string, Omit<FieldGroup, "isFiltering">>,
+        );
+
+        return resolve(fieldMap);
+      })();
     });
 
-    const fieldMap = fields.reduce(
-      (acc, field) => {
-        acc[field.id] = field.fieldGroup;
-        return acc;
-      },
-      {} as Record<string, Omit<FieldGroup, "isFiltering">>,
-    );
-
-    return fieldMap;
+    return getOrSetCache<FieldIdToFieldGroupIdMapType>(redisKey, promise);
   }
 
   private fieldsToGroupedFields(

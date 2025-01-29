@@ -636,6 +636,8 @@ export async function AddToCollection(props: {
   await deleteCacheByPrefix(userItemsKey);
   const userYearsRangeKey = `item:GetYearsRange:${ctx.session.user.id}`;
   await deleteCacheByPrefix(userYearsRangeKey);
+  const fieldsKey = `item:getFieldIdToFieldGroupIdMap:${ctx.session.user.id}`;
+  await deleteCacheByPrefix(fieldsKey);
 
   return "Item added successfully!";
 }
