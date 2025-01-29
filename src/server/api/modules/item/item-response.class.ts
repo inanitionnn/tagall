@@ -36,7 +36,7 @@ export class ItemResponseClass {
   private async getFieldIdToFieldGroupIdMap(
     ctx: ContextType,
   ): Promise<FieldIdToFieldGroupIdMapType> {
-    const redisKey = `item:getFieldIdToFieldGroupIdMap:${ctx.session.user.id}`;
+    const redisKey = `item:getFieldIdToFieldGroupIdMap`;
     const promise = new Promise<FieldIdToFieldGroupIdMapType>((resolve) => {
       (async () => {
         const fields = await ctx.db.field.findMany({
