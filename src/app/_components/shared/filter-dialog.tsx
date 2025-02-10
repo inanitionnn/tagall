@@ -65,6 +65,85 @@ export const FilterDialog = (props: Props) => {
     }))
     .filter((fieldGroup) => fieldGroup.fields.length > 0);
 
+  const onClickStatus = (status: ItemStatus) => {
+    setFiltering((prev) => {
+      const updatedFiltering = prev.filter(
+        (f) => f.name !== "status" || f.value !== status,
+      );
+      const selectedFilter = prev.find(
+        (f) => f.name === "status" && f.value === status,
+      );
+      if (!selectedFilter) {
+        updatedFiltering.push({
+          name: "status",
+          type: "include",
+          value: status,
+        });
+      } else if (selectedFilter.type === "include") {
+        updatedFiltering.push({
+          name: "status",
+          type: "exclude",
+          value: status,
+        });
+      }
+      return updatedFiltering;
+    });
+  };
+
+  const onClickTags = (tagId: string, tagValue: string) => {
+    setFiltering((prev) => {
+      const updatedFiltering = prev.filter(
+        (f) => f.name !== "tag" || f.tagId !== tagId,
+      );
+      const selectedFilter = prev.find(
+        (f) => f.name === "tag" && f.tagId === tagId,
+      );
+      if (!selectedFilter) {
+        updatedFiltering.push({
+          name: "tag",
+          type: "include",
+          value: tagValue,
+          tagId: tagId,
+        });
+      } else if (selectedFilter.type === "include") {
+        updatedFiltering.push({
+          name: "tag",
+          type: "exclude",
+          value: tagValue,
+          tagId: tagId,
+        });
+      }
+      return updatedFiltering;
+    });
+  };
+
+  const onClickField = (fieldId: string, fieldValue: string) => {
+    setFiltering((prev) => {
+      const updatedFiltering = prev.filter(
+        (f) => f.name !== "field" || f.value !== fieldValue,
+      );
+      const selectedFilter = prev.find(
+        (f) => f.name === "field" && f.value === fieldValue,
+      );
+      if (!selectedFilter) {
+        updatedFiltering.push({
+          name: "field",
+          type: "include",
+          value: fieldValue,
+          fieldId: fieldId,
+        });
+      } else if (selectedFilter.type === "include") {
+        updatedFiltering.push({
+          name: "field",
+          type: "exclude",
+          value: fieldValue,
+          fieldId: fieldId,
+        });
+      }
+      return updatedFiltering;
+    });
+  };
+
   return (
     <>
       <ResponsiveModal>
@@ -150,32 +229,7 @@ export const FilterDialog = (props: Props) => {
                               : "ghost"
                         }
                         size={"sm"}
-                        onClick={() =>
-                          setFiltering((prev) => {
-                            const updatedFiltering = prev.filter(
-                              (f) =>
-                                f.name !== "status" || f.value !== typedStatus,
-                            );
-                            const selectedFilter = prev.find(
-                              (f) =>
-                                f.name === "status" && f.value === typedStatus,
-                            );
-                            if (!selectedFilter) {
-                              updatedFiltering.push({
-                                name: "status",
-                                type: "include",
-                                value: typedStatus,
-                              });
-                            } else if (selectedFilter.type === "include") {
-                              updatedFiltering.push({
-                                name: "status",
-                                type: "exclude",
-                                value: typedStatus,
-                              });
-                            }
-                            return updatedFiltering;
-                          })
-                        }
+                        onClick={() => onClickStatus(typedStatus)}
                       >
                         {name}
                       </Button>
@@ -204,32 +258,7 @@ export const FilterDialog = (props: Props) => {
                               : "ghost"
                         }
                         size={"sm"}
-                        onClick={() =>
-                          setFiltering((prev) => {
-                            const updatedFiltering = prev.filter(
-                              (f) => f.name !== "tag" || f.tagId !== tag.id,
-                            );
-                            const selectedFilter = prev.find(
-                              (f) => f.name === "tag" && f.tagId === tag.id,
-                            );
-                            if (!selectedFilter) {
-                              updatedFiltering.push({
-                                name: "tag",
-                                type: "include",
-                                value: tag.name,
-                                tagId: tag.id,
-                              });
-                            } else if (selectedFilter.type === "include") {
-                              updatedFiltering.push({
-                                name: "tag",
-                                type: "exclude",
-                                value: tag.name,
-                                tagId: tag.id,
-                              });
-                            }
-                            return updatedFiltering;
-                          })
-                        }
+                        onClick={() => onClickTags(tag.id, tag.name)}
                       >
                         {tag.name}
                       </Button>
@@ -258,34 +287,7 @@ export const FilterDialog = (props: Props) => {
                               : "ghost"
                         }
                         size={"sm"}
-                        onClick={() =>
-                          setFiltering((prev) => {
-                            const updatedFiltering = prev.filter(
-                              (f) =>
-                                f.name !== "field" || f.value !== field.value,
-                            );
-                            const selectedFilter = prev.find(
-                              (f) =>
-                                f.name === "field" && f.value === field.value,
-                            );
-                            if (!selectedFilter) {
-                              updatedFiltering.push({
-                                name: "field",
-                                type: "include",
-                                value: field.value,
-                                fieldId: field.id,
-                              });
-                            } else if (selectedFilter.type === "include") {
-                              updatedFiltering.push({
-                                name: "field",
-                                type: "exclude",
-                                value: field.value,
-                                fieldId: field.id,
-                              });
-                            }
-                            return updatedFiltering;
-                          })
-                        }
+                        onClick={() => onClickField(field.id, field.value)}
                       >
                         {field.value}
                       </Button>

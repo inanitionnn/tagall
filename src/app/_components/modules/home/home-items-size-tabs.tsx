@@ -1,4 +1,3 @@
-import React, { type Dispatch, type SetStateAction } from "react";
 import { Button } from "../../ui";
 import {
   Grid2x2,
@@ -9,50 +8,50 @@ import {
 } from "lucide-react";
 import { CardContainer } from "../../shared";
 
-export type ItemsSize = "medium" | "list" | "small" | "large" | "edit";
+export type ItemSize = "medium" | "list" | "small" | "large" | "edit";
 
 type Props = {
-  itemsSize: ItemsSize;
-  setItemsSize: Dispatch<SetStateAction<ItemsSize>>;
+  itemSize: ItemSize;
+  setItemSize: (data: ItemSize) => void;
 };
 
-const HomeItemsSizeTabs = (props: Props) => {
-  const { itemsSize, setItemsSize } = props;
+const HomeItemSizeTabs = (props: Props) => {
+  const { itemSize, setItemSize } = props;
   return (
     <CardContainer>
       <Button
-        onClick={() => setItemsSize("large")}
+        onClick={() => setItemSize("large")}
         size={"icon"}
-        variant={itemsSize === "large" ? "default" : "ghost"}
+        variant={itemSize === "large" ? "default" : "ghost"}
         className="hidden sm:flex"
       >
         <Grid2x2 />
       </Button>
       <Button
-        onClick={() => setItemsSize("medium")}
+        onClick={() => setItemSize("medium")}
         size={"icon"}
-        variant={itemsSize === "medium" ? "default" : "ghost"}
+        variant={itemSize === "medium" ? "default" : "ghost"}
       >
         <Grid3x3 />
       </Button>
       <Button
-        onClick={() => setItemsSize("small")}
+        onClick={() => setItemSize("small")}
         size={"icon"}
-        variant={itemsSize === "small" ? "default" : "ghost"}
+        variant={itemSize === "small" ? "default" : "ghost"}
       >
         <TableProperties className="rotate-180" />
       </Button>
       <Button
-        onClick={() => setItemsSize("list")}
+        onClick={() => setItemSize("list")}
         size={"icon"}
-        variant={itemsSize === "list" ? "default" : "ghost"}
+        variant={itemSize === "list" ? "default" : "ghost"}
       >
         <Rows3 />
       </Button>
       <Button
-        onClick={() => setItemsSize("edit")}
+        onClick={() => setItemSize("edit")}
         size={"icon"}
-        variant={itemsSize === "edit" ? "default" : "ghost"}
+        variant={itemSize === "edit" ? "default" : "ghost"}
       >
         <SquarePen />
       </Button>
@@ -60,4 +59,4 @@ const HomeItemsSizeTabs = (props: Props) => {
   );
 };
 
-export { HomeItemsSizeTabs };
+export { HomeItemSizeTabs };

@@ -11,6 +11,21 @@ type Props = {
 const HomeFilterBadges = (props: Props) => {
   const { filtering, setFiltering } = props;
 
+  const removeAllFilters = () => {
+    setFiltering([]);
+  };
+
+  const removeFilter = (filter: GetUserItemsFilterType[number]) => {
+    setFiltering((prev) =>
+      prev.filter(
+        (f) =>
+          f.name !== filter.name ||
+          f.type !== filter.type ||
+          f.value !== filter.value,
+      ),
+    );
+  };
+
   return (
     <div className="flex flex-wrap gap-2">
       {filtering.map((filter, index) => {
@@ -42,16 +57,7 @@ const HomeFilterBadges = (props: Props) => {
           <Badge
             className="cursor-pointer text-sm hover:bg-destructive"
             key={index}
-            onClick={() =>
-              setFiltering((prev) =>
-                prev.filter(
-                  (f) =>
-                    f.name !== filter.name ||
-                    f.type !== filter.type ||
-                    f.value !== filter.value,
-                ),
-              )
-            }
+            onClick={() => removeFilter(filter)}
           >
             {badgeText}
           </Badge>
@@ -60,7 +66,7 @@ const HomeFilterBadges = (props: Props) => {
       {filtering.length > 0 && (
         <Badge
           className="cursor-pointer bg-destructive text-sm"
-          onClick={() => setFiltering([])}
+          onClick={removeAllFilters}
         >
           Clear
         </Badge>

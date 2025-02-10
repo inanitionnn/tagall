@@ -11,15 +11,11 @@ import { useUserItemsStats } from "../../../../hooks/queries/use-get-user-items-
 function ProfileContainer() {
   const [user] = api.user.getUser.useSuspenseQuery();
 
-  const {
-    collections,
-    selectedCollectionsIds,
-    setSelectedCollectionsIds,
-    debouncedSelectedCollectionsIds,
-  } = useGetUserCollections();
+  const { collections, selectedCollectionsIds, setSelectedCollectionsIds } =
+    useGetUserCollections();
 
   const { stats, isLoading } = useUserItemsStats({
-    collectionsIds: debouncedSelectedCollectionsIds,
+    collectionsIds: selectedCollectionsIds,
   });
 
   return (

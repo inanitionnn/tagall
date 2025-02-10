@@ -1,8 +1,11 @@
 "use client";
-import { useState } from "react";
-import type { GetUserItemsSortType } from "../../../../server/api/modules/item/types";
+import { useEffect, useState } from "react";
+import type {
+  GetUserItemsFilterType,
+  GetUserItemsSortType,
+} from "../../../../server/api/modules/item/types";
 import { Header, InfiniteScroll } from "../../ui";
-import { HomeItemsSizeTabs, type ItemsSize } from "./home-items-size-tabs";
+import { HomeItemSizeTabs, type ItemSize } from "./home-items-size-tabs";
 import { HomeSortSelect } from "./home-sort-select";
 import { HomeItems } from "./home-items";
 import { HomeFilterBadges } from "./home-filter-badges";
@@ -16,30 +19,77 @@ import {
   Container,
 } from "../../shared";
 import {
-  useGetUserCollections,
   useGetFilterFields,
   useGetUserItems,
   useGetUserTags,
   useParseFiltering,
   useYearsRange,
+  useQueryParams,
+  useDebounce,
 } from "../../../../hooks";
+import { z } from "zod";
+import { GetUserItemsInputSchema } from "../../../../server/api/modules/item/schemas";
+import { api } from "../../../../trpc/react";
+
+const HomeParamsSchema = GetUserItemsInputSchema._def.innerType
+  .omit({ limit: true, page: true, search: true })
+  .extend({
+    itemSize: z.enum(["medium", "list", "small", "large", "edit"]).optional(),
+  })
+  .default({});
 
 function HomeContainer() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [itemsSize, setItemsSize] = useState<ItemsSize>("medium");
-  const [sorting, setSorting] = useState<GetUserItemsSortType>({
-    type: "desc",
-    name: "date",
+  const [collections] = api.collection.getUserCollections.useSuspenseQuery();
+
+  const { getParam, setQueryParams } = useQueryParams<
+    z.infer<typeof HomeParamsSchema>
+  >({
+    schema: HomeParamsSchema,
+    defaultParams: {
+      filtering: [],
+      itemSize: "medium",
+      sorting: {
+        type: "desc",
+        name: "date",
+      },
+      collectionsIds: collections.map((collection) => collection.id),
+    },
   });
 
-  const [searchFilter, setSearchFilter] = useState<string>("");
+  const [selectedCollectionsIds, setSelectedCollectionsIds] = useState<
+    string[]
+  >(getParam("collectionsIds"));
+  const [filtering, setFiltering] = useState<GetUserItemsFilterType>(
+    getParam("filtering"),
+  );
+  const [itemSize, setItemSize] = useState<ItemSize>(getParam("itemSize"));
+  const [sorting, setSorting] = useState<GetUserItemsSortType>(
+    getParam("sorting"),
+  );
 
-  const {
-    collections,
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchFilter, setSearchFilter] = useState("");
+
+  const debouncedSelectedCollectionsIds = useDebounce(
     selectedCollectionsIds,
-    setSelectedCollectionsIds,
-    debouncedSelectedCollectionsIds,
-  } = useGetUserCollections();
+    1000,
+  );
+
+  const debounceObj = useDebounce(
+    {
+      collectionsIds: selectedCollectionsIds,
+      filtering,
+      sorting,
+      itemSize,
+    },
+    1000,
+  );
+
+  useEffect(() => {
+    if (debounceObj) {
+      setQueryParams(debounceObj);
+    }
+  }, [debounceObj]);
 
   const { tags } = useGetUserTags({
     collectionsIds: debouncedSelectedCollectionsIds,
@@ -53,20 +103,16 @@ function HomeContainer() {
     collectionsIds: debouncedSelectedCollectionsIds,
   });
 
-  const {
-    filtering,
-    filterRates,
-    filterYears,
-    setFilterRates,
-    setFilterYears,
-    setFiltering,
-  } = useParseFiltering({
-    yearsRange,
-    collectionsIds: debouncedSelectedCollectionsIds,
-  });
+  const { filterRates, filterYears, setFilterRates, setFilterYears } =
+    useParseFiltering({
+      filtering,
+      setFiltering,
+      yearsRange,
+      collectionsIds: debouncedSelectedCollectionsIds,
+    });
 
   const { groupedItems, setPage, hasMore, isLoading } = useGetUserItems({
-    collectionsIds: selectedCollectionsIds,
+    collectionsIds: debouncedSelectedCollectionsIds,
     sorting,
     filtering,
     searchQuery,
@@ -84,11 +130,12 @@ function HomeContainer() {
     <Container>
       <div className="flex flex-wrap justify-between gap-4">
         <CollectionsTabs
+          setFiltering={setFiltering}
           collections={collections}
           selectedCollectionsIds={selectedCollectionsIds}
           setSelectedCollectionsIds={setSelectedCollectionsIds}
         />
-        <HomeItemsSizeTabs itemsSize={itemsSize} setItemsSize={setItemsSize} />
+        <HomeItemSizeTabs itemSize={itemSize} setItemSize={setItemSize} />
 
         <HomeSortSelect setSorting={setSorting} sorting={sorting} />
 
@@ -120,8 +167,8 @@ function HomeContainer() {
           <HomeItems
             tags={tags}
             items={group.items}
-            itemsSize={itemsSize}
-            selectedCollectionsIds={selectedCollectionsIds}
+            itemSize={itemSize}
+            selectedCollectionsIds={debouncedSelectedCollectionsIds}
           />
         </div>
       ))}

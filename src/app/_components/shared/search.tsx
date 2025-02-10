@@ -1,10 +1,9 @@
 import { Input, Spinner } from "../ui";
-import type { Dispatch, SetStateAction } from "react";
 import { Search as SearchIcon } from "lucide-react";
 
 type Props = {
   query: string;
-  setQuery: Dispatch<SetStateAction<string>>;
+  setQuery: (data: string) => void;
   submit?: () => void;
   isLoading: boolean;
 };

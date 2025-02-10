@@ -7,6 +7,7 @@ import type {
 import { api } from "../../trpc/react";
 import { toast } from "sonner";
 import { useDebounce } from "../utils/use-debounce.hook";
+import { capitalize, isLetter } from "../../lib";
 
 type GroupedItems = {
   groupBy: string;
@@ -27,7 +28,7 @@ export const useGetUserItems = (props: Props) => {
     props;
 
   const LIMIT = limit || 30;
-  const DEBOUNCE = debounce || 400;
+  const DEBOUNCE = debounce || 300;
 
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -92,15 +93,6 @@ export const useGetUserItems = (props: Props) => {
 
 // #region Helper functions
 
-const capitalize = (val: string | number | null) => {
-  if (!val) return "#";
-  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
-};
-
-const isLetter = (char: string): boolean => {
-  return /^[a-zA-Zа-яА-Я]$/.test(char);
-};
-
 const groupByKey = (item: ItemSmallType, sorting: GetUserItemsSortType) => {
   let key: string | number | null = null;
   switch (sorting.name) {
@@ -133,6 +125,9 @@ const groupByKey = (item: ItemSmallType, sorting: GetUserItemsSortType) => {
       throw new Error(`Unhandled sorting name.`);
     }
   }
+
+  if (!key) return "#";
+
   return capitalize(key);
 };
 

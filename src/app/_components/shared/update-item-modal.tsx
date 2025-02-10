@@ -16,10 +16,7 @@ import {
 } from "../ui";
 import { useState } from "react";
 import { RATING_NAMES, STATUS_ICONS, STATUS_NAMES } from "../../../constants";
-import type {
-  ItemType,
-  ItemSmallType,
-} from "../../../server/api/modules/item/types";
+import type { ItemSmallType } from "../../../server/api/modules/item/types";
 import { Star } from "lucide-react";
 import { useUpdateItem } from "../../../hooks";
 import { ItemStatus } from "@prisma/client";

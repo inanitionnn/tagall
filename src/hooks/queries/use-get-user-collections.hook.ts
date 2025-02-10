@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../../trpc/react";
-import { useDebounce } from "../utils/use-debounce.hook";
+import { useDebounce } from "../utils";
 
 export const useGetUserCollections = () => {
-  const DEBOUNCE = 400;
+  const DEBOUNCE = 2000;
 
   const [collections] = api.collection.getUserCollections.useSuspenseQuery();
 
@@ -15,6 +15,10 @@ export const useGetUserCollections = () => {
     selectedCollectionsIds,
     DEBOUNCE,
   );
+
+  useEffect(() => {
+    console.log("main", debouncedSelectedCollectionsIds);
+  }, [debouncedSelectedCollectionsIds]);
 
   return {
     collections,

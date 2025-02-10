@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import type { GetUserItemsFilterType } from "../../server/api/modules/item/types";
 
 type Props = {
+  filtering: GetUserItemsFilterType;
+  setFiltering: Dispatch<SetStateAction<GetUserItemsFilterType>>;
   collectionsIds: string[];
   yearsRange: {
     minYear: number;
@@ -10,9 +12,8 @@ type Props = {
 };
 
 export const useParseFiltering = (props: Props) => {
-  const { yearsRange, collectionsIds } = props;
+  const { yearsRange, collectionsIds, filtering, setFiltering } = props;
 
-  const [filtering, setFiltering] = useState<GetUserItemsFilterType>([]);
   const [filterRates, setFilterRates] = useState<number[]>([1, 10]);
   const [filterYears, setFilterYears] = useState<number[]>([
     yearsRange.minYear,
@@ -97,7 +98,6 @@ export const useParseFiltering = (props: Props) => {
   }, [filterYears]);
 
   useEffect(() => {
-    setFiltering([]);
     setFilterRates([1, 10]);
     setFilterYears([yearsRange.minYear, yearsRange.maxYear]);
   }, [collectionsIds]);
@@ -107,7 +107,5 @@ export const useParseFiltering = (props: Props) => {
     setFilterYears,
     filterRates,
     setFilterRates,
-    filtering,
-    setFiltering,
   };
 };

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CardContainer,
   CollectionsTabs,
@@ -12,26 +12,66 @@ import { Dices } from "lucide-react";
 import { HomeNoItemsCard } from "../home/home-no-items-card";
 import { HomeFilterBadges } from "../home/home-filter-badges";
 import {
+  useDebounce,
   useGetFilterFields,
   useGetRandomUserItems,
   useGetUserCollections,
   useGetUserTags,
   useParseFiltering,
+  useQueryParams,
   useYearsRange,
 } from "../../../../hooks";
 import { RandomItem } from "./random-item";
+import { z } from "zod";
+import { GetUserItemsInputSchema } from "../../../../server/api/modules/item/schemas";
+import { api } from "../../../../trpc/react";
+import { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
+
+const RandomParamsSchema = GetUserItemsInputSchema._def.innerType
+  .omit({ limit: true, page: true, search: true, sorting: true })
+  .default({});
 
 function RandomContainer() {
+  const [collections] = api.collection.getUserCollections.useSuspenseQuery();
+
+  const { getParam, setQueryParams } = useQueryParams<
+    z.infer<typeof RandomParamsSchema>
+  >({
+    schema: RandomParamsSchema,
+    defaultParams: {
+      filtering: [],
+      collectionsIds: collections.map((collection) => collection.id),
+    },
+  });
+
   const [limit, setLimit] = useState<number>(10);
   const [searchFilter, setSearchFilter] = useState<string>("");
 
-  const {
-    collections,
-    selectedCollectionsIds,
-    setSelectedCollectionsIds,
-    debouncedSelectedCollectionsIds,
-  } = useGetUserCollections();
+  const [filtering, setFiltering] = useState<GetUserItemsFilterType>(
+    getParam("filtering"),
+  );
+  const [selectedCollectionsIds, setSelectedCollectionsIds] = useState<
+    string[]
+  >(getParam("collectionsIds"));
 
+  const debouncedSelectedCollectionsIds = useDebounce(
+    selectedCollectionsIds,
+    1000,
+  );
+
+  const debounceObj = useDebounce(
+    {
+      collectionsIds: selectedCollectionsIds,
+      filtering,
+    },
+    1000,
+  );
+
+  useEffect(() => {
+    if (debounceObj) {
+      setQueryParams(debounceObj);
+    }
+  }, [debounceObj]);
   const { tags } = useGetUserTags({
     collectionsIds: debouncedSelectedCollectionsIds,
   });
@@ -44,17 +84,13 @@ function RandomContainer() {
     collectionsIds: debouncedSelectedCollectionsIds,
   });
 
-  const {
-    filtering,
-    filterRates,
-    filterYears,
-    setFilterRates,
-    setFilterYears,
-    setFiltering,
-  } = useParseFiltering({
-    yearsRange,
-    collectionsIds: debouncedSelectedCollectionsIds,
-  });
+  const { filterRates, filterYears, setFilterRates, setFilterYears } =
+    useParseFiltering({
+      filtering,
+      setFiltering,
+      yearsRange,
+      collectionsIds: debouncedSelectedCollectionsIds,
+    });
 
   const { items, refetch, isLoading } = useGetRandomUserItems({
     collectionsIds: selectedCollectionsIds,

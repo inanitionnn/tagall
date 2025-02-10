@@ -9,22 +9,22 @@ import {
   HomeEditItem,
 } from "./items-sizes";
 import { CardContainer } from "../../shared";
-import type { ItemsSize } from "./home-items-size-tabs";
+import type { ItemSize } from "./home-items-size-tabs";
 import type { TagType } from "../../../../server/api/modules/tag/types";
 
 type Props = {
-  itemsSize: ItemsSize;
+  itemSize: ItemSize;
   items: ItemSmallType[];
   tags: TagType[];
   selectedCollectionsIds: string[];
 };
 
 const HomeItems = (props: Props) => {
-  const { itemsSize, items, selectedCollectionsIds, tags } = props;
+  const { itemSize, items, selectedCollectionsIds, tags } = props;
 
   return (
     <>
-      {itemsSize === "large" && (
+      {itemSize === "large" && (
         <div className="mx-auto grid grid-cols-1 gap-x-4 gap-y-6 xl:grid-cols-2">
           {items.map((item) => (
             <Link key={item.id} href={`/item/${item.id}`} target="_blank">
@@ -37,7 +37,7 @@ const HomeItems = (props: Props) => {
           ))}
         </div>
       )}
-      {itemsSize === "medium" && (
+      {itemSize === "medium" && (
         <div className="mx-auto grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {items.map((item) => (
             <Link key={item.id} href={`/item/${item.id}`} target="_blank">
@@ -46,7 +46,7 @@ const HomeItems = (props: Props) => {
           ))}
         </div>
       )}
-      {itemsSize === "small" && (
+      {itemSize === "small" && (
         <div className="mx-auto grid w-full grid-cols-1 gap-y-4">
           {items.map((item) => (
             <Link key={item.id} href={`/item/${item.id}`} target="_blank">
@@ -60,7 +60,7 @@ const HomeItems = (props: Props) => {
         </div>
       )}
 
-      {itemsSize === "list" && (
+      {itemSize === "list" && (
         <CardContainer className="mx-auto grid w-full grid-cols-1 gap-y-1 p-8">
           {items.map((item, index) => (
             <Link key={item.id} href={`/item/${item.id}`} target="_blank">
@@ -75,7 +75,7 @@ const HomeItems = (props: Props) => {
         </CardContainer>
       )}
 
-      {itemsSize === "edit" && (
+      {itemSize === "edit" && (
         <div className="mx-auto grid w-full grid-cols-1 gap-4 xl:grid-cols-2">
           {items.map((item) => (
             <HomeEditItem

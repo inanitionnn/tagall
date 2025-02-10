@@ -1,4 +1,3 @@
-import React, { type Dispatch, type SetStateAction } from "react";
 import {
   Paragraph,
   Select,
@@ -7,18 +6,11 @@ import {
   SelectTrigger,
 } from "../../ui";
 import { SORT_OPTIONS } from "../../../../constants";
+import type { GetUserItemsSortType } from "../../../../server/api/modules/item/types";
 
 type Props = {
-  sorting: {
-    name: "status" | "date" | "rate" | "year" | "title";
-    type: "desc" | "asc";
-  };
-  setSorting: Dispatch<
-    SetStateAction<{
-      name: "status" | "date" | "rate" | "year" | "title";
-      type: "desc" | "asc";
-    }>
-  >;
+  sorting: GetUserItemsSortType;
+  setSorting: (data: GetUserItemsSortType) => void;
 };
 
 const HomeSortSelect = (props: Props) => {

@@ -10,7 +10,6 @@ import {
   ResponsiveModal,
   ResponsiveModalContent,
   ResponsiveModalTrigger,
-  Separator,
 } from "../ui";
 import { useState } from "react";
 import { useDeleteItemFromCollection } from "../../../hooks";
