@@ -20,7 +20,7 @@ type Props = {
   searchFilter: string;
   tags: TagType[];
   setSearchFilter: Dispatch<SetStateAction<string>>;
-  filterFieldGroups: FilterFieldsType[];
+  fieldGroups: FilterFieldsType[];
   yearsRange: {
     minYear: number;
     maxYear: number;
@@ -31,20 +31,16 @@ type Props = {
   setFilterYears: Dispatch<SetStateAction<number[]>>;
   filtering: GetUserItemsFilterType;
   setFiltering: Dispatch<SetStateAction<GetUserItemsFilterType>>;
-  selectedTagsIds: string[];
-  setSelectedTagsIds: Dispatch<SetStateAction<string[]>>;
 };
 
 export const FilterDialog = (props: Props) => {
   const {
     tags,
-    selectedTagsIds,
     yearsRange,
-    filterFieldGroups,
+    fieldGroups,
     filterRates,
     filterYears,
     filtering,
-    setSelectedTagsIds,
     setFilterRates,
     setFilterYears,
     setFiltering,
@@ -52,11 +48,15 @@ export const FilterDialog = (props: Props) => {
     setSearchFilter,
   } = props;
 
-  const filteredStatusNames = Object.entries(STATUS_NAMES).filter(([_, name]) =>
+  const filteredTags = tags.filter((tag) =>
+    tag.name.toLowerCase().includes(searchFilter.toLowerCase()),
+  );
+
+  const filteredStatuses = Object.entries(STATUS_NAMES).filter(([_, name]) =>
     name.toLowerCase().includes(searchFilter.toLowerCase()),
   );
 
-  const filteredFieldGroups = filterFieldGroups
+  const filteredFieldGroups = fieldGroups
     .map((fieldGroup) => ({
       ...fieldGroup,
       fields: fieldGroup.fields.filter((field) =>
@@ -130,11 +130,11 @@ export const FilterDialog = (props: Props) => {
                 </div>
               </div>
             )}
-            {filteredStatusNames.length > 0 && (
+            {filteredStatuses.length > 0 && (
               <div className="flex flex-col gap-2">
                 <Header vtag="h6">Status</Header>
                 <div className="flex flex-wrap gap-2">
-                  {filteredStatusNames.map(([status, name]) => {
+                  {filteredStatuses.map(([status, name]) => {
                     const typedStatus = status as ItemStatus;
                     const statusFilter = filtering.find(
                       (f) => f.name === "status" && f.value === typedStatus,
@@ -144,7 +144,7 @@ export const FilterDialog = (props: Props) => {
                         key={typedStatus}
                         variant={
                           statusFilter?.type === "include"
-                            ? "success"
+                            ? "default"
                             : statusFilter?.type === "exclude"
                               ? "destructive"
                               : "ghost"
@@ -184,29 +184,57 @@ export const FilterDialog = (props: Props) => {
                 </div>
               </div>
             )}
-            {!!tags.length && (
+
+            {filteredTags.length > 0 && (
               <div className="flex flex-col gap-2">
                 <Header vtag="h6">Tags</Header>
                 <div className="flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <Button
-                      key={tag.id}
-                      variant={
-                        selectedTagsIds.includes(tag.id) ? "success" : "ghost"
-                      }
-                      size={"sm"}
-                      onClick={() =>
-                        setSelectedTagsIds((prev) => {
-                          if (prev.includes(tag.id)) {
-                            return prev.filter((id) => id !== tag.id);
-                          }
-                          return [...prev, tag.id];
-                        })
-                      }
-                    >
-                      {tag.name}
-                    </Button>
-                  ))}
+                  {filteredTags.map((tag) => {
+                    const tagFilter = filtering.find(
+                      (f) => f.name === "tag" && f.tagId === tag.id,
+                    );
+                    return (
+                      <Button
+                        key={tag.id}
+                        variant={
+                          tagFilter?.type === "include"
+                            ? "default"
+                            : tagFilter?.type === "exclude"
+                              ? "destructive"
+                              : "ghost"
+                        }
+                        size={"sm"}
+                        onClick={() =>
+                          setFiltering((prev) => {
+                            const updatedFiltering = prev.filter(
+                              (f) => f.name !== "tag" || f.tagId !== tag.id,
+                            );
+                            const selectedFilter = prev.find(
+                              (f) => f.name === "tag" && f.tagId === tag.id,
+                            );
+                            if (!selectedFilter) {
+                              updatedFiltering.push({
+                                name: "tag",
+                                type: "include",
+                                value: tag.name,
+                                tagId: tag.id,
+                              });
+                            } else if (selectedFilter.type === "include") {
+                              updatedFiltering.push({
+                                name: "tag",
+                                type: "exclude",
+                                value: tag.name,
+                                tagId: tag.id,
+                              });
+                            }
+                            return updatedFiltering;
+                          })
+                        }
+                      >
+                        {tag.name}
+                      </Button>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -224,7 +252,7 @@ export const FilterDialog = (props: Props) => {
                         key={field.id}
                         variant={
                           fieldFilter?.type === "include"
-                            ? "success"
+                            ? "default"
                             : fieldFilter?.type === "exclude"
                               ? "destructive"
                               : "ghost"

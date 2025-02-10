@@ -23,7 +23,6 @@ import { RandomItem } from "./random-item";
 
 function RandomContainer() {
   const [limit, setLimit] = useState<number>(10);
-  const [selectedTagsIds, setSelectedTagsIds] = useState<string[]>([]);
   const [searchFilter, setSearchFilter] = useState<string>("");
 
   const {
@@ -41,7 +40,7 @@ function RandomContainer() {
     collectionsIds: debouncedSelectedCollectionsIds,
   });
 
-  const { filterFieldGroups } = useGetFilterFields({
+  const { fieldGroups } = useGetFilterFields({
     collectionsIds: debouncedSelectedCollectionsIds,
   });
 
@@ -60,7 +59,6 @@ function RandomContainer() {
   const { items, refetch, isLoading } = useGetRandomUserItems({
     collectionsIds: selectedCollectionsIds,
     filtering,
-    tagsIds: selectedTagsIds,
     limit,
   });
 
@@ -95,8 +93,6 @@ function RandomContainer() {
 
         <FilterDialog
           tags={tags}
-          selectedTagsIds={selectedTagsIds}
-          setSelectedTagsIds={setSelectedTagsIds}
           searchFilter={searchFilter}
           setSearchFilter={setSearchFilter}
           filterRates={filterRates}
@@ -106,7 +102,7 @@ function RandomContainer() {
           filtering={filtering}
           setFiltering={setFiltering}
           yearsRange={yearsRange}
-          filterFieldGroups={filterFieldGroups}
+          fieldGroups={fieldGroups}
         />
         <CardContainer className="w-32">
           <Button onClick={() => refetch()} className="w-full">
@@ -119,13 +115,7 @@ function RandomContainer() {
         </CardContainer>
       </div>
 
-      <HomeFilterBadges
-        tags={tags}
-        selectedTagsIds={selectedTagsIds}
-        setSelectedTagsIds={setSelectedTagsIds}
-        filtering={filtering}
-        setFiltering={setFiltering}
-      />
+      <HomeFilterBadges filtering={filtering} setFiltering={setFiltering} />
 
       {!isLoading ? (
         <div className="mx-auto grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">

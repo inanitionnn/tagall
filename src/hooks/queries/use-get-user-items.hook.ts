@@ -16,7 +16,6 @@ type GroupedItems = {
 type Props = {
   limit?: number;
   debounce?: number;
-  tagsIds: string[];
   collectionsIds: string[];
   sorting: GetUserItemsSortType;
   filtering: GetUserItemsFilterType;
@@ -24,15 +23,8 @@ type Props = {
 };
 
 export const useGetUserItems = (props: Props) => {
-  const {
-    limit,
-    debounce,
-    collectionsIds,
-    sorting,
-    tagsIds,
-    filtering,
-    searchQuery,
-  } = props;
+  const { limit, debounce, collectionsIds, sorting, filtering, searchQuery } =
+    props;
 
   const LIMIT = limit || 30;
   const DEBOUNCE = debounce || 400;
@@ -47,7 +39,6 @@ export const useGetUserItems = (props: Props) => {
       filtering,
       sorting,
       searchQuery: searchQuery.toLowerCase().trim(),
-      tagsIds,
     },
     DEBOUNCE,
   );
@@ -59,7 +50,6 @@ export const useGetUserItems = (props: Props) => {
     sorting: debounceObj.sorting,
     filtering: debounceObj.filtering,
     search: debounceObj.searchQuery,
-    tagsIds: debounceObj.tagsIds,
   });
 
   useEffect(() => {

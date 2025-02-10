@@ -2,33 +2,17 @@ import React, { type Dispatch, type SetStateAction } from "react";
 import { Badge } from "../../ui";
 import type { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
 import { STATUS_NAMES } from "../../../../constants";
-import type { TagType } from "../../../../server/api/modules/tag/types";
 
 type Props = {
-  tags: TagType[];
   filtering: GetUserItemsFilterType;
   setFiltering: Dispatch<SetStateAction<GetUserItemsFilterType>>;
-  selectedTagsIds: string[];
-  setSelectedTagsIds: Dispatch<SetStateAction<string[]>>;
 };
 
 const HomeFilterBadges = (props: Props) => {
-  const { tags, selectedTagsIds, setSelectedTagsIds, filtering, setFiltering } =
-    props;
+  const { filtering, setFiltering } = props;
 
   return (
     <div className="flex flex-wrap gap-2">
-      {selectedTagsIds.map((tagId) => (
-        <Badge
-          className="cursor-pointer text-sm hover:bg-destructive"
-          key={tagId}
-          onClick={() =>
-            setSelectedTagsIds((prev) => prev.filter((id) => id !== tagId))
-          }
-        >
-          {tags.find((tag) => tag.id === tagId)?.name}
-        </Badge>
-      ))}
       {filtering.map((filter, index) => {
         let badgeText = "";
         switch (filter.name) {
@@ -45,6 +29,7 @@ const HomeFilterBadges = (props: Props) => {
                 ? `+ ${STATUS_NAMES[filter.value].toLowerCase()}`
                 : `- ${STATUS_NAMES[filter.value].toLowerCase()}`;
             break;
+          case "tag":
           case "field":
             badgeText =
               filter.type === "include"
@@ -72,13 +57,10 @@ const HomeFilterBadges = (props: Props) => {
           </Badge>
         );
       })}
-      {[...filtering, ...selectedTagsIds].length > 0 && (
+      {filtering.length > 0 && (
         <Badge
           className="cursor-pointer bg-destructive text-sm"
-          onClick={() => {
-            setFiltering([]);
-            setSelectedTagsIds([]);
-          }}
+          onClick={() => setFiltering([])}
         >
           Clear
         </Badge>

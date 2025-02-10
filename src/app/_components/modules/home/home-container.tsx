@@ -31,7 +31,7 @@ function HomeContainer() {
     type: "desc",
     name: "date",
   });
-  const [selectedTagsIds, setSelectedTagsIds] = useState<string[]>([]);
+
   const [searchFilter, setSearchFilter] = useState<string>("");
 
   const {
@@ -49,7 +49,7 @@ function HomeContainer() {
     collectionsIds: debouncedSelectedCollectionsIds,
   });
 
-  const { filterFieldGroups } = useGetFilterFields({
+  const { fieldGroups } = useGetFilterFields({
     collectionsIds: debouncedSelectedCollectionsIds,
   });
 
@@ -70,7 +70,6 @@ function HomeContainer() {
     sorting,
     filtering,
     searchQuery,
-    tagsIds: selectedTagsIds,
   });
 
   if (!collections.length) {
@@ -95,8 +94,6 @@ function HomeContainer() {
 
         <FilterDialog
           tags={tags}
-          selectedTagsIds={selectedTagsIds}
-          setSelectedTagsIds={setSelectedTagsIds}
           searchFilter={searchFilter}
           setSearchFilter={setSearchFilter}
           filterRates={filterRates}
@@ -106,7 +103,7 @@ function HomeContainer() {
           filtering={filtering}
           setFiltering={setFiltering}
           yearsRange={yearsRange}
-          filterFieldGroups={filterFieldGroups}
+          fieldGroups={fieldGroups}
         />
       </div>
 
@@ -116,13 +113,7 @@ function HomeContainer() {
         setQuery={setSearchQuery}
       />
 
-      <HomeFilterBadges
-        tags={tags}
-        selectedTagsIds={selectedTagsIds}
-        setSelectedTagsIds={setSelectedTagsIds}
-        filtering={filtering}
-        setFiltering={setFiltering}
-      />
+      <HomeFilterBadges filtering={filtering} setFiltering={setFiltering} />
       {groupedItems.map((group, index) => (
         <div key={group.groupBy + index} className="flex flex-col gap-4">
           <Header vtag="h3">{group.groupBy}</Header>

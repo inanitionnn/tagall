@@ -10,12 +10,11 @@ import { useDebounce } from "../utils/use-debounce.hook";
 type Props = {
   limit?: number;
   debounce?: number;
-  tagsIds: string[];
   collectionsIds: string[];
   filtering: GetUserItemsFilterType;
 };
 export const useGetRandomUserItems = (props: Props) => {
-  const { limit, debounce, collectionsIds, tagsIds, filtering } = props;
+  const { limit, debounce, collectionsIds, filtering } = props;
 
   const LIMIT = limit || 10;
   const DEBOUNCE = debounce || 400;
@@ -26,7 +25,6 @@ export const useGetRandomUserItems = (props: Props) => {
     {
       collectionsIds,
       filtering,
-      tagsIds,
       limit,
     },
     DEBOUNCE,
@@ -37,7 +35,6 @@ export const useGetRandomUserItems = (props: Props) => {
       limit: LIMIT,
       collectionsIds: debounceObj.collectionsIds,
       filtering: debounceObj.filtering,
-      tagsIds: debounceObj.tagsIds,
     });
 
   useEffect(() => {

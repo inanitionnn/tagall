@@ -229,10 +229,10 @@ export async function GetUserItems(props: {
         .map((f) => f.fieldId);
       const includeTagIds = tags
         .filter((f) => f.type === "include")
-        .map((f) => f.value);
+        .map((f) => f.tagId);
       const excludeTagIds = tags
         .filter((f) => f.type === "exclude")
-        .map((f) => f.value);
+        .map((f) => f.tagId);
 
       const userItems = await ctx.db.userToItem.findMany({
         where: {
@@ -811,10 +811,10 @@ export async function GetRandomUserItems(props: {
     .map((f) => f.fieldId);
   const includeTagIds = tags
     .filter((f) => f.type === "include")
-    .map((f) => f.value);
+    .map((f) => f.tagId);
   const excludeTagIds = tags
     .filter((f) => f.type === "exclude")
-    .map((f) => f.value);
+    .map((f) => f.tagId);
 
   const radndomUserItems = await ctx.db.userToItem.findManyRandom(limit, {
     where: {

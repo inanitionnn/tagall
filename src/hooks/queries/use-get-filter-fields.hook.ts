@@ -10,16 +10,14 @@ type Props = {
 export const useGetFilterFields = (props: Props) => {
   const { collectionsIds } = props;
 
-  const [filterFieldGroups, setFilterFieldGroups] = useState<
-    FilterFieldsType[]
-  >([]);
+  const [fieldGroups, setFieldGroups] = useState<FilterFieldsType[]>([]);
 
   const { data, isLoading, error, refetch } =
     api.field.getFilterFields.useQuery(collectionsIds);
 
   useEffect(() => {
     if (data) {
-      setFilterFieldGroups(data);
+      setFieldGroups(data);
     }
   }, [data]);
 
@@ -35,6 +33,6 @@ export const useGetFilterFields = (props: Props) => {
 
   return {
     isLoading,
-    filterFieldGroups,
+    fieldGroups,
   };
 };

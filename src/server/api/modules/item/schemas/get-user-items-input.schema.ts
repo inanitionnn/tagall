@@ -27,7 +27,8 @@ export const GetUserItemsFilterSchema = z.array(
     z.object({
       name: z.literal("tag"),
       type: z.enum(["include", "exclude"]),
-      value: z.string().cuid(),
+      tagId: z.string().cuid(),
+      value: z.string(),
     }),
   ]),
 );
