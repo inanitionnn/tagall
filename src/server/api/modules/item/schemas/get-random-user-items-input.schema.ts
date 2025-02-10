@@ -24,6 +24,11 @@ export const GetRandomUserItemsFilterSchema = z.array(
       fieldId: z.string().cuid(),
       value: z.string(),
     }),
+    z.object({
+      name: z.literal("tag"),
+      type: z.enum(["include", "exclude"]),
+      value: z.string().cuid(),
+    }),
   ]),
 );
 
@@ -37,6 +42,5 @@ export const GetRandomUserItemsInputSchema = z
     limit: z.number().int().max(100).min(1).optional(),
     collectionsIds: z.array(z.string().cuid()).optional(),
     filtering: GetRandomUserItemsFilterSchema.optional(),
-    tagsIds: z.array(z.string().cuid()).optional(),
   })
   .optional();

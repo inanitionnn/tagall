@@ -208,32 +208,31 @@ export async function GetUserItems(props: {
   const page = input?.page ?? 1;
   const promise = new Promise<ItemSmallType[]>((resolve) => {
     (async () => {
-      const rateFromFilter = input?.filtering
-        ?.filter((filter) => filter.name === "rate")
-        .find((filter) => filter.type === "from");
-      const rateToFilter = input?.filtering
-        ?.filter((filter) => filter.name === "rate")
-        .find((filter) => filter.type === "to");
-      const yearFromFilter = input?.filtering
-        ?.filter((filter) => filter.name === "year")
-        .find((filter) => filter.type === "from");
-      const yearToFilter = input?.filtering
-        ?.filter((filter) => filter.name === "year")
-        .find((filter) => filter.type === "to");
-      const statusIncludeFilter = input?.filtering
-        ?.filter((filter) => filter.name === "status")
-        .filter((filter) => filter.type === "include");
-      const statusExcludeFilter = input?.filtering
-        ?.filter((filter) => filter.name === "status")
-        .filter((filter) => filter.type === "exclude");
-      const fields =
-        input?.filtering?.filter((filter) => filter.name === "field") ?? [];
+      const rates = input?.filtering?.filter((f) => f.name === "rate") ?? [];
+      const statuses =
+        input?.filtering?.filter((f) => f.name === "status") ?? [];
+      const years = input?.filtering?.filter((f) => f.name === "year") ?? [];
+      const fields = input?.filtering?.filter((f) => f.name === "field") ?? [];
+      const tags = input?.filtering?.filter((f) => f.name === "tag") ?? [];
+
+      const rateFromFilter = rates.find((f) => f.type === "from");
+      const rateToFilter = rates.find((f) => f.type === "to");
+      const yearFromFilter = years.find((f) => f.type === "from");
+      const yearToFilter = years.find((f) => f.type === "to");
+      const statusIncludeFilter = statuses.filter((f) => f.type === "include");
+      const statusExcludeFilter = statuses.filter((f) => f.type === "exclude");
       const includeFieldsIds = fields
-        .filter((filter) => filter.type === "include")
-        .map((field) => field.fieldId);
+        .filter((f) => f.type === "include")
+        .map((f) => f.fieldId);
       const excludeFieldsIds = fields
-        .filter((filter) => filter.type === "exclude")
-        .map((field) => field.fieldId);
+        .filter((f) => f.type === "exclude")
+        .map((f) => f.fieldId);
+      const includeTagIds = tags
+        .filter((f) => f.type === "include")
+        .map((f) => f.value);
+      const excludeTagIds = tags
+        .filter((f) => f.type === "exclude")
+        .map((f) => f.value);
 
       const userItems = await ctx.db.userToItem.findMany({
         where: {
@@ -261,14 +260,23 @@ export async function GetUserItems(props: {
             },
           }),
 
-          ...(input?.tagsIds?.length && {
-            AND: input.tagsIds.map((tagId) => ({
+          ...(includeTagIds.length && {
+            AND: includeTagIds.map((tagId) => ({
               tags: {
                 some: {
                   id: tagId,
                 },
               },
             })),
+          }),
+          ...(excludeTagIds.length && {
+            tags: {
+              none: {
+                id: {
+                  in: excludeTagIds,
+                },
+              },
+            },
           }),
 
           item: {
@@ -783,32 +791,30 @@ export async function GetRandomUserItems(props: {
 
   const limit = input?.limit ?? 12;
 
-  const rateFromFilter = input?.filtering
-    ?.filter((filter) => filter.name === "rate")
-    .find((filter) => filter.type === "from");
-  const rateToFilter = input?.filtering
-    ?.filter((filter) => filter.name === "rate")
-    .find((filter) => filter.type === "to");
-  const yearFromFilter = input?.filtering
-    ?.filter((filter) => filter.name === "year")
-    .find((filter) => filter.type === "from");
-  const yearToFilter = input?.filtering
-    ?.filter((filter) => filter.name === "year")
-    .find((filter) => filter.type === "to");
-  const statusIncludeFilter = input?.filtering
-    ?.filter((filter) => filter.name === "status")
-    .filter((filter) => filter.type === "include");
-  const statusExcludeFilter = input?.filtering
-    ?.filter((filter) => filter.name === "status")
-    .filter((filter) => filter.type === "exclude");
-  const fields =
-    input?.filtering?.filter((filter) => filter.name === "field") ?? [];
+  const rates = input?.filtering?.filter((f) => f.name === "rate") ?? [];
+  const statuses = input?.filtering?.filter((f) => f.name === "status") ?? [];
+  const years = input?.filtering?.filter((f) => f.name === "year") ?? [];
+  const fields = input?.filtering?.filter((f) => f.name === "field") ?? [];
+  const tags = input?.filtering?.filter((f) => f.name === "tag") ?? [];
+
+  const rateFromFilter = rates.find((f) => f.type === "from");
+  const rateToFilter = rates.find((f) => f.type === "to");
+  const yearFromFilter = years.find((f) => f.type === "from");
+  const yearToFilter = years.find((f) => f.type === "to");
+  const statusIncludeFilter = statuses.filter((f) => f.type === "include");
+  const statusExcludeFilter = statuses.filter((f) => f.type === "exclude");
   const includeFieldsIds = fields
-    .filter((filter) => filter.type === "include")
-    .map((field) => field.fieldId);
+    .filter((f) => f.type === "include")
+    .map((f) => f.fieldId);
   const excludeFieldsIds = fields
-    .filter((filter) => filter.type === "exclude")
-    .map((field) => field.fieldId);
+    .filter((f) => f.type === "exclude")
+    .map((f) => f.fieldId);
+  const includeTagIds = tags
+    .filter((f) => f.type === "include")
+    .map((f) => f.value);
+  const excludeTagIds = tags
+    .filter((f) => f.type === "exclude")
+    .map((f) => f.value);
 
   const radndomUserItems = await ctx.db.userToItem.findManyRandom(limit, {
     where: {
@@ -836,14 +842,23 @@ export async function GetRandomUserItems(props: {
         },
       }),
 
-      ...(input?.tagsIds?.length && {
-        AND: input.tagsIds.map((tagId) => ({
+      ...(includeTagIds.length && {
+        AND: includeTagIds.map((tagId) => ({
           tags: {
             some: {
               id: tagId,
             },
           },
         })),
+      }),
+      ...(excludeTagIds.length && {
+        tags: {
+          none: {
+            id: {
+              in: excludeTagIds,
+            },
+          },
+        },
       }),
 
       item: {

@@ -24,6 +24,11 @@ export const GetUserItemsFilterSchema = z.array(
       fieldId: z.string().cuid(),
       value: z.string(),
     }),
+    z.object({
+      name: z.literal("tag"),
+      type: z.enum(["include", "exclude"]),
+      value: z.string().cuid(),
+    }),
   ]),
 );
 
@@ -40,6 +45,5 @@ export const GetUserItemsInputSchema = z
     filtering: GetUserItemsFilterSchema.optional(),
     sorting: GetUserItemsSortSchema.optional(),
     search: z.string().optional(),
-    tagsIds: z.array(z.string().cuid()).optional(),
   })
   .optional();
