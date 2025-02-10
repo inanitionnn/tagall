@@ -1,21 +1,75 @@
-import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { useState, useEffect, useCallback } from "react";
+import { ZodSchema } from "zod";
 
-const areObjectsEqual = (a: unknown, b: unknown): boolean => {
-  return JSON.stringify(a) === JSON.stringify(b);
-};
+export function useQueryParams<T extends { [key: string]: unknown }>(
+  schema: ZodSchema<T>,
+  defaultParams: Partial<T> = {},
+) {
+  const router = useRouter();
 
-export const useQueryParams = <T>(value: T, delay: number): T => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
+  const getValidatedParams = (): T => {
+    const result = schema.safeParse(router.query);
+    if (result.success) {
+      return result.data;
+    }
+    return defaultParams as T;
+  };
+
+  const [params, setParams] = useState<T>(() => {
+    if (!router.isReady) {
+      return defaultParams as T;
+    }
+    return getValidatedParams();
+  });
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      if (!areObjectsEqual(value, debouncedValue)) {
-        setDebouncedValue(value);
+    if (!router.isReady) return;
+    setParams(getValidatedParams());
+  }, [router.query, router.isReady]);
+
+  const setQueryParams = useCallback(
+    (newParams: Partial<T>) => {
+      const mergedParams = { ...params, ...newParams };
+
+      const query: { [key: string]: string } = {};
+      (Object.keys(mergedParams) as (keyof T)[]).forEach((key) => {
+        const value = mergedParams[key];
+        if (value !== undefined && value !== null) {
+          query[String(key)] = String(value);
+        }
+      });
+
+      router.push(
+        {
+          pathname: router.pathname,
+          query,
+        },
+        undefined,
+        { shallow: true },
+      );
+    },
+    [params, router],
+  );
+
+  const clearQueryParams = useCallback(() => {
+    const clearedQuery: { [key: string]: string } = {};
+    (Object.keys(defaultParams) as (keyof T)[]).forEach((key) => {
+      const value = defaultParams[key];
+      if (value !== undefined && value !== null) {
+        clearedQuery[String(key)] = String(value);
       }
-    }, delay);
+    });
 
-    return () => clearTimeout(handler);
-  }, [value, delay, debouncedValue]);
+    router.push(
+      {
+        pathname: router.pathname,
+        query: clearedQuery,
+      },
+      undefined,
+      { shallow: true },
+    );
+  }, [router, defaultParams]);
 
-  return debouncedValue;
-};
+  return { params, setQueryParams, clearQueryParams };
+}
