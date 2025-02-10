@@ -47,7 +47,7 @@ export const GetFilterFields = async (props: {
       const fieldGroups = await ctx.db.fieldGroup.findMany({
         where: {
           isFiltering: true,
-          ...(input?.length && {
+          ...(input.length && {
             collections: {
               some: {
                 id: {

@@ -44,4 +44,4 @@ export const GetRandomUserItemsInputSchema = z
     collectionsIds: z.array(z.string().cuid()).optional(),
     filtering: GetRandomUserItemsFilterSchema.optional(),
   })
-  .optional();
+  .default({});

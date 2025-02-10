@@ -47,4 +47,4 @@ export const GetUserItemsInputSchema = z
     sorting: GetUserItemsSortSchema.optional(),
     search: z.string().optional(),
   })
-  .optional();
+  .default({});

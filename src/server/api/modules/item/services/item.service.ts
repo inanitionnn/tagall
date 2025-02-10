@@ -204,16 +204,16 @@ export async function GetUserItems(props: {
 }): Promise<ItemSmallType[]> {
   const { ctx, input } = props;
   const redisKey = `item:GetUserItems:${ctx.session.user.id}:${JSON.stringify(input)}`;
-  const limit = input?.limit ?? 20;
-  const page = input?.page ?? 1;
+  const limit = input.limit ?? 20;
+  const page = input.page ?? 1;
   const promise = new Promise<ItemSmallType[]>((resolve) => {
     (async () => {
-      const rates = input?.filtering?.filter((f) => f.name === "rate") ?? [];
+      const rates = input.filtering?.filter((f) => f.name === "rate") ?? [];
       const statuses =
-        input?.filtering?.filter((f) => f.name === "status") ?? [];
-      const years = input?.filtering?.filter((f) => f.name === "year") ?? [];
-      const fields = input?.filtering?.filter((f) => f.name === "field") ?? [];
-      const tags = input?.filtering?.filter((f) => f.name === "tag") ?? [];
+        input.filtering?.filter((f) => f.name === "status") ?? [];
+      const years = input.filtering?.filter((f) => f.name === "year") ?? [];
+      const fields = input.filtering?.filter((f) => f.name === "field") ?? [];
+      const tags = input.filtering?.filter((f) => f.name === "tag") ?? [];
 
       const rateFromFilter = rates.find((f) => f.type === "from");
       const rateToFilter = rates.find((f) => f.type === "to");
@@ -280,15 +280,15 @@ export async function GetUserItems(props: {
           }),
 
           item: {
-            ...(input?.search && {
+            ...(input.search && {
               title: {
                 contains: input.search,
                 mode: "insensitive",
               },
             }),
-            ...(input?.collectionsIds?.length && {
+            ...(input.collectionsIds?.length && {
               collectionId: {
-                in: input?.collectionsIds,
+                in: input.collectionsIds,
               },
             }),
             ...((yearFromFilter || yearToFilter) && {
@@ -322,7 +322,7 @@ export async function GetUserItems(props: {
           },
         },
 
-        ...(input?.sorting && {
+        ...(input.sorting && {
           ...(input.sorting.name === "rate" && {
             orderBy: [
               {
@@ -418,7 +418,7 @@ export async function GetUserItemsStats(props: {
       const all = await ctx.db.userToItem.count({
         where: {
           userId: ctx.session.user.id,
-          ...(input?.length && {
+          ...(input.length && {
             item: {
               collectionId: {
                 in: input,
@@ -548,7 +548,7 @@ export async function GetYearsRange(props: {
             userId: ctx.session.user.id,
           },
         },
-        ...(input?.length && {
+        ...(input.length && {
           collectionId: {
             in: input,
           },
@@ -789,13 +789,13 @@ export async function GetRandomUserItems(props: {
 }): Promise<ItemSmallType[]> {
   const { ctx, input } = props;
 
-  const limit = input?.limit ?? 12;
+  const limit = input.limit ?? 12;
 
-  const rates = input?.filtering?.filter((f) => f.name === "rate") ?? [];
-  const statuses = input?.filtering?.filter((f) => f.name === "status") ?? [];
-  const years = input?.filtering?.filter((f) => f.name === "year") ?? [];
-  const fields = input?.filtering?.filter((f) => f.name === "field") ?? [];
-  const tags = input?.filtering?.filter((f) => f.name === "tag") ?? [];
+  const rates = input.filtering?.filter((f) => f.name === "rate") ?? [];
+  const statuses = input.filtering?.filter((f) => f.name === "status") ?? [];
+  const years = input.filtering?.filter((f) => f.name === "year") ?? [];
+  const fields = input.filtering?.filter((f) => f.name === "field") ?? [];
+  const tags = input.filtering?.filter((f) => f.name === "tag") ?? [];
 
   const rateFromFilter = rates.find((f) => f.type === "from");
   const rateToFilter = rates.find((f) => f.type === "to");
@@ -862,9 +862,9 @@ export async function GetRandomUserItems(props: {
       }),
 
       item: {
-        ...(input?.collectionsIds?.length && {
+        ...(input.collectionsIds?.length && {
           collectionId: {
-            in: input?.collectionsIds,
+            in: input.collectionsIds,
           },
         }),
         ...((yearFromFilter || yearToFilter) && {
