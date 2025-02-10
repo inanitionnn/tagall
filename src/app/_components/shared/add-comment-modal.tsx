@@ -71,7 +71,13 @@ const AddCommentModal = (props: Props) => {
                         autoFocus
                         placeholder="1 Season"
                         max={255}
-                        {...form.register("title")}
+                        onChange={(e) =>
+                          form.setValue(
+                            "title",
+                            e.target.value ? e.target.value : null,
+                          )
+                        }
+                        value={form.watch("title") ?? ""}
                       />
                     </FormControl>
                   </div>
