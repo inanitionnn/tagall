@@ -12,7 +12,7 @@ import {
   ScrollButton,
   Search,
 } from "../../shared";
-import { useGetUserTags, useParseSearch } from "../../../../hooks";
+import { useGetUserTags, useSearchItems } from "../../../../hooks";
 import { api } from "../../../../trpc/react";
 import { Label, Paragraph, Switch } from "../../ui";
 
@@ -32,7 +32,7 @@ function AddContainer() {
     collectionsIds: [selectedCollectionId],
   });
 
-  const { isLoading, query, setQuery, submit } = useParseSearch({
+  const { isLoading, query, setQuery, submit } = useSearchItems({
     selectedCollectionId,
     setSearchResults,
     setSelectedItem,

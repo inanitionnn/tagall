@@ -17,7 +17,7 @@ import {
 import { useRef, useState } from "react";
 import { CardContainer, CloudinaryImage } from "../../shared";
 import type { User } from "@prisma/client";
-import { useUpdateUser } from "../../../../hooks/use-update-user.hook";
+import { useUpdateUser } from "../../../../hooks/mutations/use-update-user.hook";
 import Image from "next/image";
 import { UserRound } from "lucide-react";
 

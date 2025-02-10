@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
-import type { TagType } from "../server/api/modules/tag/types/tag.type";
-import { api } from "../trpc/react";
+import type { TagType } from "../../server/api/modules/tag/types/tag.type";
+import { api } from "../../trpc/react";
 
 type Props = {
   collectionsIds: string[];

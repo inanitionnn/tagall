@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { api } from "../trpc/react";
+import { api } from "../../trpc/react";
 import { toast } from "sonner";
-import type { ItemSmallType } from "../server/api/modules/item/types";
+import type { ItemSmallType } from "../../server/api/modules/item/types";
 
 export const useSearchItemByText = () => {
   const [items, setItems] = useState<ItemSmallType[]>([]);

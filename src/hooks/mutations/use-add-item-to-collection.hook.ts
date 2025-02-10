@@ -1,7 +1,7 @@
 import { type Dispatch, type SetStateAction } from "react";
-import type { SearchResultType } from "../server/api/modules/parse/types";
+import type { SearchResultType } from "../../server/api/modules/parse/types";
 import { ItemStatus } from "@prisma/client";
-import { api } from "../trpc/react";
+import { api } from "../../trpc/react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";

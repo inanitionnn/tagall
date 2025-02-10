@@ -6,7 +6,7 @@ import { useGetUserCollections } from "../../../../hooks";
 import { ProfileStatusStats } from "./profile-status-stats";
 import { ProfileRateStats } from "./profile-rate-stats";
 import { ProfileDateStats } from "./profile-date-stats";
-import { useUserItemsStats } from "../../../../hooks/use-get-user-items-stats.hook";
+import { useUserItemsStats } from "../../../../hooks/queries/use-get-user-items-stats.hook";
 
 function ProfileContainer() {
   const [user] = api.user.getUser.useSuspenseQuery();

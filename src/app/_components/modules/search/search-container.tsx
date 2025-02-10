@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { AutosizeTextarea, Button, Header, Spinner } from "../../ui";
-import { useSearchItemByText } from "../../../../hooks/use-search-item-by-text";
 import { CardContainer, CloudinaryImage, Container } from "../../shared";
 import Link from "next/link";
+import { useSearchItemByText } from "../../../../hooks/mutations/use-search-item-by-text";
 
 function SearchContainer() {
   const [searchText, setSearchText] = useState("");

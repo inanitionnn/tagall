@@ -1,10 +1,10 @@
-import { api } from "../trpc/react";
+import { api } from "../../trpc/react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Dispatch, RefObject, SetStateAction } from "react";
 import type { User } from "@prisma/client";
-import { env } from "../env";
+import { env } from "../../env";
 import { toast } from "sonner";
 
 const formSchema = z.object({

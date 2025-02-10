@@ -1,7 +1,10 @@
 import { type Dispatch, type SetStateAction } from "react";
-import { api } from "../trpc/react";
+import { api } from "../../trpc/react";
 import { toast } from "sonner";
-import type { ItemSmallType, ItemType } from "../server/api/modules/item/types";
+import type {
+  ItemSmallType,
+  ItemType,
+} from "../../server/api/modules/item/types";
 import { useRouter } from "next/navigation";
 
 type Props = {

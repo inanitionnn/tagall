@@ -3,8 +3,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Dispatch, SetStateAction } from "react";
-import type { TagType } from "../server/api/modules/tag/types/tag.type";
-import { api } from "../trpc/react";
+import { api } from "../../trpc/react";
 
 const formSchema = z.object({
   name: z.string().min(1).max(255),
@@ -16,14 +15,13 @@ const formSchema = z.object({
 type formDataType = z.infer<typeof formSchema>;
 
 type Props = {
-  tag: TagType;
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const useUpdateTag = (props: Props) => {
-  const { tag, setOpen } = props;
+export const useAddTag = (props: Props) => {
+  const { setOpen } = props;
 
-  const { mutateAsync } = api.tag.updateTag.useMutation();
+  const { mutateAsync } = api.tag.addTag.useMutation();
 
   const utils = api.useUtils();
 
@@ -31,17 +29,13 @@ export const useUpdateTag = (props: Props) => {
     resolver: zodResolver(formSchema),
     mode: "onBlur",
     defaultValues: {
-      name: tag.name,
-      collectionsIds: tag.collections.map((collection) => collection.id),
+      name: "",
+      collectionsIds: [],
     },
   });
 
   const submit = async (data: formDataType) => {
-    const formData = {
-      ...data,
-      id: tag.id,
-    };
-    const promise = mutateAsync(formData, {
+    const promise = mutateAsync(data, {
       onSuccess: () => {
         utils.tag.invalidate();
       },
@@ -49,10 +43,12 @@ export const useUpdateTag = (props: Props) => {
 
     setOpen(false);
 
+    form.reset();
+
     toast.promise(promise, {
-      loading: `Updating tag...`,
-      success: `Tag updated successfully!`,
-      error: (error) => `Failed to update tag: ${error.message}`,
+      loading: `Adding tag...`,
+      success: `Tag added successfully!`,
+      error: (error) => `Failed to add tag: ${error.message}`,
     });
   };
 

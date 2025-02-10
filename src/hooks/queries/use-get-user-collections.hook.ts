@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { api } from "../trpc/react";
-import { useDebounce } from "./use-debounce.hook";
+import { api } from "../../trpc/react";
+import { useDebounce } from "../utils/use-debounce.hook";
 
 export const useGetUserCollections = () => {
   const DEBOUNCE = 400;

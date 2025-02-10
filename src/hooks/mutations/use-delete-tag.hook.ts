@@ -1,7 +1,7 @@
-import { api } from "../trpc/react";
+import { api } from "../../trpc/react";
 import { toast } from "sonner";
 import type { Dispatch, SetStateAction } from "react";
-import type { TagType } from "../server/api/modules/tag/types/tag.type";
+import type { TagType } from "../../server/api/modules/tag/types/tag.type";
 
 type Props = {
   tag: TagType;

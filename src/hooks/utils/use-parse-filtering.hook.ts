@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { GetUserItemsFilterType } from "../server/api/modules/item/types";
+import type { GetUserItemsFilterType } from "../../server/api/modules/item/types";
 
 type Props = {
   collectionsIds: string[];
