@@ -4,3 +4,6 @@ export * from "./use-get-years-range.hook";
 export * from "./use-get-user-items.hook";
 export * from "./use-search-items.hook";
 export * from "./use-get-user-tags.hook";
+export * from "./use-get-nearest-items.hook";
+export * from "./use-get-item-detail-fields.hook";
+export * from "./use-get-user-item-comments.hook";

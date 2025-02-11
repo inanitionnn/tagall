@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import type {
   GetUserItemsFilterType,
   GetUserItemsSortType,
-  ItemSmallType,
+  ItemType,
 } from "../../server/api/modules/item/types";
 import { api } from "../../trpc/react";
 import { toast } from "sonner";
@@ -14,7 +14,7 @@ import { DEFAULT_HOME_LIMIT } from "../../constants";
 
 type GroupedItems = {
   groupBy: string;
-  items: ItemSmallType[];
+  items: ItemType[];
 };
 
 type Props = {
@@ -87,7 +87,7 @@ export const useGetUserItems = (props: Props) => {
 
 // #region Helper functions
 
-const groupByKey = (item: ItemSmallType, sorting: GetUserItemsSortType) => {
+const groupByKey = (item: ItemType, sorting: GetUserItemsSortType) => {
   let key: string | number | null = null;
   switch (sorting.name) {
     case "year": {
@@ -126,7 +126,7 @@ const groupByKey = (item: ItemSmallType, sorting: GetUserItemsSortType) => {
 };
 
 const groupItems = (
-  items: ItemSmallType[],
+  items: ItemType[],
   prev: GroupedItems[],
   sorting: GetUserItemsSortType,
 ): GroupedItems[] => {

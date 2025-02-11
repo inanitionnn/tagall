@@ -16,14 +16,14 @@ import {
 } from "../ui";
 import { useState } from "react";
 import { RATING_NAMES, STATUS_ICONS, STATUS_NAMES } from "../../../constants";
-import type { ItemSmallType } from "../../../server/api/modules/item/types";
+import type { ItemType } from "../../../server/api/modules/item/types";
 import { Star } from "lucide-react";
 import { useUpdateItem } from "../../../hooks";
 import { ItemStatus } from "@prisma/client";
 import { CardContainer } from ".";
 
 type Props = {
-  item: ItemSmallType;
+  item: ItemType;
 };
 
 const UpdateItemModal = (props: Props) => {

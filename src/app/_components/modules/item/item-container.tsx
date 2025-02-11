@@ -13,7 +13,12 @@ import {
   UpdateTagsModal,
 } from "../../shared";
 import Link from "next/link";
-import { useGetUserTags } from "../../../../hooks";
+import {
+  useGetItemDetailFields,
+  useGetNearestItems,
+  useGetUserItemComments,
+  useGetUserTags,
+} from "../../../../hooks";
 
 type Props = {
   itemId: string;
@@ -26,6 +31,10 @@ function ItemContainer(props: Props) {
   if (!item) {
     redirect("/");
   }
+
+  const { items } = useGetNearestItems({ itemId });
+  const { fieldData } = useGetItemDetailFields({ itemId });
+  const { comments } = useGetUserItemComments({ itemId });
 
   const { tags } = useGetUserTags({
     collectionsIds: [item.collection.id],
@@ -66,41 +75,45 @@ function ItemContainer(props: Props) {
 
               <UpdateTagsModal tags={tags} item={item} />
 
-              {item.comments?.map((comment, index) => (
-                <ItemUpdateCommentModal comment={comment} key={index} />
-              ))}
+              {comments
+                ? comments.map((comment, index) => (
+                    <ItemUpdateCommentModal comment={comment} key={index} />
+                  ))
+                : null}
             </div>
           </div>
-          <CardContainer className="flex-col gap-4 p-4">
-            <Header vtag="h6">Similar Items:</Header>
+          {items && (
+            <CardContainer className="flex-col gap-4 p-4">
+              <Header vtag="h6">Similar Items:</Header>
 
-            <div className="mx-auto grid max-w-screen-2xl grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5">
-              {item.similarItems.map((item) => (
-                <Link key={item.id} href={`/item/${item.id}`}>
-                  <CardContainer
-                    key={item.id}
-                    className="h-full flex-col hover:scale-105 md:w-full"
-                  >
-                    <div className="aspect-[27/40]">
-                      {item.image ? (
-                        <CloudinaryImage
-                          publicId={item.image}
-                          folder={item.collection.name}
-                        />
-                      ) : (
-                        <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
-                      )}
-                    </div>
-                    <div className="flex h-full items-center justify-center p-2">
-                      <Header vtag="h6" className="line-clamp-3 text-center">
-                        {item.title}
-                      </Header>
-                    </div>
-                  </CardContainer>
-                </Link>
-              ))}
-            </div>
-          </CardContainer>
+              <div className="mx-auto grid max-w-screen-2xl grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5">
+                {items.map((item) => (
+                  <Link key={item.id} href={`/item/${item.id}`}>
+                    <CardContainer
+                      key={item.id}
+                      className="h-full flex-col hover:scale-105 md:w-full"
+                    >
+                      <div className="aspect-[27/40]">
+                        {item.image ? (
+                          <CloudinaryImage
+                            publicId={item.image}
+                            folder={item.collection.name}
+                          />
+                        ) : (
+                          <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
+                        )}
+                      </div>
+                      <div className="flex h-full items-center justify-center p-2">
+                        <Header vtag="h6" className="line-clamp-3 text-center">
+                          {item.title}
+                        </Header>
+                      </div>
+                    </CardContainer>
+                  </Link>
+                ))}
+              </div>
+            </CardContainer>
+          )}
         </div>
         <div className="flex flex-col gap-4 md:w-64">
           <CardContainer className="w-full flex-col gap-4 p-4 md:w-64">
@@ -116,21 +129,22 @@ function ItemContainer(props: Props) {
                 {item.year}
               </Paragraph>
             </div>
-            {item.fieldGroups?.map((group) => (
-              <div key={group.name} className="flex flex-col">
-                <Header vtag="h6">
-                  {group.name
-                    .replace(/([a-z])([A-Z])/g, "$1 $2")
-                    .replace(/^./, (str) => str.toUpperCase())}
-                  :
-                </Header>
-                {group.fields.map((field) => (
-                  <Paragraph key={field} className="text-muted-foreground">
-                    {field}
-                  </Paragraph>
-                ))}
-              </div>
-            ))}
+            {fieldData &&
+              Object.entries(fieldData).map(([key, value]) => (
+                <div key={key} className="flex flex-col">
+                  <Header vtag="h6">
+                    {key
+                      .replace(/([a-z])([A-Z])/g, "$1 $2")
+                      .replace(/^./, (str) => str.toUpperCase())}
+                    :
+                  </Header>
+                  {value.map((field: string) => (
+                    <Paragraph key={field} className="text-muted-foreground">
+                      {field}
+                    </Paragraph>
+                  ))}
+                </div>
+              ))}
           </CardContainer>
 
           <DeleteItemModal item={item} />

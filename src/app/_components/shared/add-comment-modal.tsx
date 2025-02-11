@@ -18,16 +18,13 @@ import {
 } from "../ui";
 import { useState } from "react";
 import { RATING_NAMES, STATUS_ICONS, STATUS_NAMES } from "../../../constants";
-import type {
-  ItemSmallType,
-  ItemType,
-} from "../../../server/api/modules/item/types";
+import type { ItemType } from "../../../server/api/modules/item/types";
 import { ItemStatus } from "@prisma/client";
 import { useAddComment } from "../../../hooks";
 import { CardContainer } from ".";
 
 type Props = {
-  item: ItemType | ItemSmallType;
+  item: ItemType;
 };
 
 const AddCommentModal = (props: Props) => {

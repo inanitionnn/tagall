@@ -1,5 +1,5 @@
 import React from "react";
-import type { ItemSmallType } from "../../../../server/api/modules/item/types";
+import type { ItemType } from "../../../../server/api/modules/item/types";
 import Link from "next/link";
 import {
   HomeListItem,
@@ -14,7 +14,7 @@ import type { TagType } from "../../../../server/api/modules/tag/types";
 
 type Props = {
   itemSize: ItemSize;
-  items: ItemSmallType[];
+  items: ItemType[];
   tags: TagType[];
   selectedCollectionsIds: string[];
 };

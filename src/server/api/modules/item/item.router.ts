@@ -2,6 +2,7 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
   AddToCollectionInputSchema,
   DeleteFromCollectionInputSchema,
+  GetNearestItemsInputSchema,
   GetRandomUserItemsInputSchema,
   GetUserItemInputSchema,
   GetUserItemsInputSchema,
@@ -13,6 +14,7 @@ import {
 import {
   AddToCollection,
   DeleteFromCollection,
+  GetNearestItems,
   GetRandomUserItems,
   GetUserItem,
   GetUserItems,
@@ -82,6 +84,21 @@ export const ItemRouter = createTRPCRouter({
       return response;
     }),
 
+  getNearestItems: protectedProcedure
+    .input(GetNearestItemsInputSchema)
+    .query(async (props) => {
+      const { input } = props;
+      const response = await getOrSetCache(
+        GetNearestItems(props),
+        "item",
+        "getNearestItems",
+        {
+          input,
+        },
+      );
+      return response;
+    }),
+
   getYearsRange: protectedProcedure
     .input(GetYearsRangeInputSchema)
     .query(async (props) => {
@@ -109,6 +126,7 @@ export const ItemRouter = createTRPCRouter({
       await deleteCache("item", "getYearsRange", {
         userId: ctx.session.user.id,
       });
+      await deleteCache("item", "getNearestItems");
       return response;
     }),
 

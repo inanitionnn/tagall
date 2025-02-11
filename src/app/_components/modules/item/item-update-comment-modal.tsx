@@ -22,14 +22,14 @@ import {
   STATUS_ICONS,
   STATUS_NAMES,
 } from "../../../../constants";
-import type { ItemType } from "../../../../server/api/modules/item/types";
 import { ItemStatus } from "@prisma/client";
 import { Star } from "lucide-react";
 import { useDeleteComment, useUpdateComment } from "../../../../hooks";
 import { CardContainer } from "../../shared";
+import type { CommentType } from "../../../../server/api/modules/item-comment/types";
 
 type Props = {
-  comment: NonNullable<ItemType["comments"]>[number];
+  comment: CommentType;
 };
 
 const ItemUpdateCommentModal = (props: Props) => {

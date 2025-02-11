@@ -1,8 +1,5 @@
 "use client";
-import type {
-  ItemSmallType,
-  ItemType,
-} from "../../../server/api/modules/item/types";
+import type { ItemType } from "../../../server/api/modules/item/types";
 import {
   Button,
   Header,
@@ -16,7 +13,7 @@ import { useDeleteItemFromCollection } from "../../../hooks";
 import { CardContainer } from ".";
 
 type Props = {
-  item: ItemType | ItemSmallType;
+  item: ItemType;
 };
 
 const DeleteItemModal = (props: Props) => {

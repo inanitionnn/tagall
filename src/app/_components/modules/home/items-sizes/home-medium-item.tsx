@@ -1,9 +1,9 @@
 import { Header } from "../../../ui";
-import type { ItemSmallType } from "../../../../../server/api/modules/item/types";
+import type { ItemType } from "../../../../../server/api/modules/item/types";
 import { CardContainer, CloudinaryImage } from "../../../shared";
 
 type Props = {
-  item: ItemSmallType;
+  item: ItemType;
 };
 
 const HomeMediumItem = (props: Props) => {

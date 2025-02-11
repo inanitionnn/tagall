@@ -1,5 +1,5 @@
 import { Header, Paragraph } from "../../../ui";
-import type { ItemSmallType } from "../../../../../server/api/modules/item/types";
+import type { ItemType } from "../../../../../server/api/modules/item/types";
 import {
   AddCommentModal,
   CardContainer,
@@ -12,7 +12,7 @@ import type { TagType } from "../../../../../server/api/modules/tag/types";
 import Link from "next/link";
 
 type Props = {
-  item: ItemSmallType;
+  item: ItemType;
   tags: TagType[];
   selectedCollectionsIds: string[];
 };

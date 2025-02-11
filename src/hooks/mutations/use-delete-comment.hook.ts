@@ -4,10 +4,10 @@ import { type Dispatch, type SetStateAction } from "react";
 
 import { api } from "../../trpc/react";
 import { toast } from "sonner";
-import type { ItemType } from "../../server/api/modules/item/types";
+import type { CommentType } from "../../server/api/modules/item-comment/types";
 
 type Props = {
-  comment: NonNullable<ItemType["comments"]>[number];
+  comment: CommentType;
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 

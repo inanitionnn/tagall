@@ -5,12 +5,12 @@ import type {
   GetUserItemInputType,
   GetUserItemsInputType,
   GetYearsRangeInputType,
-  ItemType,
   DeleteFromCollectionInputType,
-  ItemSmallType,
+  ItemType,
   GetRandomUserItemsInputType,
   GetUserItemsStatsInputType,
   ItemsStatsType,
+  GetNearestItemsInputType,
 } from "../types";
 import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../embedding/services";
@@ -200,7 +200,7 @@ async function CreateItem(props: {
 export async function GetUserItems(props: {
   ctx: ContextType;
   input: GetUserItemsInputType;
-}): Promise<ItemSmallType[]> {
+}): Promise<ItemType[]> {
   const { ctx, input } = props;
 
   const limit = input.limit ?? 20;
@@ -380,7 +380,7 @@ export async function GetUserItems(props: {
     skip: (page - 1) * limit,
   });
 
-  return ItemResponse.transformSmallUserItems(userItems);
+  return ItemResponse.transformUserItems(userItems);
 }
 
 export async function GetUserItemsStats(props: {
@@ -429,8 +429,6 @@ export async function GetUserItem(props: {
 }): Promise<ItemType | null> {
   const { ctx, input } = props;
 
-  const LIMIT = 8;
-
   const userItem = await ctx.db.userToItem.findUnique({
     where: {
       userId_itemId: {
@@ -446,11 +444,6 @@ export async function GetUserItem(props: {
         },
       },
       tags: true,
-      itemComments: {
-        orderBy: {
-          createdAt: "desc",
-        },
-      },
     },
   });
 
@@ -458,15 +451,24 @@ export async function GetUserItem(props: {
     return null;
   }
 
+  return ItemResponse.transformUserItem(userItem);
+}
+
+export async function GetNearestItems(props: {
+  ctx: ContextType;
+  input: GetNearestItemsInputType;
+}): Promise<ItemType[]> {
+  const { ctx, input } = props;
+
   const itemEmbedding = await GetItemEmbedding({
     ctx,
-    itemId: input,
+    itemId: input.itemId,
   });
 
   const nearestItemsIds = await GetNearestItemsIds({
     ctx,
     embedding: itemEmbedding,
-    limit: LIMIT,
+    limit: input.limit,
   });
 
   const nearestUserItems = await ctx.db.userToItem.findMany({
@@ -483,17 +485,12 @@ export async function GetUserItem(props: {
       item: {
         include: {
           collection: true,
-          fields: true,
         },
       },
     },
   });
 
-  return ItemResponse.transformBigUserItem({
-    ctx,
-    similarUserItems: nearestUserItems,
-    userItem,
-  });
+  return ItemResponse.transformUserItems(nearestUserItems);
 }
 
 export async function GetYearsRange(props: {
@@ -712,13 +709,13 @@ export async function SearchItemByText(props: {
     },
   });
 
-  return ItemResponse.transformSmallUserItems(nearestUserItems);
+  return ItemResponse.transformUserItems(nearestUserItems);
 }
 
 export async function GetRandomUserItems(props: {
   ctx: ContextType;
   input: GetRandomUserItemsInputType;
-}): Promise<ItemSmallType[]> {
+}): Promise<ItemType[]> {
   const { ctx, input } = props;
 
   const limit = input.limit ?? 12;
@@ -850,7 +847,7 @@ export async function GetRandomUserItems(props: {
     },
   });
 
-  return ItemResponse.transformSmallUserItems(userItems);
+  return ItemResponse.transformUserItems(userItems);
 }
 
 export async function UpdateAllEmbeddings(props: { ctx: ContextType }) {

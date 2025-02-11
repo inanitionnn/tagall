@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { CardContainer, CloudinaryImage } from "../../shared";
 import { Header } from "../../ui";
-import type { ItemSmallType } from "../../../../server/api/modules/item/types";
+import type { ItemType } from "../../../../server/api/modules/item/types";
 
 type Props = {
-  item: ItemSmallType;
+  item: ItemType;
 };
 
 function RandomItem(props: Props) {

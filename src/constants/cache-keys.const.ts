@@ -12,6 +12,9 @@ export const CACHE_KEYS = {
       userId: true,
       input: true,
     },
+    getNearestItems: {
+      input: true,
+    },
     getYearsRange: {
       userId: true,
       input: true,
@@ -28,6 +31,9 @@ export const CACHE_KEYS = {
       userId: true,
       input: true,
     },
+    getItemDetailFields: {
+      input: true,
+    },
   },
   parse: {
     search: {
@@ -37,6 +43,12 @@ export const CACHE_KEYS = {
   tag: {
     getUserTags: {
       userId: true,
+    },
+  },
+  comment: {
+    getUserComments: {
+      userId: true,
+      input: true,
     },
   },
   user: {

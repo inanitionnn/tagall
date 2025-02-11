@@ -1,6 +1,9 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { GetFilterFieldsInputSchema } from "./schemas";
-import { GetFilterFields } from "./services";
+import {
+  GetFilterFieldsInputSchema,
+  GetItemDetailFieldsInputSchema,
+} from "./schemas";
+import { GetFilterFields, GetItemDetailFields } from "./services";
 import { getOrSetCache } from "../../../../lib";
 
 export const FieldRouter = createTRPCRouter({
@@ -14,6 +17,21 @@ export const FieldRouter = createTRPCRouter({
         "getFilterFields",
         {
           userId: ctx.session.user.id,
+          input,
+        },
+      );
+      return response;
+    }),
+
+  getItemDetailFields: protectedProcedure
+    .input(GetItemDetailFieldsInputSchema)
+    .query(async (props) => {
+      const { input } = props;
+      const response = await getOrSetCache(
+        GetItemDetailFields(props),
+        "field",
+        "getItemDetailFields",
+        {
           input,
         },
       );

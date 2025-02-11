@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import type {
   GetUserItemsFilterType,
-  ItemSmallType,
+  ItemType,
 } from "../../server/api/modules/item/types";
 import { api } from "../../trpc/react";
 import { toast } from "sonner";
@@ -17,7 +17,7 @@ type Props = {
 export const useGetRandomUserItems = (props: Props) => {
   const { limit, collectionsIds, filtering } = props;
 
-  const [items, setItems] = useState<ItemSmallType[]>([]);
+  const [items, setItems] = useState<ItemType[]>([]);
 
   const debouncedProps = useDebounce({
     collectionsIds,

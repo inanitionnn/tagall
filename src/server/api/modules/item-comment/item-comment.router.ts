@@ -3,15 +3,34 @@ import {
   UpdateItemCommentInputSchema,
   AddItemCommentInputSchema,
   DeleteItemCommentInputSchema,
+  GetUserItemCommentsInputSchema,
 } from "./schemas";
 import {
   UpdateItemComment,
   AddItemComment,
   DeleteItemComment,
+  GetUserItemComments,
 } from "./services";
-import { deleteCache } from "../../../../lib";
+import { deleteCache, getOrSetCache } from "../../../../lib";
 
 export const ItemCommentRouter = createTRPCRouter({
+  getUserItemComment: protectedProcedure
+    .input(GetUserItemCommentsInputSchema)
+    .query(async (props) => {
+      const { ctx, input } = props;
+
+      const response = await getOrSetCache(
+        GetUserItemComments(props),
+        "comment",
+        "getUserComments",
+        {
+          userId: ctx.session.user.id,
+          input,
+        },
+      );
+      return response;
+    }),
+
   addItemComment: protectedProcedure
     .input(AddItemCommentInputSchema)
     .mutation(async (props) => {
@@ -21,17 +40,26 @@ export const ItemCommentRouter = createTRPCRouter({
       await deleteCache("item", "getUserItemsStats", {
         userId: ctx.session.user.id,
       });
-      return response;
+      await deleteCache("comment", "getUserComments", {
+        userId: ctx.session.user.id,
+        input: response.id,
+      });
+
+      return "Comment created successfully!";
     }),
 
   updateItemComment: protectedProcedure
     .input(UpdateItemCommentInputSchema)
     .mutation(async (props) => {
-      const { ctx } = props;
+      const { ctx, input } = props;
       const response = await UpdateItemComment(props);
 
       await deleteCache("item", "getUserItemsStats", {
         userId: ctx.session.user.id,
+      });
+      await deleteCache("comment", "getUserComments", {
+        userId: ctx.session.user.id,
+        input: input.id,
       });
       return response;
     }),
@@ -39,11 +67,15 @@ export const ItemCommentRouter = createTRPCRouter({
   deleteItemComment: protectedProcedure
     .input(DeleteItemCommentInputSchema)
     .mutation(async (props) => {
-      const { ctx } = props;
+      const { ctx, input } = props;
       const response = await DeleteItemComment(props);
 
       await deleteCache("item", "getUserItemsStats", {
         userId: ctx.session.user.id,
+      });
+      await deleteCache("comment", "getUserComments", {
+        userId: ctx.session.user.id,
+        input: input,
       });
       return response;
     }),

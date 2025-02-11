@@ -15,13 +15,13 @@ import {
   Badge,
 } from "../ui";
 import { useState } from "react";
-import type { ItemSmallType } from "../../../server/api/modules/item/types";
+import type { ItemType } from "../../../server/api/modules/item/types";
 import { CardContainer } from ".";
 import { useUpdateItem } from "../../../hooks";
 import type { TagType } from "../../../server/api/modules/tag/types/tag.type";
 
 type Props = {
-  item: ItemSmallType;
+  item: ItemType;
   tags: TagType[];
 };
 
