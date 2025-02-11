@@ -25,6 +25,7 @@ import { z } from "zod";
 import { GetRandomUserItemsInputSchema } from "../../../../server/api/modules/item/schemas";
 import { api } from "../../../../trpc/react";
 import type { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
+import { DEFAULT_RANDOM_LIMIT } from "../../../../constants";
 
 export const RandomParamsSchema =
   GetRandomUserItemsInputSchema._def.innerType.default({});
@@ -37,7 +38,7 @@ function RandomContainer() {
   const { getParam, setQueryParams } = useQueryParams<RandomParamsType>({
     schema: RandomParamsSchema,
     defaultParams: {
-      limit: 10,
+      limit: DEFAULT_RANDOM_LIMIT,
       filtering: [],
       collectionsIds: collections.map((collection) => collection.id),
     },

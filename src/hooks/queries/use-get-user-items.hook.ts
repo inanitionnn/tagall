@@ -10,6 +10,7 @@ import { api } from "../../trpc/react";
 import { toast } from "sonner";
 import { useDebounce } from "../utils/use-debounce.hook";
 import { capitalize, isLetter } from "../../lib";
+import { DEFAULT_HOME_LIMIT } from "../../constants";
 
 type GroupedItems = {
   groupBy: string;
@@ -17,7 +18,6 @@ type GroupedItems = {
 };
 
 type Props = {
-  limit?: number;
   collectionsIds: string[];
   sorting: GetUserItemsSortType;
   filtering: GetUserItemsFilterType;
@@ -25,9 +25,7 @@ type Props = {
 };
 
 export const useGetUserItems = (props: Props) => {
-  const { limit, collectionsIds, sorting, filtering, searchQuery } = props;
-
-  const LIMIT = limit || 30;
+  const { collectionsIds, sorting, filtering, searchQuery } = props;
 
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -41,7 +39,7 @@ export const useGetUserItems = (props: Props) => {
   });
 
   const { data, isLoading, error, refetch } = api.item.getUserItems.useQuery({
-    limit: LIMIT,
+    limit: DEFAULT_HOME_LIMIT,
     page,
     collectionsIds: debouncedProps.collectionsIds,
     sorting: debouncedProps.sorting,
@@ -51,7 +49,7 @@ export const useGetUserItems = (props: Props) => {
 
   useEffect(() => {
     if (data) {
-      if (data.length < LIMIT) {
+      if (data.length < DEFAULT_HOME_LIMIT) {
         setHasMore(false);
       }
       if (page === 1) {

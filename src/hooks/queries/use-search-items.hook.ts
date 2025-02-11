@@ -4,6 +4,7 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { api } from "../../trpc/react";
 import { toast } from "sonner";
 import type { SearchResultType } from "../../server/api/modules/parse/types";
+import { DEFAULT_ADD_LIMIT } from "../../constants";
 
 type Props = {
   query: string;
@@ -11,19 +12,15 @@ type Props = {
   selectedCollectionId: string;
   setSearchResults: Dispatch<SetStateAction<SearchResultType[]>>;
   setSelectedItem: Dispatch<SetStateAction<SearchResultType | null>>;
-  limit?: number;
 };
 export const useSearchItems = (props: Props) => {
   const {
     query,
-    limit,
     selectedCollectionId,
     isAdvancedSearch,
     setSelectedItem,
     setSearchResults,
   } = props;
-
-  const LIMIT = limit || 10;
 
   const { data, isSuccess, isLoading, isError, refetch } =
     api.parse.search.useQuery(
@@ -31,7 +28,7 @@ export const useSearchItems = (props: Props) => {
         collectionId: selectedCollectionId,
         query: query.toLowerCase().trim(),
         isAdvancedSearch,
-        limit: LIMIT,
+        limit: DEFAULT_ADD_LIMIT,
       },
       { enabled: false },
     );

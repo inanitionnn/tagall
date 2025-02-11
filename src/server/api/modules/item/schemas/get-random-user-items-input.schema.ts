@@ -40,7 +40,7 @@ export const GetRandomUserItemsSortSchema = z.object({
 
 export const GetRandomUserItemsInputSchema = z
   .object({
-    limit: z.number().int().max(100).min(1).optional(),
+    limit: z.number().int().max(20).min(1).optional(),
     collectionsIds: z.array(z.string().cuid()).optional(),
     filtering: GetRandomUserItemsFilterSchema.optional(),
   })
