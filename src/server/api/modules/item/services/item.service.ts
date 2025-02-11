@@ -16,7 +16,6 @@ import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../embedding/services";
 import { UploadImageByUrl } from "../../files/files.service";
 import { GetAnilistDetailsById } from "../../parse/services/anilist.service";
-import { deleteCacheByPrefix, getOrSetCache } from "../../../../../lib/redis";
 import {
   UpdateItemEmbedding,
   GetItemEmbedding,
@@ -203,195 +202,185 @@ export async function GetUserItems(props: {
   input: GetUserItemsInputType;
 }): Promise<ItemSmallType[]> {
   const { ctx, input } = props;
-  const redisKey = `item:GetUserItems:${ctx.session.user.id}:${JSON.stringify(input)}`;
+
   const limit = input.limit ?? 20;
   const page = input.page ?? 1;
-  const promise = new Promise<ItemSmallType[]>((resolve) => {
-    (async () => {
-      const rates = input.filtering?.filter((f) => f.name === "rate") ?? [];
-      const statuses =
-        input.filtering?.filter((f) => f.name === "status") ?? [];
-      const years = input.filtering?.filter((f) => f.name === "year") ?? [];
-      const fields = input.filtering?.filter((f) => f.name === "field") ?? [];
-      const tags = input.filtering?.filter((f) => f.name === "tag") ?? [];
+  const rates = input.filtering?.filter((f) => f.name === "rate") ?? [];
+  const statuses = input.filtering?.filter((f) => f.name === "status") ?? [];
+  const years = input.filtering?.filter((f) => f.name === "year") ?? [];
+  const fields = input.filtering?.filter((f) => f.name === "field") ?? [];
+  const tags = input.filtering?.filter((f) => f.name === "tag") ?? [];
 
-      const rateFromFilter = rates.find((f) => f.type === "from");
-      const rateToFilter = rates.find((f) => f.type === "to");
-      const yearFromFilter = years.find((f) => f.type === "from");
-      const yearToFilter = years.find((f) => f.type === "to");
-      const statusIncludeFilter = statuses.filter((f) => f.type === "include");
-      const statusExcludeFilter = statuses.filter((f) => f.type === "exclude");
-      const includeFieldsIds = fields
-        .filter((f) => f.type === "include")
-        .map((f) => f.fieldId);
-      const excludeFieldsIds = fields
-        .filter((f) => f.type === "exclude")
-        .map((f) => f.fieldId);
-      const includeTagIds = tags
-        .filter((f) => f.type === "include")
-        .map((f) => f.tagId);
-      const excludeTagIds = tags
-        .filter((f) => f.type === "exclude")
-        .map((f) => f.tagId);
+  const rateFromFilter = rates.find((f) => f.type === "from");
+  const rateToFilter = rates.find((f) => f.type === "to");
+  const yearFromFilter = years.find((f) => f.type === "from");
+  const yearToFilter = years.find((f) => f.type === "to");
+  const statusIncludeFilter = statuses.filter((f) => f.type === "include");
+  const statusExcludeFilter = statuses.filter((f) => f.type === "exclude");
+  const includeFieldsIds = fields
+    .filter((f) => f.type === "include")
+    .map((f) => f.fieldId);
+  const excludeFieldsIds = fields
+    .filter((f) => f.type === "exclude")
+    .map((f) => f.fieldId);
+  const includeTagIds = tags
+    .filter((f) => f.type === "include")
+    .map((f) => f.tagId);
+  const excludeTagIds = tags
+    .filter((f) => f.type === "exclude")
+    .map((f) => f.tagId);
 
-      const userItems = await ctx.db.userToItem.findMany({
-        where: {
-          userId: ctx.session.user.id,
-          ...((rateFromFilter || rateToFilter) && {
-            rate: {
-              ...(rateToFilter && {
-                lte: rateToFilter.value,
-              }),
-              ...(rateFromFilter && {
-                gte: rateFromFilter.value,
-              }),
+  const userItems = await ctx.db.userToItem.findMany({
+    where: {
+      userId: ctx.session.user.id,
+      ...((rateFromFilter || rateToFilter) && {
+        rate: {
+          ...(rateToFilter && {
+            lte: rateToFilter.value,
+          }),
+          ...(rateFromFilter && {
+            gte: rateFromFilter.value,
+          }),
+        },
+      }),
+      ...((statusIncludeFilter?.length || statusExcludeFilter?.length) && {
+        status: {
+          ...(statusIncludeFilter?.length && {
+            in: statusIncludeFilter.map((filter) => filter.value),
+          }),
+          ...(statusExcludeFilter?.length && {
+            not: {
+              in: statusExcludeFilter.map((filter) => filter.value),
             },
           }),
-          ...((statusIncludeFilter?.length || statusExcludeFilter?.length) && {
-            status: {
-              ...(statusIncludeFilter?.length && {
-                in: statusIncludeFilter.map((filter) => filter.value),
-              }),
-              ...(statusExcludeFilter?.length && {
-                not: {
-                  in: statusExcludeFilter.map((filter) => filter.value),
-                },
-              }),
-            },
-          }),
+        },
+      }),
 
-          ...(includeTagIds.length && {
-            AND: includeTagIds.map((tagId) => ({
-              tags: {
-                some: {
-                  id: tagId,
-                },
-              },
-            })),
-          }),
-          ...(excludeTagIds.length && {
-            tags: {
-              none: {
-                id: {
-                  in: excludeTagIds,
-                },
-              },
+      ...(includeTagIds.length && {
+        AND: includeTagIds.map((tagId) => ({
+          tags: {
+            some: {
+              id: tagId,
             },
-          }),
-
-          item: {
-            ...(input.search && {
-              title: {
-                contains: input.search,
-                mode: "insensitive",
-              },
-            }),
-            ...(input.collectionsIds?.length && {
-              collectionId: {
-                in: input.collectionsIds,
-              },
-            }),
-            ...((yearFromFilter || yearToFilter) && {
-              year: {
-                ...(yearToFilter && {
-                  lte: yearToFilter.value,
-                }),
-                ...(yearFromFilter && {
-                  gte: yearFromFilter.value,
-                }),
-              },
-            }),
-            ...(includeFieldsIds.length && {
-              AND: includeFieldsIds.map((id) => ({
-                fields: {
-                  some: {
-                    id,
-                  },
-                },
-              })),
-            }),
-            ...(excludeFieldsIds.length && {
-              fields: {
-                none: {
-                  id: {
-                    in: excludeFieldsIds,
-                  },
-                },
-              },
-            }),
+          },
+        })),
+      }),
+      ...(excludeTagIds.length && {
+        tags: {
+          none: {
+            id: {
+              in: excludeTagIds,
+            },
           },
         },
+      }),
 
-        ...(input.sorting && {
-          ...(input.sorting.name === "rate" && {
-            orderBy: [
-              {
-                rate: {
-                  sort: input.sorting.type,
-                  nulls: "last",
-                },
-              },
-              { item: { title: "asc" } },
-            ],
-          }),
-          ...(input.sorting.name === "status" && {
-            orderBy: [
-              { status: input.sorting.type },
-              { item: { title: "asc" } },
-            ],
-          }),
-          ...(input.sorting.name === "date" && {
-            orderBy: [
-              { updatedAt: input.sorting.type },
-              { item: { title: "asc" } },
-            ],
-          }),
-          ...(input.sorting.name === "year" && {
-            orderBy: [
-              {
-                item: {
-                  year: {
-                    sort: input.sorting.type,
-                    nulls: "last",
-                  },
-                },
-              },
-              { item: { title: "asc" } },
-            ],
-          }),
-          ...(input.sorting.name === "title" && {
-            orderBy: [
-              { item: { title: input.sorting.type } },
-              {
-                item: {
-                  year: {
-                    sort: "desc",
-                    nulls: "last",
-                  },
-                },
-              },
-            ],
-          }),
+      item: {
+        ...(input.search && {
+          title: {
+            contains: input.search,
+            mode: "insensitive",
+          },
         }),
-
-        include: {
-          tags: true,
-          item: {
-            include: {
-              collection: true,
+        ...(input.collectionsIds?.length && {
+          collectionId: {
+            in: input.collectionsIds,
+          },
+        }),
+        ...((yearFromFilter || yearToFilter) && {
+          year: {
+            ...(yearToFilter && {
+              lte: yearToFilter.value,
+            }),
+            ...(yearFromFilter && {
+              gte: yearFromFilter.value,
+            }),
+          },
+        }),
+        ...(includeFieldsIds.length && {
+          AND: includeFieldsIds.map((id) => ({
+            fields: {
+              some: {
+                id,
+              },
+            },
+          })),
+        }),
+        ...(excludeFieldsIds.length && {
+          fields: {
+            none: {
+              id: {
+                in: excludeFieldsIds,
+              },
             },
           },
+        }),
+      },
+    },
+
+    ...(input.sorting && {
+      ...(input.sorting.name === "rate" && {
+        orderBy: [
+          {
+            rate: {
+              sort: input.sorting.type,
+              nulls: "last",
+            },
+          },
+          { item: { title: "asc" } },
+        ],
+      }),
+      ...(input.sorting.name === "status" && {
+        orderBy: [{ status: input.sorting.type }, { item: { title: "asc" } }],
+      }),
+      ...(input.sorting.name === "date" && {
+        orderBy: [
+          { updatedAt: input.sorting.type },
+          { item: { title: "asc" } },
+        ],
+      }),
+      ...(input.sorting.name === "year" && {
+        orderBy: [
+          {
+            item: {
+              year: {
+                sort: input.sorting.type,
+                nulls: "last",
+              },
+            },
+          },
+          { item: { title: "asc" } },
+        ],
+      }),
+      ...(input.sorting.name === "title" && {
+        orderBy: [
+          { item: { title: input.sorting.type } },
+          {
+            item: {
+              year: {
+                sort: "desc",
+                nulls: "last",
+              },
+            },
+          },
+        ],
+      }),
+    }),
+
+    include: {
+      tags: true,
+      item: {
+        include: {
+          collection: true,
         },
+      },
+    },
 
-        take: limit,
-        skip: (page - 1) * limit,
-      });
-
-      return resolve(ItemResponse.transformSmallUserItems(userItems));
-    })();
+    take: limit,
+    skip: (page - 1) * limit,
   });
 
-  return getOrSetCache<ItemSmallType[]>(redisKey, promise);
+  return ItemResponse.transformSmallUserItems(userItems);
 }
 
 export async function GetUserItemsStats(props: {
@@ -399,45 +388,39 @@ export async function GetUserItemsStats(props: {
   input: GetUserItemsStatsInputType;
 }): Promise<ItemsStatsType> {
   const { ctx, input } = props;
-  const redisKey = `item:GetUserItemsStats:${ctx.session.user.id}:${JSON.stringify(input)}`;
-  const promise = new Promise<ItemsStatsType>((resolve) => {
-    (async () => {
-      const date = await getUserItemsDateStats({
-        ctx,
-        collectionsIds: input,
-      });
-      const rate = await getUserItemsRateStats({
-        ctx,
-        collectionsIds: input,
-      });
-      const status = await getUserItemsStatusStats({
-        ctx,
-        collectionsIds: input,
-      });
 
-      const all = await ctx.db.userToItem.count({
-        where: {
-          userId: ctx.session.user.id,
-          ...(input.length && {
-            item: {
-              collectionId: {
-                in: input,
-              },
-            },
-          }),
-        },
-      });
-
-      return resolve({
-        date,
-        rate,
-        status,
-        all,
-      });
-    })();
+  const date = await getUserItemsDateStats({
+    ctx,
+    collectionsIds: input,
+  });
+  const rate = await getUserItemsRateStats({
+    ctx,
+    collectionsIds: input,
+  });
+  const status = await getUserItemsStatusStats({
+    ctx,
+    collectionsIds: input,
   });
 
-  return getOrSetCache<ItemsStatsType>(redisKey, promise);
+  const all = await ctx.db.userToItem.count({
+    where: {
+      userId: ctx.session.user.id,
+      ...(input.length && {
+        item: {
+          collectionId: {
+            in: input,
+          },
+        },
+      }),
+    },
+  });
+
+  return {
+    date,
+    rate,
+    status,
+    all,
+  };
 }
 
 export async function GetUserItem(props: {
@@ -448,79 +431,69 @@ export async function GetUserItem(props: {
 
   const LIMIT = 8;
 
-  const redisKey = `item:GetUserItem:${ctx.session.user.id}:${input}`;
-
-  const promise = new Promise<ItemType | null>((resolve) => {
-    (async () => {
-      const userItem = await ctx.db.userToItem.findUnique({
-        where: {
-          userId_itemId: {
-            userId: ctx.session.user.id,
-            itemId: input,
-          },
-        },
-        include: {
-          item: {
-            include: {
-              collection: true,
-              fields: true,
-            },
-          },
-          tags: true,
-          itemComments: {
-            orderBy: {
-              createdAt: "desc",
-            },
-          },
-        },
-      });
-
-      if (!userItem) {
-        return resolve(null);
-      }
-
-      const itemEmbedding = await GetItemEmbedding({
-        ctx,
+  const userItem = await ctx.db.userToItem.findUnique({
+    where: {
+      userId_itemId: {
+        userId: ctx.session.user.id,
         itemId: input,
-      });
-
-      const nearestItemsIds = await GetNearestItemsIds({
-        ctx,
-        embedding: itemEmbedding,
-        limit: LIMIT,
-      });
-
-      const nearestUserItems = await ctx.db.userToItem.findMany({
-        where: {
-          userId: ctx.session.user.id,
-          item: {
-            id: {
-              in: nearestItemsIds,
-            },
-          },
-        },
+      },
+    },
+    include: {
+      item: {
         include: {
-          tags: true,
-          item: {
-            include: {
-              collection: true,
-              fields: true,
-            },
-          },
+          collection: true,
+          fields: true,
         },
-      });
-
-      return resolve(
-        ItemResponse.transformBigUserItem({
-          ctx,
-          similarUserItems: nearestUserItems,
-          userItem,
-        }),
-      );
-    })();
+      },
+      tags: true,
+      itemComments: {
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
   });
 
-  return getOrSetCache<ItemType | null>(redisKey, promise, 60 * 60);
+  if (!userItem) {
+    return null;
+  }
+
+  const itemEmbedding = await GetItemEmbedding({
+    ctx,
+    itemId: input,
+  });
+
+  const nearestItemsIds = await GetNearestItemsIds({
+    ctx,
+    embedding: itemEmbedding,
+    limit: LIMIT,
+  });
+
+  const nearestUserItems = await ctx.db.userToItem.findMany({
+    where: {
+      userId: ctx.session.user.id,
+      item: {
+        id: {
+          in: nearestItemsIds,
+        },
+      },
+    },
+    include: {
+      tags: true,
+      item: {
+        include: {
+          collection: true,
+          fields: true,
+        },
+      },
+    },
+  });
+
+  return ItemResponse.transformBigUserItem({
+    ctx,
+    similarUserItems: nearestUserItems,
+    userItem,
+  });
 }
 
 export async function GetYearsRange(props: {
@@ -529,40 +502,34 @@ export async function GetYearsRange(props: {
 }) {
   const { ctx, input } = props;
 
-  const redisKey = `item:GetYearsRange:${ctx.session.user.id}:${JSON.stringify(input)}`;
-
-  const promise = ctx.db.item
-    .aggregate({
-      _min: {
-        year: true,
+  const yearRange = await ctx.db.item.aggregate({
+    _min: {
+      year: true,
+    },
+    _max: {
+      year: true,
+    },
+    where: {
+      year: {
+        not: null,
       },
-      _max: {
-        year: true,
-      },
-      where: {
-        year: {
-          not: null,
+      userToItems: {
+        some: {
+          userId: ctx.session.user.id,
         },
-        userToItems: {
-          some: {
-            userId: ctx.session.user.id,
-          },
-        },
-        ...(input.length && {
-          collectionId: {
-            in: input,
-          },
-        }),
       },
-    })
-    .then((yearRange) => {
-      return {
-        minYear: yearRange._min.year,
-        maxYear: yearRange._max.year,
-      };
-    });
+      ...(input.length && {
+        collectionId: {
+          in: input,
+        },
+      }),
+    },
+  });
 
-  return getOrSetCache(redisKey, promise);
+  return {
+    minYear: yearRange._min.year,
+    maxYear: yearRange._max.year,
+  };
 }
 
 export async function AddToCollection(props: {
@@ -640,13 +607,6 @@ export async function AddToCollection(props: {
     });
   }
 
-  const userItemsKey = `item:GetUserItems:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(userItemsKey);
-  const userYearsRangeKey = `item:GetYearsRange:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(userYearsRangeKey);
-  const fieldsKey = `item:getFieldIdToFieldGroupIdMap:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(fieldsKey);
-
   return "Item added successfully!";
 }
 
@@ -685,19 +645,6 @@ export async function UpdateItem(props: {
     },
   });
 
-  const userItemsKey = `item:GetUserItems:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(userItemsKey);
-  const userItemKey = `item:GetUserItem:${ctx.session.user.id}:${input.id}`;
-  await deleteCacheByPrefix(userItemKey);
-  const statsKey = `item:GetUserItemsStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsKey);
-  const statsDateKey = `itemStats:getUserItemsDateStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsDateKey);
-  const statsRateKey = `itemStats:getUserItemsRateStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsRateKey);
-  const statsStatusKey = `itemStats:getUserItemsStatusStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsStatusKey);
-
   return "Item updated successfully!";
 }
 
@@ -728,21 +675,6 @@ export async function DeleteFromCollection(props: {
       },
     },
   });
-
-  const userItemsKey = `item:GetUserItems:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(userItemsKey);
-  const userItemKey = `item:GetUserItem:${ctx.session.user.id}:${input}`;
-  await deleteCacheByPrefix(userItemKey);
-  const userYearsRangeKey = `item:GetYearsRange:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(userYearsRangeKey);
-  const statsKey = `item:GetUserItemsStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsKey);
-  const statsDateKey = `itemStats:getUserItemsDateStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsDateKey);
-  const statsRateKey = `itemStats:getUserItemsRateStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsRateKey);
-  const statsStatusKey = `itemStats:getUserItemsStatusStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsStatusKey);
 
   return "Item deleted successfully!";
 }

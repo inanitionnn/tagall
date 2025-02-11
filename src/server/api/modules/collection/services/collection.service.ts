@@ -6,12 +6,12 @@ export const GetAll = async (props: {
   ctx: ContextType;
 }): Promise<CollectionType[]> => {
   const { ctx } = props;
-  const redisKey = `collection:GetAll`;
-  const promise = ctx.db.collection.findMany({
+
+  const collections = await ctx.db.collection.findMany({
     orderBy: [{ priority: "asc" }],
   });
 
-  return getOrSetCache<CollectionType[]>(redisKey, promise);
+  return collections;
 };
 
 export const GetUserCollections = async (props: {
@@ -19,8 +19,7 @@ export const GetUserCollections = async (props: {
 }): Promise<CollectionType[]> => {
   const { ctx } = props;
 
-  const redisKey = `collection:GetUserCollections:${ctx.session.user.id}`;
-  const promise = ctx.db.collection.findMany({
+  const collections = await ctx.db.collection.findMany({
     where: {
       items: {
         some: {
@@ -35,5 +34,5 @@ export const GetUserCollections = async (props: {
     orderBy: [{ priority: "asc" }],
   });
 
-  return getOrSetCache<CollectionType[]>(redisKey, promise);
+  return collections;
 };

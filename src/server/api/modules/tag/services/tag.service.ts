@@ -1,4 +1,3 @@
-import { deleteCacheByPrefix, getOrSetCache } from "../../../../../lib/redis";
 import type { ContextType } from "../../../../types";
 import type {
   AddTagInputType,
@@ -14,9 +13,7 @@ export async function GetUserTags(props: {
 }): Promise<TagType[]> {
   const { ctx, input } = props;
 
-  const redisKey = `tag:GetUserTags:${ctx.session.user.id}:${JSON.stringify(input)}`;
-
-  const promise = ctx.db.tag.findMany({
+  const tags = await ctx.db.tag.findMany({
     where: {
       userId: ctx.session.user.id,
       collections: {
@@ -40,7 +37,7 @@ export async function GetUserTags(props: {
     },
   });
 
-  return getOrSetCache<TagType[]>(redisKey, promise);
+  return tags;
 }
 
 export async function AddTag(props: {
@@ -60,9 +57,6 @@ export async function AddTag(props: {
       }),
     },
   });
-
-  const userItemsKey = `tag:GetUserTags:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(userItemsKey);
 
   return "Tag created successfully!";
 }
@@ -86,9 +80,6 @@ export async function UpdateTag(props: {
       }),
     },
   });
-
-  const userItemsKey = `tag:GetUserTags:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(userItemsKey);
 
   return "Tag updated successfully!";
 }
@@ -114,9 +105,6 @@ export async function DeleteTag(props: {
       id: input,
     },
   });
-
-  const userItemsKey = `tag:GetUserTags:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(userItemsKey);
 
   return "Tag deleted successfully!";
 }

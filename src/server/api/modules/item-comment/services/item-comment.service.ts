@@ -1,4 +1,3 @@
-import { deleteCacheByPrefix } from "../../../../../lib/redis";
 import type { ContextType } from "../../../../types";
 import type {
   AddItemCommentInputType,
@@ -52,13 +51,6 @@ export async function AddItemComment(props: {
     },
   });
 
-  const userItemKey = `item:GetUserItem:${ctx.session.user.id}:${input.itemId}`;
-  await deleteCacheByPrefix(userItemKey);
-  const statsKey = `item:GetUserItemsStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsKey);
-  const statsDateKey = `itemStats:getUserItemsDateStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsDateKey);
-
   return "Comment created successfully!";
 }
 
@@ -102,13 +94,6 @@ export async function UpdateItemComment(props: {
     },
   });
 
-  const userItemKey = `item:GetUserItem:${ctx.session.user.id}:${itemComment.userToItem.itemId}`;
-  await deleteCacheByPrefix(userItemKey);
-  const statsKey = `item:GetUserItemsStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsKey);
-  const statsDateKey = `itemStats:getUserItemsDateStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsDateKey);
-
   return "Comment updated successfully!";
 }
 
@@ -145,13 +130,6 @@ export async function DeleteItemComment(props: {
       id: input,
     },
   });
-
-  const userItemKey = `item:GetUserItem:${ctx.session.user.id}:${itemComment.userToItem.itemId}`;
-  await deleteCacheByPrefix(userItemKey);
-  const statsKey = `item:GetUserItemsStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsKey);
-  const statsDateKey = `itemStats:getUserItemsDateStats:${ctx.session.user.id}`;
-  await deleteCacheByPrefix(statsDateKey);
 
   return "Comment deleted successfully!";
 }

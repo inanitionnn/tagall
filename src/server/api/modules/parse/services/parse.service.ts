@@ -1,60 +1,13 @@
-import { getOrSetCache } from "../../../../../lib/redis";
 import type { ContextType } from "../../../../types";
 import type { SearchInputType, SearchResultType } from "../types";
 import { SearchAnilist } from "./anilist.service";
 import { SearchImdb } from "./imdb.service";
 
-export const Search = async (props: {
+export const AddIdToSearchResults = async (props: {
   ctx: ContextType;
-  input: SearchInputType;
+  items: SearchResultType[];
 }) => {
-  const { ctx, input } = props;
-
-  const redisKey = `parse:Search:${JSON.stringify(input)}`;
-  const promise = new Promise<SearchResultType[]>((resolve, reject) => {
-    (async () => {
-      const collection = await ctx.db.collection.findUnique({
-        where: { id: input.collectionId },
-      });
-      if (!collection) {
-        return reject(new Error("Collection not found"));
-      }
-      let items: SearchResultType[] = [];
-      switch (collection.name) {
-        case "Film": {
-          items = await SearchImdb({
-            query: input.query,
-            type: "film",
-            limit: input.limit,
-            isQuickSearch: input.isAdvancedSearch,
-          });
-          break;
-        }
-        case "Serie": {
-          items = await SearchImdb({
-            query: input.query,
-            type: "series",
-            limit: input.limit,
-            isQuickSearch: input.isAdvancedSearch,
-          });
-          break;
-        }
-        case "Manga": {
-          items = await SearchAnilist(input.query, input.limit);
-          break;
-        }
-        default:
-          return reject(new Error("Collection not found"));
-      }
-      return resolve(items);
-    })();
-  });
-
-  const items = await getOrSetCache<SearchResultType[]>(
-    redisKey,
-    promise,
-    60 * 10,
-  );
+  const { ctx, items } = props;
 
   const userItems = await ctx.db.userToItem.findMany({
     where: {
@@ -89,4 +42,46 @@ export const Search = async (props: {
       id: itemsMap[item.parsedId] ?? null,
     };
   });
+};
+
+export const Search = async (props: {
+  ctx: ContextType;
+  input: SearchInputType;
+}) => {
+  const { ctx, input } = props;
+
+  const collection = await ctx.db.collection.findUnique({
+    where: { id: input.collectionId },
+  });
+  if (!collection) {
+    throw new Error("Collection not found");
+  }
+  let items: SearchResultType[] = [];
+  switch (collection.name) {
+    case "Film": {
+      items = await SearchImdb({
+        query: input.query,
+        type: "film",
+        limit: input.limit,
+        isQuickSearch: input.isAdvancedSearch,
+      });
+      break;
+    }
+    case "Serie": {
+      items = await SearchImdb({
+        query: input.query,
+        type: "series",
+        limit: input.limit,
+        isQuickSearch: input.isAdvancedSearch,
+      });
+      break;
+    }
+    case "Manga": {
+      items = await SearchAnilist(input.query, input.limit);
+      break;
+    }
+    default:
+      throw new Error("Collection not found");
+  }
+  return items;
 };

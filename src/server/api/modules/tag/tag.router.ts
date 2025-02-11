@@ -6,15 +6,54 @@ import {
   UpdateTagInputSchema,
 } from "./schemas";
 import { AddTag, DeleteTag, GetUserTags, UpdateTag } from "./services";
+import { deleteCache, getOrSetCache } from "../../../../lib";
 
 export const TagRouter = createTRPCRouter({
   getUserTags: protectedProcedure
     .input(GetUserTagsInputSchema)
-    .query(GetUserTags),
+    .query(async (props) => {
+      const { ctx } = props;
+      const response = await getOrSetCache(
+        GetUserTags(props),
+        "tag",
+        "getUserTags",
+        {
+          userId: ctx.session.user.id,
+        },
+      );
+      return response;
+    }),
 
-  addTag: protectedProcedure.input(AddTagInputSchema).mutation(AddTag),
+  addTag: protectedProcedure
+    .input(AddTagInputSchema)
+    .mutation(async (props) => {
+      const { ctx } = props;
+      const response = await AddTag(props);
+      await deleteCache("tag", "getUserTags", {
+        userId: ctx.session.user.id,
+      });
+      return response;
+    }),
 
-  updateTag: protectedProcedure.input(UpdateTagInputSchema).mutation(UpdateTag),
+  updateTag: protectedProcedure
+    .input(UpdateTagInputSchema)
+    .mutation(async (props) => {
+      const { ctx } = props;
+      const response = await UpdateTag(props);
+      await deleteCache("tag", "getUserTags", {
+        userId: ctx.session.user.id,
+      });
+      return response;
+    }),
 
-  deleteTag: protectedProcedure.input(DeleteTagInputSchema).mutation(DeleteTag),
+  deleteTag: protectedProcedure
+    .input(DeleteTagInputSchema)
+    .mutation(async (props) => {
+      const { ctx } = props;
+      const response = await DeleteTag(props);
+      await deleteCache("tag", "getUserTags", {
+        userId: ctx.session.user.id,
+      });
+      return response;
+    }),
 });

@@ -21,11 +21,24 @@ import {
   SearchItemByText,
   UpdateItem,
 } from "./services";
+import { deleteCache, getOrSetCache } from "../../../../lib";
 
 export const ItemRouter = createTRPCRouter({
   getUserItems: protectedProcedure
     .input(GetUserItemsInputSchema)
-    .query(GetUserItems),
+    .query(async (props) => {
+      const { ctx, input } = props;
+      const response = await getOrSetCache(
+        GetUserItems(props),
+        "item",
+        "getUserItems",
+        {
+          userId: ctx.session.user.id,
+          input,
+        },
+      );
+      return response;
+    }),
 
   getRandomUserItems: protectedProcedure
     .input(GetRandomUserItemsInputSchema)
@@ -33,27 +46,103 @@ export const ItemRouter = createTRPCRouter({
 
   getUserItemsStats: protectedProcedure
     .input(GetUserItemsStatsInputSchema)
-    .query(GetUserItemsStats),
+    .query(async (props) => {
+      const { ctx, input } = props;
+      const response = await getOrSetCache(
+        GetUserItemsStats(props),
+        "item",
+        "getUserItemsStats",
+        {
+          userId: ctx.session.user.id,
+          input,
+        },
+      );
+      return response;
+    }),
 
   getUserItem: protectedProcedure
     .input(GetUserItemInputSchema)
-    .query(GetUserItem),
+    .query(async (props) => {
+      const { ctx, input } = props;
+      const response = await getOrSetCache(
+        GetUserItem(props),
+        "item",
+        "getUserItem",
+        {
+          userId: ctx.session.user.id,
+          input,
+        },
+      );
+      return response;
+    }),
 
   getYearsRange: protectedProcedure
     .input(GetYearsRangeInputSchema)
-    .query(GetYearsRange),
+    .query(async (props) => {
+      const { ctx, input } = props;
+      const response = await getOrSetCache(
+        GetYearsRange(props),
+        "item",
+        "getYearsRange",
+        {
+          userId: ctx.session.user.id,
+          input,
+        },
+      );
+      return response;
+    }),
 
   addToCollection: protectedProcedure
     .input(AddToCollectionInputSchema)
-    .mutation(AddToCollection),
+    .mutation(async (props) => {
+      const { ctx } = props;
+      const response = await AddToCollection(props);
+      await deleteCache("item", "getUserItems", {
+        userId: ctx.session.user.id,
+      });
+      await deleteCache("item", "getYearsRange", {
+        userId: ctx.session.user.id,
+      });
+      return response;
+    }),
 
   updateItem: protectedProcedure
     .input(UpdateItemInputSchema)
-    .mutation(UpdateItem),
+    .mutation(async (props) => {
+      const { ctx, input } = props;
+      const response = await UpdateItem(props);
+
+      await deleteCache("item", "getUserItems", {
+        userId: ctx.session.user.id,
+      });
+      await deleteCache("item", "getUserItem", {
+        userId: ctx.session.user.id,
+        input: input.id,
+      });
+      await deleteCache("item", "getUserItemsStats", {
+        userId: ctx.session.user.id,
+      });
+      return response;
+    }),
 
   deleteFromCollection: protectedProcedure
     .input(DeleteFromCollectionInputSchema)
-    .mutation(DeleteFromCollection),
+    .mutation(async (props) => {
+      const { ctx, input } = props;
+      const response = await DeleteFromCollection(props);
+
+      await deleteCache("item", "getYearsRange", {
+        userId: ctx.session.user.id,
+      });
+      await deleteCache("item", "getUserItem", {
+        userId: ctx.session.user.id,
+        input,
+      });
+      await deleteCache("item", "getUserItemsStats", {
+        userId: ctx.session.user.id,
+      });
+      return response;
+    }),
 
   searchItemByText: protectedProcedure
     .input(SearchItemByTextInputSchema)
