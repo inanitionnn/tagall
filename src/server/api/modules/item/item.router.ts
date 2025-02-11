@@ -28,6 +28,11 @@ export const ItemRouter = createTRPCRouter({
     .input(GetUserItemsInputSchema)
     .query(async (props) => {
       const { ctx, input } = props;
+
+      if (input?.sorting?.name === "date") {
+        return GetUserItems(props);
+      }
+
       const response = await getOrSetCache(
         GetUserItems(props),
         "item",
@@ -37,6 +42,7 @@ export const ItemRouter = createTRPCRouter({
           input,
         },
       );
+
       return response;
     }),
 
