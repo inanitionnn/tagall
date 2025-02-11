@@ -2,6 +2,8 @@ import { api, HydrateClient } from "../../../trpc/server";
 import { HomeContainer, type HomeParamsType } from "../../_components/modules";
 import { BackgroundImage } from "../../_components/shared";
 import { useGetServerParams } from "../../../hooks";
+import LoadingPage from "../../loading";
+import { Suspense } from "react";
 
 export default async function Home() {
   const params = useGetServerParams<HomeParamsType>();
@@ -18,7 +20,9 @@ export default async function Home() {
   return (
     <HydrateClient>
       <BackgroundImage image="/posters3.webp">
-        <HomeContainer />
+        <Suspense fallback={<LoadingPage />}>
+          <HomeContainer />
+        </Suspense>
       </BackgroundImage>
     </HydrateClient>
   );

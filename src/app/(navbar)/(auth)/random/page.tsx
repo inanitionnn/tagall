@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { useGetServerParams } from "../../../../hooks";
 import { api, HydrateClient } from "../../../../trpc/server";
 import {
@@ -5,6 +6,7 @@ import {
   type RandomParamsType,
 } from "../../../_components/modules";
 import { BackgroundImage } from "../../../_components/shared";
+import LoadingPage from "../../../loading";
 
 export default async function Random() {
   const params = useGetServerParams<RandomParamsType>();
@@ -20,7 +22,9 @@ export default async function Random() {
   return (
     <HydrateClient>
       <BackgroundImage image="/posters7.webp">
-        <RandomContainer />
+        <Suspense fallback={<LoadingPage />}>
+          <RandomContainer />
+        </Suspense>
       </BackgroundImage>
     </HydrateClient>
   );
