@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddSearchResultItem } from "./add-search-result-item";
 import { AddItemModal } from "./add-item-modal";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
@@ -12,31 +12,70 @@ import {
   ScrollButton,
   Search,
 } from "../../shared";
-import { useGetUserTags, useSearchItems } from "../../../../hooks";
+import {
+  useDebounce,
+  useGetUserTags,
+  useQueryParams,
+  useSearchItems,
+} from "../../../../hooks";
 import { api } from "../../../../trpc/react";
 import { Label, Paragraph, Switch } from "../../ui";
+import { z } from "zod";
+import { SearchInputSchema } from "../../../../server/api/modules/parse/schemas";
+
+export const AddParamsSchema = SearchInputSchema.pick({
+  collectionId: true,
+  query: true,
+  isAdvancedSearch: true,
+});
+
+export type AddParamsType = z.infer<typeof AddParamsSchema>;
 
 function AddContainer() {
   const [collections] = api.collection.getAll.useSuspenseQuery();
 
-  const [isAdvancedSearch, setIsAdvancedSearch] = useState(false);
+  const { getParam, setQueryParams } = useQueryParams<AddParamsType>({
+    schema: AddParamsSchema,
+    defaultParams: {
+      isAdvancedSearch: false,
+      collectionId: collections[0]?.id ?? "",
+      query: "",
+    },
+  });
+
+  const [isAdvancedSearch, setIsAdvancedSearch] = useState(
+    getParam("isAdvancedSearch"),
+  );
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string>(
+    getParam("collectionId"),
+  );
+  const [query, setQuery] = useState(getParam("query"));
   const [searchResults, setSearchResults] = useState<SearchResultType[]>([]);
   const [selectedItem, setSelectedItem] = useState<SearchResultType | null>(
     null,
   );
-  const [selectedCollectionId, setSelectedCollectionId] = useState<string>(
-    collections[0]?.id ?? "",
-  );
+
+  const debouncedParams = useDebounce({
+    isAdvancedSearch,
+    collectionId: selectedCollectionId,
+    query,
+  });
+
+  useEffect(() => {
+    if (debouncedParams) {
+      setQueryParams(debouncedParams);
+    }
+  }, [debouncedParams]);
 
   const { tags } = useGetUserTags({
     collectionsIds: [selectedCollectionId],
   });
 
-  const { isLoading, query, setQuery, submit } = useSearchItems({
+  const { isLoading, submit } = useSearchItems({
+    query,
     selectedCollectionId,
     setSearchResults,
     setSelectedItem,
-    limit: 10,
     isAdvancedSearch,
   });
 

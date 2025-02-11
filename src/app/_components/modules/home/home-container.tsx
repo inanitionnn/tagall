@@ -32,7 +32,7 @@ import { GetUserItemsInputSchema } from "../../../../server/api/modules/item/sch
 import { api } from "../../../../trpc/react";
 
 export const HomeParamsSchema = GetUserItemsInputSchema._def.innerType
-  .omit({ limit: true, page: true, search: true })
+  .pick({ collectionsIds: true, filtering: true, sorting: true })
   .extend({
     itemSize: z.enum(["medium", "list", "small", "large", "edit"]).optional(),
   })

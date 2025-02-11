@@ -1,9 +1,5 @@
 import { api, HydrateClient } from "../../../trpc/server";
-import {
-  HomeContainer,
-  HomeParamsSchema,
-  HomeParamsType,
-} from "../../_components/modules";
+import { HomeContainer, HomeParamsType } from "../../_components/modules";
 import { BackgroundImage } from "../../_components/shared";
 import { useGetServerParams } from "../../../hooks";
 

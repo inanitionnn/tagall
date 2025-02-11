@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import type { SearchResultType } from "../../server/api/modules/parse/types";
 
 type Props = {
+  query: string;
   isAdvancedSearch: boolean;
   selectedCollectionId: string;
   setSearchResults: Dispatch<SetStateAction<SearchResultType[]>>;
@@ -14,6 +15,7 @@ type Props = {
 };
 export const useSearchItems = (props: Props) => {
   const {
+    query,
     limit,
     selectedCollectionId,
     isAdvancedSearch,
@@ -22,8 +24,6 @@ export const useSearchItems = (props: Props) => {
   } = props;
 
   const LIMIT = limit || 10;
-
-  const [query, setQuery] = useState("");
 
   const { data, isSuccess, isLoading, isError, refetch } =
     api.parse.search.useQuery(
@@ -63,8 +63,6 @@ export const useSearchItems = (props: Props) => {
   }, [selectedCollectionId, setSearchResults, setSelectedItem]);
 
   return {
-    query,
-    setQuery,
     submit,
     isLoading,
   };
