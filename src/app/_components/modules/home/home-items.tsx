@@ -62,10 +62,9 @@ const HomeItems = (props: Props) => {
 
       {itemSize === "list" && (
         <CardContainer className="mx-auto grid w-full grid-cols-1 gap-y-1 p-8">
-          {items.map((item, index) => (
+          {items.map((item) => (
             <Link key={item.id} href={`/item/${item.id}`}>
               <HomeListItem
-                index={index}
                 key={item.id}
                 item={item}
                 selectedCollectionsIds={selectedCollectionsIds}

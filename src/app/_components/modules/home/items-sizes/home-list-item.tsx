@@ -8,20 +8,15 @@ import {
 
 type Props = {
   item: ItemSmallType;
-  index: number;
   selectedCollectionsIds: string[];
 };
 
 const HomeListItem = (props: Props) => {
-  const { item, index, selectedCollectionsIds } = props;
+  const { item, selectedCollectionsIds } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
     <>
       <div className="group flex w-full cursor-pointer gap-6">
-        <Paragraph className="min-w-8 font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary">
-          {index}.
-        </Paragraph>
-
         {selectedCollectionsIds.length > 1 ? (
           <Paragraph className="hidden min-w-14 font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary md:block lg:hidden xl:block">
             {item.collection.name}
