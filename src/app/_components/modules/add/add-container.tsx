@@ -87,16 +87,20 @@ function AddContainer() {
           selectedCollectionId={selectedCollectionId}
           setSelectedCollectionId={setSelectedCollectionId}
         />
-        <CardContainer className="items-center p-4">
-          <Label htmlFor="advanced-search" className="cursor-pointer">
-            <Paragraph>Advanced search</Paragraph>
-          </Label>
-          <Switch
-            id="advanced-search"
-            checked={isAdvancedSearch}
-            onCheckedChange={setIsAdvancedSearch}
-          />
-        </CardContainer>
+        {collections
+          .filter((c) => !["film", "serie"].includes(c.name.toLowerCase()))
+          .every((c) => c.id !== selectedCollectionId) ? (
+          <CardContainer className="items-center p-4">
+            <Label htmlFor="advanced-search" className="cursor-pointer">
+              <Paragraph>Advanced search</Paragraph>
+            </Label>
+            <Switch
+              id="advanced-search"
+              checked={isAdvancedSearch}
+              onCheckedChange={setIsAdvancedSearch}
+            />
+          </CardContainer>
+        ) : null}
       </div>
 
       <Search
