@@ -1,3 +1,5 @@
+"use client";
+
 import { api } from "../../trpc/react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";

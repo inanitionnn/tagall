@@ -1,9 +1,16 @@
 import { api, HydrateClient } from "../../../../trpc/server";
 import { BackgroundImage } from "../../../_components/shared";
-import { ProfileContainer } from "../../../_components/modules";
+import {
+  ProfileContainer,
+  ProfileParamsSchema,
+  ProfileParamsType,
+} from "../../../_components/modules";
+import { useGetServerParams } from "../../../../hooks";
 
 export default async function Profile() {
-  void api.item.getUserItemsStats.prefetch();
+  const params = useGetServerParams<ProfileParamsType>();
+
+  void api.item.getUserItemsStats.prefetch(params.collectionsIds);
   return (
     <HydrateClient>
       <BackgroundImage image="/posters6.webp">

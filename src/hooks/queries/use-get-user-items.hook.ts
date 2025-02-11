@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import type {
   GetUserItemsFilterType,
@@ -16,7 +18,6 @@ type GroupedItems = {
 
 type Props = {
   limit?: number;
-  debounce?: number;
   collectionsIds: string[];
   sorting: GetUserItemsSortType;
   filtering: GetUserItemsFilterType;
@@ -24,33 +25,28 @@ type Props = {
 };
 
 export const useGetUserItems = (props: Props) => {
-  const { limit, debounce, collectionsIds, sorting, filtering, searchQuery } =
-    props;
+  const { limit, collectionsIds, sorting, filtering, searchQuery } = props;
 
   const LIMIT = limit || 30;
-  const DEBOUNCE = debounce || 300;
 
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
 
-  const debounceObj = useDebounce(
-    {
-      collectionsIds,
-      filtering,
-      sorting,
-      searchQuery: searchQuery.toLowerCase().trim(),
-    },
-    DEBOUNCE,
-  );
+  const debouncedProps = useDebounce({
+    collectionsIds,
+    filtering,
+    sorting,
+    searchQuery: searchQuery.toLowerCase().trim(),
+  });
 
   const { data, isLoading, error, refetch } = api.item.getUserItems.useQuery({
     limit: LIMIT,
     page,
-    collectionsIds: debounceObj.collectionsIds,
-    sorting: debounceObj.sorting,
-    filtering: debounceObj.filtering,
-    search: debounceObj.searchQuery,
+    collectionsIds: debouncedProps.collectionsIds,
+    sorting: debouncedProps.sorting,
+    filtering: debouncedProps.filtering,
+    search: debouncedProps.searchQuery,
   });
 
   useEffect(() => {
@@ -81,7 +77,7 @@ export const useGetUserItems = (props: Props) => {
   useEffect(() => {
     setPage(1);
     setHasMore(true);
-  }, [debounceObj]);
+  }, [debouncedProps]);
 
   return {
     groupedItems,

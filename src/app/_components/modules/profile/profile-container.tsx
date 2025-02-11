@@ -2,20 +2,50 @@
 import { api } from "../../../../trpc/react";
 import { ProfileUpdateUserModal } from "./profile-update-user-modal";
 import { CollectionsTabs, Container, Loading } from "../../shared";
-import { useGetUserCollections } from "../../../../hooks";
+import { useDebounce, useQueryParams } from "../../../../hooks";
 import { ProfileStatusStats } from "./profile-status-stats";
 import { ProfileRateStats } from "./profile-rate-stats";
 import { ProfileDateStats } from "./profile-date-stats";
 import { useUserItemsStats } from "../../../../hooks/queries/use-get-user-items-stats.hook";
+import { useEffect, useState } from "react";
+import { z } from "zod";
+import { GetUserItemsStatsInputSchema } from "../../../../server/api/modules/item/schemas";
+
+export const ProfileParamsSchema = z.object({
+  collectionsIds: GetUserItemsStatsInputSchema._def.innerType.default([]),
+});
+
+export type ProfileParamsType = z.infer<typeof ProfileParamsSchema>;
 
 function ProfileContainer() {
   const [user] = api.user.getUser.useSuspenseQuery();
+  const [collections] = api.collection.getUserCollections.useSuspenseQuery();
 
-  const { collections, selectedCollectionsIds, setSelectedCollectionsIds } =
-    useGetUserCollections();
+  const { getParam, setQueryParams } = useQueryParams<ProfileParamsType>({
+    schema: ProfileParamsSchema,
+    defaultParams: {
+      collectionsIds: collections.map((collection) => collection.id),
+    },
+  });
+
+  const [selectedCollectionsIds, setSelectedCollectionsIds] = useState<
+    string[]
+  >(getParam("collectionsIds"));
+
+  const debouncedSelectedCollectionsIds = useDebounce(selectedCollectionsIds);
+
+  const debouncedParams = useDebounce({
+    collectionsIds: selectedCollectionsIds,
+  });
+
+  useEffect(() => {
+    if (debouncedParams) {
+      setQueryParams(debouncedParams);
+    }
+  }, [debouncedParams]);
 
   const { stats, isLoading } = useUserItemsStats({
-    collectionsIds: selectedCollectionsIds,
+    collectionsIds: debouncedSelectedCollectionsIds,
   });
 
   return (

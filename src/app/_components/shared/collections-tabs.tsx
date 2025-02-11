@@ -8,7 +8,7 @@ type Props = {
   collections: CollectionType[];
   selectedCollectionsIds: string[];
   setSelectedCollectionsIds: Dispatch<SetStateAction<string[]>>;
-  setFiltering?: (value: GetUserItemsFilterType) => void;
+  clear?: () => void;
 };
 
 export const CollectionsTabs = (props: Props) => {
@@ -16,11 +16,11 @@ export const CollectionsTabs = (props: Props) => {
     collections,
     selectedCollectionsIds,
     setSelectedCollectionsIds,
-    setFiltering,
+    clear,
   } = props;
 
   const onClick = (collectionId: string) => {
-    if (setFiltering) setFiltering([]);
+    if (clear) clear();
 
     setSelectedCollectionsIds((prev) => {
       if (prev.includes(collectionId)) {

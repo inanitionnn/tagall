@@ -1,3 +1,5 @@
+"use client";
+
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { api } from "../../trpc/react";
 import { toast } from "sonner";

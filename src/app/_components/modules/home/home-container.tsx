@@ -31,19 +31,19 @@ import { z } from "zod";
 import { GetUserItemsInputSchema } from "../../../../server/api/modules/item/schemas";
 import { api } from "../../../../trpc/react";
 
-const HomeParamsSchema = GetUserItemsInputSchema._def.innerType
+export const HomeParamsSchema = GetUserItemsInputSchema._def.innerType
   .omit({ limit: true, page: true, search: true })
   .extend({
     itemSize: z.enum(["medium", "list", "small", "large", "edit"]).optional(),
   })
   .default({});
 
+export type HomeParamsType = z.infer<typeof HomeParamsSchema>;
+
 function HomeContainer() {
   const [collections] = api.collection.getUserCollections.useSuspenseQuery();
 
-  const { getParam, setQueryParams } = useQueryParams<
-    z.infer<typeof HomeParamsSchema>
-  >({
+  const { getParam, setQueryParams } = useQueryParams<HomeParamsType>({
     schema: HomeParamsSchema,
     defaultParams: {
       filtering: [],
@@ -70,26 +70,20 @@ function HomeContainer() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchFilter, setSearchFilter] = useState("");
 
-  const debouncedSelectedCollectionsIds = useDebounce(
-    selectedCollectionsIds,
-    1000,
-  );
+  const debouncedSelectedCollectionsIds = useDebounce(selectedCollectionsIds);
 
-  const debounceObj = useDebounce(
-    {
-      collectionsIds: selectedCollectionsIds,
-      filtering,
-      sorting,
-      itemSize,
-    },
-    1000,
-  );
+  const debouncedParams = useDebounce({
+    collectionsIds: selectedCollectionsIds,
+    filtering,
+    sorting,
+    itemSize,
+  });
 
   useEffect(() => {
-    if (debounceObj) {
-      setQueryParams(debounceObj);
+    if (debouncedParams) {
+      setQueryParams(debouncedParams);
     }
-  }, [debounceObj]);
+  }, [debouncedParams]);
 
   const { tags } = useGetUserTags({
     collectionsIds: debouncedSelectedCollectionsIds,
@@ -103,13 +97,17 @@ function HomeContainer() {
     collectionsIds: debouncedSelectedCollectionsIds,
   });
 
-  const { filterRates, filterYears, setFilterRates, setFilterYears } =
-    useParseFiltering({
-      filtering,
-      setFiltering,
-      yearsRange,
-      collectionsIds: debouncedSelectedCollectionsIds,
-    });
+  const {
+    setDefaultFilters,
+    filterRates,
+    filterYears,
+    setFilterRates,
+    setFilterYears,
+  } = useParseFiltering({
+    filtering,
+    setFiltering,
+    yearsRange,
+  });
 
   const { groupedItems, setPage, hasMore, isLoading } = useGetUserItems({
     collectionsIds: debouncedSelectedCollectionsIds,
@@ -130,7 +128,7 @@ function HomeContainer() {
     <Container>
       <div className="flex flex-wrap justify-between gap-4">
         <CollectionsTabs
-          setFiltering={setFiltering}
+          clear={setDefaultFilters}
           collections={collections}
           selectedCollectionsIds={selectedCollectionsIds}
           setSelectedCollectionsIds={setSelectedCollectionsIds}

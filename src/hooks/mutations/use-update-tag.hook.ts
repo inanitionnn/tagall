@@ -1,3 +1,5 @@
+"use client";
+
 import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";

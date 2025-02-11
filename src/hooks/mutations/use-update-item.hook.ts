@@ -1,3 +1,5 @@
+"use client";
+
 import type { Dispatch, SetStateAction } from "react";
 import { ItemStatus } from "@prisma/client";
 import { api } from "../../trpc/react";

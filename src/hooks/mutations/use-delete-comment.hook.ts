@@ -1,3 +1,5 @@
+"use client";
+
 import { type Dispatch, type SetStateAction } from "react";
 
 import { api } from "../../trpc/react";

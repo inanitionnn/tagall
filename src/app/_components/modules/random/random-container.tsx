@@ -15,7 +15,6 @@ import {
   useDebounce,
   useGetFilterFields,
   useGetRandomUserItems,
-  useGetUserCollections,
   useGetUserTags,
   useParseFiltering,
   useQueryParams,
@@ -23,30 +22,28 @@ import {
 } from "../../../../hooks";
 import { RandomItem } from "./random-item";
 import { z } from "zod";
-import { GetUserItemsInputSchema } from "../../../../server/api/modules/item/schemas";
+import { GetRandomUserItemsInputSchema } from "../../../../server/api/modules/item/schemas";
 import { api } from "../../../../trpc/react";
-import { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
+import type { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
 
-const RandomParamsSchema = GetUserItemsInputSchema._def.innerType
-  .omit({ limit: true, page: true, search: true, sorting: true })
-  .default({});
+export const RandomParamsSchema =
+  GetRandomUserItemsInputSchema._def.innerType.default({});
+
+export type RandomParamsType = z.infer<typeof RandomParamsSchema>;
 
 function RandomContainer() {
   const [collections] = api.collection.getUserCollections.useSuspenseQuery();
 
-  const { getParam, setQueryParams } = useQueryParams<
-    z.infer<typeof RandomParamsSchema>
-  >({
+  const { getParam, setQueryParams } = useQueryParams<RandomParamsType>({
     schema: RandomParamsSchema,
     defaultParams: {
+      limit: 10,
       filtering: [],
       collectionsIds: collections.map((collection) => collection.id),
     },
   });
 
-  const [limit, setLimit] = useState<number>(10);
-  const [searchFilter, setSearchFilter] = useState<string>("");
-
+  const [limit, setLimit] = useState<number>(getParam("limit"));
   const [filtering, setFiltering] = useState<GetUserItemsFilterType>(
     getParam("filtering"),
   );
@@ -54,24 +51,21 @@ function RandomContainer() {
     string[]
   >(getParam("collectionsIds"));
 
-  const debouncedSelectedCollectionsIds = useDebounce(
-    selectedCollectionsIds,
-    1000,
-  );
+  const [searchFilter, setSearchFilter] = useState<string>("");
 
-  const debounceObj = useDebounce(
-    {
-      collectionsIds: selectedCollectionsIds,
-      filtering,
-    },
-    1000,
-  );
+  const debouncedSelectedCollectionsIds = useDebounce(selectedCollectionsIds);
+
+  const debouncedParams = useDebounce({
+    collectionsIds: selectedCollectionsIds,
+    filtering,
+  });
 
   useEffect(() => {
-    if (debounceObj) {
-      setQueryParams(debounceObj);
+    if (debouncedParams) {
+      setQueryParams(debouncedParams);
     }
-  }, [debounceObj]);
+  }, [debouncedParams]);
+
   const { tags } = useGetUserTags({
     collectionsIds: debouncedSelectedCollectionsIds,
   });
@@ -84,13 +78,17 @@ function RandomContainer() {
     collectionsIds: debouncedSelectedCollectionsIds,
   });
 
-  const { filterRates, filterYears, setFilterRates, setFilterYears } =
-    useParseFiltering({
-      filtering,
-      setFiltering,
-      yearsRange,
-      collectionsIds: debouncedSelectedCollectionsIds,
-    });
+  const {
+    setDefaultFilters,
+    filterRates,
+    filterYears,
+    setFilterRates,
+    setFilterYears,
+  } = useParseFiltering({
+    filtering,
+    setFiltering,
+    yearsRange,
+  });
 
   const { items, refetch, isLoading } = useGetRandomUserItems({
     collectionsIds: selectedCollectionsIds,
@@ -110,6 +108,7 @@ function RandomContainer() {
     <Container>
       <div className="flex flex-wrap justify-between gap-4">
         <CollectionsTabs
+          clear={setDefaultFilters}
           collections={collections}
           selectedCollectionsIds={selectedCollectionsIds}
           setSelectedCollectionsIds={setSelectedCollectionsIds}

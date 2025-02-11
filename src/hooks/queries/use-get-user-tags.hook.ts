@@ -1,3 +1,5 @@
+"use client";
+
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import type { TagType } from "../../server/api/modules/tag/types/tag.type";
