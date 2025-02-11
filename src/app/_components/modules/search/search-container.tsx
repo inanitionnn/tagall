@@ -40,7 +40,7 @@ function SearchContainer() {
       </CardContainer>
       <div className="mx-auto grid max-w-screen-2xl grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         {items.map((item) => (
-          <Link key={item.id} href={`/item/${item.id}`} target="_blank">
+          <Link key={item.id} href={`/item/${item.id}`}>
             <CardContainer
               key={item.id}
               className="h-full flex-col hover:scale-105 md:w-full"

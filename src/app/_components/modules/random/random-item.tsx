@@ -11,7 +11,7 @@ function RandomItem(props: Props) {
   const { item } = props;
 
   return (
-    <Link key={item.id} href={`/item/${item.id}`} target="_blank">
+    <Link key={item.id} href={`/item/${item.id}`}>
       <CardContainer
         key={item.id}
         className="h-full flex-col hover:scale-105 md:w-full"

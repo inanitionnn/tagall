@@ -25,7 +25,7 @@ const HomeEditItem = (props: Props) => {
   return (
     <CardContainer className="h-fit flex-col p-4">
       <div className="flex gap-4">
-        <Link key={item.id} href={`/item/${item.id}`} target="_blank">
+        <Link key={item.id} href={`/item/${item.id}`}>
           <div className="aspect-[27/40] h-36 transition-all duration-500 ease-in-out hover:scale-105 sm:h-72">
             {item.image ? (
               <CloudinaryImage

@@ -85,7 +85,6 @@ function AddContainer() {
               <Link
                 key={searchResult.parsedId}
                 href={`/item/${searchResult.id}`}
-                target="_blank"
               >
                 <AddSearchResultItem
                   searchResult={searchResult}
