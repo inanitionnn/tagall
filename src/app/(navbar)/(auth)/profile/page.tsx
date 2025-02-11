@@ -2,7 +2,7 @@ import { api, HydrateClient } from "../../../../trpc/server";
 import { BackgroundImage } from "../../../_components/shared";
 import {
   ProfileContainer,
-  ProfileParamsType,
+  type ProfileParamsType,
 } from "../../../_components/modules";
 import { useGetServerParams } from "../../../../hooks";
 

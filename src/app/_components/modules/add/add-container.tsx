@@ -20,7 +20,7 @@ import {
 } from "../../../../hooks";
 import { api } from "../../../../trpc/react";
 import { Label, Paragraph, Switch } from "../../ui";
-import { z } from "zod";
+import type { z } from "zod";
 import { SearchInputSchema } from "../../../../server/api/modules/parse/schemas";
 
 export const AddParamsSchema = SearchInputSchema.pick({

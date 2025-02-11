@@ -5,7 +5,6 @@ import type {
   ItemsRateStatsType,
   ItemsStatusStatsType,
 } from "../types";
-import { getOrSetCache } from "../../../../../lib/redis";
 
 export async function getUserItemsDateStats(props: {
   ctx: ContextType;

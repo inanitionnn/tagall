@@ -1,4 +1,3 @@
-import { getOrSetCache } from "../../../../../lib/redis";
 import type { ContextType } from "../../../../types";
 import type { CollectionType } from "../types";
 

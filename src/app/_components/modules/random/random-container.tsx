@@ -21,7 +21,7 @@ import {
   useYearsRange,
 } from "../../../../hooks";
 import { RandomItem } from "./random-item";
-import { z } from "zod";
+import type { z } from "zod";
 import { GetRandomUserItemsInputSchema } from "../../../../server/api/modules/item/schemas";
 import { api } from "../../../../trpc/react";
 import type { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";

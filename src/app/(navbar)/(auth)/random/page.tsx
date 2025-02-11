@@ -2,7 +2,7 @@ import { useGetServerParams } from "../../../../hooks";
 import { api, HydrateClient } from "../../../../trpc/server";
 import {
   RandomContainer,
-  RandomParamsType,
+  type RandomParamsType,
 } from "../../../_components/modules";
 import { BackgroundImage } from "../../../_components/shared";
 

@@ -1,6 +1,6 @@
 import { Redis } from "@upstash/redis";
-import { CACHE_KEYS } from "../constants/cache-keys.const";
-import { buildCacheKey, CacheKeyParams } from "./cache-key";
+import type { CACHE_KEYS } from "../constants/cache-keys.const";
+import { buildCacheKey, type CacheKeyParams } from "./cache-key";
 
 const redis = Redis.fromEnv();
 

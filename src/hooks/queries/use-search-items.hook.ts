@@ -1,6 +1,6 @@
 "use client";
 
-import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect } from "react";
 import { api } from "../../trpc/react";
 import { toast } from "sonner";
 import type { SearchResultType } from "../../server/api/modules/parse/types";

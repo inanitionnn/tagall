@@ -2,7 +2,6 @@ import React, { type Dispatch, type SetStateAction } from "react";
 import { Button } from "../ui";
 import type { CollectionType } from "../../../server/api/modules/collection/types";
 import { CardContainer } from "./card-container";
-import type { GetUserItemsFilterType } from "../../../server/api/modules/item/types";
 
 type Props = {
   collections: CollectionType[];
