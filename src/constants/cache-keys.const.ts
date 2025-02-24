@@ -39,6 +39,10 @@ export const CACHE_KEYS = {
     search: {
       input: true,
     },
+    regrex: {
+      userId: true,
+      input: true,
+    },
   },
   tag: {
     getUserTags: {

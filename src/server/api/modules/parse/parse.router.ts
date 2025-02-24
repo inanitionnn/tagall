@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { AddIdToSearchResults, Search } from "./services";
-import { SearchInputSchema } from "./schemas";
+import { AddIdToSearchResults, Search, ParseRegrex } from "./services";
+import { SearchInputSchema, ParseRegrexInputSchema } from "./schemas";
 import { getOrSetCache } from "../../../../lib";
 
 export const ParseRouter = createTRPCRouter({
@@ -11,4 +11,20 @@ export const ParseRouter = createTRPCRouter({
     });
     return AddIdToSearchResults({ ...props, items: response });
   }),
+
+  regrex: protectedProcedure
+    .input(ParseRegrexInputSchema)
+    .query(async (props) => {
+      const { ctx, input } = props;
+      const response = await getOrSetCache(
+        ParseRegrex(props),
+        "parse",
+        "regrex",
+        {
+          userId: ctx.session.user.id,
+          input,
+        },
+      );
+      return response;
+    }),
 });

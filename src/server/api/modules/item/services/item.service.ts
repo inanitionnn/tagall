@@ -13,7 +13,7 @@ import type {
   GetNearestItemsInputType,
 } from "../types";
 import { GetImdbDetailsById } from "../../parse/services";
-import { GetEmbedding } from "../../embedding/services";
+import { GetEmbedding } from "../../open-ai/services";
 import { UploadImageByUrl } from "../../files/files.service";
 import { GetAnilistDetailsById } from "../../parse/services/anilist.service";
 import {
