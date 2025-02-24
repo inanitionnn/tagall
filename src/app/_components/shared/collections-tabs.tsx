@@ -7,6 +7,7 @@ type Props = {
   collections: CollectionType[];
   selectedCollectionsIds: string[];
   setSelectedCollectionsIds: Dispatch<SetStateAction<string[]>>;
+  isMany?: boolean;
   clear?: () => void;
 };
 
@@ -15,18 +16,22 @@ export const CollectionsTabs = (props: Props) => {
     collections,
     selectedCollectionsIds,
     setSelectedCollectionsIds,
+    isMany = true,
     clear,
   } = props;
 
   const onClick = (collectionId: string) => {
     if (clear) clear();
-
-    setSelectedCollectionsIds((prev) => {
-      if (prev.includes(collectionId)) {
-        return prev.filter((id) => id !== collectionId);
-      }
-      return [...prev, collectionId];
-    });
+    if (isMany) {
+      setSelectedCollectionsIds((prev) => {
+        if (prev.includes(collectionId)) {
+          return prev.filter((id) => id !== collectionId);
+        }
+        return [...prev, collectionId];
+      });
+    } else {
+      setSelectedCollectionsIds([collectionId]);
+    }
   };
 
   return (

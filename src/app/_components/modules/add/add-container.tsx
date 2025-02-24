@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { AddSearchResultItem } from "./add-search-result-item";
 import { AddItemModal } from "./add-item-modal";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
-import { AddCollectionsTabs } from "./add-collections-tabs";
 import Link from "next/link";
 import {
   CardContainer,
+  CollectionsTabs,
   Container,
   Loading,
   ScrollButton,
@@ -46,9 +46,9 @@ function AddContainer() {
   const [isAdvancedSearch, setIsAdvancedSearch] = useState(
     getParam("isAdvancedSearch"),
   );
-  const [selectedCollectionId, setSelectedCollectionId] = useState<string>(
-    getParam("collectionId"),
-  );
+  const [selectedCollectionsIds, setSelectedCollectionsIds] = useState<
+    string[]
+  >([getParam("collectionId")]);
   const [query, setQuery] = useState(getParam("query"));
   const [searchResults, setSearchResults] = useState<SearchResultType[]>([]);
   const [selectedItem, setSelectedItem] = useState<SearchResultType | null>(
@@ -57,7 +57,7 @@ function AddContainer() {
 
   const debouncedParams = useDebounce({
     isAdvancedSearch,
-    collectionId: selectedCollectionId,
+    collectionId: selectedCollectionsIds[0],
     query,
   });
 
@@ -68,12 +68,12 @@ function AddContainer() {
   }, [debouncedParams]);
 
   const { tags } = useGetUserTags({
-    collectionsIds: [selectedCollectionId],
+    collectionsIds: selectedCollectionsIds,
   });
 
   const { isLoading, submit } = useSearchItems({
     query,
-    selectedCollectionId,
+    selectedCollectionId: selectedCollectionsIds[0] ?? "",
     setSearchResults,
     setSelectedItem,
     isAdvancedSearch,
@@ -82,14 +82,14 @@ function AddContainer() {
   return (
     <Container>
       <div className="flex flex-wrap justify-between gap-4">
-        <AddCollectionsTabs
+        <CollectionsTabs
           collections={collections}
-          selectedCollectionId={selectedCollectionId}
-          setSelectedCollectionId={setSelectedCollectionId}
+          selectedCollectionsIds={selectedCollectionsIds}
+          setSelectedCollectionsIds={setSelectedCollectionsIds}
         />
         {collections
           .filter((c) => !["film", "serie"].includes(c.name.toLowerCase()))
-          .every((c) => c.id !== selectedCollectionId) ? (
+          .every((c) => c.id !== selectedCollectionsIds[0]) ? (
           <CardContainer className="items-center p-4">
             <Label htmlFor="advanced-search" className="cursor-pointer">
               <Paragraph>Advanced search</Paragraph>
@@ -115,7 +115,7 @@ function AddContainer() {
           tags={tags}
           selectedItem={selectedItem}
           open={!!selectedItem}
-          selectedCollectionId={selectedCollectionId}
+          selectedCollectionId={selectedCollectionsIds[0] ?? ""}
           setSelectedItem={setSelectedItem}
           setSearchResults={setSearchResults}
         />
