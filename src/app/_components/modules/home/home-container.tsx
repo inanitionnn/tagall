@@ -26,6 +26,7 @@ import {
   useYearsRange,
   useQueryParams,
   useDebounce,
+  useDebouncedQueryParams,
 } from "../../../../hooks";
 import { z } from "zod";
 import { GetUserItemsInputSchema } from "../../../../server/api/modules/item/schemas";
@@ -72,18 +73,15 @@ function HomeContainer() {
 
   const debouncedSelectedCollectionsIds = useDebounce(selectedCollectionsIds);
 
-  const debouncedParams = useDebounce({
-    collectionsIds: selectedCollectionsIds,
-    filtering,
-    sorting,
-    itemSize,
-  });
-
-  useEffect(() => {
-    if (debouncedParams) {
-      setQueryParams(debouncedParams);
-    }
-  }, [debouncedParams]);
+  useDebouncedQueryParams<HomeParamsType>(
+    {
+      collectionsIds: selectedCollectionsIds,
+      filtering,
+      sorting,
+      itemSize,
+    },
+    setQueryParams,
+  );
 
   const { tags } = useGetUserTags({
     collectionsIds: debouncedSelectedCollectionsIds,

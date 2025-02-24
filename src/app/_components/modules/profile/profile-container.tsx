@@ -2,7 +2,11 @@
 import { api } from "../../../../trpc/react";
 import { ProfileUpdateUserModal } from "./profile-update-user-modal";
 import { CollectionsTabs, Container, Loading } from "../../shared";
-import { useDebounce, useQueryParams } from "../../../../hooks";
+import {
+  useDebounce,
+  useDebouncedQueryParams,
+  useQueryParams,
+} from "../../../../hooks";
 import { ProfileStatusStats } from "./profile-status-stats";
 import { ProfileRateStats } from "./profile-rate-stats";
 import { ProfileDateStats } from "./profile-date-stats";
@@ -34,15 +38,12 @@ function ProfileContainer() {
 
   const debouncedSelectedCollectionsIds = useDebounce(selectedCollectionsIds);
 
-  const debouncedParams = useDebounce({
-    collectionsIds: selectedCollectionsIds,
-  });
-
-  useEffect(() => {
-    if (debouncedParams) {
-      setQueryParams(debouncedParams);
-    }
-  }, [debouncedParams]);
+  useDebouncedQueryParams<ProfileParamsType>(
+    {
+      collectionsIds: selectedCollectionsIds,
+    },
+    setQueryParams,
+  );
 
   const { stats, isLoading } = useUserItemsStats({
     collectionsIds: debouncedSelectedCollectionsIds,

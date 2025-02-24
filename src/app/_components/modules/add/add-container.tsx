@@ -14,6 +14,7 @@ import {
 } from "../../shared";
 import {
   useDebounce,
+  useDebouncedQueryParams,
   useGetUserTags,
   useQueryParams,
   useSearchItems,
@@ -55,17 +56,14 @@ function AddContainer() {
     null,
   );
 
-  const debouncedParams = useDebounce({
-    isAdvancedSearch,
-    collectionId: selectedCollectionsIds[0],
-    query,
-  });
-
-  useEffect(() => {
-    if (debouncedParams) {
-      setQueryParams(debouncedParams);
-    }
-  }, [debouncedParams]);
+  useDebouncedQueryParams<AddParamsType>(
+    {
+      isAdvancedSearch,
+      collectionId: selectedCollectionsIds[0] ?? "",
+      query,
+    },
+    setQueryParams,
+  );
 
   const { tags } = useGetUserTags({
     collectionsIds: selectedCollectionsIds,

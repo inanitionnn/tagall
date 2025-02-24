@@ -13,6 +13,7 @@ import { HomeNoItemsCard } from "../home/home-no-items-card";
 import { HomeFilterBadges } from "../home/home-filter-badges";
 import {
   useDebounce,
+  useDebouncedQueryParams,
   useGetFilterFields,
   useGetRandomUserItems,
   useGetUserTags,
@@ -56,16 +57,13 @@ function RandomContainer() {
 
   const debouncedSelectedCollectionsIds = useDebounce(selectedCollectionsIds);
 
-  const debouncedParams = useDebounce({
-    collectionsIds: selectedCollectionsIds,
-    filtering,
-  });
-
-  useEffect(() => {
-    if (debouncedParams) {
-      setQueryParams(debouncedParams);
-    }
-  }, [debouncedParams]);
+  useDebouncedQueryParams<RandomParamsType>(
+    {
+      collectionsIds: selectedCollectionsIds,
+      filtering,
+    },
+    setQueryParams,
+  );
 
   const { tags } = useGetUserTags({
     collectionsIds: debouncedSelectedCollectionsIds,
