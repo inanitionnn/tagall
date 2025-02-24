@@ -1,4 +1,11 @@
-import { BadgePlus, Dices, House, Tags, type LucideIcon } from "lucide-react";
+import {
+  BadgePlus,
+  CodeXml,
+  Dices,
+  House,
+  Tags,
+  type LucideIcon,
+} from "lucide-react";
 
 type NavbarLinkType =
   | {
@@ -41,15 +48,15 @@ const NAVBAR_LINKS: NavbarLinkType[] = [
   {
     type: "divider",
   },
-  // {
-  //   type: "link",
-  //   icon: Search,
-  //   href: "/search",
-  //   title: "Search",
-  // },
-  // {
-  //   type: "divider",
-  // },
+  {
+    type: "link",
+    icon: CodeXml,
+    href: "/parse",
+    title: "Parse",
+  },
+  {
+    type: "divider",
+  },
   {
     type: "link",
     icon: Tags,

@@ -11,7 +11,7 @@ import { ProfileStatusStats } from "./profile-status-stats";
 import { ProfileRateStats } from "./profile-rate-stats";
 import { ProfileDateStats } from "./profile-date-stats";
 import { useUserItemsStats } from "../../../../hooks/queries/use-get-user-items-stats.hook";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 import { GetUserItemsStatsInputSchema } from "../../../../server/api/modules/item/schemas";
 

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AddSearchResultItem } from "./add-search-result-item";
 import { AddItemModal } from "./add-item-modal";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
@@ -13,7 +13,6 @@ import {
   Search,
 } from "../../shared";
 import {
-  useDebounce,
   useDebouncedQueryParams,
   useGetUserTags,
   useQueryParams,
@@ -81,6 +80,7 @@ function AddContainer() {
     <Container>
       <div className="flex flex-wrap justify-between gap-4">
         <CollectionsTabs
+          isMany={false}
           collections={collections}
           selectedCollectionsIds={selectedCollectionsIds}
           setSelectedCollectionsIds={setSelectedCollectionsIds}
@@ -102,6 +102,7 @@ function AddContainer() {
       </div>
 
       <Search
+        autoFocus
         isLoading={isLoading}
         query={query}
         setQuery={setQuery}

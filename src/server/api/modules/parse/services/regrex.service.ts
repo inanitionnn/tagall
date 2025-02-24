@@ -53,18 +53,23 @@ async function parseMediaList(props: ParseRegrexInputType) {
   return extractDataFromHtml(html, selector, new RegExp(regex));
 }
 
-type UserItemWithItem = Prisma.UserToItemGetPayload<{
-  include: {
-    item: true;
-  };
-}>;
-
 export async function ParseRegrex(props: {
   ctx: ContextType;
   input: ParseRegrexInputType;
 }): Promise<ParseRegrexResult[]> {
   const { ctx, input } = props;
-  const parsedMedias: ParseRegrexResult[] = await parseMediaList(input);
+
+  const collection = await ctx.db.collection.findUnique({
+    where: {
+      id: input.collectionId,
+    },
+  });
+
+  if (!collection) {
+    throw new Error("Collection not found");
+  }
+
+  const parsedMedias = await parseMediaList(input);
 
   const userItems = await ctx.db.userToItem.findMany({
     where: {
@@ -73,6 +78,7 @@ export async function ParseRegrex(props: {
         item: {
           title: media.title,
           year: media.year,
+          collectionId: collection.id,
         },
       })),
     },
@@ -81,7 +87,14 @@ export async function ParseRegrex(props: {
     },
   });
 
-  const mediaToUserItem: Record<string, UserItemWithItem> = {};
+  const mediaToUserItem: Record<
+    string,
+    Prisma.UserToItemGetPayload<{
+      include: {
+        item: true;
+      };
+    }>
+  > = {};
 
   for (const media of parsedMedias) {
     const userItem = userItems.find(
@@ -93,18 +106,16 @@ export async function ParseRegrex(props: {
     }
   }
 
-  return parsedMedias
-    .map((media) => {
-      const userItem = mediaToUserItem[media.title];
-      if (userItem) {
-        const {
-          rate,
-          status,
-          item: { title, year, id },
-        } = userItem;
-        return { id, title, year, rate, status };
-      }
-      return media;
-    })
-    .sort((a, b) => +(a.id !== null) - +(b.id !== null)); // first items without id
+  return parsedMedias.map((media) => {
+    const userItem = mediaToUserItem[media.title];
+    if (userItem) {
+      const {
+        rate,
+        status,
+        item: { title, year, id },
+      } = userItem;
+      return { id, collectionId: collection.id, title, year, rate, status };
+    }
+    return { ...media, collectionId: collection.id };
+  });
 }

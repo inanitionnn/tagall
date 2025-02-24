@@ -8,3 +8,4 @@ export * from "./use-update-user.hook";
 export * from "./use-add-tag.hook";
 export * from "./use-delete-tag.hook";
 export * from "./use-update-tag.hook";
+export * from "./use-parse-regrex.hook";

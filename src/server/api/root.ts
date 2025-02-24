@@ -3,7 +3,6 @@ import { CollectionRouter } from "./modules/collection/collection.router";
 import { ParseRouter } from "./modules/parse/parse.router";
 import { FieldRouter } from "./modules/field/field.router";
 import { ItemRouter } from "./modules/item/item.router";
-import { EmbeddingRouter } from "./modules/open-ai/open-ai.router";
 import { ItemCommentRouter } from "./modules/item-comment/item-comment.router";
 import { TagRouter } from "./modules/tag/tag.router";
 import { UserRouter } from "./modules/user/user.router";
@@ -18,7 +17,7 @@ export const appRouter = createTRPCRouter({
   parse: ParseRouter,
   item: ItemRouter,
   field: FieldRouter,
-  embedding: EmbeddingRouter,
+  // openAi: OpenAiRouter,
   itemComment: ItemCommentRouter,
   tag: TagRouter,
   user: UserRouter,

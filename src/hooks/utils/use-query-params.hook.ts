@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import type { ZodType } from "zod";
+import { mergeSearchParams } from "../../lib";
 
 interface Props<T> {
   schema: ZodType<T, any, unknown>;
@@ -18,7 +19,6 @@ interface Response<T> {
   params: T;
   getParam: getParamType<T>;
   setQueryParams: (newParams: Partial<T>) => void;
-  clearQueryParams: () => void;
 }
 
 export function useQueryParams<T extends Record<string, any>>(
@@ -62,37 +62,12 @@ export function useQueryParams<T extends Record<string, any>>(
   const setQueryParams = useCallback(
     (newParams: Partial<T>) => {
       const mergedParams = { ...params, ...newParams };
-      const newSearchParams = new URLSearchParams(searchParams.toString());
-      Object.entries(mergedParams).forEach(([key, value]) => {
-        if (!value) {
-          newSearchParams.delete(key);
-        } else if (typeof value === "object") {
-          newSearchParams.set(key, JSON.stringify(value));
-        } else {
-          newSearchParams.set(key, String(value));
-        }
-      });
-      const search = newSearchParams.toString();
-      const query = search ? `?${search}` : "";
+
+      const query = mergeSearchParams(mergedParams, searchParams);
       router.replace(pathname + query, { scroll: false });
     },
     [params, searchParams, pathname, router],
   );
 
-  const clearQueryParams = useCallback(() => {
-    const newSearchParams = new URLSearchParams();
-
-    Object.entries(defaultParams).forEach(([key, value]) => {
-      if (value) {
-        newSearchParams.set(key, JSON.stringify(value));
-      } else {
-        newSearchParams.delete(key);
-      }
-    });
-    const search = newSearchParams.toString();
-    const query = search ? `?${search}` : "";
-    router.replace(pathname + query, { scroll: false });
-  }, [defaultParams, pathname, router]);
-
-  return { params, getParam, setQueryParams, clearQueryParams };
+  return { params, getParam, setQueryParams };
 }

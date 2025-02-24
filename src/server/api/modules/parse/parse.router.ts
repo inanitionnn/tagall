@@ -14,7 +14,7 @@ export const ParseRouter = createTRPCRouter({
 
   regrex: protectedProcedure
     .input(ParseRegrexInputSchema)
-    .query(async (props) => {
+    .mutation(async (props) => {
       const { ctx, input } = props;
       const response = await getOrSetCache(
         ParseRegrex(props),
