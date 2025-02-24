@@ -120,6 +120,12 @@ export const ItemRouter = createTRPCRouter({
     .mutation(async (props) => {
       const { ctx } = props;
       const response = await AddToCollection(props);
+      await deleteCache("parse", "regrex", {
+        userId: ctx.session.user.id,
+      });
+      await deleteCache("parse", "search", {
+        userId: ctx.session.user.id,
+      });
       await deleteCache("item", "getUserItems", {
         userId: ctx.session.user.id,
       });
@@ -155,6 +161,12 @@ export const ItemRouter = createTRPCRouter({
       const { ctx, input } = props;
       const response = await DeleteFromCollection(props);
 
+      await deleteCache("parse", "regrex", {
+        userId: ctx.session.user.id,
+      });
+      await deleteCache("parse", "search", {
+        userId: ctx.session.user.id,
+      });
       await deleteCache("item", "getYearsRange", {
         userId: ctx.session.user.id,
       });

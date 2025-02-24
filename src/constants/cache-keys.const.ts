@@ -37,6 +37,7 @@ export const CACHE_KEYS = {
   },
   parse: {
     search: {
+      userId: true,
       input: true,
     },
     regrex: {

@@ -5,8 +5,9 @@ import { getOrSetCache } from "../../../../lib";
 
 export const ParseRouter = createTRPCRouter({
   search: protectedProcedure.input(SearchInputSchema).query(async (props) => {
-    const { input } = props;
+    const { ctx, input } = props;
     const response = await getOrSetCache(Search(props), "parse", "search", {
+      userId: ctx.session.user.id,
       input,
     });
     return AddIdToSearchResults({ ...props, items: response });
