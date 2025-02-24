@@ -17,14 +17,15 @@ const HomeSmallItem = (props: Props) => {
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
     <CardContainer className="h-fit cursor-pointer hover:scale-105 sm:h-24">
-      <div className="aspect-[27/40] h-36 sm:h-full">
+      <div className="aspect-square h-36 sm:h-full">
         {item.image ? (
           <CloudinaryImage
+            className="aspect-square rounded-full"
             publicId={item.image}
             folder={item.collection.name}
           />
         ) : (
-          <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
+          <div className="aspect-square rounded-full bg-primary object-cover" />
         )}
       </div>
       <div className="flex w-full flex-col justify-between gap-2 p-2 sm:flex-row sm:items-center">
