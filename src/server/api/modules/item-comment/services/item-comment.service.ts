@@ -90,9 +90,12 @@ export async function AddItemComment(props: {
       rate: input.rate ? input.rate : null,
       status: input.status,
     },
+    include: {
+      userToItem: true,
+    },
   });
 
-  return CommentResponse.transformUserItemComment(comment);
+  return comment;
 }
 
 export async function UpdateItemComment(props: {
@@ -123,7 +126,7 @@ export async function UpdateItemComment(props: {
     },
   });
 
-  await ctx.db.itemComment.update({
+  const comment = await ctx.db.itemComment.update({
     where: {
       id: input.id,
     },
@@ -133,9 +136,11 @@ export async function UpdateItemComment(props: {
       rate: input.rate,
       status: input.status,
     },
+    include: {
+      userToItem: true,
+    },
   });
-
-  return "Comment updated successfully!";
+  return comment;
 }
 
 export async function DeleteItemComment(props: {
@@ -166,13 +171,14 @@ export async function DeleteItemComment(props: {
     },
   });
 
-  await ctx.db.itemComment.delete({
+  return await ctx.db.itemComment.delete({
     where: {
       id: input,
     },
+    include: {
+      userToItem: true,
+    },
   });
-
-  return "Comment deleted successfully!";
 }
 
 // #endregion public functions

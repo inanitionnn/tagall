@@ -40,6 +40,10 @@ export const ItemCommentRouter = createTRPCRouter({
       await deleteCache("item", "getUserItemsStats", {
         userId: ctx.session.user.id,
       });
+      await deleteCache("item", "getUserItem", {
+        userId: ctx.session.user.id,
+        input: response.userToItem.itemId,
+      });
       await deleteCache("comment", "getUserComments", {
         userId: ctx.session.user.id,
         input: response.id,
@@ -57,11 +61,16 @@ export const ItemCommentRouter = createTRPCRouter({
       await deleteCache("item", "getUserItemsStats", {
         userId: ctx.session.user.id,
       });
+      await deleteCache("item", "getUserItem", {
+        userId: ctx.session.user.id,
+        input: response.userToItem.itemId,
+      });
       await deleteCache("comment", "getUserComments", {
         userId: ctx.session.user.id,
         input: input.id,
       });
-      return response;
+
+      return "Comment updated successfully!";
     }),
 
   deleteItemComment: protectedProcedure
@@ -73,10 +82,14 @@ export const ItemCommentRouter = createTRPCRouter({
       await deleteCache("item", "getUserItemsStats", {
         userId: ctx.session.user.id,
       });
+      await deleteCache("item", "getUserItem", {
+        userId: ctx.session.user.id,
+        input: response.userToItem.itemId,
+      });
       await deleteCache("comment", "getUserComments", {
         userId: ctx.session.user.id,
         input: input,
       });
-      return response;
+      return "Comment deleted successfully!";
     }),
 });
