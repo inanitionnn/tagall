@@ -48,11 +48,9 @@ export default async function RootLayout({
         <TRPCReactProvider ssrOnlySecret={encryptedCookie}>
           <SessionProviderWrapper session={session}>
             <ToastWrapper>
-              <Suspense fallback={<LoadingPage />}>
-                {children}
-                <SpeedInsights />
-                <Analytics />
-              </Suspense>
+              <Suspense fallback={<LoadingPage />}>{children}</Suspense>
+              <SpeedInsights />
+              <Analytics />
             </ToastWrapper>
           </SessionProviderWrapper>
         </TRPCReactProvider>
