@@ -99,7 +99,7 @@ const groupByKey = (item: ItemType, sorting: GetUserItemsSortType) => {
       break;
     }
     case "rate": {
-      key = `${item.rate} - ${RATING_NAMES[item.rate || 0]}`;
+      key = `${item.rate || 0} - ${RATING_NAMES[item.rate || 0]}`;
       break;
     }
     case "title": {
