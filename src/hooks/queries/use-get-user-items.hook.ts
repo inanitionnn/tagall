@@ -10,7 +10,11 @@ import { api } from "../../trpc/react";
 import { toast } from "sonner";
 import { useDebounce } from "../utils/use-debounce.hook";
 import { capitalize, isLetter } from "../../lib";
-import { DEFAULT_HOME_LIMIT } from "../../constants";
+import {
+  DEFAULT_HOME_LIMIT,
+  RATING_NAMES,
+  STATUS_NAMES,
+} from "../../constants";
 
 type GroupedItems = {
   groupBy: string;
@@ -95,7 +99,7 @@ const groupByKey = (item: ItemType, sorting: GetUserItemsSortType) => {
       break;
     }
     case "rate": {
-      key = item.rate;
+      key = `${item.rate} - ${RATING_NAMES[item.rate || 0]}`;
       break;
     }
     case "title": {
@@ -111,7 +115,7 @@ const groupByKey = (item: ItemType, sorting: GetUserItemsSortType) => {
       break;
     }
     case "status": {
-      key = item.status;
+      key = STATUS_NAMES[item.status];
       break;
     }
     default: {

@@ -1,4 +1,5 @@
 export const RATING_NAMES: Record<number, string> = {
+  0: "Unrated",
   1: "Worst",
   2: "Awful",
   3: "Bad",
