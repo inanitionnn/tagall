@@ -41,6 +41,9 @@ export async function GetUserItemComments(props: {
     where: {
       userToItemId: userToItem.id,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return CommentResponse.transformUserItemComments(comments);

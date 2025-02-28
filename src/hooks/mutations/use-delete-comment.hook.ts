@@ -21,7 +21,7 @@ export const useDeleteComment = (props: Props) => {
   const submit = async () => {
     const promise = mutateAsync(comment.id, {
       onSuccess: () => {
-        utils.item.invalidate();
+        utils.itemComment.invalidate();
       },
     });
 

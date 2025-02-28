@@ -54,7 +54,7 @@ export const useUpdateComment = (props: Props) => {
 
     const promise = mutateAsync(formData, {
       onSuccess: () => {
-        utils.item.invalidate();
+        utils.itemComment.invalidate();
       },
     });
 
