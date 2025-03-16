@@ -55,7 +55,7 @@ export const ItemCommentRouter = createTRPCRouter({
   updateItemComment: protectedProcedure
     .input(UpdateItemCommentInputSchema)
     .mutation(async (props) => {
-      const { ctx, input } = props;
+      const { ctx } = props;
       const response = await UpdateItemComment(props);
 
       await deleteCache("item", "getUserItemsStats", {
@@ -76,7 +76,7 @@ export const ItemCommentRouter = createTRPCRouter({
   deleteItemComment: protectedProcedure
     .input(DeleteItemCommentInputSchema)
     .mutation(async (props) => {
-      const { ctx, input } = props;
+      const { ctx } = props;
       const response = await DeleteItemComment(props);
 
       await deleteCache("item", "getUserItemsStats", {
