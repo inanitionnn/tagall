@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { cva, type VariantProps } from "class-variance-authority";
 import { X } from "lucide-react";
 import { cn } from "../../../lib";
@@ -62,6 +63,9 @@ const ResponsiveModalContent = React.forwardRef<
 >(({ side = "bottom", className, children, ...props }, ref) => (
   <ResponsiveModalPortal>
     <ResponsiveModalOverlay />
+    <VisuallyHidden asChild>
+      <DialogPrimitive.Title />
+    </VisuallyHidden>
     <DialogPrimitive.Content
       ref={ref}
       className={cn(ResponsiveModalVariants({ side }), className)}
