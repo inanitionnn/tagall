@@ -99,7 +99,7 @@ export const useParseFiltering = (props: Props) => {
   }, [filterYears]);
 
   const setDefaultFilters = () => {
-    setFiltering([]);
+    setFiltering((prev) => prev.filter((f) => f.name === "status"));
     setFilterRates([1, 10]);
     setFilterYears([yearsRange.minYear, yearsRange.maxYear]);
   };
