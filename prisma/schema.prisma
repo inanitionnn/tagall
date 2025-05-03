@@ -19,6 +19,7 @@ enum ItemStatus {
     INPROGRESS
     NOTSTARTED
     ABANDONED
+    WAITING
 }
 
 // #region Next auth

@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "../ui";
 import { useState } from "react";
-import { RATING_NAMES, STATUS_ICONS, STATUS_NAMES } from "../../../constants";
+import { RATING_NAMES, STATUS_ICONS, STATUS_NAMES, STATUS_VALUES } from "../../../constants";
 import type { ItemType } from "../../../server/api/modules/item/types";
 import { ItemStatus } from "@prisma/client";
 import { useAddComment } from "../../../hooks";
@@ -120,8 +120,7 @@ const AddCommentModal = (props: Props) => {
                       {STATUS_NAMES[status]}
                     </Paragraph>
                     <div className="flex gap-2">
-                      {Object.values(ItemStatus)
-                        .reverse()
+                      {STATUS_VALUES
                         .map((s) => {
                           const IconComponent = STATUS_ICONS[s];
                           return (

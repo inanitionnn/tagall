@@ -21,6 +21,7 @@ import {
   RATING_NAMES,
   STATUS_ICONS,
   STATUS_NAMES,
+  STATUS_VALUES,
 } from "../../../../constants";
 import { ItemStatus } from "@prisma/client";
 import { Star } from "lucide-react";
@@ -171,8 +172,7 @@ const ItemUpdateCommentModal = (props: Props) => {
                       {STATUS_NAMES[status]}
                     </Paragraph>
                     <div className="flex gap-2">
-                      {Object.values(ItemStatus)
-                        .reverse()
+                      {STATUS_VALUES
                         .map((s) => {
                           const IconComponent = STATUS_ICONS[s];
                           return (
