@@ -2,10 +2,11 @@ import React from "react";
 import { Button, Header, Paragraph } from "../../ui";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { CardContainer } from "../../shared/card-container";
 
 const HomeNoItemsCard = () => {
   return (
-    <div className="flex max-w-xl flex-col gap-6 rounded-lg bg-white p-8 shadow">
+    <CardContainer className="max-w-xl flex-col gap-6 p-8">
       <Header vtag="h4">Your collection is currently empty!</Header>
 
       <Paragraph>
@@ -19,7 +20,7 @@ const HomeNoItemsCard = () => {
           Add Item
         </Button>
       </Link>
-    </div>
+    </CardContainer>
   );
 };
 
