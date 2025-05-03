@@ -3,6 +3,7 @@ import {
   CodeXml,
   Dices,
   House,
+  Search,
   Tags,
   type LucideIcon,
 } from "lucide-react";
@@ -39,12 +40,22 @@ const NAVBAR_LINKS: NavbarLinkType[] = [
   {
     type: "divider",
   },
+
+  {
+    type: "link",
+    icon: Search,
+    href: "/search",
+    title: "Search",
+  },  {
+    type: "divider",
+  },
   {
     type: "link",
     icon: Dices,
     href: "/random",
     title: "Random",
   },
+
   {
     type: "divider",
   },
@@ -62,7 +73,7 @@ const NAVBAR_LINKS: NavbarLinkType[] = [
     icon: Tags,
     href: "/tag",
     title: "Tags",
-  },
+  }
 ];
 
 export { NAVBAR_LINKS };

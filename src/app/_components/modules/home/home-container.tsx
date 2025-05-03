@@ -8,8 +8,6 @@ import { Header, InfiniteScroll } from "../../ui";
 import { HomeItemSizeTabs, type ItemSize } from "./home-items-size-tabs";
 import { HomeSortSelect } from "./home-sort-select";
 import { HomeItems } from "./home-items";
-import { HomeFilterBadges } from "./home-filter-badges";
-import { HomeNoItemsCard } from "./home-no-items-card";
 import {
   Search,
   FilterDialog,
@@ -17,6 +15,8 @@ import {
   CollectionsTabs,
   Loading,
   Container,
+  NoItemsCard,
+  FilterBadges,
 } from "../../shared";
 import {
   useGetFilterFields,
@@ -117,7 +117,7 @@ function HomeContainer() {
   if (!collections.length) {
     return (
       <div className="flex h-svh items-center justify-center p-6">
-        <HomeNoItemsCard />
+        <NoItemsCard />
       </div>
     );
   }
@@ -156,7 +156,7 @@ function HomeContainer() {
         setQuery={setSearchQuery}
       />
 
-      <HomeFilterBadges filtering={filtering} setFiltering={setFiltering} />
+      <FilterBadges filtering={filtering} setFiltering={setFiltering} />
       {groupedItems.map((group, index) => (
         <div key={group.groupBy + index} className="flex flex-col gap-4">
           <Header vtag="h3">{group.groupBy}</Header>

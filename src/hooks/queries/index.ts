@@ -7,3 +7,4 @@ export * from "./use-get-user-tags.hook";
 export * from "./use-get-nearest-items.hook";
 export * from "./use-get-item-detail-fields.hook";
 export * from "./use-get-user-item-comments.hook";
+export * from "./use-search-item-by-text.hook";

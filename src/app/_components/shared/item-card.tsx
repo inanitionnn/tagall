@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { CardContainer, CloudinaryImage } from "../../shared";
-import { Header } from "../../ui";
-import type { ItemType } from "../../../../server/api/modules/item/types";
-
+import { Header } from "../ui";
+import { ItemType } from "../../../server/api/modules/item/types";
+import { CardContainer } from "./card-container";
+import { CloudinaryImage } from "./cloudinary-image";
 type Props = {
   item: ItemType;
 };
 
-function RandomItem(props: Props) {
+function ItemCard(props: Props) {
   const { item } = props;
 
   return (
@@ -35,4 +35,4 @@ function RandomItem(props: Props) {
     </Link>
   );
 }
-export { RandomItem };
+export { ItemCard };

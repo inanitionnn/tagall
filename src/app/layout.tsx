@@ -35,10 +35,19 @@ export default async function RootLayout({
   params: { session: Session | null | undefined };
 }>) {
   const cookie = new Headers(headers()).get("cookie");
-  const encryptedCookie = await cloakSSROnlySecret(
-    cookie ?? "",
-    "SECRET_CLIENT_COOKIE_VAR",
-  );
+  let encryptedCookie = "";
+  
+  try {
+    if (cookie) {
+      encryptedCookie = await cloakSSROnlySecret(
+        cookie,
+        "SECRET_CLIENT_COOKIE_VAR",
+      );
+    }
+  } catch (error) {
+    console.error("Error cloaking SSR secret:", error);
+  }
+  
   return (
     <html
       lang="en"

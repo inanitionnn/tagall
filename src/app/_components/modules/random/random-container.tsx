@@ -4,13 +4,14 @@ import {
   CardContainer,
   CollectionsTabs,
   Container,
+  FilterBadges,
+  ItemCard,
   FilterDialog,
   Loading,
+  NoItemsCard,
 } from "../../shared";
 import { Button, DualRangeSlider, Spinner } from "../../ui";
 import { Dices } from "lucide-react";
-import { HomeNoItemsCard } from "../home/home-no-items-card";
-import { HomeFilterBadges } from "../home/home-filter-badges";
 import {
   useDebounce,
   useDebouncedQueryParams,
@@ -21,7 +22,6 @@ import {
   useQueryParams,
   useYearsRange,
 } from "../../../../hooks";
-import { RandomItem } from "./random-item";
 import type { z } from "zod";
 import { GetRandomUserItemsInputSchema } from "../../../../server/api/modules/item/schemas";
 import { api } from "../../../../trpc/react";
@@ -98,7 +98,7 @@ function RandomContainer() {
   if (!collections.length) {
     return (
       <div className="flex h-svh items-center justify-center p-6">
-        <HomeNoItemsCard />
+        <NoItemsCard />
       </div>
     );
   }
@@ -149,12 +149,12 @@ function RandomContainer() {
         </CardContainer>
       </div>
 
-      <HomeFilterBadges filtering={filtering} setFiltering={setFiltering} />
+      <FilterBadges filtering={filtering} setFiltering={setFiltering} />
 
       {!isLoading ? (
         <div className="mx-auto grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {items.map((item) => (
-            <RandomItem item={item} key={item.id} />
+            <ItemCard item={item} key={item.id} />
           ))}
         </div>
       ) : (

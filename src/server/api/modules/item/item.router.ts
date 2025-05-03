@@ -182,5 +182,17 @@ export const ItemRouter = createTRPCRouter({
 
   searchItemByText: protectedProcedure
     .input(SearchItemByTextInputSchema)
-    .mutation(SearchItemByText),
+    .query(async (props) => {
+      const { ctx, input } = props;
+      const response = await getOrSetCache(
+        SearchItemByText(props),
+        "item",
+        "searchItemByText",
+        {
+          userId: ctx.session.user.id,
+          input,
+        },
+      );
+      return response;
+    }),
 });

@@ -1,14 +1,14 @@
 import React, { type Dispatch, type SetStateAction } from "react";
-import { Badge } from "../../ui";
-import type { GetUserItemsFilterType } from "../../../../server/api/modules/item/types";
-import { STATUS_NAMES } from "../../../../constants";
+import { Badge } from "../ui";
+import type { GetUserItemsFilterType } from "../../../server/api/modules/item/types";
+import { STATUS_NAMES } from "../../../constants";
 
 type Props = {
   filtering: GetUserItemsFilterType;
   setFiltering: Dispatch<SetStateAction<GetUserItemsFilterType>>;
 };
 
-const HomeFilterBadges = (props: Props) => {
+const FilterBadges = (props: Props) => {
   const { filtering, setFiltering } = props;
 
   const removeAllFilters = () => {
@@ -75,4 +75,4 @@ const HomeFilterBadges = (props: Props) => {
   );
 };
 
-export { HomeFilterBadges };
+export { FilterBadges };

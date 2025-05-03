@@ -19,6 +19,10 @@ export const CACHE_KEYS = {
       userId: true,
       input: true,
     },
+    searchItemByText: {
+      userId: true,
+      input: true,
+    },
   },
   collection: {
     getAll: true,
