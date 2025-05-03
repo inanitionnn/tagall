@@ -12,7 +12,7 @@ export const BackgroundImage = (props: Props) => {
         alt="background"
         width={1200}
         height={675}
-        className="fixed inset-0 -z-10 h-screen w-full object-cover object-center opacity-[0.10]"
+        className="fixed inset-0 -z-10 h-[100dvh] w-full object-cover object-center opacity-[0.10]"
         {...restProps}
       />
 
