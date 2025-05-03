@@ -4,7 +4,7 @@ import { BackgroundImage } from "../../../_components/shared";
 import LoadingPage from "../../../loading";
 import { SearchContainer } from "../../../_components/modules";
 
-export default function SearchPage() {          
+export default function SearchPage() {
   return (
     <HydrateClient>
       <BackgroundImage image="/posters4.webp">
@@ -14,4 +14,4 @@ export default function SearchPage() {
       </BackgroundImage>
     </HydrateClient>
   );
-} 
+}

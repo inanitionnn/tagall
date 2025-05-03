@@ -46,7 +46,8 @@ const NAVBAR_LINKS: NavbarLinkType[] = [
     icon: Search,
     href: "/search",
     title: "Search",
-  },  {
+  },
+  {
     type: "divider",
   },
   {
@@ -73,7 +74,7 @@ const NAVBAR_LINKS: NavbarLinkType[] = [
     icon: Tags,
     href: "/tag",
     title: "Tags",
-  }
+  },
 ];
 
 export { NAVBAR_LINKS };

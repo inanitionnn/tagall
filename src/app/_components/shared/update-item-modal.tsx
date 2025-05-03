@@ -15,11 +15,15 @@ import {
   FormMessage,
 } from "../ui";
 import { useState } from "react";
-import { RATING_NAMES, STATUS_ICONS, STATUS_NAMES, STATUS_VALUES } from "../../../constants";
+import {
+  RATING_NAMES,
+  STATUS_ICONS,
+  STATUS_NAMES,
+  STATUS_VALUES,
+} from "../../../constants";
 import type { ItemType } from "../../../server/api/modules/item/types";
 import { Star } from "lucide-react";
 import { useUpdateItem } from "../../../hooks";
-import { ItemStatus } from "@prisma/client";
 import { CardContainer } from ".";
 
 type Props = {

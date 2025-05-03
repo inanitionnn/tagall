@@ -36,7 +36,7 @@ export default async function RootLayout({
 }>) {
   const cookie = new Headers(headers()).get("cookie");
   let encryptedCookie = "";
-  
+
   try {
     if (cookie) {
       encryptedCookie = await cloakSSROnlySecret(
@@ -47,7 +47,7 @@ export default async function RootLayout({
   } catch (error) {
     console.error("Error cloaking SSR secret:", error);
   }
-  
+
   return (
     <html
       lang="en"

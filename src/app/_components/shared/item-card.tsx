@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Header } from "../ui";
-import { ItemType } from "../../../server/api/modules/item/types";
+import type { ItemType } from "../../../server/api/modules/item/types";
 import { CardContainer } from "./card-container";
 import { CloudinaryImage } from "./cloudinary-image";
 type Props = {

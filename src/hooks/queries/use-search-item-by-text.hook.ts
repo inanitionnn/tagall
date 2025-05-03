@@ -7,24 +7,17 @@ import type { ItemType } from "../../server/api/modules/item/types";
 
 type Props = {
   searchText: string;
-  setSearchText: (text: string) => void;
-}
+};
 
 export const useSearchItemByText = (props: Props) => {
-  const { searchText, setSearchText } = props;
+  const { searchText } = props;
 
   const [items, setItems] = useState<ItemType[]>([]);
 
-
-  const {
-    data,
-    isError,
-    isFetched,
-    isLoading,
-    refetch,
-  } = api.item.searchItemByText.useQuery(searchText.trim(), {
-    enabled: false,
-  });
+  const { data, isError, isFetched, isLoading, refetch } =
+    api.item.searchItemByText.useQuery(searchText.trim(), {
+      enabled: false,
+    });
 
   const search = () => {
     if (searchText.trim().length > 0) {
@@ -51,4 +44,4 @@ export const useSearchItemByText = (props: Props) => {
     isLoading,
     isError,
   };
-}; 
+};

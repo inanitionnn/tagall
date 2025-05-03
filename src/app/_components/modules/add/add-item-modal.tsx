@@ -23,7 +23,6 @@ import {
   STATUS_NAMES,
   STATUS_VALUES,
 } from "../../../../constants";
-import { ItemStatus } from "@prisma/client";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import type { TagType } from "../../../../server/api/modules/tag/types";
 import { Truthy } from "../../../../lib";
@@ -102,26 +101,25 @@ const AddItemModal = (props: Props) => {
                             {STATUS_NAMES[status]}
                           </Paragraph>
                           <div className="flex gap-2">
-                            {STATUS_VALUES
-                              .map((s) => {
-                                const IconComponent = STATUS_ICONS[s];
-                                return (
-                                  <FormControl key={s}>
-                                    <Button
-                                      size={"icon"}
-                                      variant={
-                                        status === s ? "default" : "secondary"
-                                      }
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        form.setValue("status", s);
-                                      }}
-                                    >
-                                      <IconComponent size={16} />
-                                    </Button>
-                                  </FormControl>
-                                );
-                              })}
+                            {STATUS_VALUES.map((s) => {
+                              const IconComponent = STATUS_ICONS[s];
+                              return (
+                                <FormControl key={s}>
+                                  <Button
+                                    size={"icon"}
+                                    variant={
+                                      status === s ? "default" : "secondary"
+                                    }
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      form.setValue("status", s);
+                                    }}
+                                  >
+                                    <IconComponent size={16} />
+                                  </Button>
+                                </FormControl>
+                              );
+                            })}
                           </div>
                         </div>
                         <FormMessage />

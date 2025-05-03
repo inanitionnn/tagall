@@ -56,13 +56,13 @@ export function TRPCReactProvider(props: {
           headers: async () => {
             const headers = new Headers();
             const secret = props.ssrOnlySecret;
-            
+
             try {
               const value = await readSSROnlySecret(
                 secret,
                 "SECRET_CLIENT_COOKIE_VAR",
               );
-              
+
               headers.set("x-trpc-source", "nextjs-react");
               if (value) {
                 headers.set("cookie", value);
@@ -71,7 +71,7 @@ export function TRPCReactProvider(props: {
               console.error("Error reading SSR secret:", error);
               headers.set("x-trpc-source", "nextjs-react");
             }
-            
+
             return headers;
           },
         }),

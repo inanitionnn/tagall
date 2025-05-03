@@ -17,9 +17,13 @@ import {
   FormMessage,
 } from "../ui";
 import { useState } from "react";
-import { RATING_NAMES, STATUS_ICONS, STATUS_NAMES, STATUS_VALUES } from "../../../constants";
+import {
+  RATING_NAMES,
+  STATUS_ICONS,
+  STATUS_NAMES,
+  STATUS_VALUES,
+} from "../../../constants";
 import type { ItemType } from "../../../server/api/modules/item/types";
-import { ItemStatus } from "@prisma/client";
 import { useAddComment } from "../../../hooks";
 import { CardContainer } from ".";
 
@@ -120,24 +124,23 @@ const AddCommentModal = (props: Props) => {
                       {STATUS_NAMES[status]}
                     </Paragraph>
                     <div className="flex gap-2">
-                      {STATUS_VALUES
-                        .map((s) => {
-                          const IconComponent = STATUS_ICONS[s];
-                          return (
-                            <FormControl key={s}>
-                              <Button
-                                size={"icon"}
-                                variant={status === s ? "default" : "secondary"}
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  form.setValue("status", s);
-                                }}
-                              >
-                                <IconComponent size={16} />
-                              </Button>
-                            </FormControl>
-                          );
-                        })}
+                      {STATUS_VALUES.map((s) => {
+                        const IconComponent = STATUS_ICONS[s];
+                        return (
+                          <FormControl key={s}>
+                            <Button
+                              size={"icon"}
+                              variant={status === s ? "default" : "secondary"}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                form.setValue("status", s);
+                              }}
+                            >
+                              <IconComponent size={16} />
+                            </Button>
+                          </FormControl>
+                        );
+                      })}
                     </div>
                   </div>
                   <FormMessage />
