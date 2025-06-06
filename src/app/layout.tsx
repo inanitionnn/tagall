@@ -24,7 +24,45 @@ const nunitoSans = Nunito_Sans({
 export const metadata: Metadata = {
   title: "Tagall",
   description: "Collect all you want",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [
+    {
+      rel: "icon",
+      url: "/favicon16.ico",
+      sizes: "16x16",
+      type: "image/x-icon",
+    },
+    {
+      rel: "icon",
+      url: "/favicon32.ico",
+      sizes: "32x32",
+      type: "image/x-icon",
+    },
+    {
+      rel: "icon",
+      url: "/favicon48.ico",
+      sizes: "48x48",
+      type: "image/x-icon",
+    },
+    {
+      rel: "icon",
+      url: "/favicon64.ico",
+      sizes: "64x64",
+      type: "image/x-icon",
+    },
+    {
+      rel: "icon",
+      url: "/favicon128.ico",
+      sizes: "128x128",
+      type: "image/x-icon",
+    },
+    {
+      rel: "icon",
+      url: "/favicon256.ico",
+      sizes: "256x256",
+      type: "image/x-icon",
+    },
+    { rel: "shortcut icon", url: "/favicon32.ico" },
+  ],
 };
 
 export default async function RootLayout({
