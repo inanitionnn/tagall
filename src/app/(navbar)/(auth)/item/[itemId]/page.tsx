@@ -1,8 +1,6 @@
-import { Suspense } from "react";
 import { api, HydrateClient } from "../../../../../trpc/server";
 import { ItemContainer } from "../../../../_components/modules";
 import { BackgroundImage } from "../../../../_components/shared";
-import LoadingPage from "../../../../loading";
 
 export default async function Item({ params }: { params: { itemId: string } }) {
   const { itemId } = params;
@@ -18,9 +16,7 @@ export default async function Item({ params }: { params: { itemId: string } }) {
   return (
     <HydrateClient>
       <BackgroundImage image="/posters9.webp">
-        <Suspense fallback={<LoadingPage />}>
-          <ItemContainer itemId={itemId} />
-        </Suspense>
+        <ItemContainer itemId={itemId} />
       </BackgroundImage>
     </HydrateClient>
   );

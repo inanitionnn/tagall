@@ -5,8 +5,6 @@ import {
   type ProfileParamsType,
 } from "../../../_components/modules";
 import { useGetServerParams } from "../../../../hooks";
-import LoadingPage from "../../../loading";
-import { Suspense } from "react";
 
 export default async function Profile() {
   const params = useGetServerParams<ProfileParamsType>();
@@ -15,9 +13,7 @@ export default async function Profile() {
   return (
     <HydrateClient>
       <BackgroundImage image="/posters6.webp">
-        <Suspense fallback={<LoadingPage />}>
-          <ProfileContainer />
-        </Suspense>
+        <ProfileContainer />
       </BackgroundImage>
     </HydrateClient>
   );
