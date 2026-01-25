@@ -23,8 +23,18 @@ const HomeEditItem = (props: Props) => {
     tag.collections.map((c) => c.name).includes(item.collection.name),
   );
   return (
-    <CardContainer className="h-fit flex-col p-4">
-      <div className="flex gap-4">
+    <CardContainer className="relative h-fit overflow-hidden flex-col p-4">
+      {item.image && (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <CloudinaryImage
+            className="!aspect-auto h-full w-full rounded-none border-0 object-cover opacity-15 shadow-none"
+            publicId={item.image}
+            folder={item.collection.name}
+          />
+        </div>
+      )}
+
+      <div className="relative z-10 flex gap-4">
         <Link key={item.id} href={`/item/${item.id}`}>
           <div className="aspect-[27/40] h-36 transition-all duration-500 ease-in-out hover:scale-105 sm:h-72">
             {item.image ? (
@@ -64,13 +74,15 @@ const HomeEditItem = (props: Props) => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 sm:hidden">
+      <div className="relative z-10 flex flex-col gap-2 sm:hidden">
         <UpdateItemModal item={item} />
         <UpdateTagsModal item={item} tags={itemTags} />
         <DeleteItemModal item={item} />
       </div>
 
-      <DeleteItemModal item={item} />
+      <div className="relative z-10">
+        <DeleteItemModal item={item} />
+      </div>
     </CardContainer>
   );
 };

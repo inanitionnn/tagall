@@ -10,8 +10,18 @@ const HomeMediumItem = (props: Props) => {
   const { item } = props;
 
   return (
-    <CardContainer className="h-full flex-col hover:scale-105 md:w-full">
-      <div className="aspect-[27/40]">
+    <CardContainer className="relative h-full overflow-hidden flex-col hover:scale-105 md:w-full">
+      {item.image && (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <CloudinaryImage
+            className="!aspect-auto h-full w-full rounded-none border-0 object-cover opacity-15 shadow-none"
+            publicId={item.image}
+            folder={item.collection.name}
+          />
+        </div>
+      )}
+
+      <div className="relative z-10 aspect-[27/40]">
         {item.image ? (
           <CloudinaryImage
             publicId={item.image}
@@ -21,7 +31,7 @@ const HomeMediumItem = (props: Props) => {
           <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
         )}
       </div>
-      <div className="flex h-full items-center justify-center p-2">
+      <div className="relative z-10 flex h-full items-center justify-center p-2">
         <Header vtag="h6" className="line-clamp-3 text-center">
           {item.title}
         </Header>

@@ -16,8 +16,18 @@ const HomeLargeItem = (props: Props) => {
   const { item, selectedCollectionsIds } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
-    <CardContainer className="h-fit cursor-pointer hover:scale-105">
-      <div className="aspect-[27/40] h-36 sm:h-52">
+    <CardContainer className="relative h-fit cursor-pointer overflow-hidden hover:scale-105">
+      {item.image && (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <CloudinaryImage
+            className="!aspect-auto h-full w-full rounded-none border-0 object-cover opacity-15 shadow-none"
+            publicId={item.image}
+            folder={item.collection.name}
+          />
+        </div>
+      )}
+
+      <div className="relative z-10 aspect-[27/40] h-36 sm:h-52">
         {item.image ? (
           <CloudinaryImage
             publicId={item.image}
@@ -27,7 +37,7 @@ const HomeLargeItem = (props: Props) => {
           <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
         )}
       </div>
-      <div className="flex w-full flex-col justify-between gap-2 p-2">
+      <div className="relative z-10 flex w-full flex-col justify-between gap-2 p-2">
         <div className="flex flex-col">
           <div className="flex justify-between gap-2">
             <Header vtag="h5" className="line-clamp-2">

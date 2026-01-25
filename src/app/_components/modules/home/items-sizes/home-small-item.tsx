@@ -17,19 +17,30 @@ const HomeSmallItem = (props: Props) => {
   const { item, selectedCollectionsIds, showTimeAgo = true } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
-    <CardContainer className="h-fit cursor-pointer hover:scale-105 sm:h-24">
-      <div className="aspect-square h-36 sm:h-full">
+    <CardContainer className="relative h-fit cursor-pointer overflow-hidden hover:scale-105 sm:h-24">
+      {item.image && (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <CloudinaryImage
+            className="!aspect-auto h-full w-full rounded-none border-0 object-cover opacity-15 shadow-none"
+            publicId={item.image}
+            folder={item.collection.name}
+          />
+        </div>
+      )}
+
+      <div className="relative z-10 aspect-[27/40] h-24 shrink-0 overflow-hidden rounded-sm sm:h-20">
         {item.image ? (
           <CloudinaryImage
-            className="aspect-square rounded-full"
+            className="h-full w-full rounded-sm object-cover"
             publicId={item.image}
             folder={item.collection.name}
           />
         ) : (
-          <div className="aspect-square rounded-full bg-primary object-cover" />
+          <div className="h-full w-full rounded-sm bg-primary object-cover" />
         )}
       </div>
-      <div className="flex w-full flex-col justify-between gap-2 p-2 sm:flex-row sm:items-center">
+
+      <div className="relative z-10 flex w-full flex-col justify-between gap-2 p-2 sm:flex-row sm:items-center">
         <div className="flex items-start justify-between gap-1 sm:flex-col xl:min-w-[300px] xl:max-w-[300px]">
           <Header vtag="h6" className="line-clamp-2">
             {item.title}
