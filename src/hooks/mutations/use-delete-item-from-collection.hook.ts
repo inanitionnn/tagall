@@ -29,7 +29,7 @@ export const useDeleteItemFromCollection = (props: Props) => {
       error: (error) => `Failed to delete ${item.title}: ${error.message}`,
     });
 
-    router.push("/");
+    router.back();
   };
 
   return {
