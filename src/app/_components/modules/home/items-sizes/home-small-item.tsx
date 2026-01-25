@@ -21,7 +21,7 @@ const HomeSmallItem = (props: Props) => {
       {item.image && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <CloudinaryImage
-            className="!aspect-auto h-full w-full rounded-none border-0 object-cover opacity-15 shadow-none"
+            className="!aspect-auto h-full w-full rounded-none border-0 object-cover opacity-15 blur-lg shadow-none"
             publicId={item.image}
             folder={item.collection.name}
           />
