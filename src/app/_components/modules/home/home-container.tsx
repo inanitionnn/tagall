@@ -158,13 +158,14 @@ function HomeContainer() {
 
       <FilterBadges filtering={filtering} setFiltering={setFiltering} />
       {groupedItems.map((group, index) => (
-        <div key={group.groupBy + index} className="flex flex-col gap-4">
-          <Header vtag="h3">{group.groupBy}</Header>
+        <div key={group.groupBy || `group-${index}`} className="flex flex-col gap-4">
+          {group.groupBy ? <Header vtag="h3">{group.groupBy}</Header> : null}
           <HomeItems
             tags={tags}
             items={group.items}
             itemSize={itemSize}
             selectedCollectionsIds={debouncedSelectedCollectionsIds}
+            sorting={sorting}
           />
         </div>
       ))}

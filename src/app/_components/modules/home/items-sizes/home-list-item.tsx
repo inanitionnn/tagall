@@ -9,10 +9,11 @@ import {
 type Props = {
   item: ItemType;
   selectedCollectionsIds: string[];
+  showTimeAgo?: boolean;
 };
 
 const HomeListItem = (props: Props) => {
-  const { item, selectedCollectionsIds } = props;
+  const { item, selectedCollectionsIds, showTimeAgo = true } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
     <>
@@ -58,9 +59,11 @@ const HomeListItem = (props: Props) => {
           </Paragraph>
         </div>
 
-        <Paragraph className="hidden min-w-32 text-end font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary xl:block">
-          {item.timeAgo}
-        </Paragraph>
+        {showTimeAgo ? (
+          <Paragraph className="hidden min-w-32 text-end font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary xl:block">
+            {item.timeAgo}
+          </Paragraph>
+        ) : null}
       </div>
     </>
   );

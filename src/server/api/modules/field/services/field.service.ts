@@ -95,8 +95,7 @@ export const GetFilterFields = async (props: {
   input: GetFilterFieldsInputType;
 }): Promise<FilterFieldsType[]> => {
   const { ctx, input } = props;
-
-  const MINIMUM_ITEMS = 10;
+  const MINIMUM_ITEMS = 2 as const;
 
   const fields = await ctx.db.field.findMany({
     select: {

@@ -10,10 +10,11 @@ import { CardContainer, CloudinaryImage } from "../../../shared";
 type Props = {
   item: ItemType;
   selectedCollectionsIds: string[];
+  showTimeAgo?: boolean;
 };
 
 const HomeSmallItem = (props: Props) => {
-  const { item, selectedCollectionsIds } = props;
+  const { item, selectedCollectionsIds, showTimeAgo = true } = props;
   const ItemStatusIcon = STATUS_ICONS[item.status];
   return (
     <CardContainer className="h-fit cursor-pointer hover:scale-105 sm:h-24">
@@ -82,13 +83,15 @@ const HomeSmallItem = (props: Props) => {
             <div className="sm:w-24" />
           )}
 
-          <div className="hidden w-32 flex-col items-center lg:flex">
-            <Paragraph className="font-bold">{item.timeAgo}</Paragraph>
+          {showTimeAgo ? (
+            <div className="hidden w-32 flex-col items-center lg:flex">
+              <Paragraph className="font-bold">{item.timeAgo}</Paragraph>
 
-            <Paragraph className="font-medium text-muted-foreground">
-              {new Date(item.updatedAt).toLocaleDateString()}
-            </Paragraph>
-          </div>
+              <Paragraph className="font-medium text-muted-foreground">
+                {new Date(item.updatedAt).toLocaleDateString()}
+              </Paragraph>
+            </div>
+          ) : null}
         </div>
       </div>
     </CardContainer>

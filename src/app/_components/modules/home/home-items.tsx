@@ -1,5 +1,8 @@
 import React from "react";
-import type { ItemType } from "../../../../server/api/modules/item/types";
+import type {
+  GetUserItemsSortType,
+  ItemType,
+} from "../../../../server/api/modules/item/types";
 import Link from "next/link";
 import {
   HomeListItem,
@@ -17,10 +20,12 @@ type Props = {
   items: ItemType[];
   tags: TagType[];
   selectedCollectionsIds: string[];
+  sorting: GetUserItemsSortType;
 };
 
 const HomeItems = (props: Props) => {
-  const { itemSize, items, selectedCollectionsIds, tags } = props;
+  const { itemSize, items, selectedCollectionsIds, tags, sorting } = props;
+  const showTimeAgo = sorting.name !== "date";
 
   return (
     <>
@@ -54,6 +59,7 @@ const HomeItems = (props: Props) => {
                 key={item.id}
                 item={item}
                 selectedCollectionsIds={selectedCollectionsIds}
+                showTimeAgo={showTimeAgo}
               />
             </Link>
           ))}
@@ -68,6 +74,7 @@ const HomeItems = (props: Props) => {
                 key={item.id}
                 item={item}
                 selectedCollectionsIds={selectedCollectionsIds}
+                showTimeAgo={showTimeAgo}
               />
             </Link>
           ))}

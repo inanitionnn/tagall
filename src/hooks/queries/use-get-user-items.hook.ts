@@ -9,7 +9,7 @@ import type {
 import { api } from "../../trpc/react";
 import { toast } from "sonner";
 import { useDebounce } from "../utils/use-debounce.hook";
-import { capitalize, isLetter } from "../../lib";
+import { capitalize } from "../../lib";
 import {
   DEFAULT_HOME_LIMIT,
   RATING_NAMES,
@@ -103,16 +103,10 @@ const groupByKey = (item: ItemType, sorting: GetUserItemsSortType) => {
       break;
     }
     case "title": {
-      const firstCharacter = item.title.charAt(0);
-      if (isLetter(firstCharacter)) {
-        key = firstCharacter;
-      }
-      break;
+      return "";
     }
     case "date": {
-      const dateType = item.timeAgo.split(" ")[1]!;
-      key = `${dateType} ago`;
-      break;
+      return "";
     }
     case "status": {
       key = STATUS_NAMES[item.status];
@@ -124,7 +118,7 @@ const groupByKey = (item: ItemType, sorting: GetUserItemsSortType) => {
     }
   }
 
-  if (!key) return "#";
+  if (key == null) return "#";
 
   return capitalize(key);
 };
