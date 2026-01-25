@@ -79,9 +79,10 @@ function AddContainer() {
   return (
     <Container>
       <div className="flex flex-wrap justify-between gap-4">
+        {/* Book collection hidden – remove .filter() to restore */}
         <CollectionsTabs
           isMany={false}
-          collections={collections}
+          collections={collections.filter((c) => c.name.toLowerCase() !== "book")}
           selectedCollectionsIds={selectedCollectionsIds}
           setSelectedCollectionsIds={setSelectedCollectionsIds}
         />
