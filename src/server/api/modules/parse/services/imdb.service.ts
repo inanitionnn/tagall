@@ -19,7 +19,6 @@ async function GetHtmlFromUrl(url: string): Promise<string> {
         Accept: "text/html",
       },
     });
-
     return response.data as string;
   } catch {
     throw new Error("IMDB parse error");
@@ -296,7 +295,6 @@ async function GetQuickSearchHtml(
   }
 
   const url = `https://www.imdb.com/find/${defaultMeta}`;
-  console.log("url", url);
   return GetHtmlFromUrl(url);
 }
 
@@ -325,7 +323,6 @@ async function GetAdvancedSearchHtml(
   const mergedMeta = mergeMeta(meta, defaultMeta);
 
   const url = `https://www.imdb.com/search/title/${mergedMeta}`;
-
   return GetHtmlFromUrl(url);
 }
 
@@ -353,15 +350,28 @@ export async function GetImdbDetailsById(
     const $Main = cheerio.load(mainHtml);
 
     const nextdataScriptString = $Main("#__NEXT_DATA__").html();
-    const nextdataScriptJson = JSON.parse(nextdataScriptString ?? "");
-    const pageProps = nextdataScriptJson.props.pageProps.aboveTheFoldData;
+    if (!nextdataScriptString) {
+      throw new Error("IMDB: #__NEXT_DATA__ script not found");
+    }
+    const nextdataScriptJson = JSON.parse(nextdataScriptString);
+    const pageProps =
+      nextdataScriptJson?.props?.pageProps?.aboveTheFoldData ?? null;
+    if (!pageProps) {
+      throw new Error("IMDB: aboveTheFoldData not found in __NEXT_DATA__");
+    }
 
     const metadataScriptString = $Main(
       'script[type="application/ld+json"]',
     ).html();
-    const metadata = JSON.parse(metadataScriptString ?? "");
+    const metadata = metadataScriptString
+      ? JSON.parse(metadataScriptString)
+      : {};
 
-    return FillImdbDetailsResult({ ...pageProps, ...metadata, summaries });
+    return FillImdbDetailsResult({
+      ...pageProps,
+      ...metadata,
+      summaries,
+    });
   } catch (error) {
     console.error(error);
     throw new Error("Imdb parse error");
@@ -372,9 +382,10 @@ export async function SearchImdb(
   props: ImdbSearchInputType,
 ): Promise<SearchResultType[]> {
   const { query, isQuickSearch = false, type = "all", limit = 10 } = props;
+
   const { meta, title, year } = parseQueryString(query);
 
-  const quickSearchResults = [];
+  const quickSearchResults: SearchResultType[] = [];
   if (isQuickSearch) {
     const quickSearchHtml = await GetQuickSearchHtml({ type, title, year });
     quickSearchResults.push(

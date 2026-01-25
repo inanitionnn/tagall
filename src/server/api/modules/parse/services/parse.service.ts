@@ -56,9 +56,10 @@ export const Search = async (props: {
   if (!collection) {
     throw new Error("Collection not found");
   }
+
   let items: SearchResultType[] = [];
   switch (collection.name) {
-    case "Film": {
+    case "Film":
       items = await SearchImdb({
         query: input.query,
         type: "film",
@@ -66,8 +67,7 @@ export const Search = async (props: {
         isQuickSearch: input.isAdvancedSearch,
       });
       break;
-    }
-    case "Serie": {
+    case "Serie":
       items = await SearchImdb({
         query: input.query,
         type: "series",
@@ -75,13 +75,12 @@ export const Search = async (props: {
         isQuickSearch: input.isAdvancedSearch,
       });
       break;
-    }
-    case "Manga": {
+    case "Manga":
       items = await SearchAnilist(input.query, input.limit);
       break;
-    }
     default:
       throw new Error("Collection not found");
   }
+
   return items;
 };

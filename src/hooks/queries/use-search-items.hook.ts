@@ -1,6 +1,11 @@
 "use client";
 
-import { type Dispatch, type SetStateAction, useEffect } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useRef,
+} from "react";
 import { api } from "../../trpc/react";
 import { toast } from "sonner";
 import type { SearchResultType } from "../../server/api/modules/parse/types";
@@ -22,29 +27,25 @@ export const useSearchItems = (props: Props) => {
     setSearchResults,
   } = props;
 
-  const { data, isSuccess, isLoading, isError, refetch } =
-    api.parse.search.useQuery(
-      {
-        collectionId: selectedCollectionId,
-        query: query.toLowerCase().trim(),
-        isAdvancedSearch,
-        limit: DEFAULT_ADD_LIMIT,
-      },
-      { enabled: false },
-    );
+  const prevCollectionIdRef = useRef<string | null>(null);
+
+  const { data, isFetching, isError, refetch } = api.parse.search.useQuery(
+    {
+      collectionId: selectedCollectionId,
+      query: query.toLowerCase().trim(),
+      isAdvancedSearch,
+      limit: DEFAULT_ADD_LIMIT,
+    },
+    { enabled: false },
+  );
 
   const submit = () => {
-    if (!isLoading && query.length >= 1) {
+    const normalizedQuery = query.trim();
+    if (!isFetching && normalizedQuery.length >= 1 && selectedCollectionId) {
       setSelectedItem(null);
-      refetch();
+      void refetch();
     }
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      setSearchResults(data);
-    }
-  }, [isSuccess, data, setSearchResults]);
 
   useEffect(() => {
     if (isError) {
@@ -53,7 +54,22 @@ export const useSearchItems = (props: Props) => {
   }, [isError]);
 
   useEffect(() => {
-    if (selectedCollectionId) {
+    if (data) {
+      setSearchResults(data);
+    }
+  }, [data, setSearchResults]);
+
+  useEffect(() => {
+    const prev = prevCollectionIdRef.current;
+    prevCollectionIdRef.current = selectedCollectionId;
+
+    // Clear only when switching from one collection to another (not on mount, not when prev is empty)
+    if (
+      prev != null &&
+      prev !== "" &&
+      selectedCollectionId !== "" &&
+      prev !== selectedCollectionId
+    ) {
       setSearchResults([]);
       setSelectedItem(null);
     }
@@ -61,6 +77,6 @@ export const useSearchItems = (props: Props) => {
 
   return {
     submit,
-    isLoading,
+    isLoading: isFetching,
   };
 };
