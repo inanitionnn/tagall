@@ -72,8 +72,20 @@ export const useSearchItems = (props: Props) => {
     ) {
       setSearchResults([]);
       setSelectedItem(null);
+      // Auto-trigger search when switching categories if there is a query
+      const normalizedQuery = query.trim();
+      if (normalizedQuery.length >= 1 && !isFetching) {
+        void refetch();
+      }
     }
-  }, [selectedCollectionId, setSearchResults, setSelectedItem]);
+  }, [
+    selectedCollectionId,
+    setSearchResults,
+    setSelectedItem,
+    query,
+    isFetching,
+    refetch,
+  ]);
 
   return {
     submit,
