@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AddSearchResultItem } from "./add-search-result-item";
 import { AddItemModal } from "./add-item-modal";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
@@ -75,6 +75,17 @@ function AddContainer() {
     setSelectedItem,
     isAdvancedSearch,
   });
+
+  const prevIsAdvancedSearchRef = useRef<boolean | null>(null);
+  useEffect(() => {
+    const prev = prevIsAdvancedSearchRef.current;
+    prevIsAdvancedSearchRef.current = isAdvancedSearch;
+
+    // Auto-trigger search only when the toggle changes (not on mount)
+    if (prev !== null && prev !== isAdvancedSearch) {
+      submit();
+    }
+  }, [isAdvancedSearch, submit]);
 
   return (
     <Container>
