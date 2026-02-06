@@ -80,7 +80,7 @@ const HomeEditItem = (props: Props) => {
         <DeleteItemModal item={item} />
       </div>
 
-      <div className="relative z-10">
+      <div className="relative z-10 hidden sm:block">
         <DeleteItemModal item={item} />
       </div>
     </CardContainer>
