@@ -40,12 +40,130 @@ function ItemContainer(props: Props) {
     collectionsIds: [item.collection.id],
   });
 
+  const imageBlock = (
+    <CardContainer className="p-4">
+      <div className="mx-auto flex w-full max-w-64 flex-col items-center gap-4">
+        <div className="aspect-[27/40] w-full">
+          {item.image ? (
+            <CloudinaryImage
+              publicId={item.image}
+              className="mx-auto w-full"
+              folder={item.collection.name}
+            />
+          ) : (
+            <div className="h-full w-full rounded-sm bg-primary object-cover" />
+          )}
+        </div>
+      </div>
+    </CardContainer>
+  );
+
+  const plotBlock = (
+    <CardContainer className="flex-col p-4">
+      <Header vtag="h6">Plot:</Header>
+      <Paragraph className="line-clamp-[16] text-muted-foreground">
+        {item.description}
+      </Paragraph>
+    </CardContainer>
+  );
+
+  const infoBlock = (
+    <CardContainer className="w-full flex-col gap-4 p-4 md:w-64">
+      <div className="flex flex-col">
+        <Header vtag="h6">Collection:</Header>
+        <Paragraph className="text-muted-foreground">
+          {item.collection.name}
+        </Paragraph>
+      </div>
+      <div className="flex flex-col">
+        <Header vtag="h6">Year:</Header>
+        <Paragraph className="text-muted-foreground">{item.year}</Paragraph>
+      </div>
+      {fieldData &&
+        Object.entries(fieldData).map(([key, value]) => (
+          <div key={key} className="flex flex-col">
+            <Header vtag="h6">
+              {key
+                .replace(/([a-z])([A-Z])/g, "$1 $2")
+                .replace(/^./, (str) => str.toUpperCase())}
+              :
+            </Header>
+            {value.map((field: string) => (
+              <Paragraph key={field} className="text-muted-foreground">
+                {field}
+              </Paragraph>
+            ))}
+          </div>
+        ))}
+    </CardContainer>
+  );
+
+  const similarItemsBlock =
+    items && items.length > 0 ? (
+      <CardContainer className="flex-col gap-4 p-4">
+        <Header vtag="h6">Similar Items:</Header>
+
+        <div className="mx-auto grid max-w-screen-2xl grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5">
+          {items.map((item) => (
+            <Link key={item.id} href={`/item/${item.id}`}>
+              <CardContainer
+                key={item.id}
+                className="h-full flex-col hover:scale-105 md:w-full"
+              >
+                <div className="aspect-[27/40]">
+                  {item.image ? (
+                    <CloudinaryImage
+                      publicId={item.image}
+                      folder={item.collection.name}
+                    />
+                  ) : (
+                    <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
+                  )}
+                </div>
+                <div className="flex h-full items-center justify-center p-2">
+                  <Header vtag="h6" className="line-clamp-3 text-center">
+                    {item.title}
+                  </Header>
+                </div>
+              </CardContainer>
+            </Link>
+          ))}
+        </div>
+      </CardContainer>
+    ) : null;
+
+  const commentsBlock =
+    comments && comments.length > 0 ? (
+      <>
+        {comments.map((comment, index) => (
+          <ItemUpdateCommentModal comment={comment} key={index} />
+        ))}
+      </>
+    ) : null;
+
   return (
     <Container>
       <CardContainer className="p-4">
         <Header vtag="h4">{item.title}</Header>
       </CardContainer>
-      <div className="flex flex-col gap-4 md:flex-row">
+
+      {/* Mobile layout order:
+        Title, Image, Status, Tags, Comments, Plot, Info, Similar items, Delete
+      */}
+      <div className="flex flex-col gap-4 md:hidden">
+        {imageBlock}
+        <UpdateItemModal item={item} />
+        <UpdateTagsModal tags={tags} item={item} />
+        <AddCommentModal item={item} />
+        {commentsBlock}
+        {plotBlock}
+        {infoBlock}
+        {similarItemsBlock}
+        <DeleteItemModal item={item} />
+      </div>
+
+      {/* Desktop layout (keeps existing structure) */}
+      <div className="hidden gap-4 md:flex md:flex-row">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="flex min-w-64 flex-col items-center gap-4 md:max-w-64">
@@ -66,87 +184,16 @@ function ItemContainer(props: Props) {
             </div>
 
             <div className="flex w-full flex-col gap-4">
-              <CardContainer className="flex-col p-4">
-                <Header vtag="h6">Plot:</Header>
-                <Paragraph className="line-clamp-[16] text-muted-foreground">
-                  {item.description}
-                </Paragraph>
-              </CardContainer>
-
+              {plotBlock}
               <UpdateTagsModal tags={tags} item={item} />
-
-              {comments
-                ? comments.map((comment, index) => (
-                    <ItemUpdateCommentModal comment={comment} key={index} />
-                  ))
-                : null}
+              {commentsBlock}
             </div>
           </div>
-          {items && (
-            <CardContainer className="flex-col gap-4 p-4">
-              <Header vtag="h6">Similar Items:</Header>
-
-              <div className="mx-auto grid max-w-screen-2xl grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5">
-                {items.map((item) => (
-                  <Link key={item.id} href={`/item/${item.id}`}>
-                    <CardContainer
-                      key={item.id}
-                      className="h-full flex-col hover:scale-105 md:w-full"
-                    >
-                      <div className="aspect-[27/40]">
-                        {item.image ? (
-                          <CloudinaryImage
-                            publicId={item.image}
-                            folder={item.collection.name}
-                          />
-                        ) : (
-                          <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
-                        )}
-                      </div>
-                      <div className="flex h-full items-center justify-center p-2">
-                        <Header vtag="h6" className="line-clamp-3 text-center">
-                          {item.title}
-                        </Header>
-                      </div>
-                    </CardContainer>
-                  </Link>
-                ))}
-              </div>
-            </CardContainer>
-          )}
+          {similarItemsBlock}
         </div>
-        <div className="flex flex-col gap-4 md:w-64">
-          <CardContainer className="w-full flex-col gap-4 p-4 md:w-64">
-            <div className="flex flex-col">
-              <Header vtag="h6">Collection:</Header>
-              <Paragraph className="text-muted-foreground">
-                {item.collection.name}
-              </Paragraph>
-            </div>
-            <div className="flex flex-col">
-              <Header vtag="h6">Year:</Header>
-              <Paragraph className="text-muted-foreground">
-                {item.year}
-              </Paragraph>
-            </div>
-            {fieldData &&
-              Object.entries(fieldData).map(([key, value]) => (
-                <div key={key} className="flex flex-col">
-                  <Header vtag="h6">
-                    {key
-                      .replace(/([a-z])([A-Z])/g, "$1 $2")
-                      .replace(/^./, (str) => str.toUpperCase())}
-                    :
-                  </Header>
-                  {value.map((field: string) => (
-                    <Paragraph key={field} className="text-muted-foreground">
-                      {field}
-                    </Paragraph>
-                  ))}
-                </div>
-              ))}
-          </CardContainer>
 
+        <div className="flex flex-col gap-4 md:w-64">
+          {infoBlock}
           <DeleteItemModal item={item} />
         </div>
       </div>
