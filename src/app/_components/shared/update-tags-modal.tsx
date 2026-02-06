@@ -68,7 +68,7 @@ const UpdateTagsModal = (props: Props) => {
                     <Paragraph>
                       <FormLabel>Tags:</FormLabel>
                     </Paragraph>
-                    <div className="flew-wrap flex gap-2">
+                    <div className="flex w-full flex-wrap gap-2">
                       {tags.map((tag) => (
                         <FormControl key={tag.id}>
                           <Button
@@ -85,6 +85,7 @@ const UpdateTagsModal = (props: Props) => {
                                   : [...tagsIds, tag.id],
                               );
                             }}
+                            className="max-w-full whitespace-normal break-words"
                           >
                             {tag.name}
                           </Button>
