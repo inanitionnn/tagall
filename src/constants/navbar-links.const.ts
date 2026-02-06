@@ -1,6 +1,6 @@
 import {
   BadgePlus,
-  CodeXml,
+  /* CodeXml, */
   Dices,
   House,
   Search,
@@ -60,15 +60,16 @@ const NAVBAR_LINKS: NavbarLinkType[] = [
   {
     type: "divider",
   },
-  {
-    type: "link",
-    icon: CodeXml,
-    href: "/parse",
-    title: "Parse",
-  },
-  {
-    type: "divider",
-  },
+  // Temporarily disabled.
+  // {
+  //   type: "link",
+  //   icon: CodeXml,
+  //   href: "/parse",
+  //   title: "Parse",
+  // },
+  // {
+  //   type: "divider",
+  // },
   {
     type: "link",
     icon: Tags,
