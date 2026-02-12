@@ -6,22 +6,21 @@ import type {
   SearchQuery,
 } from "../types";
 import * as cheerio from "cheerio";
-import axios from "axios";
+import { fetchWithScrapingAnt } from "../../../../../lib";
 
 // #region Private Functions
 async function GetHtmlFromUrl(url: string): Promise<string> {
   try {
-    const response = await axios.get(url, {
-      headers: {
-        "Accept-Language": "en-US,en;q=0.9",
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        Accept: "text/html",
-      },
+    const html = await fetchWithScrapingAnt(url, {
+      timeout: 30,
+      browser: true,
+      proxyType: "datacenter",
     });
-    return response.data as string;
-  } catch {
-    throw new Error("IMDB parse error");
+    return html;
+  } catch (error) {
+    throw new Error(
+      `IMDB parse error: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
   }
 }
 

@@ -6,3 +6,4 @@ export * from "./is-letter";
 export * from "./cache-key";
 export * from "./date-to-time-ago";
 export * from "./merge-search-params";
+export * from "./scraping-ant";
