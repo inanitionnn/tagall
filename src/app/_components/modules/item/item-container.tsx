@@ -10,6 +10,7 @@ import {
   Container,
   DeleteItemModal,
   UpdateItemModal,
+  UpdateItemImageModal,
   UpdateTagsModal,
 } from "../../shared";
 import Link from "next/link";
@@ -41,21 +42,23 @@ function ItemContainer(props: Props) {
   });
 
   const imageBlock = (
-    <CardContainer className="p-4">
-      <div className="mx-auto flex w-full max-w-64 flex-col items-center gap-4">
-        <div className="aspect-[27/40] w-full">
-          {item.image ? (
-            <CloudinaryImage
-              publicId={item.image}
-              className="mx-auto w-full"
-              folder={item.collection.name}
-            />
-          ) : (
-            <div className="h-full w-full rounded-sm bg-primary object-cover" />
-          )}
+    <UpdateItemImageModal item={item}>
+      <CardContainer className="cursor-pointer p-4 transition-transform hover:scale-105">
+        <div className="mx-auto flex w-full max-w-64 flex-col items-center gap-4">
+          <div className="aspect-[27/40] w-full">
+            {item.image ? (
+              <CloudinaryImage
+                publicId={item.image}
+                className="mx-auto w-full"
+                folder={item.collection.name}
+              />
+            ) : (
+              <div className="h-full w-full rounded-sm bg-primary object-cover" />
+            )}
+          </div>
         </div>
-      </div>
-    </CardContainer>
+      </CardContainer>
+    </UpdateItemImageModal>
   );
 
   const plotBlock = (
@@ -167,17 +170,19 @@ function ItemContainer(props: Props) {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="flex min-w-64 flex-col items-center gap-4 md:max-w-64">
-              <div className="md:aspect-[27/40]">
-                {item.image ? (
-                  <CloudinaryImage
-                    publicId={item.image}
-                    className="mx-auto w-full"
-                    folder={item.collection.name}
-                  />
-                ) : (
-                  <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
-                )}
-              </div>
+              <UpdateItemImageModal item={item}>
+                <div className="cursor-pointer transition-transform hover:scale-105 md:aspect-[27/40]">
+                  {item.image ? (
+                    <CloudinaryImage
+                      publicId={item.image}
+                      className="mx-auto w-full"
+                      folder={item.collection.name}
+                    />
+                  ) : (
+                    <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
+                  )}
+                </div>
+              </UpdateItemImageModal>
 
               <UpdateItemModal item={item} />
               <AddCommentModal item={item} />

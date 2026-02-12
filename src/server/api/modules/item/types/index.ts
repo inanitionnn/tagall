@@ -4,6 +4,7 @@ export * from "./get-years-range-input.type";
 export * from "./item.type";
 export * from "./get-user-item-input.type";
 export * from "./update-item-input.type";
+export * from "./update-item-image-input.type";
 export * from "./delete-from-collection-input.type";
 export * from "./get-random-user-items-input.type";
 export * from "./get-user-items-stats-input.type";

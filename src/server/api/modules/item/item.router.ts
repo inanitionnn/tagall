@@ -10,6 +10,7 @@ import {
   GetYearsRangeInputSchema,
   SearchItemByTextInputSchema,
   UpdateItemInputSchema,
+  UpdateItemImageInputSchema,
 } from "./schemas";
 import {
   AddToCollection,
@@ -22,6 +23,7 @@ import {
   GetYearsRange,
   SearchItemByText,
   UpdateItem,
+  UpdateItemImage,
 } from "./services";
 import { deleteCache, getOrSetCache } from "../../../../lib";
 
@@ -152,6 +154,23 @@ export const ItemRouter = createTRPCRouter({
       await deleteCache("item", "getUserItemsStats", {
         userId: ctx.session.user.id,
       });
+      return response;
+    }),
+
+  updateItemImage: protectedProcedure
+    .input(UpdateItemImageInputSchema)
+    .mutation(async (props) => {
+      const { ctx, input } = props;
+      const response = await UpdateItemImage(props);
+
+      await deleteCache("item", "getUserItems", {
+        userId: ctx.session.user.id,
+      });
+      await deleteCache("item", "getUserItem", {
+        userId: ctx.session.user.id,
+        input: input.id,
+      });
+      await deleteCache("item", "getNearestItems");
       return response;
     }),
 

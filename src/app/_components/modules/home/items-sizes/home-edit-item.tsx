@@ -6,6 +6,7 @@ import {
   CloudinaryImage,
   DeleteItemModal,
   UpdateItemModal,
+  UpdateItemImageModal,
   UpdateTagsModal,
 } from "../../../shared";
 import type { TagType } from "../../../../../server/api/modules/tag/types";
@@ -35,8 +36,8 @@ const HomeEditItem = (props: Props) => {
       )}
 
       <div className="relative z-10 flex gap-4">
-        <Link key={item.id} href={`/item/${item.id}`}>
-          <div className="aspect-[27/40] h-36 transition-all duration-500 ease-in-out hover:scale-105 sm:h-72">
+        <UpdateItemImageModal item={item}>
+          <div className="aspect-[27/40] h-36 cursor-pointer transition-all duration-500 ease-in-out hover:scale-105 sm:h-72">
             {item.image ? (
               <CloudinaryImage
                 publicId={item.image}
@@ -46,7 +47,7 @@ const HomeEditItem = (props: Props) => {
               <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
             )}
           </div>
-        </Link>
+        </UpdateItemImageModal>
 
         <div className="flex w-full flex-col justify-between gap-2">
           <div className="flex flex-col">

@@ -1,6 +1,7 @@
 import type { ContextType } from "../../../../types";
 import type {
   UpdateItemInputType,
+  UpdateItemImageInputType,
   AddToCollectionInputType,
   GetUserItemInputType,
   GetUserItemsInputType,
@@ -14,7 +15,7 @@ import type {
 } from "../types";
 import { GetImdbDetailsById } from "../../parse/services";
 import { GetEmbedding } from "../../open-ai/services";
-import { UploadImageByUrl } from "../../files/files.service";
+import { UploadImageByUrl, UploadImageByBase64, DeleteFile } from "../../files/files.service";
 import { GetAnilistDetailsById } from "../../parse/services/anilist.service";
 import {
   UpdateItemEmbedding,
@@ -643,6 +644,70 @@ export async function UpdateItem(props: {
   });
 
   return "Item updated successfully!";
+}
+
+export async function UpdateItemImage(props: {
+  ctx: ContextType;
+  input: UpdateItemImageInputType;
+}): Promise<string> {
+  const { ctx, input } = props;
+
+  // Check if user owns this item
+  const userItem = await ctx.db.userToItem.findUnique({
+    where: {
+      userId_itemId: {
+        userId: ctx.session.user.id,
+        itemId: input.id,
+      },
+    },
+    include: {
+      item: {
+        include: {
+          collection: true,
+        },
+      },
+    },
+  });
+
+  if (!userItem) {
+    throw new Error("Item not found!");
+  }
+
+  const { item } = userItem;
+  const oldImage = item.image;
+
+  // Upload new image
+  let newImageId: string | null = null;
+
+  if (input.imageUrl) {
+    newImageId = await UploadImageByUrl(item.collection.name, input.imageUrl);
+  } else if (input.imageBase64) {
+    newImageId = await UploadImageByBase64(
+      item.collection.name,
+      input.imageBase64,
+    );
+  }
+
+  if (!newImageId) {
+    throw new Error("Failed to upload image");
+  }
+
+  // Delete old image from Cloudinary if exists
+  if (oldImage) {
+    await DeleteFile(item.collection.name, oldImage);
+  }
+
+  // Update item image in database
+  await ctx.db.item.update({
+    where: {
+      id: input.id,
+    },
+    data: {
+      image: newImageId,
+    },
+  });
+
+  return "Item image updated successfully!";
 }
 
 export async function DeleteFromCollection(props: {

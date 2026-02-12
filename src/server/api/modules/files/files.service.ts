@@ -43,6 +43,29 @@ export const UploadImageByUrl = async (
   }
 };
 
+export const UploadImageByBase64 = async (
+  folder: string,
+  base64Image: string,
+): Promise<string | null> => {
+  if (!base64Image) {
+    return null;
+  }
+  try {
+    const response = await cloudinary.uploader.upload(base64Image, {
+      folder: `${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folder}`,
+      transformation: [
+        { width: 1000, crop: "scale" },
+        { quality: "auto" },
+        { fetch_format: "auto" },
+      ],
+    });
+    return extractId(response.public_id);
+  } catch (error) {
+    const err = error as UploadApiErrorResponse;
+    throw new Error(`Error uploading image: ${err.message}`);
+  }
+};
+
 export const MoveFile = async (
   fromPublicId: string | null | undefined,
   toPublicId: string,
