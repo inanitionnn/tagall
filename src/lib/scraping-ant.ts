@@ -22,10 +22,66 @@ export class ScrapingAntError extends Error {
   }
 }
 
+type QueuedRequest<T> = {
+  execute: () => Promise<T>;
+  resolve: (value: T) => void;
+  reject: (error: unknown) => void;
+};
+
 /**
- * Fetches HTML content from a URL using ScrapingAnt API to bypass WAF and anti-bot systems
+ * Request queue to ensure only 1 concurrent ScrapingAnt request
+ * ScrapingAnt free plan has a concurrency limit of 1
  */
-export async function fetchWithScrapingAnt(
+class ScrapingAntQueue {
+  private queue: QueuedRequest<string>[] = [];
+  private isProcessing = false;
+
+  async add<T>(request: () => Promise<T>): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      this.queue.push({
+        execute: request as () => Promise<string>,
+        resolve: resolve as (value: string) => void,
+        reject,
+      } as QueuedRequest<string>);
+
+      if (!this.isProcessing) {
+        void this.processQueue();
+      }
+    });
+  }
+
+  private async processQueue(): Promise<void> {
+    if (this.isProcessing || this.queue.length === 0) {
+      return;
+    }
+
+    this.isProcessing = true;
+
+    while (this.queue.length > 0) {
+      const request = this.queue.shift();
+      if (!request) break;
+
+      try {
+        const result = await request.execute();
+        request.resolve(result);
+      } catch (error) {
+        request.reject(error);
+      }
+
+      // Small delay between requests to avoid rate limiting
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    this.isProcessing = false;
+  }
+}
+
+const scrapingAntQueue = new ScrapingAntQueue();
+
+/**
+ * Internal function to make actual ScrapingAnt request
+ */
+async function makeScrapingAntRequest(
   url: string,
   options: ScrapingAntOptions = {},
 ): Promise<string> {
@@ -70,4 +126,51 @@ export async function fetchWithScrapingAnt(
       error instanceof Error ? error.message : "Unknown error occurred",
     );
   }
+}
+
+/**
+ * Fetches HTML content from a URL using ScrapingAnt API with queuing and retry logic
+ * Ensures only 1 concurrent request due to ScrapingAnt free plan limitation
+ */
+export async function fetchWithScrapingAnt(
+  url: string,
+  options: ScrapingAntOptions = {},
+): Promise<string> {
+  const maxRetries = 3;
+  const baseDelay = 2000; // 2 seconds
+
+  return scrapingAntQueue.add(async () => {
+    let lastError: Error | null = null;
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        return await makeScrapingAntRequest(url, options);
+      } catch (error) {
+        lastError = error as Error;
+
+        // Check if it's a rate limit error
+        const isConcurrencyError =
+          error instanceof ScrapingAntError &&
+          (error.message.includes("concurrency limit") ||
+            error.message.includes("rate limit"));
+
+        // Only retry on concurrency/rate limit errors
+        if (isConcurrencyError && attempt < maxRetries - 1) {
+          // Exponential backoff with jitter
+          const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
+          console.log(
+            `ScrapingAnt concurrency limit hit, retrying in ${Math.round(delay)}ms (attempt ${attempt + 1}/${maxRetries})`,
+          );
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+
+        // For other errors or last attempt, throw immediately
+        throw error;
+      }
+    }
+
+    // This should never be reached, but TypeScript needs it
+    throw lastError ?? new Error("Failed to fetch from ScrapingAnt");
+  });
 }

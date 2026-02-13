@@ -48,6 +48,9 @@ export const CACHE_KEYS = {
       userId: true,
       input: true,
     },
+    imdbDetails: {
+      parsedId: true,
+    },
   },
   tag: {
     getUserTags: {

@@ -6,6 +6,7 @@ import type {
   UpdateTagInputType,
 } from "../types";
 import type { TagType } from "../types/tag.type";
+import { normalizeText } from "~/utils/normalize-text";
 
 export async function GetUserTags(props: {
   ctx: ContextType;
@@ -46,9 +47,16 @@ export async function AddTag(props: {
 }) {
   const { ctx, input } = props;
 
+  // Normalize tag name: lowercase + trim for consistency
+  const normalizedName = normalizeText(input.name);
+
+  if (!normalizedName) {
+    throw new Error("Tag name cannot be empty!");
+  }
+
   await ctx.db.tag.create({
     data: {
-      name: input.name,
+      name: normalizedName,
       userId: ctx.session.user.id,
       ...(input.collectionsIds?.length && {
         collections: {
@@ -67,12 +75,19 @@ export async function UpdateTag(props: {
 }) {
   const { ctx, input } = props;
 
+  // Normalize tag name: lowercase + trim for consistency
+  const normalizedName = normalizeText(input.name);
+
+  if (!normalizedName) {
+    throw new Error("Tag name cannot be empty!");
+  }
+
   await ctx.db.tag.update({
     where: {
       id: input.id,
     },
     data: {
-      name: input.name,
+      name: normalizedName,
       ...(input.collectionsIds?.length && {
         collections: {
           set: input.collectionsIds?.map((id) => ({ id })),

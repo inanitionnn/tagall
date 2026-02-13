@@ -6,7 +6,7 @@ import type {
   SearchQuery,
 } from "../types";
 import * as cheerio from "cheerio";
-import { fetchWithScrapingAnt } from "../../../../../lib";
+import { fetchWithScrapingAnt, getOrSetCache } from "../../../../../lib";
 
 // #region Private Functions
 async function GetHtmlFromUrl(url: string): Promise<string> {
@@ -328,10 +328,11 @@ async function GetAdvancedSearchHtml(
 // #endregion Private Functions
 
 // #region Public Functions
-export async function GetImdbDetailsById(
+async function GetImdbDetailsByIdUncached(
   id: string,
 ): Promise<ImdbDetailsResultType> {
   try {
+    // Note: ScrapingAnt allows only 1 concurrent request, so we must fetch sequentially
     const plotHtml = await GetHtmlFromUrl(
       `https://www.imdb.com/title/${id}/plotsummary`,
     );
@@ -377,6 +378,18 @@ export async function GetImdbDetailsById(
   }
 }
 
+export async function GetImdbDetailsById(
+  id: string,
+): Promise<ImdbDetailsResultType> {
+  return getOrSetCache(
+    GetImdbDetailsByIdUncached(id),
+    "parse",
+    "imdbDetails",
+    { parsedId: id },
+    60 * 60 * 24 * 7, // 7 days TTL - IMDB data is relatively stable
+  );
+}
+
 export async function SearchImdb(
   props: ImdbSearchInputType,
 ): Promise<SearchResultType[]> {
@@ -384,6 +397,7 @@ export async function SearchImdb(
 
   const { meta, title, year } = parseQueryString(query);
 
+  // Note: ScrapingAnt allows only 1 concurrent request, so we must fetch sequentially
   const quickSearchResults: SearchResultType[] = [];
   if (isQuickSearch) {
     const quickSearchHtml = await GetQuickSearchHtml({ type, title, year });

@@ -31,6 +31,8 @@ import {
   getUserItemsRateStats,
   getUserItemsStatusStats,
 } from "./item-stats.service";
+import { ScrapingAntError } from "../../../../../lib/scraping-ant";
+import { normalizeText } from "~/utils/normalize-text";
 
 const ItemResponse = new ItemResponseClass();
 
@@ -73,12 +75,62 @@ async function CreateItem(props: {
   parsedId: string;
   collectionId: string;
 }) {
-  const { ctx, collectionId, parsedId } = props;
+  const { ctx, collectionId } = props;
+  
+  // Normalize parsedId: lowercase + trim for consistency
+  const parsedId = normalizeText(props.parsedId);
 
-  let details: any;
+  // Check if item already exists before expensive operations
+  const existingItem = await ctx.db.item.findFirst({
+    where: {
+      parsedId,
+    },
+  });
 
+  if (existingItem) {
+    return existingItem;
+  }
+
+  // Fetch details OUTSIDE transaction to avoid timeout
+  // ScrapingAnt requests can take 30+ seconds each
+  let details: Record<string, unknown>;
+
+  switch (props.type) {
+    case "imdb":
+      details = await GetImdbDetailsById(parsedId);
+      break;
+    case "anilist":
+      details = await GetAnilistDetailsById(parsedId);
+      break;
+    default:
+      throw new Error("Invalid type");
+  }
+
+  if (!details?.title) {
+    throw new Error("Parse error! Title not found!");
+  }
+
+  // Get collection info
+  const collection = await ctx.db.collection.findUnique({
+    where: {
+      id: collectionId,
+    },
+  });
+
+  if (!collection) {
+    throw new Error("Collection not found!");
+  }
+
+  // Upload image OUTSIDE transaction
+  const image = await UploadImageByUrl(
+    collection.name,
+    details.image as string | null | undefined,
+  );
+
+  // Now start transaction for DB operations only
   const transactionResult = await ctx.db.$transaction(
     async (prisma) => {
+      // Double-check if item was created by another request
       const oldItem = await prisma.item.findFirst({
         where: {
           parsedId,
@@ -89,39 +141,12 @@ async function CreateItem(props: {
         return oldItem;
       }
 
-      switch (props.type) {
-        case "imdb":
-          details = await GetImdbDetailsById(parsedId);
-          break;
-        case "anilist":
-          details = await GetAnilistDetailsById(parsedId);
-          break;
-        default:
-          throw new Error("Invalid type");
-      }
-
-      if (!details?.title) {
-        throw new Error("Parse error! Title not found!");
-      }
-
-      const collection = await prisma.collection.findUnique({
-        where: {
-          id: collectionId,
-        },
-      });
-
-      if (!collection) {
-        throw new Error("Collection not found!");
-      }
-
-      const image = await UploadImageByUrl(collection.name, details.image);
-
       const item = await prisma.item.create({
         data: {
           collectionId: collection.id,
-          title: details.title,
-          year: details.year,
-          description: details.description,
+          title: details.title as string,
+          year: details.year as number,
+          description: details.description as string,
           parsedId,
           image,
         },
@@ -147,7 +172,11 @@ async function CreateItem(props: {
         switch (typeof value) {
           case "number":
           case "string": {
-            fields.push({ field: String(value), fieldGroupId: fieldGroup.id });
+            // Normalize: lowercase + trim for consistency
+            const normalizedField = normalizeText(String(value));
+            if (normalizedField) {
+              fields.push({ field: normalizedField, fieldGroupId: fieldGroup.id });
+            }
             break;
           }
           case "object": {
@@ -155,10 +184,14 @@ async function CreateItem(props: {
               continue;
             }
             for (const field of value) {
-              fields.push({
-                field: String(field),
-                fieldGroupId: fieldGroup.id,
-              });
+              // Normalize: lowercase + trim for consistency
+              const normalizedField = normalizeText(String(field));
+              if (normalizedField) {
+                fields.push({
+                  field: normalizedField,
+                  fieldGroupId: fieldGroup.id,
+                });
+              }
             }
             break;
           }
@@ -751,7 +784,14 @@ export async function AddToCollection(props: {
         throw new Error("Invalid collection name");
     }
   } catch (error) {
-    console.log(error);
+    if (error instanceof ScrapingAntError) {
+      throw new Error(
+        `Failed to fetch IMDB data: ${error.message}${error.statusCode ? ` (Status: ${error.statusCode})` : ""}`,
+      );
+    }
+    throw new Error(
+      `Failed to create item: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
   }
 
   if (!item) {
