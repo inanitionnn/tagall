@@ -64,8 +64,9 @@ const UpdateItemImageModal = (props: Props) => {
     if (!items) return;
 
     for (let i = 0; i < items.length; i++) {
-      if (items[i].type.indexOf("image") !== -1) {
-        const blob = items[i].getAsFile();
+      const item = items[i];
+      if (item && item.type.indexOf("image") !== -1) {
+        const blob = item.getAsFile();
         if (blob) {
           setPastedImage(blob);
           setPreviewImage(URL.createObjectURL(blob));
