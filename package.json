@@ -20,6 +20,9 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^1.6.0",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@formkit/auto-animate": "^0.8.2",
     "@hookform/resolvers": "^3.9.0",
     "@prisma/client": "^5.20.0",
@@ -40,6 +43,7 @@
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tabler/icons-react": "^3.19.0",
     "@tanstack/react-query": "^5.56.2",
+    "@tanstack/react-virtual": "^3.13.18",
     "@trpc/client": "11.0.0-rc.532",
     "@trpc/react-query": "11.0.0-rc.532",
     "@trpc/server": "11.0.0-rc.532",

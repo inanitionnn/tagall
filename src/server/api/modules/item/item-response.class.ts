@@ -1,5 +1,5 @@
 import type { Field, Item, UserToItem, Collection, Tag } from "@prisma/client";
-import type { ItemType } from "./types";
+import type { ItemType, TierItemType } from "./types";
 import { FieldsToData } from "../field/services";
 import type { ContextType } from "../../../types";
 import { dateToTimeAgoString } from "../../../../lib";
@@ -36,6 +36,25 @@ export class ItemResponseClass {
 
   public transformUserItems(userItems: UserItemSmallType[]): ItemType[] {
     return userItems.map((userItem) => this.transformUserItem(userItem));
+  }
+
+  public transformTierItem(userItem: UserItemSmallType): TierItemType {
+    return {
+      id: userItem.item.id,
+      title: userItem.item.title,
+      year: userItem.item.year,
+      image: userItem.item.image,
+      rate: userItem.rate,
+      status: userItem.status,
+      collection: {
+        id: userItem.item.collection.id,
+        name: userItem.item.collection.name,
+      },
+    };
+  }
+
+  public transformTierItems(userItems: UserItemSmallType[]): TierItemType[] {
+    return userItems.map((userItem) => this.transformTierItem(userItem));
   }
 
   public async transformItemDetails(props: {

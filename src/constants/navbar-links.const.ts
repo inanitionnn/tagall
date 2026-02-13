@@ -3,6 +3,7 @@ import {
   /* CodeXml, */
   Dices,
   House,
+  ListOrdered,
   Search,
   Tags,
   type LucideIcon,
@@ -25,6 +26,17 @@ const NAVBAR_LINKS: NavbarLinkType[] = [
     icon: House,
     href: "/",
     title: "Home",
+  },
+
+  {
+    type: "divider",
+  },
+
+  {
+    type: "link",
+    icon: ListOrdered,
+    href: "/tierlist",
+    title: "Tier List",
   },
 
   {

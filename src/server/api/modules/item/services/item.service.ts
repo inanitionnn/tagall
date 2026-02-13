@@ -5,9 +5,11 @@ import type {
   AddToCollectionInputType,
   GetUserItemInputType,
   GetUserItemsInputType,
+  GetAllUserItemsInputType,
   GetYearsRangeInputType,
   DeleteFromCollectionInputType,
   ItemType,
+  TierItemType,
   GetRandomUserItemsInputType,
   GetUserItemsStatsInputType,
   ItemsStatsType,
@@ -382,6 +384,187 @@ export async function GetUserItems(props: {
   });
 
   return ItemResponse.transformUserItems(userItems);
+}
+
+export async function GetAllUserItems(props: {
+  ctx: ContextType;
+  input: GetAllUserItemsInputType;
+}): Promise<TierItemType[]> {
+  const { ctx, input } = props;
+
+  const rates = input.filtering?.filter((f) => f.name === "rate") ?? [];
+  const statuses = input.filtering?.filter((f) => f.name === "status") ?? [];
+  const years = input.filtering?.filter((f) => f.name === "year") ?? [];
+  const fields = input.filtering?.filter((f) => f.name === "field") ?? [];
+  const tags = input.filtering?.filter((f) => f.name === "tag") ?? [];
+
+  const rateFromFilter = rates.find((f) => f.type === "from");
+  const rateToFilter = rates.find((f) => f.type === "to");
+  const yearFromFilter = years.find((f) => f.type === "from");
+  const yearToFilter = years.find((f) => f.type === "to");
+  const statusIncludeFilter = statuses.filter((f) => f.type === "include");
+  const statusExcludeFilter = statuses.filter((f) => f.type === "exclude");
+  const includeFieldsIds = fields
+    .filter((f) => f.type === "include")
+    .map((f) => f.fieldId);
+  const excludeFieldsIds = fields
+    .filter((f) => f.type === "exclude")
+    .map((f) => f.fieldId);
+  const includeTagIds = tags
+    .filter((f) => f.type === "include")
+    .map((f) => f.tagId);
+  const excludeTagIds = tags
+    .filter((f) => f.type === "exclude")
+    .map((f) => f.tagId);
+
+  const userItems = await ctx.db.userToItem.findMany({
+    where: {
+      userId: ctx.session.user.id,
+      ...((rateFromFilter || rateToFilter) && {
+        rate: {
+          ...(rateToFilter && {
+            lte: rateToFilter.value,
+          }),
+          ...(rateFromFilter && {
+            gte: rateFromFilter.value,
+          }),
+        },
+      }),
+      ...((statusIncludeFilter?.length || statusExcludeFilter?.length) && {
+        status: {
+          ...(statusIncludeFilter?.length && {
+            in: statusIncludeFilter.map((filter) => filter.value),
+          }),
+          ...(statusExcludeFilter?.length && {
+            not: {
+              in: statusExcludeFilter.map((filter) => filter.value),
+            },
+          }),
+        },
+      }),
+
+      ...(includeTagIds.length && {
+        AND: includeTagIds.map((tagId) => ({
+          tags: {
+            some: {
+              id: tagId,
+            },
+          },
+        })),
+      }),
+      ...(excludeTagIds.length && {
+        tags: {
+          none: {
+            id: {
+              in: excludeTagIds,
+            },
+          },
+        },
+      }),
+
+      item: {
+        ...(input.search && {
+          title: {
+            contains: input.search,
+            mode: "insensitive",
+          },
+        }),
+        ...(input.collectionsIds?.length && {
+          collectionId: {
+            in: input.collectionsIds,
+          },
+        }),
+        ...((yearFromFilter || yearToFilter) && {
+          year: {
+            ...(yearToFilter && {
+              lte: yearToFilter.value,
+            }),
+            ...(yearFromFilter && {
+              gte: yearFromFilter.value,
+            }),
+          },
+        }),
+        ...(includeFieldsIds.length && {
+          AND: includeFieldsIds.map((id) => ({
+            fields: {
+              some: {
+                id,
+              },
+            },
+          })),
+        }),
+        ...(excludeFieldsIds.length && {
+          fields: {
+            none: {
+              id: {
+                in: excludeFieldsIds,
+              },
+            },
+          },
+        }),
+      },
+    },
+
+    ...(input.sorting && {
+      ...(input.sorting.name === "rate" && {
+        orderBy: [
+          {
+            rate: {
+              sort: input.sorting.type,
+              nulls: "last",
+            },
+          },
+          { item: { title: "asc" } },
+        ],
+      }),
+      ...(input.sorting.name === "status" && {
+        orderBy: [{ status: input.sorting.type }, { item: { title: "asc" } }],
+      }),
+      ...(input.sorting.name === "date" && {
+        orderBy: [
+          { updatedAt: input.sorting.type },
+          { item: { title: "asc" } },
+        ],
+      }),
+      ...(input.sorting.name === "year" && {
+        orderBy: [
+          {
+            item: {
+              year: {
+                sort: input.sorting.type,
+                nulls: "last",
+              },
+            },
+          },
+          { item: { title: "asc" } },
+        ],
+      }),
+      ...(input.sorting.name === "title" && {
+        orderBy: [
+          { item: { title: input.sorting.type } },
+          {
+            item: {
+              year: {
+                sort: "desc",
+                nulls: "last",
+              },
+            },
+          },
+        ],
+      }),
+    }),
+
+    include: {
+      tags: true,
+      item: {
+        include: {
+          collection: true,
+        },
+      },
+    },
+  });
+
+  return ItemResponse.transformTierItems(userItems);
 }
 
 export async function GetUserItemsStats(props: {
