@@ -63,9 +63,8 @@ const UpdateItemImageModal = (props: Props) => {
     const items = event.clipboardData?.items;
     if (!items) return;
 
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      if (item && item.type.indexOf("image") !== -1) {
+    for (const item of items) {
+      if (item?.type.includes("image")) {
         const blob = item.getAsFile();
         if (blob) {
           setPastedImage(blob);

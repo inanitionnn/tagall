@@ -43,14 +43,14 @@ export const useUpdateItemImage = (props: Props) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
+      reader.onerror = () => reject(new Error("Failed to read file"));
     });
   };
 
   const submit = async () => {
     const imageSource = form.getValues("imageSource");
 
-    let uploadData: { id: string; imageUrl?: string; imageBase64?: string } = {
+    const uploadData: { id: string; imageUrl?: string; imageBase64?: string } = {
       id: item.id,
     };
 

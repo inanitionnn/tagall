@@ -10,7 +10,6 @@ import {
   UpdateTagsModal,
 } from "../../../shared";
 import type { TagType } from "../../../../../server/api/modules/tag/types";
-import Link from "next/link";
 
 type Props = {
   item: ItemType;

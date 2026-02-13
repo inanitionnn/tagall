@@ -4,10 +4,10 @@ import {
   ProfileContainer,
   type ProfileParamsType,
 } from "../../../_components/modules";
-import { useGetServerParams } from "../../../../hooks";
+import { getServerParams } from "../../../../hooks";
 
 export default async function Profile() {
-  const params = useGetServerParams<ProfileParamsType>();
+  const params = getServerParams<ProfileParamsType>();
 
   void api.item.getUserItemsStats.prefetch(params.collectionsIds);
   return (

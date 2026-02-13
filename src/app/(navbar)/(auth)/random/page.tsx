@@ -1,4 +1,4 @@
-import { useGetServerParams } from "../../../../hooks";
+import { getServerParams } from "../../../../hooks";
 import { api, HydrateClient } from "../../../../trpc/server";
 import {
   RandomContainer,
@@ -7,7 +7,7 @@ import {
 import { BackgroundImage } from "../../../_components/shared";
 
 export default async function Random() {
-  const params = useGetServerParams<RandomParamsType>();
+  const params = getServerParams<RandomParamsType>();
 
   void api.collection.getUserCollections.prefetch();
   void api.item.getRandomUserItems.prefetch({

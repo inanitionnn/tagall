@@ -1,10 +1,10 @@
 import { api, HydrateClient } from "../../../trpc/server";
 import { HomeContainer, type HomeParamsType } from "../../_components/modules";
 import { BackgroundImage } from "../../_components/shared";
-import { useGetServerParams } from "../../../hooks";
+import { getServerParams } from "../../../hooks";
 
 export default async function Home() {
-  const params = useGetServerParams<HomeParamsType>();
+  const params = getServerParams<HomeParamsType>();
 
   void api.collection.getUserCollections.prefetch();
   void api.item.getUserItems.prefetch({

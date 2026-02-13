@@ -7,7 +7,6 @@ import type {
   TierItemType,
 } from "../../../../server/api/modules/item/types";
 import { DndContext, DragOverlay, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
-import { Header } from "../../ui";
 import { TierListItemsViewTabs } from "./tierlist-items-view-tabs";
 import { TierListSortSelect } from "./tierlist-sort-select";
 import { TierListTierRow } from "./tierlist-tier-row";

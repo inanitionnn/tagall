@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "../../ui";
-import { Image, SquareMousePointer, Type } from "lucide-react";
+import { Image as ImageIcon, SquareMousePointer, Type } from "lucide-react";
 import { CardContainer } from "../../shared";
 import type { TierItemView } from "../../../../types/tier-item-view.type";
 
@@ -21,7 +21,7 @@ const TierListItemsViewTabs = (props: Props) => {
         variant={itemView === "poster" ? "default" : "ghost"}
         title="Poster only"
       >
-        <Image />
+        <ImageIcon />
       </Button>
       <Button
         onClick={() => setItemView("hover")}

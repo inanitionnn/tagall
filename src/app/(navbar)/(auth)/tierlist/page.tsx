@@ -4,10 +4,10 @@ import {
   type TierListParamsType,
 } from "../../../_components/modules/tierlist";
 import { BackgroundImage } from "../../../_components/shared";
-import { useGetServerParams } from "../../../../hooks";
+import { getServerParams } from "../../../../hooks";
 
 export default async function TierListPage() {
-  const params = useGetServerParams<TierListParamsType>();
+  const params = getServerParams<TierListParamsType>();
 
   void api.collection.getUserCollections.prefetch();
   void api.item.getAllUserItems.prefetch({
