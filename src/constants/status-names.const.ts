@@ -25,9 +25,9 @@ export const STATUS_ICONS: Record<ItemStatus, LucideIcon> = {
 } as const;
 
 export const STATUS_VALUES = [
-  ItemStatus.NOTSTARTED,
+  ItemStatus.COMPLETED,
   ItemStatus.INPROGRESS,
   ItemStatus.WAITING,
+  ItemStatus.NOTSTARTED,
   ItemStatus.ABANDONED,
-  ItemStatus.COMPLETED,
 ] as const;
