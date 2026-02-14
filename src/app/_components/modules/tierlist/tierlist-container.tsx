@@ -329,7 +329,7 @@ function TierListContainer() {
           
           <DragOverlay>
             {activeItem ? (
-              <div className="opacity-80">
+              <div className="cursor-grabbing">
                 <TierListItem item={activeItem} itemView={itemView} />
               </div>
             ) : null}
