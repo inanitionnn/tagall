@@ -30,7 +30,13 @@ export const CollectionsTabs = (props: Props) => {
         return [...prev, collectionId];
       });
     } else {
-      setSelectedCollectionsIds([collectionId]);
+      setSelectedCollectionsIds((prev) => {
+        // Toggle selection: if already selected, deselect; otherwise select
+        if (prev.includes(collectionId)) {
+          return [];
+        }
+        return [collectionId];
+      });
     }
   };
 

@@ -9,7 +9,6 @@ import {
 } from "../../../../hooks";
 import { ProfileStatusStats } from "./profile-status-stats";
 import { ProfileRateStats } from "./profile-rate-stats";
-import { ProfileDateStats } from "./profile-date-stats";
 import { useUserItemsStats } from "../../../../hooks/queries/use-get-user-items-stats.hook";
 import { useState } from "react";
 import { z } from "zod";
@@ -56,12 +55,12 @@ function ProfileContainer() {
         collections={collections}
         selectedCollectionsIds={selectedCollectionsIds}
         setSelectedCollectionsIds={setSelectedCollectionsIds}
+        isMany={false}
       />
       {!isLoading && stats ? (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <ProfileStatusStats all={stats.all} statusStats={stats.status} />
           <ProfileRateStats rateStats={stats.rate} />
-          <ProfileDateStats dateStats={stats.date} />
         </div>
       ) : (
         <Loading />
