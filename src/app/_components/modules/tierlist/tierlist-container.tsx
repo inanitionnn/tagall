@@ -6,7 +6,16 @@ import type {
   GetUserItemsSortType,
   TierItemType,
 } from "../../../../server/api/modules/item/types";
-import { DndContext, DragOverlay, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
+import { 
+  DndContext, 
+  DragOverlay, 
+  type DragEndEvent, 
+  type DragStartEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { TierListItemsViewTabs } from "./tierlist-items-view-tabs";
 import { TierListSortSelect } from "./tierlist-sort-select";
 import { TierListTierRow } from "./tierlist-tier-row";
@@ -124,6 +133,24 @@ function TierListContainer() {
 
   const { mutateAsync } = api.item.updateItem.useMutation();
   const utils = api.useUtils();
+
+  // Configure sensors for both mouse and touch devices
+  const mouseSensor = useSensor(MouseSensor, {
+    // Require the mouse to move by 10 pixels before activating
+    activationConstraint: {
+      distance: 10,
+    },
+  });
+
+  const touchSensor = useSensor(TouchSensor, {
+    // Press delay of 250ms, with tolerance of 5px of movement
+    activationConstraint: {
+      delay: 250,
+      tolerance: 5,
+    },
+  });
+
+  const sensors = useSensors(mouseSensor, touchSensor);
 
   const tierRowsComponents = useMemo(
     () =>
@@ -291,7 +318,11 @@ function TierListContainer() {
           <Loading />
         </div>
       ) : (
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <DndContext 
+          sensors={sensors}
+          onDragStart={handleDragStart} 
+          onDragEnd={handleDragEnd}
+        >
           <div className="flex flex-col gap-4">
             {tierRowsComponents}
           </div>
