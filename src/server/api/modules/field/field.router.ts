@@ -1,10 +1,11 @@
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import {
   GetFilterFieldsInputSchema,
   GetItemDetailFieldsInputSchema,
 } from "./schemas";
 import { GetFilterFields, GetItemDetailFields } from "./services";
 import { getOrSetCache } from "../../../../lib";
+import { getFirstAllowedUser } from "../../helpers";
 
 export const FieldRouter = createTRPCRouter({
   getFilterFields: protectedProcedure
@@ -36,5 +37,25 @@ export const FieldRouter = createTRPCRouter({
         },
       );
       return response;
+    }),
+
+  getPublicFilterFields: publicProcedure
+    .input(GetFilterFieldsInputSchema)
+    .query(async (props) => {
+      const { ctx, input } = props;
+      const user = await getFirstAllowedUser(ctx.db);
+      if (!user) {
+        throw new Error("Public user not found");
+      }
+
+      const publicCtx = {
+        ...ctx,
+        session: {
+          user: { id: user.id, email: user.email, name: user.name },
+          expires: "",
+        },
+      };
+
+      return GetFilterFields({ ctx: publicCtx, input });
     }),
 });

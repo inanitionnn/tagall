@@ -24,7 +24,7 @@ const NAVBAR_LINKS: NavbarLinkType[] = [
   {
     type: "link",
     icon: House,
-    href: "/",
+    href: "/home",
     title: "Home",
   },
 

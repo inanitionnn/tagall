@@ -10,7 +10,7 @@ export const CardContainer = forwardRef<HTMLDivElement, Props>((props, ref) => {
     <div
       ref={ref}
       className={cn(
-        "flex gap-2 rounded-lg border border-input bg-background p-2 shadow focus:border-primary",
+        "flex gap-2 rounded-lg border border-input bg-background p-1 shadow focus:border-primary",
         "transition-all duration-500 ease-in-out",
         className,
       )}

@@ -1,7 +1,8 @@
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { GetUser, UpdateUser } from "./services";
 import { UpdateUserInputSchema } from "./schemas";
 import { deleteCache, getOrSetCache } from "../../../../lib";
+import { getFirstAllowedUser } from "../../helpers";
 
 export const UserRouter = createTRPCRouter({
   getUser: protectedProcedure.query(async (props) => {
@@ -10,6 +11,15 @@ export const UserRouter = createTRPCRouter({
       userId: ctx.session.user.id,
     });
     return response;
+  }),
+
+  getPublicUser: publicProcedure.query(async (props) => {
+    const { ctx } = props;
+    const user = await getFirstAllowedUser(ctx.db);
+    if (!user) {
+      throw new Error("Public user not found");
+    }
+    return user;
   }),
 
   updateUser: protectedProcedure

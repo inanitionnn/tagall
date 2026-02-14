@@ -8,13 +8,14 @@ import type { TierItemView } from "../../../../types/tier-item-view.type";
 type Props = {
   itemView: TierItemView;
   setItemView: (data: TierItemView) => void;
+  withContainer?: boolean;
 };
 
 const TierListItemsViewTabs = (props: Props) => {
-  const { itemView, setItemView } = props;
+  const { itemView, setItemView, withContainer = true } = props;
   
-  return (
-    <CardContainer>
+  const buttons = (
+    <>
       <Button
         onClick={() => setItemView("poster")}
         size={"icon"}
@@ -39,8 +40,14 @@ const TierListItemsViewTabs = (props: Props) => {
       >
         <Type />
       </Button>
-    </CardContainer>
+    </>
   );
+
+  if (withContainer) {
+    return <CardContainer>{buttons}</CardContainer>;
+  }
+
+  return <div className="flex gap-2">{buttons}</div>;
 };
 
 export { TierListItemsViewTabs };

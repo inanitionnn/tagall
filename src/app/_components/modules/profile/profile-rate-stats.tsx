@@ -52,8 +52,8 @@ const ProfileRateStats = (props: Props) => {
     }));
 
   return (
-    <CardContainer className="flex-col pb-6 pr-8">
-      <Header className="p-4" vtag="h4">
+    <CardContainer className="flex-col p-4 h-[320px] w-full">
+      <Header  vtag="h5">
         By Rate
       </Header>
       <ChartContainer

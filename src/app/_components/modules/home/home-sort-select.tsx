@@ -27,7 +27,7 @@ const HomeSortSelect = (props: Props) => {
         }
       }}
     >
-      <SelectTrigger className="h-[58px] w-32 justify-center gap-2">
+      <SelectTrigger className="h-[50px] w-32 justify-center gap-2">
         <Paragraph>{sorting.type === "asc" ? "▲" : "▼"}</Paragraph>
         <Paragraph className="capitalize">{sorting.name}</Paragraph>
       </SelectTrigger>

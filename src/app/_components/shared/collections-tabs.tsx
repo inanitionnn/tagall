@@ -9,6 +9,7 @@ type Props = {
   setSelectedCollectionsIds: Dispatch<SetStateAction<string[]>>;
   isMany?: boolean;
   clear?: () => void;
+  allowDeselect?: boolean;
 };
 
 export const CollectionsTabs = (props: Props) => {
@@ -18,6 +19,7 @@ export const CollectionsTabs = (props: Props) => {
     setSelectedCollectionsIds,
     isMany = true,
     clear,
+    allowDeselect = true,
   } = props;
 
   const onClick = (collectionId: string) => {
@@ -31,7 +33,11 @@ export const CollectionsTabs = (props: Props) => {
       });
     } else {
       setSelectedCollectionsIds((prev) => {
-        // Toggle selection: if already selected, deselect; otherwise select
+        // If allowDeselect is false and already selected, don't change
+        if (!allowDeselect && prev.includes(collectionId)) {
+          return prev;
+        }
+        // Otherwise toggle
         if (prev.includes(collectionId)) {
           return [];
         }

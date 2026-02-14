@@ -15,18 +15,13 @@ type Props = {
   setSorting: (data: GetUserItemsSortType) => void;
 };
 
-// Filter out rate sorting for tier list
-const TIERLIST_SORT_OPTIONS = SORT_OPTIONS.filter(
-  (option) => option.name !== "rate"
-);
-
 const TierListSortSelect = (props: Props) => {
   const { setSorting, sorting } = props;
 
   return (
     <Select
       onValueChange={(value) => {
-        const selectedOption = TIERLIST_SORT_OPTIONS.find(
+        const selectedOption = SORT_OPTIONS.find(
           (option) => JSON.stringify(option) === value,
         );
         if (selectedOption) {
@@ -34,12 +29,12 @@ const TierListSortSelect = (props: Props) => {
         }
       }}
     >
-      <SelectTrigger className="h-[58px] w-32 justify-center gap-2">
+      <SelectTrigger className="h-14 w-32 justify-center gap-2">
         <Paragraph>{sorting.type === "asc" ? "▲" : "▼"}</Paragraph>
         <Paragraph className="capitalize">{sorting.name}</Paragraph>
       </SelectTrigger>
       <SelectContent>
-        {TIERLIST_SORT_OPTIONS.map((option) => (
+        {SORT_OPTIONS.map((option) => (
           <SelectItem
             key={`${option.type}-${option.name}`}
             value={JSON.stringify(option)}

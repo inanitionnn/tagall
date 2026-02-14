@@ -8,7 +8,7 @@ import {
   ResponsiveModalContent,
   ResponsiveModalTrigger,
 } from "../ui";
-import { STATUS_NAMES } from "../../../constants";
+import { STATUS_NAMES, STATUS_VALUES } from "../../../constants";
 import { Search, SlidersHorizontal } from "lucide-react";
 import type { GetUserItemsFilterType } from "../../../server/api/modules/item/types";
 import type { ItemStatus } from "@prisma/client";
@@ -52,7 +52,10 @@ export const FilterDialog = (props: Props) => {
     tag.name.toLowerCase().includes(searchFilter.toLowerCase()),
   );
 
-  const filteredStatuses = Object.entries(STATUS_NAMES).filter(([_, name]) =>
+  const filteredStatuses = STATUS_VALUES.map((status) => [
+    status,
+    STATUS_NAMES[status],
+  ] as const).filter(([_, name]) =>
     name.toLowerCase().includes(searchFilter.toLowerCase()),
   );
 
@@ -149,7 +152,7 @@ export const FilterDialog = (props: Props) => {
       <ResponsiveModal>
         <ResponsiveModalTrigger asChild>
           <CardContainer>
-            <Button size={"icon"} variant={"ghost"}>
+            <Button size={"icon"} variant={"ghost"} className="aspect-square">
               <SlidersHorizontal />
             </Button>
           </CardContainer>

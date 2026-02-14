@@ -14,30 +14,46 @@ import {
 type Props = {
   item: TierItemType;
   itemView: TierItemView;
+  readOnly?: boolean;
 };
 
 const TierListItem = memo((props: Props) => {
-  const { item, itemView } = props;
+  const { item, itemView, readOnly = false } = props;
+
+  const draggableProps = useDraggable({
+    id: item.id,
+    data: {
+      item,
+    },
+    disabled: readOnly,
+  });
 
   const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: item.id,
-      data: {
-        item,
-      },
-    });
+    draggableProps;
 
-  const style = {
-    transform: CSS.Translate.toString(transform),
-    opacity: isDragging ? 0 : 1,
-    cursor: isDragging ? "grabbing" : "grab",
-  };
+  const style = readOnly
+    ? {}
+    : {
+        transform: CSS.Translate.toString(transform),
+        opacity: isDragging ? 0 : 1,
+        cursor: isDragging ? "grabbing" : "grab",
+      };
 
-  return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+  const itemContent = (
+    <>
       {itemView === "poster" && <TierListPosterItem item={item} />}
       {itemView === "hover" && <TierListHoverItem item={item} />}
       {itemView === "title" && <TierListTitleItem item={item} />}
+    </>
+  );
+
+  if (readOnly) {
+    return <div>{itemContent}</div>;
+  }
+
+  return (
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+      {itemContent}
     </div>
   );
 });

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 export const STATUS_NAMES: Record<ItemStatus, string> = {
-  ABANDONED: "Adandoned",
+  ABANDONED: "Abandoned",
   COMPLETED: "Completed",
   WAITING: "Waiting",
   INPROGRESS: "In Progress",

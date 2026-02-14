@@ -4,9 +4,9 @@ import { redirect } from "next/navigation";
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const sesstion = await getServerAuthSession();
-  if (!sesstion?.user) {
-    redirect("/api/auth/signin");
+  const session = await getServerAuthSession();
+  if (!session?.user) {
+    redirect("/");
   }
   return <>{children}</>;
 }

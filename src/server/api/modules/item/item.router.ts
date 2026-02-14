@@ -1,4 +1,4 @@
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import {
   AddToCollectionInputSchema,
   DeleteFromCollectionInputSchema,
@@ -28,6 +28,7 @@ import {
   UpdateItemImage,
 } from "./services";
 import { deleteCache, getOrSetCache } from "../../../../lib";
+import { getFirstAllowedUser } from "../../helpers";
 
 export const ItemRouter = createTRPCRouter({
   getUserItems: protectedProcedure
@@ -221,5 +222,105 @@ export const ItemRouter = createTRPCRouter({
         },
       );
       return response;
+    }),
+
+  getPublicUserItems: publicProcedure
+    .input(GetUserItemsInputSchema)
+    .query(async (props) => {
+      const { ctx, input } = props;
+      const user = await getFirstAllowedUser(ctx.db);
+      if (!user) {
+        throw new Error("Public user not found");
+      }
+
+      const publicCtx = {
+        ...ctx,
+        session: {
+          user: { id: user.id, email: user.email, name: user.name },
+          expires: "",
+        },
+      };
+
+      return GetUserItems({ ctx: publicCtx, input });
+    }),
+
+  getPublicAllUserItems: publicProcedure
+    .input(GetAllUserItemsInputSchema)
+    .query(async (props) => {
+      const { ctx, input } = props;
+      const user = await getFirstAllowedUser(ctx.db);
+      if (!user) {
+        throw new Error("Public user not found");
+      }
+
+      const publicCtx = {
+        ...ctx,
+        session: {
+          user: { id: user.id, email: user.email, name: user.name },
+          expires: "",
+        },
+      };
+
+      return GetAllUserItems({ ctx: publicCtx, input });
+    }),
+
+  getPublicRandomUserItems: publicProcedure
+    .input(GetRandomUserItemsInputSchema)
+    .query(async (props) => {
+      const { ctx, input } = props;
+      const user = await getFirstAllowedUser(ctx.db);
+      if (!user) {
+        throw new Error("Public user not found");
+      }
+
+      const publicCtx = {
+        ...ctx,
+        session: {
+          user: { id: user.id, email: user.email, name: user.name },
+          expires: "",
+        },
+      };
+
+      return GetRandomUserItems({ ctx: publicCtx, input });
+    }),
+
+  getPublicUserItemsStats: publicProcedure
+    .input(GetUserItemsStatsInputSchema)
+    .query(async (props) => {
+      const { ctx, input } = props;
+      const user = await getFirstAllowedUser(ctx.db);
+      if (!user) {
+        throw new Error("Public user not found");
+      }
+
+      const publicCtx = {
+        ...ctx,
+        session: {
+          user: { id: user.id, email: user.email, name: user.name },
+          expires: "",
+        },
+      };
+
+      return GetUserItemsStats({ ctx: publicCtx, input });
+    }),
+
+  getPublicYearsRange: publicProcedure
+    .input(GetYearsRangeInputSchema)
+    .query(async (props) => {
+      const { ctx, input } = props;
+      const user = await getFirstAllowedUser(ctx.db);
+      if (!user) {
+        throw new Error("Public user not found");
+      }
+
+      const publicCtx = {
+        ...ctx,
+        session: {
+          user: { id: user.id, email: user.email, name: user.name },
+          expires: "",
+        },
+      };
+
+      return GetYearsRange({ ctx: publicCtx, input });
     }),
 });

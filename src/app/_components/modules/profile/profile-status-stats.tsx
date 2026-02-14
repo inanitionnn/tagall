@@ -34,11 +34,11 @@ const ProfileStatusStats = (props: Props) => {
   });
 
   return (
-    <CardContainer className="flex-col">
-      <Header className="pl-4 pt-4" vtag="h4">
+    <CardContainer className="flex-col p-4 h-[320px] w-full"  >
+      <Header  vtag="h5">
         By Status
       </Header>
-      <div className="flex flex-col items-center gap-4 p-4 lg:flex-row lg:items-center lg:justify-center">
+      <div className="flex flex-col items-center gap-4 lg:flex-row lg:items-center lg:justify-center">
         <div className="flex flex-col justify-center gap-3">
           {sortedStatusStats.map((stat) => (
             <div key={stat.status} className="flex items-center gap-2">

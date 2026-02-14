@@ -38,6 +38,15 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
+    signIn: async ({ user }) => {
+      const allowedEmails = env.ALLOWED_EMAILS.split(",").map((email) =>
+        email.trim(),
+      );
+      if (!allowedEmails.includes(user.email ?? "")) {
+        return "/auth-error";
+      }
+      return true;
+    },
     jwt: ({ token, user }) => {
       if (user) {
         token.role = user.role;
@@ -55,6 +64,9 @@ export const authOptions: NextAuthOptions = {
       };
     },
   },
+  pages: {
+    error: "/auth-error",
+  },
   session: {
     strategy: "jwt",
   },
@@ -63,11 +75,7 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
-      async profile(profile) {
-        const allowedEmails = env.ALLOWED_EMAILS.split(",");
-        if (!allowedEmails.includes(profile.email)) {
-          throw new Error("Email not allowed ;)");
-        }
+      profile(profile) {
         return {
           id: profile.sub,
           name: profile.name,

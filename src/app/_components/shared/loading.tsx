@@ -10,7 +10,7 @@ export const Loading = forwardRef<HTMLDivElement, Props>((props, ref) => {
     <div
       ref={ref}
       className={cn(
-        "flex flex-grow items-center justify-center gap-2",
+        "flex flex-grow items-center justify-center gap-2 my-6",
         className,
       )}
       {...restProps}

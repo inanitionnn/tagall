@@ -1,7 +1,7 @@
-import { api, HydrateClient } from "../../../trpc/server";
-import { HomeContainer, type HomeParamsType } from "../../_components/modules";
-import { BackgroundImage } from "../../_components/shared";
-import { getServerParams } from "../../../hooks";
+import { api, HydrateClient } from "../../../../trpc/server";
+import { HomeContainer, type HomeParamsType } from "../../../_components/modules";
+import { BackgroundImage } from "../../../_components/shared";
+import { getServerParams } from "../../../../hooks";
 
 export default async function Home() {
   const params = getServerParams<HomeParamsType>();

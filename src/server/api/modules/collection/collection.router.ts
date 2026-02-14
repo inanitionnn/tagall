@@ -1,6 +1,7 @@
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { GetAll, GetUserCollections } from "./services";
 import { getOrSetCache } from "../../../../lib";
+import { getFirstAllowedUser } from "../../helpers";
 
 export const CollectionRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async (props) => {
@@ -18,5 +19,27 @@ export const CollectionRouter = createTRPCRouter({
       },
     );
     return response;
+  }),
+  getPublicUserCollections: publicProcedure.query(async (props) => {
+    const { ctx } = props;
+    const user = await getFirstAllowedUser(ctx.db);
+    if (!user) {
+      throw new Error("Public user not found");
+    }
+    const collections = await ctx.db.collection.findMany({
+      where: {
+        items: {
+          some: {
+            userToItems: {
+              some: {
+                userId: user.id,
+              },
+            },
+          },
+        },
+      },
+      orderBy: [{ priority: "asc" }],
+    });
+    return collections;
   }),
 });
