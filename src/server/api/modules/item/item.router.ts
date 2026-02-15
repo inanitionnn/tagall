@@ -27,8 +27,9 @@ import {
   UpdateItem,
   UpdateItemImage,
 } from "./services";
-import { deleteCache, getOrSetCache } from "../../../../lib";
+import { getOrSetCache } from "../../../../lib";
 import { getFirstAllowedUser } from "../../helpers";
+import { invalidateItemCaches } from "./utils/cache-invalidation.util";
 
 export const ItemRouter = createTRPCRouter({
   getUserItems: protectedProcedure
@@ -129,21 +130,14 @@ export const ItemRouter = createTRPCRouter({
   addToCollection: protectedProcedure
     .input(AddToCollectionInputSchema)
     .mutation(async (props) => {
-      const { ctx } = props;
+      const { ctx, input } = props;
       const response = await AddToCollection(props);
-      await deleteCache("parse", "regrex", {
-        userId: ctx.session.user.id,
+      
+      await invalidateItemCaches(ctx.session.user.id, {
+        collectionsIds: [input.collectionId],
+        includeSearch: true,
       });
-      await deleteCache("parse", "search", {
-        userId: ctx.session.user.id,
-      });
-      await deleteCache("item", "getUserItems", {
-        userId: ctx.session.user.id,
-      });
-      await deleteCache("item", "getYearsRange", {
-        userId: ctx.session.user.id,
-      });
-      await deleteCache("item", "getNearestItems");
+      
       return response;
     }),
 
@@ -153,16 +147,10 @@ export const ItemRouter = createTRPCRouter({
       const { ctx, input } = props;
       const response = await UpdateItem(props);
 
-      await deleteCache("item", "getUserItems", {
-        userId: ctx.session.user.id,
+      await invalidateItemCaches(ctx.session.user.id, {
+        itemId: input.id,
       });
-      await deleteCache("item", "getUserItem", {
-        userId: ctx.session.user.id,
-        input: input.id,
-      });
-      await deleteCache("item", "getUserItemsStats", {
-        userId: ctx.session.user.id,
-      });
+      
       return response;
     }),
 
@@ -172,14 +160,10 @@ export const ItemRouter = createTRPCRouter({
       const { ctx, input } = props;
       const response = await UpdateItemImage(props);
 
-      await deleteCache("item", "getUserItems", {
-        userId: ctx.session.user.id,
+      await invalidateItemCaches(ctx.session.user.id, {
+        itemId: input.id,
       });
-      await deleteCache("item", "getUserItem", {
-        userId: ctx.session.user.id,
-        input: input.id,
-      });
-      await deleteCache("item", "getNearestItems");
+      
       return response;
     }),
 
@@ -189,22 +173,11 @@ export const ItemRouter = createTRPCRouter({
       const { ctx, input } = props;
       const response = await DeleteFromCollection(props);
 
-      await deleteCache("parse", "regrex", {
-        userId: ctx.session.user.id,
+      await invalidateItemCaches(ctx.session.user.id, {
+        itemId: input,
+        includeSearch: true,
       });
-      await deleteCache("parse", "search", {
-        userId: ctx.session.user.id,
-      });
-      await deleteCache("item", "getYearsRange", {
-        userId: ctx.session.user.id,
-      });
-      await deleteCache("item", "getUserItem", {
-        userId: ctx.session.user.id,
-        input,
-      });
-      await deleteCache("item", "getUserItemsStats", {
-        userId: ctx.session.user.id,
-      });
+      
       return response;
     }),
 

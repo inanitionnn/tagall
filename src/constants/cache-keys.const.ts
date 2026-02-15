@@ -2,10 +2,25 @@ export const CACHE_KEYS = {
   item: {
     getUserItems: {
       userId: true,
+      collectionsIds: true,
+      filtering: true,
+      sorting: true,
+      page: true,
+      limit: true,
+      search: true,
+      input: true,
+    },
+    getAllUserItems: {
+      userId: true,
+      collectionsIds: true,
+      filtering: true,
+      sorting: true,
+      search: true,
       input: true,
     },
     getUserItemsStats: {
       userId: true,
+      collectionsIds: true,
       input: true,
     },
     getUserItem: {
@@ -17,6 +32,7 @@ export const CACHE_KEYS = {
     },
     getYearsRange: {
       userId: true,
+      collectionsIds: true,
       input: true,
     },
     searchItemByText: {
@@ -33,6 +49,7 @@ export const CACHE_KEYS = {
   field: {
     getFilterFields: {
       userId: true,
+      collectionsIds: true,
       input: true,
     },
     getItemDetailFields: {

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { invalidateItemQueries } from "../../lib/cache-invalidation";
 
 const formSchema = z.object({
   commentTitle: z.string().min(1).max(255).nullable().optional(),
@@ -73,19 +74,42 @@ export const useAddItemToCollection = (props: Props) => {
       }),
     };
 
+    // Optimistically mark item as added in search results
+    setSearchResults((prev) =>
+      prev.map((item) =>
+        item.parsedId === selectedItem.parsedId
+          ? { ...item, id: "temp-id" }
+          : item
+      )
+    );
+
     const promise = mutateAsync(formData, {
       onSuccess: () => {
-        utils.item.invalidate();
+        void invalidateItemQueries(utils, {
+          collectionsIds: [selectedCollectionId],
+          includeStats: true,
+        });
+
+        // Remove from search results permanently
+        setSearchResults((prev) =>
+          prev.filter(
+            (searchResult) => searchResult.parsedId !== selectedItem.parsedId
+          )
+        );
+      },
+      onError: () => {
+        // Rollback optimistic update on error
+        setSearchResults((prev) =>
+          prev.map((item) =>
+            item.parsedId === selectedItem.parsedId
+              ? { ...item, id: null }
+              : item
+          )
+        );
       },
     });
 
     setSelectedItem(null);
-    setSearchResults((prev) =>
-      prev.filter(
-        (searchResult) => searchResult.parsedId !== selectedItem?.parsedId,
-      ),
-    );
-
     form.reset();
 
     toast.promise(promise, {

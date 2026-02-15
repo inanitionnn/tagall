@@ -8,6 +8,7 @@ import type { ItemType } from "../../server/api/modules/item/types";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { invalidateItemQueries } from "../../lib/cache-invalidation";
 
 const formSchema = z.object({
   rate: z.number().int().min(0).max(10),
@@ -45,16 +46,29 @@ export const useUpdateItem = (props: Props) => {
       id: item.id,
     };
 
+    // Store original values for rollback
+    const originalRate = item.rate;
+    const originalStatus = item.status;
+
+    // Optimistically update the item in cache
+    item.rate = data.rate;
+    item.status = data.status;
+
     const promise = mutateAsync(formData, {
       onSuccess: () => {
-        utils.item.invalidate();
+        void invalidateItemQueries(utils, {
+          itemId: item.id,
+          includeStats: true,
+        });
+      },
+      onError: () => {
+        // Rollback optimistic update on error
+        item.rate = originalRate;
+        item.status = originalStatus;
       },
     });
 
     setOpen(false);
-
-    item.rate = data.rate;
-    item.status = data.status;
 
     toast.promise(promise, {
       loading: `Updating ${item.title}...`,

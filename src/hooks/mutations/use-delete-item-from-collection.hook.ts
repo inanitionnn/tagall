@@ -5,6 +5,7 @@ import { api } from "../../trpc/react";
 import { toast } from "sonner";
 import type { ItemType } from "../../server/api/modules/item/types";
 import { useRouter } from "next/navigation";
+import { invalidateItemQueries } from "../../lib/cache-invalidation";
 
 type Props = {
   item: ItemType;
@@ -15,11 +16,19 @@ export const useDeleteItemFromCollection = (props: Props) => {
   const { item, setOpen } = props;
 
   const { mutateAsync } = api.item.deleteFromCollection.useMutation();
+  const utils = api.useUtils();
 
   const router = useRouter();
 
   const submit = async () => {
-    const promise = mutateAsync(item.id);
+    const promise = mutateAsync(item.id, {
+      onSuccess: () => {
+        void invalidateItemQueries(utils, {
+          itemId: item.id,
+          includeStats: true,
+        });
+      },
+    });
 
     setOpen(false);
 

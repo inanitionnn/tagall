@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { Dispatch, RefObject, SetStateAction } from "react";
 import type { ItemType } from "../../server/api/modules/item/types";
 import { toast } from "sonner";
+import { invalidateItemQueries } from "../../lib/cache-invalidation";
 
 const formSchema = z.object({
   imageSource: z.enum(["file", "url", "paste"]),
@@ -69,7 +70,9 @@ export const useUpdateItemImage = (props: Props) => {
 
       const promise = mutateAsync(uploadData, {
         onSuccess: () => {
-          utils.item.invalidate();
+          void invalidateItemQueries(utils, {
+            itemId: item.id,
+          });
         },
       });
 
