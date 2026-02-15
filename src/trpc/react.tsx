@@ -74,6 +74,7 @@ export function TRPCReactProvider(props: {
 
             return headers;
           },
+          // Timeout is controlled by server maxDuration (180s)
         }),
       ],
     }),

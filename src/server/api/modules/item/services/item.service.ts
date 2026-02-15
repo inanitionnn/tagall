@@ -44,6 +44,9 @@ async function UpdateEmbedding(props: {
 }): Promise<void> {
   const { ctx, itemId } = props;
 
+  console.log(`[UpdateEmbedding] Starting to update embedding for item: ${itemId}`);
+  const startTime = Date.now();
+
   const item = await ctx.db.item.findUnique({
     where: {
       id: itemId,
@@ -55,18 +58,28 @@ async function UpdateEmbedding(props: {
   });
 
   if (!item) {
+    console.error(`[UpdateEmbedding] Item not found: ${itemId}`);
     throw new Error("Item not found!");
   }
 
+  console.log(`[UpdateEmbedding] Item found: "${item.title}" (${item.id})`);
+  console.log(`[UpdateEmbedding] Transforming item details for ${itemId}`);
   const details = await ItemResponse.transformItemDetails({ ctx, item });
 
+  console.log(`[UpdateEmbedding] Getting embedding from OpenAI for ${itemId}`);
+  const embeddingStartTime = Date.now();
   const embedding = await GetEmbedding(details);
+  console.log(`[UpdateEmbedding] Embedding received from OpenAI (${Date.now() - embeddingStartTime}ms)`);
 
+  console.log(`[UpdateEmbedding] Updating embedding in database for ${itemId}`);
   await UpdateItemEmbedding({
     ctx,
     embedding,
     itemId,
   });
+
+  const totalDuration = Date.now() - startTime;
+  console.log(`[UpdateEmbedding] Successfully updated embedding for "${item.title}" (${totalDuration}ms)`);
 }
 
 async function CreateItem(props: {
@@ -77,10 +90,15 @@ async function CreateItem(props: {
 }) {
   const { ctx, collectionId } = props;
   
+  console.log(`[CreateItem] Starting to create item with parsedId: ${props.parsedId}, type: ${props.type}, collectionId: ${collectionId}`);
+  const startTime = Date.now();
+  
   // Normalize parsedId: lowercase + trim for consistency
   const parsedId = normalizeText(props.parsedId);
+  console.log(`[CreateItem] Normalized parsedId: ${parsedId}`);
 
   // Check if item already exists before expensive operations
+  console.log(`[CreateItem] Checking if item already exists: ${parsedId}`);
   const existingItem = await ctx.db.item.findFirst({
     where: {
       parsedId,
@@ -88,11 +106,13 @@ async function CreateItem(props: {
   });
 
   if (existingItem) {
+    console.log(`[CreateItem] Item already exists: ${parsedId} - ID: ${existingItem.id}, Title: "${existingItem.title}" (${Date.now() - startTime}ms)`);
     return existingItem;
   }
 
   // Fetch details OUTSIDE transaction to avoid timeout
   // ScrapingAnt requests can take 30+ seconds each
+  console.log(`[CreateItem] Fetching details for ${parsedId} from ${props.type}`);
   let details: Record<string, unknown>;
 
   switch (props.type) {
@@ -105,12 +125,17 @@ async function CreateItem(props: {
     default:
       throw new Error("Invalid type");
   }
+  console.log(`[CreateItem] Details fetched for ${parsedId} (${Date.now() - startTime}ms)`);
 
-  if (!details?.title) {
+  const title = details?.title;
+  if (!title || typeof title !== "string") {
+    console.error(`[CreateItem] Parse error! Title not found for ${parsedId}`);
     throw new Error("Parse error! Title not found!");
   }
+  console.log(`[CreateItem] Parsed title: "${title}"`);
 
   // Get collection info
+  console.log(`[CreateItem] Fetching collection info: ${collectionId}`);
   const collection = await ctx.db.collection.findUnique({
     where: {
       id: collectionId,
@@ -118,16 +143,23 @@ async function CreateItem(props: {
   });
 
   if (!collection) {
+    console.error(`[CreateItem] Collection not found: ${collectionId}`);
     throw new Error("Collection not found!");
   }
+  console.log(`[CreateItem] Collection found: ${collection.name}`);
 
   // Upload image OUTSIDE transaction
+  console.log(`[CreateItem] Uploading image for ${parsedId}`);
+  const uploadStartTime = Date.now();
   const image = await UploadImageByUrl(
     collection.name,
     details.image as string | null | undefined,
   );
+  console.log(`[CreateItem] Image uploaded for ${parsedId}: ${image ?? "null"} (${Date.now() - uploadStartTime}ms)`);
 
   // Now start transaction for DB operations only
+  console.log(`[CreateItem] Starting database transaction for ${parsedId}`);
+  const transactionStartTime = Date.now();
   const transactionResult = await ctx.db.$transaction(
     async (prisma) => {
       // Double-check if item was created by another request
@@ -138,19 +170,21 @@ async function CreateItem(props: {
       });
 
       if (oldItem) {
+        console.log(`[CreateItem] Item was created by another request: ${parsedId}`);
         return oldItem;
       }
 
       const item = await prisma.item.create({
         data: {
           collectionId: collection.id,
-          title: details.title as string,
+          title,
           year: details.year as number,
           description: details.description as string,
           parsedId,
           image,
         },
       });
+      console.log(`[CreateItem] Item created in DB: ${item.id} - "${item.title}"`);
 
       const keys = Object.keys(details);
 
@@ -166,6 +200,8 @@ async function CreateItem(props: {
           },
         },
       });
+      console.log(`[CreateItem] Found ${fieldGroups.length} field groups for ${parsedId}`);
+      
       const fields: { field: string; fieldGroupId: string }[] = [];
       for (const fieldGroup of fieldGroups) {
         const value = details[fieldGroup.name as keyof typeof details]!;
@@ -198,6 +234,7 @@ async function CreateItem(props: {
         }
       }
 
+      console.log(`[CreateItem] Upserting ${fields.length} fields for ${parsedId}`);
       for (const { field, fieldGroupId } of fields) {
         await prisma.field.upsert({
           where: {
@@ -221,11 +258,17 @@ async function CreateItem(props: {
           },
         });
       }
+      console.log(`[CreateItem] All fields upserted for ${parsedId}`);
 
       return item;
     },
-    { timeout: 120_000 },
+    { timeout: 180_000 }, // Increased timeout from 120s to 180s (3 minutes)
   );
+
+  const transactionDuration = Date.now() - transactionStartTime;
+  const totalDuration = Date.now() - startTime;
+  console.log(`[CreateItem] Transaction completed for ${parsedId} (${transactionDuration}ms)`);
+  console.log(`[CreateItem] Successfully created item: ${transactionResult.id} - "${transactionResult.title}" (Total: ${totalDuration}ms)`);
 
   return transactionResult;
 }
@@ -752,19 +795,27 @@ export async function AddToCollection(props: {
 }) {
   const { ctx, input } = props;
 
+  console.log(`[AddToCollection] Starting to add item to collection`);
+  console.log(`[AddToCollection] User: ${ctx.session.user.id}, ParsedId: ${input.parsedId}, CollectionId: ${input.collectionId}`);
+  const startTime = Date.now();
+
+  console.log(`[AddToCollection] Fetching collection info: ${input.collectionId}`);
   const collection = await ctx.db.collection.findUnique({
     where: { id: input.collectionId },
   });
 
   if (!collection) {
+    console.error(`[AddToCollection] Collection not found: ${input.collectionId}`);
     throw new Error("Collection not found");
   }
+  console.log(`[AddToCollection] Collection found: ${collection.name}`);
 
   let item;
   try {
     switch (collection.name) {
       case "Serie":
       case "Film":
+        console.log(`[AddToCollection] Creating IMDB item for ${collection.name}`);
         item = await CreateItem({
           ctx,
           type: "imdb",
@@ -773,6 +824,7 @@ export async function AddToCollection(props: {
         });
         break;
       case "Manga":
+        console.log(`[AddToCollection] Creating Anilist item for Manga`);
         item = await CreateItem({
           ctx,
           type: "anilist",
@@ -781,9 +833,14 @@ export async function AddToCollection(props: {
         });
         break;
       default:
+        console.error(`[AddToCollection] Invalid collection name: ${collection.name}`);
         throw new Error("Invalid collection name");
     }
+    console.log(`[AddToCollection] Item created successfully: ${item.id} - "${item.title}" (${Date.now() - startTime}ms)`);
   } catch (error) {
+    const duration = Date.now() - startTime;
+    console.error(`[AddToCollection] Error creating item after ${duration}ms:`, error);
+    
     if (error instanceof ScrapingAntError) {
       throw new Error(
         `Failed to fetch IMDB data: ${error.message}${error.statusCode ? ` (Status: ${error.statusCode})` : ""}`,
@@ -795,11 +852,14 @@ export async function AddToCollection(props: {
   }
 
   if (!item) {
+    console.error(`[AddToCollection] Item not found after creation`);
     throw new Error("Something went wrong! Item not found!");
   }
 
+  console.log(`[AddToCollection] Updating embedding for item: ${item.id}`);
   await UpdateEmbedding({ ctx, itemId: item.id });
 
+  console.log(`[AddToCollection] Creating user-to-item relationship`);
   const userToItem = await ctx.db.userToItem.create({
     data: {
       userId: ctx.session.user.id,
@@ -813,8 +873,10 @@ export async function AddToCollection(props: {
       }),
     },
   });
+  console.log(`[AddToCollection] User-to-item relationship created: ${userToItem.id}`);
 
   if (input.comment) {
+    console.log(`[AddToCollection] Creating comment for item: ${item.id}`);
     await ctx.db.itemComment.create({
       data: {
         title: input.comment.title,
@@ -826,7 +888,11 @@ export async function AddToCollection(props: {
         userToItemId: userToItem.id,
       },
     });
+    console.log(`[AddToCollection] Comment created`);
   }
+
+  const totalDuration = Date.now() - startTime;
+  console.log(`[AddToCollection] Successfully added "${item.title}" to collection "${collection.name}" (Total: ${totalDuration}ms)`);
 
   return "Item added successfully!";
 }

@@ -86,7 +86,7 @@ async function makeScrapingAntRequest(
   options: ScrapingAntOptions = {},
 ): Promise<string> {
   const {
-    timeout = 30,
+    timeout = 60, // Increased default timeout from 30 to 60 seconds
     waitForSelector,
     browser = true,
     proxyType = "datacenter",
@@ -103,25 +103,36 @@ async function makeScrapingAntRequest(
     scrapingAntUrl.searchParams.set("wait_for_selector", waitForSelector);
   }
 
+  console.log(`[ScrapingAnt] Fetching URL: ${url}, timeout: ${timeout}s`);
+  const startTime = Date.now();
+
   try {
     const response = await axios.get<string>(scrapingAntUrl.toString(), {
       headers: {
         Accept: "text/html",
       },
-      timeout: (timeout + 5) * 1000, // Add 5 seconds buffer for axios timeout
+      timeout: (timeout + 10) * 1000, // Increased buffer from 5 to 10 seconds
     });
+
+    const duration = Date.now() - startTime;
+    console.log(`[ScrapingAnt] Success: ${url} (${duration}ms)`);
 
     return response.data;
   } catch (error) {
+    const duration = Date.now() - startTime;
+    console.error(`[ScrapingAnt] Error after ${duration}ms for URL: ${url}`);
+    
     if (axios.isAxiosError(error)) {
       const errorData = error.response?.data as ScrapingAntErrorResponse;
       const statusCode = error.response?.status;
       const errorMessage =
         errorData?.detail ?? error.message ?? "ScrapingAnt request failed";
 
+      console.error(`[ScrapingAnt] ${errorMessage} (Status: ${statusCode ?? "unknown"})`);
       throw new ScrapingAntError(errorMessage, statusCode);
     }
 
+    console.error(`[ScrapingAnt] Unknown error:`, error);
     throw new ScrapingAntError(
       error instanceof Error ? error.message : "Unknown error occurred",
     );

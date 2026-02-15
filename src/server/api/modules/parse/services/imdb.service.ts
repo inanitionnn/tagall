@@ -10,14 +10,21 @@ import { fetchWithScrapingAnt, getOrSetCache } from "../../../../../lib";
 
 // #region Private Functions
 async function GetHtmlFromUrl(url: string): Promise<string> {
+  console.log(`[GetHtmlFromUrl] Fetching URL: ${url}`);
+  const startTime = Date.now();
+  
   try {
     const html = await fetchWithScrapingAnt(url, {
-      timeout: 30,
+      timeout: 60, // Increased timeout from 30 to 60 seconds
       browser: true,
       proxyType: "datacenter",
     });
+    const duration = Date.now() - startTime;
+    console.log(`[GetHtmlFromUrl] Successfully fetched URL: ${url} (${duration}ms)`);
     return html;
   } catch (error) {
+    const duration = Date.now() - startTime;
+    console.error(`[GetHtmlFromUrl] Failed to fetch URL after ${duration}ms: ${url}`);
     throw new Error(
       `IMDB parse error: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
@@ -331,11 +338,17 @@ async function GetAdvancedSearchHtml(
 async function GetImdbDetailsByIdUncached(
   id: string,
 ): Promise<ImdbDetailsResultType> {
+  console.log(`[IMDB] Starting to fetch details for ID: ${id}`);
+  const startTime = Date.now();
+  
   try {
     // Note: ScrapingAnt allows only 1 concurrent request, so we must fetch sequentially
+    console.log(`[IMDB] Fetching plot summary for ${id}`);
     const plotHtml = await GetHtmlFromUrl(
       `https://www.imdb.com/title/${id}/plotsummary`,
     );
+    console.log(`[IMDB] Plot summary fetched for ${id} (${Date.now() - startTime}ms)`);
+    
     const $Plot = cheerio.load(plotHtml);
     const summaries: string[] = [];
     $Plot('[data-testid="sub-section-summaries"]')
@@ -345,18 +358,24 @@ async function GetImdbDetailsByIdUncached(
         const summary = $Plot(element).text().trim();
         summaries.push(removeSignatures(summary));
       });
+    console.log(`[IMDB] Parsed ${summaries.length} summaries for ${id}`);
 
+    console.log(`[IMDB] Fetching main page for ${id}`);
     const mainHtml = await GetHtmlFromUrl(`https://www.imdb.com/title/${id}/`);
+    console.log(`[IMDB] Main page fetched for ${id} (${Date.now() - startTime}ms)`);
+    
     const $Main = cheerio.load(mainHtml);
 
     const nextdataScriptString = $Main("#__NEXT_DATA__").html();
     if (!nextdataScriptString) {
+      console.error(`[IMDB] #__NEXT_DATA__ script not found for ${id}`);
       throw new Error("IMDB: #__NEXT_DATA__ script not found");
     }
     const nextdataScriptJson = JSON.parse(nextdataScriptString);
     const pageProps =
       nextdataScriptJson?.props?.pageProps?.aboveTheFoldData ?? null;
     if (!pageProps) {
+      console.error(`[IMDB] aboveTheFoldData not found in __NEXT_DATA__ for ${id}`);
       throw new Error("IMDB: aboveTheFoldData not found in __NEXT_DATA__");
     }
 
@@ -367,14 +386,20 @@ async function GetImdbDetailsByIdUncached(
       ? JSON.parse(metadataScriptString)
       : {};
 
-    return FillImdbDetailsResult({
+    const result = FillImdbDetailsResult({
       ...pageProps,
       ...metadata,
       summaries,
     });
+    
+    const totalDuration = Date.now() - startTime;
+    console.log(`[IMDB] Successfully fetched and parsed details for ${id} - Title: "${result.title}" (${totalDuration}ms)`);
+    
+    return result;
   } catch (error) {
-    console.error(error);
-    throw new Error("Imdb parse error");
+    const totalDuration = Date.now() - startTime;
+    console.error(`[IMDB] Error fetching details for ${id} after ${totalDuration}ms:`, error);
+    throw new Error(`IMDB parse error for ${id}: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
 }
 

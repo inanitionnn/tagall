@@ -5,7 +5,9 @@ import { env } from "~/env";
 import { appRouter } from "~/server/api/root";
 import { createTRPCContext } from "~/server/api/trpc";
 
-export const maxDuration = 60;
+// Increased timeout from 60 to 180 seconds (3 minutes) for long-running operations
+// like fetching IMDB data, uploading images, and creating embeddings
+export const maxDuration = 180;
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -23,14 +25,18 @@ const handler = (req: NextRequest) =>
     req,
     router: appRouter,
     createContext: () => createContext(req),
-    onError:
-      env.NODE_ENV === "development"
-        ? ({ path, error }) => {
-            console.error(
-              `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
-            );
-          }
-        : undefined,
+    onError: ({ path, error, input }) => {
+      console.error(`[tRPC Error] Path: ${path ?? "<no-path>"}`);
+      console.error(`[tRPC Error] Message: ${error.message}`);
+      console.error(`[tRPC Error] Code: ${error.code}`);
+      if (env.NODE_ENV === "development") {
+        console.error(`[tRPC Error] Input:`, input);
+        console.error(`[tRPC Error] Stack:`, error.stack);
+      }
+      if (error.cause) {
+        console.error(`[tRPC Error] Cause:`, error.cause);
+      }
+    },
   });
 
 export { handler as GET, handler as POST };

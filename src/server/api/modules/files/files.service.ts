@@ -25,8 +25,13 @@ export const UploadImageByUrl = async (
   imageUrl: string | null | undefined,
 ): Promise<string | null> => {
   if (!imageUrl) {
+    console.log(`[UploadImageByUrl] No image URL provided, skipping upload`);
     return null;
   }
+  
+  console.log(`[UploadImageByUrl] Starting to upload image from URL to folder: ${folder}`);
+  const startTime = Date.now();
+  
   try {
     const response = await cloudinary.uploader.upload(imageUrl, {
       folder: `${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folder}`,
@@ -35,10 +40,16 @@ export const UploadImageByUrl = async (
         { quality: "auto" },
         { fetch_format: "auto" },
       ],
+      timeout: 120_000, // 2 minutes timeout for image upload
     });
-    return extractId(response.public_id);
+    const imageId = extractId(response.public_id);
+    const duration = Date.now() - startTime;
+    console.log(`[UploadImageByUrl] Image uploaded successfully to ${folder}, ID: ${imageId} (${duration}ms)`);
+    return imageId;
   } catch (error) {
+    const duration = Date.now() - startTime;
     const err = error as UploadApiErrorResponse;
+    console.error(`[UploadImageByUrl] Error uploading image to ${folder} after ${duration}ms:`, err.message);
     throw new Error(`Error uploading image: ${err.message}`);
   }
 };
@@ -48,8 +59,13 @@ export const UploadImageByBase64 = async (
   base64Image: string,
 ): Promise<string | null> => {
   if (!base64Image) {
+    console.log(`[UploadImageByBase64] No base64 image provided, skipping upload`);
     return null;
   }
+  
+  console.log(`[UploadImageByBase64] Starting to upload base64 image to folder: ${folder}`);
+  const startTime = Date.now();
+  
   try {
     const response = await cloudinary.uploader.upload(base64Image, {
       folder: `${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folder}`,
@@ -58,10 +74,16 @@ export const UploadImageByBase64 = async (
         { quality: "auto" },
         { fetch_format: "auto" },
       ],
+      timeout: 120_000, // 2 minutes timeout for image upload
     });
-    return extractId(response.public_id);
+    const imageId = extractId(response.public_id);
+    const duration = Date.now() - startTime;
+    console.log(`[UploadImageByBase64] Image uploaded successfully to ${folder}, ID: ${imageId} (${duration}ms)`);
+    return imageId;
   } catch (error) {
+    const duration = Date.now() - startTime;
     const err = error as UploadApiErrorResponse;
+    console.error(`[UploadImageByBase64] Error uploading image to ${folder} after ${duration}ms:`, err.message);
     throw new Error(`Error uploading image: ${err.message}`);
   }
 };
