@@ -39,10 +39,41 @@ export const CACHE_KEYS = {
       userId: true,
       input: true,
     },
+    getPublicUserItems: {
+      userId: true,
+      collectionsIds: true,
+      filtering: true,
+      sorting: true,
+      page: true,
+      limit: true,
+      search: true,
+      input: true,
+    },
+    getPublicAllUserItems: {
+      userId: true,
+      collectionsIds: true,
+      filtering: true,
+      sorting: true,
+      search: true,
+      input: true,
+    },
+    getPublicUserItemsStats: {
+      userId: true,
+      collectionsIds: true,
+      input: true,
+    },
+    getPublicYearsRange: {
+      userId: true,
+      collectionsIds: true,
+      input: true,
+    },
   },
   collection: {
     getAll: true,
     getUserCollections: {
+      userId: true,
+    },
+    getPublicUserCollections: {
       userId: true,
     },
   },
@@ -53,6 +84,11 @@ export const CACHE_KEYS = {
       input: true,
     },
     getItemDetailFields: {
+      input: true,
+    },
+    getPublicFilterFields: {
+      userId: true,
+      collectionsIds: true,
       input: true,
     },
   },
@@ -84,5 +120,6 @@ export const CACHE_KEYS = {
     getUser: {
       userId: true,
     },
+    getPublicUser: true,
   },
 } as const;

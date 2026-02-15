@@ -222,7 +222,17 @@ export const ItemRouter = createTRPCRouter({
         },
       };
 
-      return GetUserItems({ ctx: publicCtx, input });
+      const response = await getOrSetCache(
+        GetUserItems({ ctx: publicCtx, input }),
+        "item",
+        "getPublicUserItems",
+        {
+          userId: user.id,
+          input,
+        },
+      );
+
+      return response;
     }),
 
   getPublicAllUserItems: publicProcedure
@@ -242,7 +252,17 @@ export const ItemRouter = createTRPCRouter({
         },
       };
 
-      return GetAllUserItems({ ctx: publicCtx, input });
+      const response = await getOrSetCache(
+        GetAllUserItems({ ctx: publicCtx, input }),
+        "item",
+        "getPublicAllUserItems",
+        {
+          userId: user.id,
+          input,
+        },
+      );
+
+      return response;
     }),
 
   getPublicRandomUserItems: publicProcedure
@@ -282,7 +302,17 @@ export const ItemRouter = createTRPCRouter({
         },
       };
 
-      return GetUserItemsStats({ ctx: publicCtx, input });
+      const response = await getOrSetCache(
+        GetUserItemsStats({ ctx: publicCtx, input }),
+        "item",
+        "getPublicUserItemsStats",
+        {
+          userId: user.id,
+          input,
+        },
+      );
+
+      return response;
     }),
 
   getPublicYearsRange: publicProcedure
@@ -302,6 +332,16 @@ export const ItemRouter = createTRPCRouter({
         },
       };
 
-      return GetYearsRange({ ctx: publicCtx, input });
+      const response = await getOrSetCache(
+        GetYearsRange({ ctx: publicCtx, input }),
+        "item",
+        "getPublicYearsRange",
+        {
+          userId: user.id,
+          input,
+        },
+      );
+
+      return response;
     }),
 });

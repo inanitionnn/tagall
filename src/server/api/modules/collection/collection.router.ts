@@ -26,20 +26,32 @@ export const CollectionRouter = createTRPCRouter({
     if (!user) {
       throw new Error("Public user not found");
     }
-    const collections = await ctx.db.collection.findMany({
-      where: {
-        items: {
-          some: {
-            userToItems: {
+
+    const response = await getOrSetCache(
+      (async () => {
+        const collections = await ctx.db.collection.findMany({
+          where: {
+            items: {
               some: {
-                userId: user.id,
+                userToItems: {
+                  some: {
+                    userId: user.id,
+                  },
+                },
               },
             },
           },
-        },
+          orderBy: [{ priority: "asc" }],
+        });
+        return collections;
+      })(),
+      "collection",
+      "getPublicUserCollections",
+      {
+        userId: user.id,
       },
-      orderBy: [{ priority: "asc" }],
-    });
-    return collections;
+    );
+
+    return response;
   }),
 });

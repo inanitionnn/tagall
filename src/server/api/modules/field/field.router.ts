@@ -56,6 +56,16 @@ export const FieldRouter = createTRPCRouter({
         },
       };
 
-      return GetFilterFields({ ctx: publicCtx, input });
+      const response = await getOrSetCache(
+        GetFilterFields({ ctx: publicCtx, input }),
+        "field",
+        "getPublicFilterFields",
+        {
+          userId: user.id,
+          input,
+        },
+      );
+
+      return response;
     }),
 });

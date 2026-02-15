@@ -15,11 +15,20 @@ export const UserRouter = createTRPCRouter({
 
   getPublicUser: publicProcedure.query(async (props) => {
     const { ctx } = props;
-    const user = await getFirstAllowedUser(ctx.db);
-    if (!user) {
-      throw new Error("Public user not found");
-    }
-    return user;
+    
+    const response = await getOrSetCache(
+      (async () => {
+        const user = await getFirstAllowedUser(ctx.db);
+        if (!user) {
+          throw new Error("Public user not found");
+        }
+        return user;
+      })(),
+      "user",
+      "getPublicUser",
+    );
+    
+    return response;
   }),
 
   updateUser: protectedProcedure
