@@ -9,23 +9,36 @@ async function getOrSetCacheByKey<T>(
   promise: Promise<T>,
   ttl?: number,
 ): Promise<T> {
+  const startTime = Date.now();
   const cachedData = await redis.get<T>(key);
 
   if (cachedData) {
+    const duration = Date.now() - startTime;
+    console.log(`[Cache HIT] Key: "${key}" (${duration}ms)`);
     return cachedData;
   }
 
+  console.log(`[Cache MISS] Key: "${key}" - fetching from database`);
+  const dataStartTime = Date.now();
   const data = await promise;
+  const dataDuration = Date.now() - dataStartTime;
+  console.log(`[Cache MISS] Data fetched for "${key}" (${dataDuration}ms)`);
 
   const defaultTTL = 60 * 60 * 24; // 1 day
 
+  const setCacheStartTime = Date.now();
   await redis.set(key, data, { ex: ttl ?? defaultTTL });
+  const setCacheDuration = Date.now() - setCacheStartTime;
+  console.log(`[Cache SET] Key: "${key}" cached with TTL=${ttl ?? defaultTTL}s (${setCacheDuration}ms)`);
 
   return data;
 }
 
 async function deleteCacheByPrefix(keyPrefix: string) {
+  console.log(`[Cache INVALIDATE] Starting invalidation for prefix: "${keyPrefix}"`);
+  const startTime = Date.now();
   let cursor = 0;
+  let totalDeleted = 0;
 
   do {
     const [nextCursor, keys] = await redis.scan(cursor, {
@@ -37,8 +50,13 @@ async function deleteCacheByPrefix(keyPrefix: string) {
 
     if (keys.length > 0) {
       await redis.del(...keys);
+      totalDeleted += keys.length;
+      console.log(`[Cache INVALIDATE] Deleted ${keys.length} keys matching "${keyPrefix}*"`);
     }
   } while (cursor !== 0);
+
+  const duration = Date.now() - startTime;
+  console.log(`[Cache INVALIDATE] Completed for "${keyPrefix}" - deleted ${totalDeleted} keys (${duration}ms)`);
 }
 
 export async function deleteCache<
