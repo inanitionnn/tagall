@@ -37,10 +37,6 @@ export const ItemRouter = createTRPCRouter({
     .query(async (props) => {
       const { ctx, input } = props;
 
-      if (input?.sorting?.name === "date") {
-        return GetUserItems(props);
-      }
-
       const response = await getOrSetCache(
         GetUserItems(props),
         "item",
@@ -57,7 +53,19 @@ export const ItemRouter = createTRPCRouter({
   getAllUserItems: protectedProcedure
     .input(GetAllUserItemsInputSchema)
     .query(async (props) => {
-      return GetAllUserItems(props);
+      const { ctx, input } = props;
+
+      const response = await getOrSetCache(
+        GetAllUserItems(props),
+        "item",
+        "getAllUserItems",
+        {
+          userId: ctx.session.user.id,
+          input,
+        },
+      );
+
+      return response;
     }),
 
   getRandomUserItems: protectedProcedure
