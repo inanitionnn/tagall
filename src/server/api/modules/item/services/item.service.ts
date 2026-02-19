@@ -188,18 +188,16 @@ async function CreateItem(props: {
 
       const keys = Object.keys(details);
 
-      const fieldGroups = await prisma.fieldGroup.findMany({
-        where: {
-          name: {
-            in: keys,
-          },
-          collections: {
-            some: {
-              id: collection.id,
-            },
-          },
-        },
-      });
+      const fieldGroups =
+        keys.length === 0
+          ? []
+          : await prisma.fieldGroup.findMany({
+              where: {
+                name: { in: keys },
+                collections: { some: { id: collection.id } },
+              },
+              select: { id: true, name: true },
+            });
       console.log(`[CreateItem] Found ${fieldGroups.length} field groups for ${parsedId}`);
       
       const fields: { field: string; fieldGroupId: string }[] = [];
@@ -236,10 +234,13 @@ async function CreateItem(props: {
 
       console.log(`[CreateItem] Upserting ${fields.length} fields for ${parsedId}`);
       const values = [...new Set(fields.map((f) => f.field))];
-      const existingFields = await prisma.field.findMany({
-        where: { value: { in: values } },
-        select: { id: true, value: true },
-      });
+      const existingFields =
+        values.length === 0
+          ? []
+          : await prisma.field.findMany({
+              where: { value: { in: values } },
+              select: { id: true, value: true },
+            });
       const existingValues = new Set(existingFields.map((e) => e.value));
       const toCreateMap = new Map<string, string>();
       for (const { field, fieldGroupId } of fields) {
