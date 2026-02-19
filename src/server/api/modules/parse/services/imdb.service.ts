@@ -57,7 +57,8 @@ function FillImdbDetailsResult(props: any): ImdbDetailsResultType {
   return {
     title: props.titleText?.text ?? props.originalTitleText?.text ?? null,
     image: GetHighQualityImageUrls(props.primaryImage?.url)?.optimized ?? null,
-    description: props.summaries[1] || props.plot?.plotText?.plainText || null,
+    // When using summaries from plotsummary page: props.summaries[1] || props.plot?.plotText?.plainText || null
+    description: props.plot?.plotText?.plainText ?? null,
     type: {
       titleType: props.titleType?.id ?? null,
       isSeries: !!props.titleType?.isSeries,
@@ -156,10 +157,11 @@ function mergeMeta(meta1: string | null, meta2: string | null): string {
   return params.toString() ? `?${params.toString()}` : "";
 }
 
-function removeSignatures(text: string): string {
-  const signaturePattern = /\s?—[\w\s]+$/gm;
-  return text.replace(signaturePattern, "");
-}
+// Kept for potential future use when restoring summaries from plotsummary page
+// function removeSignatures(text: string): string {
+//   const signaturePattern = /\s?—[\w\s]+$/gm;
+//   return text.replace(signaturePattern, "");
+// }
 
 function ParseQuickSearch(props: {
   html: string;
@@ -342,23 +344,22 @@ async function GetImdbDetailsByIdUncached(
   const startTime = Date.now();
   
   try {
-    // Note: ScrapingAnt allows only 1 concurrent request, so we must fetch sequentially
-    console.log(`[IMDB] Fetching plot summary for ${id}`);
-    const plotHtml = await GetHtmlFromUrl(
-      `https://www.imdb.com/title/${id}/plotsummary`,
-    );
-    console.log(`[IMDB] Plot summary fetched for ${id} (${Date.now() - startTime}ms)`);
-    
-    const $Plot = cheerio.load(plotHtml);
-    const summaries: string[] = [];
-    $Plot('[data-testid="sub-section-summaries"]')
-      .children()
-      .children()
-      .each((_, element) => {
-        const summary = $Plot(element).text().trim();
-        summaries.push(removeSignatures(summary));
-      });
-    console.log(`[IMDB] Parsed ${summaries.length} summaries for ${id}`);
+    // Optional: fetch plot summary page for longer descriptions (adds 1 extra HTTP request)
+    // console.log(`[IMDB] Fetching plot summary for ${id}`);
+    // const plotHtml = await GetHtmlFromUrl(
+    //   `https://www.imdb.com/title/${id}/plotsummary`,
+    // );
+    // console.log(`[IMDB] Plot summary fetched for ${id} (${Date.now() - startTime}ms)`);
+    // const $Plot = cheerio.load(plotHtml);
+    // const summaries: string[] = [];
+    // $Plot('[data-testid="sub-section-summaries"]')
+    //   .children()
+    //   .children()
+    //   .each((_, element) => {
+    //     const summary = $Plot(element).text().trim();
+    //     summaries.push(removeSignatures(summary));
+    //   });
+    // console.log(`[IMDB] Parsed ${summaries.length} summaries for ${id}`);
 
     console.log(`[IMDB] Fetching main page for ${id}`);
     const mainHtml = await GetHtmlFromUrl(`https://www.imdb.com/title/${id}/`);
@@ -389,7 +390,7 @@ async function GetImdbDetailsByIdUncached(
     const result = FillImdbDetailsResult({
       ...pageProps,
       ...metadata,
-      summaries,
+      // summaries, // pass when fetching plotsummary page (uncomment block above and description fallback in FillImdbDetailsResult)
     });
     
     const totalDuration = Date.now() - startTime;

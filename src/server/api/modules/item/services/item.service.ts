@@ -235,25 +235,38 @@ async function CreateItem(props: {
       }
 
       console.log(`[CreateItem] Upserting ${fields.length} fields for ${parsedId}`);
+      const values = [...new Set(fields.map((f) => f.field))];
+      const existingFields = await prisma.field.findMany({
+        where: { value: { in: values } },
+        select: { id: true, value: true },
+      });
+      const existingValues = new Set(existingFields.map((e) => e.value));
+      const toCreateMap = new Map<string, string>();
       for (const { field, fieldGroupId } of fields) {
-        await prisma.field.upsert({
-          where: {
-            value: field,
-          },
-          create: {
-            value: field,
-            fieldGroupId: fieldGroupId,
-            items: {
-              connect: {
-                id: item.id,
-              },
-            },
-          },
-          update: {
-            items: {
-              connect: {
-                id: item.id,
-              },
+        if (!existingValues.has(field) && !toCreateMap.has(field)) {
+          toCreateMap.set(field, fieldGroupId);
+        }
+      }
+      const toCreate = [...toCreateMap.entries()].map(([value, fieldGroupId]) => ({
+        value,
+        fieldGroupId,
+      }));
+      const createdFields =
+        toCreate.length > 0
+          ? await prisma.field.createManyAndReturn({
+              data: toCreate,
+            })
+          : [];
+      const allFieldIds = [
+        ...existingFields.map((f) => f.id),
+        ...createdFields.map((f) => f.id),
+      ];
+      if (allFieldIds.length > 0) {
+        await prisma.item.update({
+          where: { id: item.id },
+          data: {
+            fields: {
+              connect: allFieldIds.map((id) => ({ id })),
             },
           },
         });
