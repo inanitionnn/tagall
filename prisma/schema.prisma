@@ -194,3 +194,4 @@ model Tag {
 
     @@index([name])
 }
+

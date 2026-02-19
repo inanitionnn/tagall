@@ -19,6 +19,7 @@ const sourceSansPro = Source_Sans_3({
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
   variable: "--font-nunito-sans",
+  adjustFontFallback: false, // Nunito Sans has no metrics in Next.js bundle; avoids font override warning
 });
 
 export const metadata: Metadata = {

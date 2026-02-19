@@ -59,6 +59,7 @@ export const useAddItemToCollection = (props: Props) => {
       setSelectedItem(null);
       return;
     }
+
     const { commentTitle, commentDescription, rate, status, tagsIds } = data;
     const formData = {
       status,
@@ -79,8 +80,8 @@ export const useAddItemToCollection = (props: Props) => {
       prev.map((item) =>
         item.parsedId === selectedItem.parsedId
           ? { ...item, id: "temp-id" }
-          : item
-      )
+          : item,
+      ),
     );
 
     const promise = mutateAsync(formData, {
@@ -90,21 +91,19 @@ export const useAddItemToCollection = (props: Props) => {
           includeStats: true,
         });
 
-        // Remove from search results permanently
         setSearchResults((prev) =>
           prev.filter(
-            (searchResult) => searchResult.parsedId !== selectedItem.parsedId
-          )
+            (searchResult) => searchResult.parsedId !== selectedItem.parsedId,
+          ),
         );
       },
       onError: () => {
-        // Rollback optimistic update on error
         setSearchResults((prev) =>
           prev.map((item) =>
             item.parsedId === selectedItem.parsedId
               ? { ...item, id: null }
-              : item
-          )
+              : item,
+          ),
         );
       },
     });
@@ -115,7 +114,8 @@ export const useAddItemToCollection = (props: Props) => {
     toast.promise(promise, {
       loading: `Adding ${selectedItem.title}...`,
       success: `${selectedItem.title} added successfully!`,
-      error: (error) => `Failed to add ${selectedItem.title}: ${error.message}`,
+      error: (error) =>
+        `Failed to add ${selectedItem.title}: ${error.message}`,
     });
   };
 

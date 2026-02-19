@@ -140,12 +140,12 @@ export const ItemRouter = createTRPCRouter({
     .mutation(async (props) => {
       const { ctx, input } = props;
       const response = await AddToCollection(props);
-      
+
       await invalidateItemCaches(ctx.session.user.id, {
         collectionsIds: [input.collectionId],
         includeSearch: true,
       });
-      
+
       return response;
     }),
 

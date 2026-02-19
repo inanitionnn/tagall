@@ -68,7 +68,6 @@ class ScrapingAntQueue {
         request.reject(error);
       }
 
-      // Small delay between requests to avoid rate limiting
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
@@ -86,7 +85,7 @@ async function makeScrapingAntRequest(
   options: ScrapingAntOptions = {},
 ): Promise<string> {
   const {
-    timeout = 60, // Increased default timeout from 30 to 60 seconds
+    timeout = 60,
     waitForSelector,
     browser = true,
     proxyType = "datacenter",
@@ -111,7 +110,7 @@ async function makeScrapingAntRequest(
       headers: {
         Accept: "text/html",
       },
-      timeout: (timeout + 10) * 1000, // Increased buffer from 5 to 10 seconds
+      timeout: (timeout + 10) * 1000,
     });
 
     const duration = Date.now() - startTime;
@@ -121,14 +120,16 @@ async function makeScrapingAntRequest(
   } catch (error) {
     const duration = Date.now() - startTime;
     console.error(`[ScrapingAnt] Error after ${duration}ms for URL: ${url}`);
-    
+
     if (axios.isAxiosError(error)) {
       const errorData = error.response?.data as ScrapingAntErrorResponse;
       const statusCode = error.response?.status;
       const errorMessage =
         errorData?.detail ?? error.message ?? "ScrapingAnt request failed";
 
-      console.error(`[ScrapingAnt] ${errorMessage} (Status: ${statusCode ?? "unknown"})`);
+      console.error(
+        `[ScrapingAnt] ${errorMessage} (Status: ${statusCode ?? "unknown"})`,
+      );
       throw new ScrapingAntError(errorMessage, statusCode);
     }
 
@@ -148,7 +149,7 @@ export async function fetchWithScrapingAnt(
   options: ScrapingAntOptions = {},
 ): Promise<string> {
   const maxRetries = 3;
-  const baseDelay = 2000; // 2 seconds
+  const baseDelay = 2000;
 
   return scrapingAntQueue.add(async () => {
     let lastError: Error | null = null;
@@ -159,16 +160,14 @@ export async function fetchWithScrapingAnt(
       } catch (error) {
         lastError = error as Error;
 
-        // Check if it's a rate limit error
         const isConcurrencyError =
           error instanceof ScrapingAntError &&
           (error.message.includes("concurrency limit") ||
             error.message.includes("rate limit"));
 
-        // Only retry on concurrency/rate limit errors
         if (isConcurrencyError && attempt < maxRetries - 1) {
-          // Exponential backoff with jitter
-          const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
+          const delay =
+            baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
           console.log(
             `ScrapingAnt concurrency limit hit, retrying in ${Math.round(delay)}ms (attempt ${attempt + 1}/${maxRetries})`,
           );
@@ -176,12 +175,10 @@ export async function fetchWithScrapingAnt(
           continue;
         }
 
-        // For other errors or last attempt, throw immediately
         throw error;
       }
     }
 
-    // This should never be reached, but TypeScript needs it
     throw lastError ?? new Error("Failed to fetch from ScrapingAnt");
   });
 }

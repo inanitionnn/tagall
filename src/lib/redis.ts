@@ -29,7 +29,9 @@ async function getOrSetCacheByKey<T>(
   const setCacheStartTime = Date.now();
   await redis.set(key, data, { ex: ttl ?? defaultTTL });
   const setCacheDuration = Date.now() - setCacheStartTime;
-  console.log(`[Cache SET] Key: "${key}" cached with TTL=${ttl ?? defaultTTL}s (${setCacheDuration}ms)`);
+  console.log(
+    `[Cache SET] Key: "${key}" cached with TTL=${ttl ?? defaultTTL}s (${setCacheDuration}ms)`,
+  );
 
   return data;
 }
