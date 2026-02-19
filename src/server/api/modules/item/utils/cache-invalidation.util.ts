@@ -19,30 +19,16 @@ export async function invalidateItemCaches(
 ): Promise<void> {
   const { collectionsIds, itemId, includeSearch } = options;
 
-  // Always invalidate user items queries
-  await deleteCache("item", "getUserItems", {
-    userId,
-    ...(collectionsIds && { collectionsIds }),
-  });
-
-  await deleteCache("item", "getAllUserItems", {
-    userId,
-    ...(collectionsIds && { collectionsIds }),
-  });
+  // Invalidate by userId only: cache keys are built with full input, so prefix must match all getUserItems for user
+  await deleteCache("item", "getUserItems", { userId });
+  await deleteCache("item", "getAllUserItems", { userId });
 
   // Invalidate stats
   await deleteCache("item", "getUserItemsStats", { userId });
 
-  // Invalidate filters and years range
-  await deleteCache("item", "getYearsRange", {
-    userId,
-    ...(collectionsIds && { collectionsIds }),
-  });
-
-  await deleteCache("field", "getFilterFields", {
-    userId,
-    ...(collectionsIds && { collectionsIds }),
-  });
+  // Invalidate by userId only: cache keys use full input, prefix must match all entries for user
+  await deleteCache("item", "getYearsRange", { userId });
+  await deleteCache("field", "getFilterFields", { userId });
 
   // Invalidate specific item if provided
   if (itemId) {
