@@ -7,9 +7,10 @@ COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --ignore-scripts
 # Download Chromium for Playwright (used for IMDB scraping)
 RUN pnpm exec playwright install chromium
-# cp -rL recursively follows ALL symlinks (including nested pnpm store symlinks like playwright-core),
-# producing a fully-resolved directory that can be safely COPYed into runner without broken symlinks.
-RUN cp -rL node_modules/playwright /playwright-resolved
+# pnpm virtual store keeps playwright and playwright-core as sibling symlinks.
+# Resolve the entire parent (which includes both) so they can find each other at runtime.
+RUN PLAYWRIGHT_STORE=$(dirname "$(readlink -f node_modules/playwright)") \
+    && cp -rL "$PLAYWRIGHT_STORE" /playwright-env
 
 # Stage 2: Build application
 FROM node:20-alpine AS builder
@@ -68,8 +69,9 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy the fully-resolved playwright directory (no pnpm symlinks) from deps stage.
-COPY --from=deps --chown=nextjs:nodejs /playwright-resolved ./node_modules/playwright
+# Resolved playwright + playwright-core directory (no pnpm symlinks).
+# NODE_PATH makes them discoverable as a fallback for any require('playwright').
+COPY --from=deps --chown=nextjs:nodejs /playwright-env ./playwright-env
 
 USER nextjs
 EXPOSE 3000
@@ -77,5 +79,6 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 # Tell Playwright where to find the pre-downloaded Chromium
 ENV PLAYWRIGHT_BROWSERS_PATH=/home/nextjs/.cache/ms-playwright
+ENV NODE_PATH=/app/playwright-env
 
 CMD ["node", "server.js"]
