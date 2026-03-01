@@ -1,7 +1,7 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { GetUser, UpdateUser } from "./services";
 import { UpdateUserInputSchema } from "./schemas";
-import { deleteCache, getOrSetCache } from "../../../../lib";
+import { deleteCache, getOrSetCache } from "../../../../lib/redis";
 import { getFirstAllowedUser } from "../../helpers";
 
 export const UserRouter = createTRPCRouter({

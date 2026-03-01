@@ -19,6 +19,32 @@ function cleanText(input: string): string {
 
 const url = "https://graphql.anilist.co";
 
+const JAPANESE_CHARS_RE = /[\u3040-\u30FF\u4E00-\u9FFF\uFF00-\uFFEF]/;
+
+/**
+ * Pick the best available title in priority order:
+ * 1. Official English title
+ * 2. First synonym without Japanese characters (fan/alt English title)
+ * 3. Romaji fallback
+ */
+function pickBestTitle(
+  english: string | null | undefined,
+  romaji: string | null | undefined,
+  synonyms: string[] | null | undefined,
+): string {
+  if (english) return english;
+
+  const latinSynonym = (synonyms ?? []).find(
+    (s) =>
+      s &&
+      !JAPANESE_CHARS_RE.test(s) &&
+      s.toLowerCase() !== (romaji ?? "").toLowerCase(),
+  );
+  if (latinSynonym) return latinSynonym;
+
+  return romaji ?? "";
+}
+
 export async function GetAnilistDetailsById(mediaId: string) {
   const variables = {
     mediaId: parseInt(mediaId),
@@ -73,7 +99,7 @@ export async function SearchAnilist(
     search: query,
     type: "MANGA",
     perPage: limit,
-    sort: [],
+    sort: ["SEARCH_MATCH"],
     genreNotIn: ["Hentai"],
   };
 
@@ -91,11 +117,11 @@ export async function SearchAnilist(
     },
   );
 
-  return result.data.data.Page.media.map((media) => {
+  return result.data.data.Page.media.map((media, index) => {
     const description = media.description ?? null;
     const image = media.coverImage?.large ?? null;
     const parsedId = media.id.toString() ?? null;
-    const title = media.title.english ?? media.title.romaji ?? "";
+    const title = pickBestTitle(media.title.english, media.title.romaji, media.synonyms);
     const year = media.startDate?.year ?? null;
     const tags = media.tags?.map((tag) => tag.name) ?? [];
     const genres = media.genres ?? [];
@@ -105,6 +131,7 @@ export async function SearchAnilist(
       ...genres,
       ...tags,
     ].filter(Truthy);
+    const averageScore = media.averageScore ?? null;
     return {
       id: null,
       description: cleanText(description ?? ""),
@@ -113,6 +140,8 @@ export async function SearchAnilist(
       parsedId,
       title,
       year,
+      rating: averageScore != null ? averageScore / 10 : null,
+      relevanceRank: index,
     };
   });
 }

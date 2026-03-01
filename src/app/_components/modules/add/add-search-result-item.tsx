@@ -1,72 +1,149 @@
+"use client";
 import Image from "next/image";
-import { Header, Paragraph } from "../../ui";
 import type { Dispatch, SetStateAction } from "react";
 import type { SearchResultType } from "../../../../server/api/modules/parse/types";
 import { cn } from "../../../../lib";
-import { CardContainer } from "../../shared";
+import { CardContainer, ItemRatingBadge, ItemTypeBadge } from "../../shared";
+import { Badge } from "../../ui/badge";
 
 type Props = {
   searchResult: SearchResultType;
   setSelectedItem: Dispatch<SetStateAction<SearchResultType | null>>;
+  disableHover?: boolean;
 };
 
+const MANGA_STATUSES: Record<string, string> = {
+  FINISHED: "Finished",
+  RELEASING: "Ongoing",
+  NOT_YET_RELEASED: "Coming Soon",
+  CANCELLED: "Cancelled",
+  HIATUS: "On Hiatus",
+};
+
+function getTypeLabel(searchResult: SearchResultType): string {
+  if (searchResult.suggestedCollectionName) return searchResult.suggestedCollectionName;
+  if (searchResult.mediaType === "movie") return "Film";
+  if (searchResult.mediaType === "tv") return "Serie";
+  return "Manga";
+}
+
+function parseKeywords(keywords: string[], isManga: boolean): string[] {
+  const meta: string[] = [];
+  for (const kw of keywords) {
+    if (kw.endsWith(" imdb") || kw.endsWith(" tmdb")) continue;
+    if (isManga) {
+      if (/\d+ volumes?/i.test(kw) || kw in MANGA_STATUSES) {
+        meta.push(kw in MANGA_STATUSES ? (MANGA_STATUSES[kw] ?? kw) : kw);
+      }
+    } else {
+      meta.push(kw);
+    }
+  }
+  return meta;
+}
+
 const AddSearchResultItem = (props: Props) => {
-  const { searchResult, setSelectedItem } = props;
+  const { searchResult, setSelectedItem, disableHover = false } = props;
+  const typeLabel = getTypeLabel(searchResult);
+  const isManga = typeLabel === "Manga";
+  const meta = parseKeywords(searchResult.keywords, isManga);
 
   return (
     <CardContainer
       className={cn(
-        "relative h-fit cursor-pointer flex-col p-4 sm:h-80 sm:flex-row",
-        {
-          "hover:scale-105": !searchResult.id,
-        },
+        "relative overflow-hidden p-0 transition-all duration-200",
+        !disableHover && "cursor-pointer",
+        !disableHover && !searchResult.id && "hover:scale-105 hover:border-primary/50 hover:shadow-md",
       )}
       onClick={() => {
-        if (!searchResult.id) {
-          setSelectedItem(() => searchResult);
-        }
+        if (!disableHover && !searchResult.id) setSelectedItem(() => searchResult);
       }}
     >
-      {searchResult.id && (
-        <div className="absolute bottom-2 left-2 rounded-sm bg-green-500 p-2 text-destructive-foreground">
-          <Paragraph>In Collection</Paragraph>
+      {/* Blurred background image */}
+      {searchResult.image && (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <Image
+            src={searchResult.image}
+            alt=""
+            className="h-full w-full rounded-none border-0 object-cover opacity-5 blur-sm"
+            width={300}
+            height={450}
+            unoptimized
+          />
         </div>
       )}
-      <Header vtag="h5" className="line-clamp-3 sm:hidden">
-        {searchResult.title}
-      </Header>
-      <div className="flex h-full">
-        <div className="aspect-[27/40]">
-          {searchResult.image ? (
-            <Image
-              src={searchResult.image}
-              alt={"cover" + searchResult.title}
-              className="aspect-[27/40] rounded-sm object-cover"
-              width={210}
-              height={290}
-              unoptimized={true}
-            />
-          ) : (
-            <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
-          )}
-        </div>
-        <div className="flex w-full flex-col justify-between gap-2 p-6">
-          <Header vtag="h5" className="line-clamp-3 hidden sm:block">
+
+      {/* Grain overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[1] opacity-[0.035]"
+        style={{ backgroundImage: "url('/halftone.png')", backgroundRepeat: "repeat" }}
+      />
+
+      {/* Poster */}
+      <div className="relative z-10 w-[110px] flex-shrink-0 sm:w-[150px]">
+        {searchResult.image ? (
+          <Image
+            src={searchResult.image}
+            alt={"cover " + (searchResult.title ?? "")}
+            className="h-full w-full rounded-l-lg object-cover"
+            width={150}
+            height={225}
+            unoptimized
+          />
+        ) : (
+          <div className="h-full w-full rounded-l-lg bg-muted" />
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 flex min-w-0 flex-1 flex-col justify-between gap-2 px-4 py-3">
+
+        {/* Title + badges row */}
+        <div className="flex items-start justify-between gap-2">
+          <p className="line-clamp-2 text-base font-bold leading-snug sm:text-lg">
             {searchResult.title}
-          </Header>
-
-          {searchResult.description && (
-            <Paragraph vsize={"sm"} className="line-clamp-4">
-              {searchResult.description}
-            </Paragraph>
-          )}
-
-          <Paragraph>
-            {[searchResult.year, ...searchResult.keywords]
-              .slice(0, 5)
-              .join(" • ")}
-          </Paragraph>
+          </p>
+          <div className="flex flex-shrink-0 items-center gap-1.5">
+            {searchResult.id && (
+              <Badge
+                variant="outline"
+                className="rounded-md border-green-500/40 bg-green-500/15 px-2 py-0.5 text-xs font-semibold text-green-400"
+              >
+                Added
+              </Badge>
+            )}
+            <ItemTypeBadge collectionName={typeLabel} />
+          </div>
         </div>
+
+            {/* Description */}
+            {searchResult.description && (
+          <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+            {searchResult.description}
+          </p>
+        )}
+
+        {/* Rating + year row */}
+        <div className="flex items-center justify-end gap-3">
+        {meta.map((meta: string) => (
+          <p key={meta} className="text-base text-muted-foreground sm:text-md">
+            {meta}
+          </p>
+        ))}
+     
+          {searchResult.year != null && (
+            <span className="text-base font-semibold text-muted-foreground sm:text-md ">
+              {searchResult.year}
+            </span>
+          )}
+              {searchResult.rating != null && (
+            <ItemRatingBadge rate={searchResult.rating} className="text-base sm:text-md" />
+          )}
+        </div>
+
+        
+
+    
       </div>
     </CardContainer>
   );

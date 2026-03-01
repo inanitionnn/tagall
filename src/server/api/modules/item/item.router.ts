@@ -27,7 +27,7 @@ import {
   UpdateItem,
   UpdateItemImage,
 } from "./services";
-import { getOrSetCache } from "../../../../lib";
+import { getOrSetCache } from "../../../../lib/redis";
 import { getFirstAllowedUser } from "../../helpers";
 import { invalidateItemCaches } from "./utils/cache-invalidation.util";
 

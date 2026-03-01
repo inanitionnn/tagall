@@ -1,11 +1,13 @@
 import { Badge, Header, Paragraph } from "../../../ui";
 import type { ItemType } from "../../../../../server/api/modules/item/types";
 import {
-  RATING_NAMES,
-  STATUS_ICONS,
-  STATUS_NAMES,
-} from "../../../../../constants";
-import { CardContainer, CloudinaryImage } from "../../../shared";
+  CardContainer,
+  CloudinaryImage,
+  ItemRatingBadge,
+  ItemStatusBadge,
+  ItemTypeBadge,
+  TYPE_BADGE_STYLES,
+} from "../../../shared";
 
 type Props = {
   item: ItemType;
@@ -14,84 +16,87 @@ type Props = {
 
 const HomeLargeItem = (props: Props) => {
   const { item, selectedCollectionsIds } = props;
-  const ItemStatusIcon = STATUS_ICONS[item.status];
+
   return (
-    <CardContainer className="relative h-fit cursor-pointer overflow-hidden hover:scale-105">
+    <CardContainer className="relative h-fit cursor-pointer overflow-hidden p-0 transition-all duration-200 hover:scale-105 hover:border-primary/50 hover:shadow-md">
+      {/* Blurred background */}
       {item.image && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <CloudinaryImage
-            className="!aspect-auto h-full w-full rounded-none border-0 object-cover opacity-15 blur-lg shadow-none"
+            className="!aspect-auto h-full w-full rounded-none border-0 object-cover opacity-5 blur-sm shadow-none"
             publicId={item.image}
             folder={item.collection.name}
           />
         </div>
       )}
 
-      <div className="relative z-10 aspect-[27/40] h-36 sm:h-52">
+      {/* Grain overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[1] opacity-[0.035]"
+        style={{ backgroundImage: "url('/halftone.png')", backgroundRepeat: "repeat" }}
+      />
+
+      {/* Poster */}
+      <div className="relative z-10 aspect-[27/40] w-[110px] flex-shrink-0 sm:w-[150px]">
         {item.image ? (
           <CloudinaryImage
+            className="h-full w-full rounded-l-sm object-cover"
             publicId={item.image}
             folder={item.collection.name}
           />
         ) : (
-          <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />
+          <div className="h-full w-full rounded-l-sm bg-muted" />
         )}
       </div>
-      <div className="relative z-10 flex w-full flex-col justify-between gap-2 p-2">
-        <div className="flex flex-col">
-          <div className="flex justify-between gap-2">
-            <Header vtag="h5" className="line-clamp-2">
-              {item.title}
-            </Header>
-            {selectedCollectionsIds.length > 1 ? (
-              <Header vtag="h6" className="font-bold text-muted-foreground">
-                {item.collection.name}
-              </Header>
-            ) : null}
-          </div>
 
-          <Paragraph className="font-semibold text-muted-foreground">
-            {item.year}
-          </Paragraph>
+      {/* Content */}
+      <div className="relative z-10 flex min-w-0 flex-1 flex-col justify-between gap-2 px-4 py-3">
+        {/* Title + type badge */}
+        <div className="flex items-start justify-between gap-2">
+          <Header vtag="h5" className="line-clamp-2 leading-snug">
+            {item.title}
+          </Header>
+          <div className="flex flex-shrink-0 items-center gap-1.5">
+            <ItemTypeBadge collectionName={item.collection.name} />
+            {selectedCollectionsIds.length > 1 && !TYPE_BADGE_STYLES[item.collection.name] && (
+              <Badge variant="outline" className="text-xs text-muted-foreground">
+                {item.collection.name}
+              </Badge>
+            )}
+          </div>
         </div>
 
-        <div className="hidden sm:block">
-          <Paragraph vsize={"sm"} className="line-clamp-4">
+        {/* Description */}
+        {item.description && (
+          <Paragraph vsize="sm" className="line-clamp-3 leading-relaxed text-muted-foreground">
             {item.description}
           </Paragraph>
-        </div>
+        )}
 
-        {item.tags.length ? (
-          <div className="flex flex-wrap gap-2">
+        {/* Tags */}
+        {item.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
             {item.tags.map((tag) => (
-              <Badge key={tag.id} className="text-sm">
+              <Badge key={tag.id} className="text-xs">
                 {tag.name}
               </Badge>
             ))}
           </div>
-        ) : null}
+        )}
 
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        {/* Bottom row: status · ★ rating · year */}
+        <div className="flex items-center justify-end gap-3">
+          <ItemStatusBadge status={item.status} className="text-base" />
+
           {item.rate ? (
-            <div className="flex items-center gap-2">
-              <Paragraph className="w-5 text-center font-bold">
-                {item.rate}
-              </Paragraph>
-              <Paragraph className="font-medium text-muted-foreground">
-                {RATING_NAMES[item.rate]}
-              </Paragraph>
-            </div>
-          ) : (
-            <div />
-          )}
+            <ItemRatingBadge rate={item.rate} className="text-base" />
+          ) : null}
 
-          <div className="flex items-center gap-2">
-            <ItemStatusIcon className="block size-5 w-5 stroke-[2px] sm:hidden" />
-            <Paragraph className="font-medium text-muted-foreground">
-              {STATUS_NAMES[item.status]}
-            </Paragraph>
-            <ItemStatusIcon className="hidden size-5 stroke-[2.5px] sm:block" />
-          </div>
+          {item.year && (
+            <span className="text-base font-semibold text-muted-foreground">
+              {item.year}
+            </span>
+          )}
         </div>
       </div>
     </CardContainer>

@@ -1,21 +1,64 @@
-import { Redis } from "@upstash/redis";
+import { createClient, type RedisClientType } from "redis";
+import { env } from "~/env";
 import type { CACHE_KEYS } from "../constants/cache-keys.const";
 import { buildCacheKey, type CacheKeyParams } from "./cache-key";
 
-const redis = Redis.fromEnv();
+let client: RedisClientType | null = null;
+let connectionFailed = false;
+
+function isRedisConfigured(): boolean {
+  return !!env.REDIS_HOST && !!env.REDIS_PORT;
+}
+
+async function getClient(): Promise<RedisClientType | null> {
+  if (!isRedisConfigured() || connectionFailed) return null;
+  if (client) return client;
+
+  client = createClient({
+    socket: {
+      host: env.REDIS_HOST,
+      port: env.REDIS_PORT,
+      connectTimeout: 3000,
+      reconnectStrategy: false,
+    },
+    ...(env.REDIS_PASSWORD && { password: env.REDIS_PASSWORD }),
+    ...(env.REDIS_DB !== undefined && { database: env.REDIS_DB }),
+  });
+
+  client.on("error", () => {
+    // Errors are expected when Redis is unavailable; suppress verbose output
+  });
+
+  try {
+    await client.connect();
+  } catch {
+    console.warn("[Redis] Unavailable, running without cache");
+    connectionFailed = true;
+    client = null;
+    return null;
+  }
+
+  return client;
+}
 
 async function getOrSetCacheByKey<T>(
   key: string,
   promise: Promise<T>,
   ttl?: number,
 ): Promise<T> {
-  const startTime = Date.now();
-  const cachedData = await redis.get<T>(key);
+  const redis = await getClient();
 
-  if (cachedData) {
+  if (!redis) {
+    return promise;
+  }
+
+  const startTime = Date.now();
+  const raw = await redis.get(key);
+
+  if (raw !== null) {
     const duration = Date.now() - startTime;
     console.log(`[Cache HIT] Key: "${key}" (${duration}ms)`);
-    return cachedData;
+    return JSON.parse(raw) as T;
   }
 
   console.log(`[Cache MISS] Key: "${key}" - fetching from database`);
@@ -25,40 +68,40 @@ async function getOrSetCacheByKey<T>(
   console.log(`[Cache MISS] Data fetched for "${key}" (${dataDuration}ms)`);
 
   const defaultTTL = 60 * 60 * 24; // 1 day
+  const ttlSeconds = ttl ?? defaultTTL;
 
   const setCacheStartTime = Date.now();
-  await redis.set(key, data, { ex: ttl ?? defaultTTL });
+  await redis.setEx(key, ttlSeconds, JSON.stringify(data));
   const setCacheDuration = Date.now() - setCacheStartTime;
   console.log(
-    `[Cache SET] Key: "${key}" cached with TTL=${ttl ?? defaultTTL}s (${setCacheDuration}ms)`,
+    `[Cache SET] Key: "${key}" cached with TTL=${ttlSeconds}s (${setCacheDuration}ms)`,
   );
 
   return data;
 }
 
-async function deleteCacheByPrefix(keyPrefix: string) {
+async function deleteCacheByPrefix(keyPrefix: string): Promise<void> {
+  const redis = await getClient();
+
+  if (!redis) return;
+
   console.log(`[Cache INVALIDATE] Starting invalidation for prefix: "${keyPrefix}"`);
   const startTime = Date.now();
-  let cursor = 0;
   let totalDeleted = 0;
+  const batchSize = 100;
 
-  do {
-    const [nextCursor, keys] = await redis.scan(cursor, {
-      match: `${keyPrefix}*`,
-      count: 100,
-    });
-
-    cursor = parseInt(nextCursor, 10);
-
-    if (keys.length > 0) {
-      await redis.del(...keys);
-      totalDeleted += keys.length;
-      console.log(`[Cache INVALIDATE] Deleted ${keys.length} keys matching "${keyPrefix}*"`);
-    }
-  } while (cursor !== 0);
+  for await (const key of redis.scanIterator({
+    MATCH: `${keyPrefix}*`,
+    COUNT: batchSize,
+  })) {
+    await redis.del(key);
+    totalDeleted++;
+  }
 
   const duration = Date.now() - startTime;
-  console.log(`[Cache INVALIDATE] Completed for "${keyPrefix}" - deleted ${totalDeleted} keys (${duration}ms)`);
+  console.log(
+    `[Cache INVALIDATE] Completed for "${keyPrefix}" - deleted ${totalDeleted} keys (${duration}ms)`,
+  );
 }
 
 export async function deleteCache<
@@ -68,9 +111,9 @@ export async function deleteCache<
   category: Category,
   key: Key,
   params: Partial<CacheKeyParams<Category, Key>> = {},
-) {
+): Promise<void> {
   const cacheKey = buildCacheKey(category, key, params);
-  deleteCacheByPrefix(cacheKey);
+  await deleteCacheByPrefix(cacheKey);
 }
 
 export async function getOrSetCache<
@@ -88,4 +131,4 @@ export async function getOrSetCache<
   return getOrSetCacheByKey(cacheKey, promise, ttl);
 }
 
-export default redis;
+export default { getClient, getOrSetCache, deleteCache };

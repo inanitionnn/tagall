@@ -5,6 +5,8 @@ import {
   CardContainer,
   CloudinaryImage,
   DeleteItemModal,
+  ItemTypeBadge,
+  TYPE_BADGE_STYLES,
   UpdateItemModal,
   UpdateItemImageModal,
   UpdateTagsModal,
@@ -27,12 +29,17 @@ const HomeEditItem = (props: Props) => {
       {item.image && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <CloudinaryImage
-            className="!aspect-auto h-full w-full rounded-none border-0 object-cover opacity-15 blur-lg shadow-none"
+            className="!aspect-auto h-full w-full rounded-none border-0 object-cover opacity-5 blur-sm shadow-none"
             publicId={item.image}
             folder={item.collection.name}
           />
         </div>
       )}
+
+      <div
+        className="pointer-events-none absolute inset-0 z-[1] opacity-[0.035]"
+        style={{ backgroundImage: "url('/halftone.png')", backgroundRepeat: "repeat" }}
+      />
 
       <div className="relative z-10 flex gap-4">
         <UpdateItemImageModal item={item}>
@@ -50,15 +57,18 @@ const HomeEditItem = (props: Props) => {
 
         <div className="flex w-full flex-col justify-between gap-2">
           <div className="flex flex-col">
-            <div className="flex justify-between gap-2">
+            <div className="flex items-start justify-between gap-2">
               <Header vtag="h5" className="line-clamp-2">
                 {item.title}
               </Header>
-              {selectedCollectionsIds.length > 1 ? (
-                <Header vtag="h6" className="font-bold text-muted-foreground">
-                  {item.collection.name}
-                </Header>
-              ) : null}
+              <div className="flex flex-shrink-0 items-center gap-1.5">
+                <ItemTypeBadge collectionName={item.collection.name} />
+                {selectedCollectionsIds.length > 1 && !TYPE_BADGE_STYLES[item.collection.name] && (
+                  <Header vtag="h6" className="font-bold text-muted-foreground">
+                    {item.collection.name}
+                  </Header>
+                )}
+              </div>
             </div>
 
             <Paragraph className="font-semibold text-muted-foreground">

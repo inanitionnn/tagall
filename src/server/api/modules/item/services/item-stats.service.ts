@@ -5,6 +5,7 @@ import type {
   ItemsRateStatsType,
   ItemsStatusStatsType,
 } from "../types";
+import { STATUS_VALUES } from "~/constants";
 
 export async function getUserItemsDateStats(props: {
   ctx: ContextType;
@@ -120,9 +121,9 @@ export async function getUserItemsStatusStats(props: {
       return { status, count };
     }),
   );
-  const priorityOrder = Object.values(ItemStatus);
   const stats = statusCounts.sort(
-    (a, b) => priorityOrder.indexOf(a.status) - priorityOrder.indexOf(b.status),
+    (a, b) =>
+      STATUS_VALUES.indexOf(a.status) - STATUS_VALUES.indexOf(b.status),
   );
   return stats;
 }

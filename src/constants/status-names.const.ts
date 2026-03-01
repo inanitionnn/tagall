@@ -25,9 +25,17 @@ export const STATUS_ICONS: Record<ItemStatus, LucideIcon> = {
 } as const;
 
 export const STATUS_VALUES = [
-  ItemStatus.COMPLETED,
+  ItemStatus.ABANDONED,
+  ItemStatus.NOTSTARTED,
   ItemStatus.INPROGRESS,
   ItemStatus.WAITING,
-  ItemStatus.NOTSTARTED,
-  ItemStatus.ABANDONED,
+  ItemStatus.COMPLETED,
 ] as const;
+
+export const STATUS_COLORS: Record<ItemStatus, string> = {
+  COMPLETED: "text-green-400",
+  INPROGRESS: "text-sky-400",
+  WAITING: "text-amber-400",
+  NOTSTARTED: "text-slate-400",
+  ABANDONED: "text-red-400",
+} as const;

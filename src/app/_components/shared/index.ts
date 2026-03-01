@@ -15,3 +15,6 @@ export * from "./delete-item-modal";
 export * from "./item-card";
 export * from "./no-items-card";
 export * from "./filter-badges";
+export * from "./item-type-badge";
+export * from "./item-rating-badge";
+export * from "./item-status-badge";

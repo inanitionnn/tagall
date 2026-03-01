@@ -113,9 +113,7 @@ export function PublicStandardView(props: Props) {
       {items && items.length > 0 && (
         <div className="mx-auto grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8">
           {items.map((item) => (
-            <div key={item.id} className="pointer-events-none">
-              <HomeMediumItem item={item} />
-            </div>
+            <HomeMediumItem key={item.id} item={item} />
           ))}
         </div>
       )}

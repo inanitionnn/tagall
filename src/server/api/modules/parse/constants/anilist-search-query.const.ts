@@ -7,9 +7,11 @@ query ($search: String!, $type: MediaType, $perPage: Int, $sort: [MediaSort], $g
                 english
                 romaji
             }
+            synonyms
             coverImage {
                 large
             }
+            averageScore
             genres
             tags {
                 name

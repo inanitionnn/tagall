@@ -20,6 +20,7 @@ function extractId(input: string | null | undefined): string | null {
   return match ?? null;
 }
 
+
 export const UploadImageByUrl = async (
   folder: string,
   imageUrl: string | null | undefined,

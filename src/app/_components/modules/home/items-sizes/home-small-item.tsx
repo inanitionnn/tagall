@@ -1,108 +1,86 @@
-import { Badge, Header, Paragraph } from "../../../ui";
+import { Badge, Header } from "../../../ui";
 import type { ItemType } from "../../../../../server/api/modules/item/types";
 import {
-  RATING_NAMES,
-  STATUS_ICONS,
-  STATUS_NAMES,
-} from "../../../../../constants";
-import { CardContainer, CloudinaryImage } from "../../../shared";
+  CardContainer,
+  CloudinaryImage,
+  ItemRatingBadge,
+  ItemStatusBadge,
+  ItemTypeBadge,
+} from "../../../shared";
 
 type Props = {
   item: ItemType;
   selectedCollectionsIds: string[];
-  showTimeAgo?: boolean;
 };
 
 const HomeSmallItem = (props: Props) => {
-  const { item, selectedCollectionsIds, showTimeAgo = true } = props;
-  const ItemStatusIcon = STATUS_ICONS[item.status];
+  const { item, selectedCollectionsIds } = props;
+
   return (
-    <CardContainer className="relative h-fit cursor-pointer overflow-hidden hover:scale-105 sm:h-24">
+    <CardContainer className="relative h-fit cursor-pointer overflow-hidden p-0 transition-all duration-200 hover:scale-105 hover:border-primary/50 hover:shadow-md sm:h-24">
+      {/* Blurred background */}
       {item.image && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <CloudinaryImage
-            className="!aspect-auto h-full w-full rounded-none border-0 object-cover opacity-15 blur-lg shadow-none"
+            className="!aspect-auto h-full w-full rounded-none border-0 object-cover opacity-5 blur-sm shadow-none"
             publicId={item.image}
             folder={item.collection.name}
           />
         </div>
       )}
 
-      <div className="relative z-10 aspect-[27/40] h-24 shrink-0 overflow-hidden rounded-sm sm:h-20">
+      {/* Grain overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[1] opacity-[0.035]"
+        style={{ backgroundImage: "url('/halftone.png')", backgroundRepeat: "repeat" }}
+      />
+
+      {/* Poster */}
+      <div className="relative z-10 aspect-square h-full flex-shrink-0 overflow-hidden rounded-xl">
         {item.image ? (
           <CloudinaryImage
-            className="h-full w-full rounded-sm object-cover"
+            className="h-full w-full object-cover"
             publicId={item.image}
             folder={item.collection.name}
           />
         ) : (
-          <div className="h-full w-full rounded-sm bg-primary object-cover" />
+          <div className="h-full w-full bg-muted" />
         )}
       </div>
 
-      <div className="relative z-10 flex w-full flex-col justify-between gap-2 p-2 sm:flex-row sm:items-center">
-        <div className="flex items-start justify-between gap-1 sm:flex-col xl:min-w-[300px] xl:max-w-[300px]">
-          <Header vtag="h6" className="line-clamp-2">
+      {/* Content */}
+      <div className="relative z-10 flex min-w-0 flex-1 flex-col justify-between gap-1 px-4 py-3">
+        {/* Title + type badge */}
+        <div className="flex items-start justify-between gap-2">
+          <Header vtag="h6" className="line-clamp-2 leading-snug">
             {item.title}
           </Header>
-          <div className="flex flex-col gap-2 whitespace-nowrap sm:flex-row">
-            {selectedCollectionsIds.length > 1 ? (
-              <>
-                <Paragraph className="hidden font-semibold text-muted-foreground sm:block">
-                  {item.collection.name}
-                </Paragraph>
-                <Paragraph className="hidden font-semibold text-muted-foreground sm:block">
-                  {" • "}
-                </Paragraph>
-              </>
-            ) : null}
-
-            <Paragraph className="font-semibold text-muted-foreground">
-              {item.year}
-            </Paragraph>
+          <div className="flex flex-shrink-0 items-center gap-1.5">
+            <ItemTypeBadge collectionName={item.collection.name} />
           </div>
         </div>
 
-        {item.tags.length ? (
-          <div className="flex w-full flex-wrap gap-2">
-            {item.tags.map((tag) => (
-              <Badge key={tag.id} className="text-sm">
-                {tag.name}
-              </Badge>
-            ))}
-          </div>
-        ) : null}
+        {/* Bottom row: status · ★ rating · year */}
+        <div className="flex items-center justify-end gap-3">
 
-        <div className="flex flex-col gap-1 sm:w-min sm:flex-row sm:items-center sm:justify-center sm:gap-4">
-          <div className="flex items-center gap-1 sm:w-24 sm:flex-col sm:gap-2">
-            <ItemStatusIcon className="size-5 w-5 stroke-[2.5px]" />
-            <Paragraph className="font-medium text-muted-foreground">
-              {STATUS_NAMES[item.status]}
-            </Paragraph>
-          </div>
-
-          {item.rate ? (
-            <div className="flex items-center gap-1 sm:w-24 sm:flex-col sm:gap-2">
-              <Paragraph className="w-5 text-center font-bold">
-                {item.rate}
-              </Paragraph>
-              <Paragraph className="font-medium text-muted-foreground">
-                {RATING_NAMES[item.rate]}
-              </Paragraph>
-            </div>
-          ) : (
-            <div className="sm:w-24" />
-          )}
-
-          {showTimeAgo ? (
-            <div className="hidden w-32 flex-col items-center lg:flex">
-              <Paragraph className="font-bold">{item.timeAgo}</Paragraph>
-
-              <Paragraph className="font-medium text-muted-foreground">
-                {new Date(item.updatedAt).toLocaleDateString()}
-              </Paragraph>
-            </div>
+        {item.rate ? (
+            <ItemRatingBadge rate={item.rate} className="text-base" />
           ) : null}
+
+        {item.year && (
+            <span className="text-base font-semibold text-muted-foreground">
+              {item.year}
+            </span>
+          )}
+        
+        
+
+<ItemStatusBadge
+            status={item.status}
+            showLabel={false}
+            className="text-base sm:gap-1.5"
+          />
+
         </div>
       </div>
     </CardContainer>

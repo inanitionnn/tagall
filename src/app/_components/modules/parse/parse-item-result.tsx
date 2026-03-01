@@ -19,9 +19,7 @@ const ParseItemResult = (props: Props) => {
     link = `/item/${item.id}`;
   } else {
     const params: AddParamsType = {
-      collectionId: item.collectionId,
       query: item.year ? `${item.title} (${item.year})` : item.title,
-      isAdvancedSearch: false,
     };
     const query = mergeSearchParams(params);
     link = `/add${query}`;

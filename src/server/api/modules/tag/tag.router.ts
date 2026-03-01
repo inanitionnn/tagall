@@ -6,7 +6,7 @@ import {
   UpdateTagInputSchema,
 } from "./schemas";
 import { AddTag, DeleteTag, GetUserTags, UpdateTag } from "./services";
-import { deleteCache, getOrSetCache } from "../../../../lib";
+import { deleteCache, getOrSetCache } from "../../../../lib/redis";
 
 export const TagRouter = createTRPCRouter({
   getUserTags: protectedProcedure

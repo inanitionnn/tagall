@@ -1,4 +1,4 @@
-import { deleteCache } from "../../../../../lib";
+import { deleteCache } from "../../../../../lib/redis";
 
 export interface InvalidateItemCachesOptions {
   collectionsIds?: string[];

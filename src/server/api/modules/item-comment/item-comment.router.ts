@@ -11,7 +11,7 @@ import {
   DeleteItemComment,
   GetUserItemComments,
 } from "./services";
-import { deleteCache, getOrSetCache } from "../../../../lib";
+import { deleteCache, getOrSetCache } from "../../../../lib/redis";
 
 export const ItemCommentRouter = createTRPCRouter({
   getUserItemComment: protectedProcedure

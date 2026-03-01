@@ -8,9 +8,11 @@ export type AnilistSearchResultType = {
             english?: string | null;
             romaji?: string | null;
           };
+          synonyms?: string[] | null;
           coverImage: {
             large?: string | null;
           };
+          averageScore?: number | null;
           volumes?: number | null;
           genres?: string[] | null;
           tags?: { name: string }[] | null;

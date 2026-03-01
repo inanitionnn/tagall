@@ -33,13 +33,23 @@ export const env = createEnv({
 
     OPENAI_API_KEY: z.string(),
 
-    UPSTASH_REDIS_REST_URL: z.string(),
-    UPSTASH_REDIS_REST_TOKEN: z.string(),
+    REDIS_HOST: z.string().optional(),
+    REDIS_PORT: z.coerce.number().optional(),
+    REDIS_PASSWORD: z.string().optional(),
+    REDIS_DB: z.coerce.number().optional(),
 
     CLOUDINARY_API_KEY: z.string(),
     CLOUDINARY_API_SECRET: z.string(),
 
-    SCRAPING_ANT_API_KEY: z.string(),
+    TMDB_ACCESS_TOKEN: z.string().optional(),
+    TMDB_API_KEY: z.string().optional(),
+
+    /** When false or unset, IMDB enrichment (Crawlee) is skipped and base TMDB details are used. */
+    IMDB_ENRICH_ENABLED: z
+      .string()
+      .optional()
+      .default("false")
+      .transform((v) => v === "true" || v === "1"),
 
     ALLOWED_EMAILS: z.string(),
     SECRET_CLIENT_COOKIE_VAR: z.string(),
@@ -71,9 +81,13 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
-    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
-    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
-    SCRAPING_ANT_API_KEY: process.env.SCRAPING_ANT_API_KEY,
+    REDIS_HOST: process.env.REDIS_HOST,
+    REDIS_PORT: process.env.REDIS_PORT,
+    REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+    REDIS_DB: process.env.REDIS_DB,
+    TMDB_ACCESS_TOKEN: process.env.TMDB_ACCESS_TOKEN,
+    TMDB_API_KEY: process.env.TMDB_API_KEY,
+    IMDB_ENRICH_ENABLED: process.env.IMDB_ENRICH_ENABLED,
     ALLOWED_EMAILS: process.env.ALLOWED_EMAILS,
     NEXT_PUBLIC_CLOUDINARY_FOLDER: process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER,
     SECRET_CLIENT_COOKIE_VAR: process.env.SECRET_CLIENT_COOKIE_VAR,

@@ -104,6 +104,19 @@ export const CACHE_KEYS = {
     imdbDetails: {
       parsedId: true,
     },
+    tmdbMovieDetails: {
+      tmdbId: true,
+    },
+    tmdbTvDetails: {
+      tmdbId: true,
+    },
+    imdbCrawleeEnrich: {
+      parsedId: true,
+    },
+    imdbSearch: {
+      query: true,
+      limit: true,
+    },
   },
   tag: {
     getUserTags: {

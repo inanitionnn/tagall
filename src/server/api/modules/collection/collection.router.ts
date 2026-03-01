@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { GetAll, GetUserCollections } from "./services";
-import { getOrSetCache } from "../../../../lib";
+import { getOrSetCache } from "../../../../lib/redis";
 import { getFirstAllowedUser } from "../../helpers";
 
 export const CollectionRouter = createTRPCRouter({

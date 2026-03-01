@@ -7,6 +7,18 @@ await import("./src/env.js");
 /** @type {import("next").NextConfig} */
 const config = {
   output: "standalone",
+  experimental: {
+    serverComponentsExternalPackages: [
+      "crawlee",
+      "@crawlee/playwright",
+      "@crawlee/browser",
+      "@crawlee/browser-pool",
+      "playwright",
+      "playwright-core",
+      "puppeteer",
+      "puppeteer-core",
+    ],
+  },
   images: {
     remotePatterns: [
       {

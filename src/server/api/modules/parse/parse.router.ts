@@ -1,7 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { AddIdToSearchResults, Search, ParseRegrex } from "./services";
 import { SearchInputSchema, ParseRegrexInputSchema } from "./schemas";
-import { getOrSetCache } from "../../../../lib";
+import { getOrSetCache } from "../../../../lib/redis";
 
 export const ParseRouter = createTRPCRouter({
   search: protectedProcedure.input(SearchInputSchema).query(async (props) => {

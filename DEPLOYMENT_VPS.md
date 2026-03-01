@@ -56,10 +56,9 @@ Set these in the container (via `env_file` or `environment`); the image does not
 | `ALLOWED_EMAILS` | Comma-separated emails allowed to sign in. |
 | `SECRET_CLIENT_COOKIE_VAR` | JWK for client cookie encryption (see `.env.example`). |
 | `OPENAI_API_KEY` | OpenAI API key. |
-| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis. |
+| `REDIS_HOST` / `REDIS_PORT` / `REDIS_PASSWORD` (optional) / `REDIS_DB` (optional) | Local Redis on VPS (for caching). |
+| `TMDB_ACCESS_TOKEN` or `TMDB_API_KEY` | TMDB API (at least one required for video search/create). |
 | `CLOUDINARY_*` / `NEXT_PUBLIC_CLOUDINARY_*` | Cloudinary config. |
-| `SCRAPING_ANT_API_KEY` | ScrapingAnt API key. |
-| Qstash (optional) | `QSTASH_*` if you use Qstash. |
 
 See `.env.example` in the repo for the full list and comments.
 

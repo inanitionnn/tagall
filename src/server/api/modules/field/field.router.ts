@@ -4,7 +4,7 @@ import {
   GetItemDetailFieldsInputSchema,
 } from "./schemas";
 import { GetFilterFields, GetItemDetailFields } from "./services";
-import { getOrSetCache } from "../../../../lib";
+import { getOrSetCache } from "../../../../lib/redis";
 import { getFirstAllowedUser } from "../../helpers";
 
 export const FieldRouter = createTRPCRouter({

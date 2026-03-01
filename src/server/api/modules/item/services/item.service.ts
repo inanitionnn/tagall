@@ -15,7 +15,12 @@ import type {
   ItemsStatsType,
   GetNearestItemsInputType,
 } from "../types";
-import { GetImdbDetailsById } from "../../parse/services";
+import {
+  getVideoDetailsByImdbId,
+  findByImdbId,
+} from "../../parse/services/tmdb.service";
+import { enrichVideoDetailsFromImdb } from "../../parse/services/imdb-crawlee.service";
+import type { ImdbDetailsResultType } from "../../parse/types";
 import { GetEmbedding } from "../../open-ai/services";
 import { UploadImageByUrl, UploadImageByBase64, DeleteFile } from "../../files/files.service";
 import { GetAnilistDetailsById } from "../../parse/services/anilist.service";
@@ -31,7 +36,6 @@ import {
   getUserItemsRateStats,
   getUserItemsStatusStats,
 } from "./item-stats.service";
-import { ScrapingAntError } from "../../../../../lib/scraping-ant";
 import { normalizeText } from "~/utils/normalize-text";
 
 const ItemResponse = new ItemResponseClass();
@@ -116,9 +120,21 @@ async function CreateItem(props: {
   let details: Record<string, unknown>;
 
   switch (props.type) {
-    case "imdb":
-      details = await GetImdbDetailsById(parsedId);
+    case "imdb": {
+      console.log("[CreateItem] IMDB: fetching TMDB details by IMDb id", {
+        parsedId,
+      });
+      details = await getVideoDetailsByImdbId(parsedId);
+      console.log("[CreateItem] IMDB: TMDB details received, enriching from IMDB page", {
+        parsedId,
+        title: (details as ImdbDetailsResultType).title,
+      });
+      details = await enrichVideoDetailsFromImdb(
+        parsedId,
+        details as ImdbDetailsResultType,
+      );
       break;
+    }
     case "anilist":
       details = await GetAnilistDetailsById(parsedId);
       break;
@@ -151,10 +167,19 @@ async function CreateItem(props: {
   // Upload image OUTSIDE transaction
   console.log(`[CreateItem] Uploading image for ${parsedId}`);
   const uploadStartTime = Date.now();
-  const image = await UploadImageByUrl(
-    collection.name,
-    details.image as string | null | undefined,
-  );
+  let image: string | null = null;
+  try {
+    image = await UploadImageByUrl(
+      collection.name,
+      details.image as string | null | undefined,
+    );
+  } catch (error) {
+    console.error(
+      `[CreateItem] Poster upload failed for ${parsedId}`,
+      error,
+    );
+    throw error;
+  }
   console.log(`[CreateItem] Image uploaded for ${parsedId}: ${image ?? "null"} (${Date.now() - uploadStartTime}ms)`);
 
   // Now start transaction for DB operations only
@@ -828,15 +853,25 @@ export async function AddToCollection(props: {
   try {
     switch (collection.name) {
       case "Serie":
-      case "Film":
-        console.log(`[AddToCollection] Creating IMDB item for ${collection.name}`);
+      case "Film": {
+        const found = await findByImdbId(input.parsedId);
+        const mediaType = found?.mediaType ?? "movie";
+        const targetCollectionName = mediaType === "movie" ? "Film" : "Serie";
+        const targetCollection = await ctx.db.collection.findFirst({
+          where: { name: targetCollectionName },
+        });
+        if (!targetCollection) {
+          throw new Error(`Collection "${targetCollectionName}" not found`);
+        }
+        console.log(`[AddToCollection] Creating video item (${mediaType}) for ${targetCollectionName}`);
         item = await CreateItem({
           ctx,
           type: "imdb",
           parsedId: input.parsedId,
-          collectionId: collection.id,
+          collectionId: targetCollection.id,
         });
         break;
+      }
       case "Manga":
         console.log(`[AddToCollection] Creating Anilist item for Manga`);
         item = await CreateItem({
@@ -854,12 +889,6 @@ export async function AddToCollection(props: {
   } catch (error) {
     const duration = Date.now() - startTime;
     console.error(`[AddToCollection] Error creating item after ${duration}ms:`, error);
-    
-    if (error instanceof ScrapingAntError) {
-      throw new Error(
-        `Failed to fetch IMDB data: ${error.message}${error.statusCode ? ` (Status: ${error.statusCode})` : ""}`,
-      );
-    }
     throw new Error(
       `Failed to create item: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
