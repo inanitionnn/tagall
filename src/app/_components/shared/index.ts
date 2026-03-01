@@ -2,6 +2,7 @@ export * from "./background-image";
 export * from "./cloudinary-image";
 export * from "./collections-tabs";
 export * from "./card-container";
+export * from "./grain-card-container";
 export * from "./filter-dialog";
 export * from "./loading";
 export * from "./scroll-button";

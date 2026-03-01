@@ -7,7 +7,7 @@ import type {
   SearchMediaFilterType,
 } from "../../../../server/api/modules/parse/types";
 import Link from "next/link";
-import { Container, Loading, ScrollButton, Search } from "../../shared";
+import { CollectionsTabs, Container, Loading, ScrollButton, Search } from "../../shared";
 import {
   useDebouncedQueryParams,
   useGetUserTags,
@@ -17,7 +17,7 @@ import {
 import { api } from "../../../../trpc/react";
 import type { z } from "zod";
 import { SearchInputSchema } from "../../../../server/api/modules/parse/schemas";
-import { cn } from "../../../../lib";
+import type { CollectionType } from "../../../../server/api/modules/collection/types";
 
 export const AddParamsSchema = SearchInputSchema.pick({
   query: true,
@@ -28,6 +28,16 @@ export type AddParamsType = z.infer<typeof AddParamsSchema>;
 const SEARCH_ALL_COLLECTION_ID = "all" as const;
 
 const MEDIA_FILTER_OPTIONS: SearchMediaFilterType[] = ["Film", "Serie", "Manga"];
+
+const MEDIA_FILTER_COLLECTIONS: CollectionType[] = MEDIA_FILTER_OPTIONS.map(
+  (type) => ({
+    id: type,
+    name: type,
+    priority: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }),
+);
 
 function AddContainer() {
   const [collections] = api.collection.getAll.useSuspenseQuery();
@@ -42,7 +52,7 @@ function AddContainer() {
   const [selectedItem, setSelectedItem] = useState<SearchResultType | null>(
     null,
   );
-  const [mediaFilter, setMediaFilter] = useState<SearchMediaFilterType | null>(null);
+  const [selectedMediaIds, setSelectedMediaIds] = useState<string[]>([]);
 
   useDebouncedQueryParams<AddParamsType>({ query }, setQueryParams);
 
@@ -60,19 +70,15 @@ function AddContainer() {
   });
 
   const submit = () => {
-    setMediaFilter(null);
+    setSelectedMediaIds([]);
     baseSubmit();
   };
 
-  const toggleMediaFilter = (type: SearchMediaFilterType) => {
-    setMediaFilter((prev) => (prev === type ? null : type));
-  };
-
   const filteredResults = [
-    ...(mediaFilter === null
+    ...(selectedMediaIds.length === 0
       ? searchResults
       : searchResults.filter(
-          (r) => (r.suggestedCollectionName ?? "Film") === mediaFilter,
+          (r) => (r.suggestedCollectionName ?? "Film") === selectedMediaIds[0],
         )),
   ].sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1));
 
@@ -89,22 +95,12 @@ function AddContainer() {
       />
 
       {hasResults && !isLoading && (
-        <div className="flex gap-2">
-          {MEDIA_FILTER_OPTIONS.map((type) => (
-            <button
-              key={type}
-              onClick={() => toggleMediaFilter(type)}
-              className={cn(
-                "rounded-full border px-3 py-1 text-sm font-medium transition-colors",
-                mediaFilter === type
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
-              )}
-            >
-              {type}
-            </button>
-          ))}
-        </div>
+        <CollectionsTabs
+          collections={MEDIA_FILTER_COLLECTIONS}
+          selectedCollectionsIds={selectedMediaIds}
+          setSelectedCollectionsIds={setSelectedMediaIds}
+          isMany={false}
+        />
       )}
 
       {selectedItem && (

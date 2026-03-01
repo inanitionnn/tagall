@@ -15,7 +15,7 @@ import {
 } from "../../ui";
 import { useState } from "react";
 import type { CollectionType } from "../../../../server/api/modules/collection/types";
-import { CardContainer } from "../../shared";
+import { CardContainer, GrainCardContainer } from "../../shared";
 import { useAddTag } from "../../../../hooks";
 
 type Props = {
@@ -36,15 +36,17 @@ const TagAddModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <CardContainer className="w-min">
-          <Button variant={"ghost"}>Add tag</Button>
-        </CardContainer>
+        <div className="w-min">
+        <GrainCardContainer>
+            <Button variant="default" >Add tag</Button>
+          </GrainCardContainer>
+        </div>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(submit)}
-            className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-4 sm:min-w-96"
+            className="flex w-full flex-col justify-between gap-4 rounded-sm bg-transparent p-4 sm:min-w-96"
           >
             <Header vtag="h4" className=" ">
               Add tag

@@ -18,7 +18,7 @@ const HomeSmallItem = (props: Props) => {
   const { item } = props;
 
   return (
-    <CardContainer className="relative h-fit cursor-pointer overflow-hidden p-0 transition-all duration-200 hover:scale-105 hover:border-primary/50 hover:shadow-md sm:h-24">
+    <CardContainer className="relative h-fit cursor-pointer overflow-hidden p-0 transition-all duration-300 hover:scale-105 hover:border-primary hover:shadow-md sm:h-24">
       {/* Blurred background */}
       {item.image && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">

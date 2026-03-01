@@ -15,7 +15,7 @@ import {
   Paragraph,
 } from "../../ui";
 import { useRef, useState } from "react";
-import { CardContainer, CloudinaryImage } from "../../shared";
+import { CardContainer, CloudinaryImage, GrainCardContainer } from "../../shared";
 import type { User } from "@prisma/client";
 import { useUpdateUser } from "../../../../hooks/mutations/use-update-user.hook";
 import Image from "next/image";
@@ -55,7 +55,7 @@ const ProfileUpdateUserModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <CardContainer className="cursor-pointer flex-col items-center gap-4 p-4 hover:scale-105 sm:flex-row sm:gap-8">
+        <GrainCardContainer className="cursor-pointer flex flex-col items-center gap-6 sm:flex-row ">
           <div className="aspect-square w-28 rounded-full border border-input">
             {user.image ? (
               <CloudinaryImage
@@ -77,13 +77,13 @@ const ProfileUpdateUserModal = (props: Props) => {
               {user.email}
             </Paragraph>
           </div>
-        </CardContainer>
+        </GrainCardContainer>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(submit)}
-            className="p-4і flex w-full flex-col justify-between gap-4 rounded-sm bg-background sm:min-w-96"
+            className="p-4 flex w-full flex-col justify-between gap-4 rounded-sm bg-transparent sm:min-w-96"
           >
             <Header vtag="h4" className=" ">
               Update user
@@ -125,7 +125,7 @@ const ProfileUpdateUserModal = (props: Props) => {
                   <div className="flex flex-col gap-2">
                     <FormLabel>Image:</FormLabel>
                     <CardContainer
-                      className="flex cursor-pointer justify-between gap-2 px-4"
+                      className="flex cursor-pointer justify-between gap-2 px-4 bg-white/5"
                       onClick={openFilePicker}
                     >
                       <Paragraph className="my-auto w-full">

@@ -14,7 +14,7 @@ import type { GetUserItemsFilterType } from "../../../server/api/modules/item/ty
 import type { ItemStatus } from "@prisma/client";
 import type { TagType } from "../../../server/api/modules/tag/types/tag.type";
 import type { FilterFieldsType } from "../../../server/api/modules/field/types";
-import { CardContainer } from "./card-container";
+import { GrainCardContainer } from "./grain-card-container";
 
 type Props = {
   searchFilter: string;
@@ -151,14 +151,16 @@ export const FilterDialog = (props: Props) => {
     <>
       <ResponsiveModal>
         <ResponsiveModalTrigger asChild>
-          <CardContainer>
-            <Button size={"icon"} variant={"ghost"} className="aspect-square">
-              <SlidersHorizontal />
-            </Button>
-          </CardContainer>
+          <GrainCardContainer>
+            <div className="w-min">
+              <Button size={"icon"} variant={"ghost"} className="aspect-square">
+                <SlidersHorizontal />
+              </Button>
+            </div>
+          </GrainCardContainer>
         </ResponsiveModalTrigger>
         <ResponsiveModalContent className="sm:max-w-2xl md:max-w-2xl lg:max-w-3xl [&>button]:hidden">
-          <div className="flex max-h-[400px] w-full flex-col gap-8 rounded-sm bg-background p-4 md:max-h-[700px]">
+          <div className="flex max-h-[400px] w-full flex-col gap-8 rounded-sm bg-transparent p-4 md:max-h-[700px]">
             <div className="flex items-center justify-between">
               <Header vtag="h4">Filter</Header>
               <Button

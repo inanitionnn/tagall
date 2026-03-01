@@ -9,6 +9,7 @@ import {
 } from "../../ui";
 import { SORT_OPTIONS } from "../../../../constants";
 import type { GetUserItemsSortType } from "../../../../server/api/modules/item/types";
+import { GrainCardContainer } from "../../shared";
 
 type Props = {
   sorting: GetUserItemsSortType;
@@ -19,6 +20,7 @@ const TierListSortSelect = (props: Props) => {
   const { setSorting, sorting } = props;
 
   return (
+    <GrainCardContainer>
     <Select
       onValueChange={(value) => {
         const selectedOption = SORT_OPTIONS.find(
@@ -29,8 +31,8 @@ const TierListSortSelect = (props: Props) => {
         }
       }}
     >
-      <SelectTrigger className="h-14 w-32 justify-center gap-2">
-        <Paragraph>{sorting.type === "asc" ? "▲" : "▼"}</Paragraph>
+      <SelectTrigger className="h-full w-28 justify-center gap-2 ">
+        <Paragraph>{sorting.type === "asc" ? "▼" : "▲"}</Paragraph>
         <Paragraph className="capitalize">{sorting.name}</Paragraph>
       </SelectTrigger>
       <SelectContent>
@@ -40,13 +42,14 @@ const TierListSortSelect = (props: Props) => {
             value={JSON.stringify(option)}
           >
             <div className="flex gap-2">
-              <Paragraph>{option.type === "asc" ? "▲" : "▼"}</Paragraph>
+              <Paragraph>{option.type === "asc" ? "▼" : "▲"}</Paragraph>
               <Paragraph className="capitalize">{option.name}</Paragraph>
             </div>
           </SelectItem>
         ))}
       </SelectContent>
     </Select>
+    </GrainCardContainer>
   );
 };
 

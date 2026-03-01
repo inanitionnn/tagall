@@ -9,7 +9,7 @@ export const Container = (props: Props) => {
     <div
       className={cn(
         "mx-auto flex min-h-lvh max-w-screen-xl flex-col gap-6 p-8",
-        "transition-all duration-500 ease-in-out",
+        "transition-all duration-300 ease-in-out",
         className,
       )}
       {...restProps}

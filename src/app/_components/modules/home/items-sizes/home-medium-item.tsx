@@ -10,7 +10,7 @@ const HomeMediumItem = (props: Props) => {
   const { item } = props;
 
   return (
-    <CardContainer className="relative flex-col h-full overflow-hidden transition-all duration-200 hover:scale-105 hover:border-primary/50 hover:shadow-md md:w-full">
+    <CardContainer className="relative flex-col h-full overflow-hidden transition-all duration-300 hover:scale-105 hover:border-primary hover:shadow-md md:w-full">
       {item.image && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <CloudinaryImage

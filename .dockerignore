@@ -3,6 +3,10 @@ node_modules
 .next
 out
 
+# Crawlee storage (should never be in Docker image)
+storage
+
+
 # Git and version control
 .git
 .gitignore

@@ -20,9 +20,13 @@ const MobileNavbar = (props: SheetContentProps) => {
       </SheetTrigger>
       <SheetContent
         side={"left"}
-        className={cn("p-0", className)}
+        className={cn("relative overflow-hidden p-0", className)}
         {...restProps}
       >
+        <div
+          className="pointer-events-none absolute inset-0 z-0 opacity-[0.02]"
+          style={{ backgroundImage: "url('/halftone.png')", backgroundRepeat: "repeat" }}
+        />
         <NavbarContent />
       </SheetContent>
     </Sheet>

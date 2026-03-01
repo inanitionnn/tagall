@@ -107,7 +107,7 @@ const UpdateItemImageModal = (props: Props) => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(submit)}
-            className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-4"
+            className="flex w-full flex-col justify-between gap-4 rounded-sm bg-transparent p-4"
           >
             <Header vtag="h4">Update cover</Header>
 

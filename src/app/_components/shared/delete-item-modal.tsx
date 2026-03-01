@@ -35,7 +35,7 @@ const DeleteItemModal = (props: Props) => {
         </CardContainer>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
-        <div className="flex w-full flex-col justify-center rounded-sm bg-background p-4">
+        <div className="flex w-full flex-col justify-center rounded-sm bg-transparent p-4">
           <div className="flex w-full flex-col justify-between gap-8 p-6 sm:min-w-96">
             <Header vtag="h5">This action cannot be undone!</Header>
 

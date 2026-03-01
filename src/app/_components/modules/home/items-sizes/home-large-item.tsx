@@ -18,7 +18,7 @@ const HomeLargeItem = (props: Props) => {
   const { item, selectedCollectionsIds } = props;
 
   return (
-    <CardContainer className="relative h-fit cursor-pointer overflow-hidden p-0 transition-all duration-200 hover:scale-105 hover:border-primary/50 hover:shadow-md">
+    <CardContainer className="relative h-fit cursor-pointer overflow-hidden p-0 transition-all duration-300 hover:scale-105 hover:border-primary hover:shadow-md">
       {/* Blurred background */}
       {item.image && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">

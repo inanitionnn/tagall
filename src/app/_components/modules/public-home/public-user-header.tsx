@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { Header } from "../../ui";
-import { CloudinaryImage, CardContainer } from "../../shared";
+import { CloudinaryImage, GrainCardContainer } from "../../shared";
 import type { User } from "@prisma/client";
 import type { ItemsStatsType } from "../../../../server/api/modules/item/types";
 import { ProfileStatusStats } from "../profile/profile-status-stats";
@@ -22,7 +22,7 @@ export const PublicUserHeader = (props: Props) => {
   };
 
   return (
-    <CardContainer className="flex flex-col gap-4 p-8">
+    <GrainCardContainer className="flex-col gap-4 p-8">
       {/* User Info */}
       <div className="flex flex-col items-center gap-4 sm:flex-row">
         <div
@@ -51,12 +51,12 @@ export const PublicUserHeader = (props: Props) => {
       </div>
 
       {/* Stats Section */}
-      {stats && !isStatsLoading && (  
-        <div className="gap-4 flex ">
+      {stats && !isStatsLoading && (
+        <div className="flex gap-4">
           <ProfileStatusStats all={stats.all} statusStats={stats.status} />
           <ProfileRateStats rateStats={stats.rate} />
         </div>
       )}
-    </CardContainer>
+    </GrainCardContainer>
   );
 };

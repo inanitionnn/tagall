@@ -1,7 +1,7 @@
 import React, { type Dispatch, type SetStateAction } from "react";
-import { Button } from "../ui";
 import type { CollectionType } from "../../../server/api/modules/collection/types";
-import { CardContainer } from "./card-container";
+import { GrainCardContainer } from "./grain-card-container";
+import { Button } from "../ui";
 
 type Props = {
   collections: CollectionType[];
@@ -33,11 +33,9 @@ export const CollectionsTabs = (props: Props) => {
       });
     } else {
       setSelectedCollectionsIds((prev) => {
-        // If allowDeselect is false and already selected, don't change
         if (!allowDeselect && prev.includes(collectionId)) {
           return prev;
         }
-        // Otherwise toggle
         if (prev.includes(collectionId)) {
           return [];
         }
@@ -47,18 +45,21 @@ export const CollectionsTabs = (props: Props) => {
   };
 
   return (
-    <CardContainer className="w-min">
+    <div className="w-min">
+    <GrainCardContainer>
       {collections.map((collection) => (
         <Button
-          key={collection.id}
-          onClick={() => onClick(collection.id)}
+            key={collection.id}
+            onClick={() => onClick(collection.id)}
           variant={
             selectedCollectionsIds.includes(collection.id) ? "default" : "ghost"
           }
-        >
-          {collection.name}
+          className="hover:scale-110 transition-all duration-300"
+          >
+            {collection.name}
         </Button>
       ))}
-    </CardContainer>
+    </GrainCardContainer>
+    </div>
   );
 };

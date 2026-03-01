@@ -13,7 +13,7 @@ function ItemCard(props: Props) {
 
   return (
     <Link href={`/item/${item.id}`}>
-      <CardContainer className="relative h-full flex-col overflow-hidden transition-all duration-200 hover:scale-105 hover:border-primary/50 hover:shadow-md md:w-full">
+      <CardContainer className="relative h-full flex-col overflow-hidden transition-all duration-300 hover:scale-105 hover:border-primary hover:shadow-md md:w-full">
         {/* Blurred background */}
         {item.image && (
           <div className="pointer-events-none absolute inset-0 overflow-hidden">

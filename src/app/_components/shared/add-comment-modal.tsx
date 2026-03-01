@@ -55,7 +55,7 @@ const AddCommentModal = (props: Props) => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(submit)}
-            className="flex w-full flex-col justify-between gap-4 rounded-sm bg-background p-4 sm:min-w-96"
+            className="flex w-full flex-col justify-between gap-4 rounded-sm bg-transparent p-4 sm:min-w-96"
           >
             <Header vtag="h4" className="line-clamp-2">
               {item.title}

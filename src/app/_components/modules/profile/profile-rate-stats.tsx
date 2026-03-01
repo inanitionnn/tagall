@@ -5,7 +5,7 @@ import {
   ChartTooltip,
 } from "../../ui";
 import type { ItemsStatsType } from "../../../../server/api/modules/item/types";
-import { CardContainer } from "../../shared";
+import { GrainCardContainer } from "../../shared";
 import {
   Bar,
   BarChart,
@@ -52,48 +52,50 @@ const ProfileRateStats = (props: Props) => {
     }));
 
   return (
-    <CardContainer className="flex-col p-4 h-[320px] w-full">
-      <Header  vtag="h5">
-        By Rate
-      </Header>
-      <ChartContainer
-        config={{
-          count: {
-            label: "count",
-            color: "hsl(var(--chart-1))",
-          },
-        }}
-        className="h-full min-h-[200px] w-full"
-      >
-        <BarChart accessibilityLayer data={chartData}>
-          <XAxis
-            dataKey="rateNumber"
-            tickLine={false}
-            tickMargin={10}
-            axisLine={false}
-            tickFormatter={(value) => value}
-          />
-          <YAxis
-            width={45}
-            dataKey="count"
-            tickLine={false}
-            tickMargin={10}
-            axisLine={false}
-            tickFormatter={(value) => value}
-          />
-          <ChartTooltip cursor={false} content={<CustomTooltip />} />
-          <CartesianGrid vertical={false} />
-          <Bar dataKey="count" fill="var(--color-count)" radius={8}>
-            <LabelList
-              position="top"
-              offset={6}
-              className="block fill-muted-foreground md:hidden"
-              fontSize={12}
+    <GrainCardContainer className="flex-col p-4 h-[320px] w-full">
+      <div className="flex flex-col h-full">
+        <Header vtag="h5">
+          By Rate
+        </Header>
+        <ChartContainer
+          config={{
+            count: {
+              label: "count",
+              color: "hsl(var(--chart-1))",
+            },
+          }}
+          className="h-full min-h-[200px] w-full"
+        >
+          <BarChart accessibilityLayer data={chartData}>
+            <XAxis
+              dataKey="rateNumber"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) => value}
             />
-          </Bar>
-        </BarChart>
-      </ChartContainer>
-    </CardContainer>
+            <YAxis
+              width={45}
+              dataKey="count"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) => value}
+            />
+            <ChartTooltip cursor={false} content={<CustomTooltip />} />
+            <CartesianGrid vertical={false} />
+            <Bar dataKey="count" fill="var(--color-count)" radius={8}>
+              <LabelList
+                position="top"
+                offset={6}
+                className="block fill-muted-foreground md:hidden"
+                fontSize={12}
+              />
+            </Bar>
+          </BarChart>
+        </ChartContainer>
+      </div>
+    </GrainCardContainer>
   );
 };
 

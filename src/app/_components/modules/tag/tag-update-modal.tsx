@@ -18,7 +18,8 @@ import {
 import { useState } from "react";
 import type { TagType } from "../../../../server/api/modules/tag/types/tag.type";
 import type { CollectionType } from "../../../../server/api/modules/collection/types";
-import { CardContainer } from "../../shared";
+import { CardContainer, GrainCardContainer, ItemTypeBadge, TYPE_BADGE_STYLES } from "../../shared";
+import { cn } from "../../../../lib";
 import { useDeleteTag, useUpdateTag } from "../../../../hooks";
 
 type Props = {
@@ -46,7 +47,7 @@ const TagUpdateModal = (props: Props) => {
   return (
     <ResponsiveModal open={open} onOpenChange={setOpen}>
       <ResponsiveModalTrigger asChild>
-        <CardContainer className="cursor-pointer flex-col gap-4 p-4 hover:scale-105">
+        <GrainCardContainer className="cursor-pointer flex flex-col gap-4 p-3">
           <div className="flex items-center justify-between">
             <Header vtag="h5" className=" ">
               {tag.name}
@@ -57,22 +58,16 @@ const TagUpdateModal = (props: Props) => {
           </div>
           <div className="flex flex-wrap gap-2">
             {tag.collections.map((collection) => (
-              <Badge
-                key={collection.id}
-                variant={"outline"}
-                className="px-4 py-2"
-              >
-                {collection.name}
-              </Badge>
+              <ItemTypeBadge key={collection.id} collectionName={collection.name} />
             ))}
           </div>
-        </CardContainer>
+        </GrainCardContainer>
       </ResponsiveModalTrigger>
       <ResponsiveModalContent className="sm:max-w-xl md:max-w-xl lg:max-w-xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(submit)}
-            className="p-4і flex w-full flex-col justify-between gap-4 rounded-sm bg-background sm:min-w-96"
+            className="p-4 flex w-full flex-col justify-between gap-4 rounded-sm bg-transparent sm:min-w-96"
           >
             <Header vtag="h4" className=" ">
               Update tag

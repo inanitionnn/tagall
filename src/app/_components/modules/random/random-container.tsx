@@ -9,6 +9,7 @@ import {
   FilterDialog,
   Loading,
   NoItemsCard,
+  GrainCardContainer,
 } from "../../shared";
 import { Button, DualRangeSlider, Spinner } from "../../ui";
 import { Dices } from "lucide-react";
@@ -113,7 +114,7 @@ function RandomContainer() {
           setSelectedCollectionsIds={setSelectedCollectionsIds}
         />
 
-        <CardContainer className="flex w-80 items-center">
+<GrainCardContainer className="w-64">
           <DualRangeSlider
             value={[limit]}
             onValueChange={(value) => setLimit(value[0] ?? 10)}
@@ -123,7 +124,7 @@ function RandomContainer() {
             labelPosition="bottom"
             step={1}
           />
-        </CardContainer>
+        </GrainCardContainer>
 
         <FilterDialog
           tags={tags}
@@ -138,7 +139,7 @@ function RandomContainer() {
           yearsRange={yearsRange}
           fieldGroups={fieldGroups}
         />
-        <CardContainer className="w-32">
+        <GrainCardContainer className="w-32">
           <Button onClick={() => refetch()} className="w-full">
             {isLoading ? (
               <Spinner className="h-5 w-5 text-primary-foreground" />
@@ -146,7 +147,7 @@ function RandomContainer() {
               <Dices />
             )}
           </Button>
-        </CardContainer>
+        </GrainCardContainer>
       </div>
 
       <FilterBadges filtering={filtering} setFiltering={setFiltering} />

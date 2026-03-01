@@ -51,7 +51,7 @@ const AddSearchResultItem = (props: Props) => {
   return (
     <CardContainer
       className={cn(
-        "relative overflow-hidden p-0 transition-all duration-200",
+        "relative overflow-hidden p-0 transition-all duration-300",
         !disableHover && "cursor-pointer",
         !disableHover && !searchResult.id && "hover:scale-105 hover:border-primary/50 hover:shadow-md",
       )}

@@ -43,7 +43,7 @@ const HomeEditItem = (props: Props) => {
 
       <div className="relative z-10 flex gap-4">
         <UpdateItemImageModal item={item}>
-          <div className="aspect-[27/40] h-36 cursor-pointer transition-all duration-500 ease-in-out hover:scale-105 sm:h-72">
+          <div className="aspect-[27/40] h-36 cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 sm:h-72">
             {item.image ? (
               <CloudinaryImage
                 publicId={item.image}

@@ -11,7 +11,7 @@ export const CardContainer = forwardRef<HTMLDivElement, Props>((props, ref) => {
       ref={ref}
       className={cn(
         "flex gap-2 rounded-xl border border-input bg-background p-1 shadow focus:border-primary",
-        "transition-all duration-500 ease-in-out",
+        "transition-all duration-300 ease-in-out",
         className,
       )}
       {...restProps}

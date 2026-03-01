@@ -2,7 +2,7 @@
 
 import { Button } from "../../ui";
 import { Image as ImageIcon, SquareMousePointer, Type } from "lucide-react";
-import { CardContainer } from "../../shared";
+import { CardContainer, GrainCardContainer } from "../../shared";
 import type { TierItemView } from "../../../../types/tier-item-view.type";
 
 type Props = {
@@ -44,7 +44,7 @@ const TierListItemsViewTabs = (props: Props) => {
   );
 
   if (withContainer) {
-    return <CardContainer>{buttons}</CardContainer>;
+    return <GrainCardContainer>{buttons}</GrainCardContainer>;
   }
 
   return <div className="flex gap-2">{buttons}</div>;

@@ -48,7 +48,7 @@ function HomeContainer() {
     schema: HomeParamsSchema,
     defaultParams: {
       filtering: [],
-      itemSize: "medium",
+      itemSize: "large",
       sorting: {
         type: "desc",
         name: "date",

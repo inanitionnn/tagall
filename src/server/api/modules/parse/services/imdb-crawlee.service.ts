@@ -45,7 +45,7 @@ async function fetchImdbPageHtml(imdbId: string): Promise<string | null> {
         html = await page.content();
       },
     },
-    new Configuration({ storageClient: new MemoryStorage() }),
+    new Configuration({ storageClient: new MemoryStorage({ persistStorage: false }) }),
   );
 
   try {
@@ -73,7 +73,7 @@ async function fetchImdbAdvancedSearchHtml(query: string): Promise<string | null
         html = await page.content();
       },
     },
-    new Configuration({ storageClient: new MemoryStorage() }),
+    new Configuration({ storageClient: new MemoryStorage({ persistStorage: false }) }),
   );
 
   try {

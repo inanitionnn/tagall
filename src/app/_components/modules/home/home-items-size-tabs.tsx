@@ -6,7 +6,7 @@ import {
   SquarePen,
   TableProperties,
 } from "lucide-react";
-import { CardContainer } from "../../shared";
+import { GrainCardContainer } from "../../shared";
 
 export type ItemSize = "medium" | "list" | "small" | "large" | "edit";
 
@@ -18,7 +18,7 @@ type Props = {
 const HomeItemSizeTabs = (props: Props) => {
   const { itemSize, setItemSize } = props;
   return (
-    <CardContainer>
+    <GrainCardContainer>
       <Button
         onClick={() => setItemSize("large")}
         size={"icon"}
@@ -55,7 +55,7 @@ const HomeItemSizeTabs = (props: Props) => {
       >
         <SquarePen />
       </Button>
-    </CardContainer>
+    </GrainCardContainer>
   );
 };
 

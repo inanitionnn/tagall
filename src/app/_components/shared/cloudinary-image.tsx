@@ -22,7 +22,7 @@ export const CloudinaryImage = (props: Props) => {
       width={width ?? 200}
       height={height ?? 300}
       className={cn(
-        "aspect-[27/40] rounded-lg border border-input object-cover shadow-sm",
+        "aspect-[27/40] rounded-lg border border-input object-cover shadow-md",
         className,
       )}
       crop={{

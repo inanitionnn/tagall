@@ -6,7 +6,7 @@ import type { TagType } from "../../server/api/modules/tag/types/tag.type";
 import { api } from "../../trpc/react";
 
 type Props = {
-  collectionsIds: string[];
+  collectionsIds: string[] | undefined;
 };
 
 export const useGetUserTags = (props: Props) => {
