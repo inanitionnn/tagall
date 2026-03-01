@@ -71,6 +71,8 @@ type TmdbFindResponse = {
 type TmdbExternalIdsResponse = { imdb_id: string | null };
 
 type TmdbGenre = { id: number; name: string };
+type TmdbProductionCompany = { name: string };
+
 type TmdbMovieDetails = {
   id: number;
   title: string | null;
@@ -81,6 +83,7 @@ type TmdbMovieDetails = {
   genres: TmdbGenre[];
   adult: boolean;
   vote_average: number | null;
+  production_companies: TmdbProductionCompany[];
 };
 
 type TmdbTvDetails = {
@@ -93,6 +96,7 @@ type TmdbTvDetails = {
   genres: TmdbGenre[];
   adult: boolean;
   vote_average: number | null;
+  production_companies: TmdbProductionCompany[];
 };
 
 type TmdbCreditsResponse = {
@@ -308,7 +312,7 @@ async function getMovieDetailsUncached(tmdbId: number): Promise<ImdbDetailsResul
     isAdult: movie.adult ?? false,
     contentRating: cert,
     rating: movie.vote_average ?? null,
-    production: [],
+    production: movie.production_companies?.map((c) => c.name) ?? [],
   };
 }
 
@@ -357,7 +361,7 @@ async function getTvDetailsUncached(tmdbId: number): Promise<ImdbDetailsResultTy
     isAdult: tv.adult ?? false,
     contentRating: cert,
     rating: tv.vote_average ?? null,
-    production: [],
+    production: tv.production_companies?.map((c) => c.name) ?? [],
   };
 }
 

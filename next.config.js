@@ -9,12 +9,12 @@ const config = {
   output: "standalone",
   experimental: {
     serverComponentsExternalPackages: [
-      "crawlee",
-      "@crawlee/playwright",
-      "@crawlee/browser",
-      "@crawlee/browser-pool",
-      "playwright",
-      "playwright-core",
+      // "crawlee",
+      // "@crawlee/playwright",
+      // "@crawlee/browser",
+      // "@crawlee/browser-pool",
+      // "playwright",
+      // "playwright-core",
       "puppeteer",
       "puppeteer-core",
     ],

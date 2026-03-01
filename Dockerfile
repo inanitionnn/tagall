@@ -5,12 +5,11 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@8.15.5 --activate
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --ignore-scripts
-# Download Chromium for Playwright (used for IMDB scraping)
-RUN pnpm exec playwright install chromium
+# Download Chromium for Playwright (used for IMDB scraping) — commented out, IMDB parsing disabled
+# RUN pnpm exec playwright install chromium
 # pnpm virtual store keeps playwright and playwright-core as sibling symlinks.
-# Resolve the entire parent (which includes both) so they can find each other at runtime.
-RUN PLAYWRIGHT_STORE=$(dirname "$(readlink -f node_modules/playwright)") \
-    && cp -rL "$PLAYWRIGHT_STORE" /playwright-env
+# RUN PLAYWRIGHT_STORE=$(dirname "$(readlink -f node_modules/playwright)") \
+#     && cp -rL "$PLAYWRIGHT_STORE" /playwright-env
 
 # Stage 2: Build application
 FROM node:20-alpine AS builder
@@ -30,56 +29,55 @@ RUN pnpm prisma generate
 RUN pnpm build
 
 # Stage 3: Production runtime
-# node:20-slim (Debian Bookworm) is required for Chromium system libraries
+# FROM node:20-slim (Debian Bookworm) was required for Chromium; Playwright commented out
 FROM node:20-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Install Chromium system dependencies required by Playwright at runtime
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libnss3 \
-    libnspr4 \
-    libdbus-1-3 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libxkbcommon0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxrandr2 \
-    libgbm1 \
-    libasound2 \
-    libpango-1.0-0 \
-    libcairo2 \
-    libatspi2.0-0 \
-    libwayland-client0 \
-    fonts-liberation \
-    procps \
-    && rm -rf /var/lib/apt/lists/*
+# Install Chromium system dependencies required by Playwright at runtime — commented out
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#     libnss3 \
+#     libnspr4 \
+#     libdbus-1-3 \
+#     libatk1.0-0 \
+#     libatk-bridge2.0-0 \
+#     libcups2 \
+#     libdrm2 \
+#     libxkbcommon0 \
+#     libxcomposite1 \
+#     libxdamage1 \
+#     libxfixes3 \
+#     libxrandr2 \
+#     libgbm1 \
+#     libasound2 \
+#     libpango-1.0-0 \
+#     libcairo2 \
+#     libatspi2.0-0 \
+#     libwayland-client0 \
+#     fonts-liberation \
+#     procps \
+#     && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd --system --gid 1001 nodejs \
     && useradd --system --uid 1001 --gid nodejs --create-home nextjs
 
-# Copy pre-downloaded Chromium browser from deps stage
-COPY --from=deps /root/.cache/ms-playwright /home/nextjs/.cache/ms-playwright
-RUN chown -R nextjs:nodejs /home/nextjs/.cache
+# Copy pre-downloaded Chromium browser from deps stage — commented out
+# COPY --from=deps /root/.cache/ms-playwright /home/nextjs/.cache/ms-playwright
+# RUN chown -R nextjs:nodejs /home/nextjs/.cache
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Resolved playwright + playwright-core directory (no pnpm symlinks).
-# NODE_PATH makes them discoverable as a fallback for any require('playwright').
-COPY --from=deps --chown=nextjs:nodejs /playwright-env ./playwright-env
+# Resolved playwright + playwright-core directory — commented out
+# COPY --from=deps --chown=nextjs:nodejs /playwright-env ./playwright-env
 
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
-# Tell Playwright where to find the pre-downloaded Chromium
-ENV PLAYWRIGHT_BROWSERS_PATH=/home/nextjs/.cache/ms-playwright
-ENV NODE_PATH=/app/playwright-env
+# Tell Playwright where to find the pre-downloaded Chromium — commented out
+# ENV PLAYWRIGHT_BROWSERS_PATH=/home/nextjs/.cache/ms-playwright
+# ENV NODE_PATH=/app/playwright-env
 
 CMD ["node", "server.js"]
