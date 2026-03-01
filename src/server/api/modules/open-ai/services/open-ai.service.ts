@@ -2,11 +2,18 @@ import OpenAI from "openai";
 import { env } from "../../../../../env";
 import { REGREX_PROMT } from "../constants";
 
-const openai = new OpenAI({
-  apiKey: env.OPENAI_API_KEY,
-  timeout: 60_000, // 60 seconds timeout for all OpenAI API requests
-  maxRetries: 3,
-});
+let _openai: OpenAI | null = null;
+
+function getOpenAIClient(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({
+      apiKey: env.OPENAI_API_KEY,
+      timeout: 60_000,
+      maxRetries: 3,
+    });
+  }
+  return _openai;
+}
 
 export async function GetEmbedding(data: object | string): Promise<number[]> {
   console.log(`[GetEmbedding] Starting to get embedding from OpenAI`);
@@ -16,7 +23,7 @@ export async function GetEmbedding(data: object | string): Promise<number[]> {
     const inputString = typeof data === "string" ? data : JSON.stringify(data);
     console.log(`[GetEmbedding] Input length: ${inputString.length} characters`);
 
-    const response = await openai.embeddings.create({
+    const response = await getOpenAIClient().embeddings.create({
       model: "text-embedding-3-small",
       input: inputString,
     });
@@ -55,7 +62,7 @@ export async function GetSelectorAndRegex(
       });
     }
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAIClient().chat.completions.create({
       model: "gpt-4-turbo",
       messages,
       temperature: 0,
