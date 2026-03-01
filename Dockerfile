@@ -66,9 +66,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # pnpm stores packages as symlinks — Next.js NFT cannot trace them.
-# Docker COPY follows symlinks and copies actual files, making them resolvable at runtime.
+# Docker COPY follows the symlink and copies actual files, making them resolvable at runtime.
+# playwright-core is not a direct dep so pnpm does not hoist it; playwright bundles it internally.
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/playwright ./node_modules/playwright
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/playwright-core ./node_modules/playwright-core
 
 USER nextjs
 EXPOSE 3000
