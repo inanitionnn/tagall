@@ -131,4 +131,6 @@ export async function getOrSetCache<
   return getOrSetCacheByKey(cacheKey, promise, ttl);
 }
 
-export default { getClient, getOrSetCache, deleteCache };
+const redisClient = { getClient, getOrSetCache, deleteCache };
+
+export default redisClient;

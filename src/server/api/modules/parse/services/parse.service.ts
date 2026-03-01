@@ -116,14 +116,14 @@ export const Search = async (props: {
       ...r,
       suggestedCollectionId:
         r.mediaType === "movie"
-          ? collectionIdByName["Film"] ?? null
-          : collectionIdByName["Serie"] ?? null,
+          ? collectionIdByName.Film ?? null
+          : collectionIdByName.Serie ?? null,
       suggestedCollectionName:
         r.mediaType === "movie" ? "Film" : "Serie",
     }));
     const mangaWithCollection: SearchResultType[] = mangaResults.map((r) => ({
       ...r,
-      suggestedCollectionId: collectionIdByName["Manga"] ?? null,
+      suggestedCollectionId: collectionIdByName.Manga ?? null,
       suggestedCollectionName: "Manga",
     }));
 

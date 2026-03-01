@@ -1,4 +1,4 @@
-import { Badge, Header } from "../../../ui";
+import { Header } from "../../../ui";
 import type { ItemType } from "../../../../../server/api/modules/item/types";
 import {
   CardContainer,
@@ -11,10 +11,11 @@ import {
 type Props = {
   item: ItemType;
   selectedCollectionsIds: string[];
+  showTimeAgo?: boolean;
 };
 
 const HomeSmallItem = (props: Props) => {
-  const { item, selectedCollectionsIds } = props;
+  const { item } = props;
 
   return (
     <CardContainer className="relative h-fit cursor-pointer overflow-hidden p-0 transition-all duration-200 hover:scale-105 hover:border-primary/50 hover:shadow-md sm:h-24">

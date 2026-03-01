@@ -17,7 +17,7 @@ export async function invalidateItemCaches(
   userId: string,
   options: InvalidateItemCachesOptions = {}
 ): Promise<void> {
-  const { collectionsIds, itemId, includeSearch } = options;
+  const { itemId, includeSearch } = options;
 
   // Invalidate by userId only: cache keys are built with full input, so prefix must match all getUserItems for user
   await deleteCache("item", "getUserItems", { userId });

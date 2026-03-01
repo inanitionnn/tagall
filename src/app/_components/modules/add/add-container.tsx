@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AddSearchResultItem } from "./add-search-result-item";
 import { AddItemModal } from "./add-item-modal";
 import type {
