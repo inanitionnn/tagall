@@ -14,6 +14,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV SKIP_ENV_VALIDATION=1
+
+# NEXT_PUBLIC_* vars must be available at build time as they are inlined into the JS bundle
+ARG NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+ARG NEXT_PUBLIC_CLOUDINARY_FOLDER
+ENV NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=$NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+ENV NEXT_PUBLIC_CLOUDINARY_FOLDER=$NEXT_PUBLIC_CLOUDINARY_FOLDER
+
 RUN corepack enable && corepack prepare pnpm@8.15.5 --activate
 RUN pnpm prisma generate
 RUN pnpm build
