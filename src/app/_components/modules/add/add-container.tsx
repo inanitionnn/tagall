@@ -80,7 +80,9 @@ function AddContainer() {
       : searchResults.filter(
           (r) => (r.suggestedCollectionName ?? "Film") === selectedMediaIds[0],
         )),
-  ].sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1));
+  ]
+    .filter((r) => !!r.image)
+    .sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1));
 
   const hasResults = searchResults.length > 0;
 
