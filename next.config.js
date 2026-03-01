@@ -8,16 +8,6 @@ await import("./src/env.js");
 const config = {
   output: "standalone",
   experimental: {
-    // Playwright and crawlee use dynamic requires that NFT cannot statically trace,
-    // so we explicitly include all their files in the standalone output.
-    outputFileTracingIncludes: {
-      "/api/trpc/**": [
-        "./node_modules/playwright/**/*",
-        "./node_modules/playwright-core/**/*",
-        "./node_modules/@crawlee/**/*",
-        "./node_modules/crawlee/**/*",
-      ],
-    },
     serverComponentsExternalPackages: [
       "crawlee",
       "@crawlee/playwright",
