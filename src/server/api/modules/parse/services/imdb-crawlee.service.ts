@@ -37,21 +37,26 @@ async function fetchImdbPageHtml(imdbId: string): Promise<string | null> {
   const url = `${IMDB_TITLE_BASE}/${imdbId}/`;
   let html: string | null = null;
 
-  const crawler = new PlaywrightCrawler(
-    {
-      maxRequestsPerCrawl: 1,
-      requestHandlerTimeoutSecs: CRAWLER_TIMEOUT_SEC,
-      async requestHandler({ page }) {
-        html = await page.content();
-      },
-    },
-    new Configuration({ storageClient: new MemoryStorage({ persistStorage: false }) }),
-  );
-
   try {
+    const crawler = new PlaywrightCrawler(
+      {
+        maxRequestsPerCrawl: 1,
+        requestHandlerTimeoutSecs: CRAWLER_TIMEOUT_SEC,
+        async requestHandler({ page }) {
+          html = await page.content();
+        },
+      },
+      new Configuration({ storageClient: new MemoryStorage({ persistStorage: false }) }),
+    );
+
     await crawler.run([url]);
   } catch (error) {
-    console.error("[IMDB enrich] Crawlee fetch failed", error, { imdbId, url });
+    const err = error as NodeJS.ErrnoException;
+    if (err?.code === "MODULE_NOT_FOUND" && err?.message?.includes("playwright")) {
+      console.warn("[IMDB enrich] Playwright not available, skipping page fetch", { imdbId, url });
+    } else {
+      console.error("[IMDB enrich] Crawlee fetch failed", error, { imdbId, url });
+    }
     return null;
   }
 
@@ -65,21 +70,29 @@ async function fetchImdbAdvancedSearchHtml(query: string): Promise<string | null
   const url = `${IMDB_ADVANCED_SEARCH_BASE}/?title=${encodeURIComponent(query.trim())}`;
   let html: string | null = null;
 
-  const crawler = new PlaywrightCrawler(
-    {
-      maxRequestsPerCrawl: 1,
-      requestHandlerTimeoutSecs: CRAWLER_TIMEOUT_SEC,
-      async requestHandler({ page }) {
-        html = await page.content();
-      },
-    },
-    new Configuration({ storageClient: new MemoryStorage({ persistStorage: false }) }),
-  );
-
   try {
+    const crawler = new PlaywrightCrawler(
+      {
+        maxRequestsPerCrawl: 1,
+        requestHandlerTimeoutSecs: CRAWLER_TIMEOUT_SEC,
+        async requestHandler({ page }) {
+          html = await page.content();
+        },
+      },
+      new Configuration({ storageClient: new MemoryStorage({ persistStorage: false }) }),
+    );
+
     await crawler.run([url]);
   } catch (error) {
-    console.error("[IMDB search] Crawlee advanced-search fetch failed", error, { query, url });
+    const err = error as NodeJS.ErrnoException;
+    if (err?.code === "MODULE_NOT_FOUND" && err?.message?.includes("playwright")) {
+      console.warn("[IMDB search] Playwright not available, skipping advanced-search fetch", {
+        query,
+        url,
+      });
+    } else {
+      console.error("[IMDB search] Crawlee advanced-search fetch failed", error, { query, url });
+    }
     return null;
   }
 
