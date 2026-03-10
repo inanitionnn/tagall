@@ -69,6 +69,9 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Copy Prisma client with the correct engine binary for the runtime (Debian Bookworm / OpenSSL 3.x)
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+
 # Resolved playwright + playwright-core directory — commented out
 # COPY --from=deps --chown=nextjs:nodejs /playwright-env ./playwright-env
 
