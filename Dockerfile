@@ -28,52 +28,26 @@ RUN corepack enable && corepack prepare pnpm@8.15.5 --activate
 RUN pnpm prisma generate
 RUN pnpm build
 
-# Stage 3: Production runtime
-# FROM node:20-slim (Debian Bookworm) was required for Chromium; Playwright commented out
-FROM node:20-slim AS runner
+# Stage 3: Production runtime — Alpine to match the builder and avoid OpenSSL version mismatch
+FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Install Chromium system dependencies required by Playwright at runtime — commented out
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-#     libnss3 \
-#     libnspr4 \
-#     libdbus-1-3 \
-#     libatk1.0-0 \
-#     libatk-bridge2.0-0 \
-#     libcups2 \
-#     libdrm2 \
-#     libxkbcommon0 \
-#     libxcomposite1 \
-#     libxdamage1 \
-#     libxfixes3 \
-#     libxrandr2 \
-#     libgbm1 \
-#     libasound2 \
-#     libpango-1.0-0 \
-#     libcairo2 \
-#     libatspi2.0-0 \
-#     libwayland-client0 \
-#     fonts-liberation \
-#     procps \
-#     && rm -rf /var/lib/apt/lists/*
+# openssl is required by Prisma at runtime; libc6-compat ensures glibc-compatible shims
+RUN apk add --no-cache openssl libc6-compat
 
-RUN groupadd --system --gid 1001 nodejs \
-    && useradd --system --uid 1001 --gid nodejs --create-home nextjs
-
-# Copy pre-downloaded Chromium browser from deps stage — commented out
-# COPY --from=deps /root/.cache/ms-playwright /home/nextjs/.cache/ms-playwright
-# RUN chown -R nextjs:nodejs /home/nextjs/.cache
+RUN addgroup --system --gid 1001 nodejs \
+    && adduser --system --uid 1001 --ingroup nodejs nextjs
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy Prisma client with the correct engine binary for the runtime (Debian Bookworm / OpenSSL 3.x)
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
-
-# Resolved playwright + playwright-core directory — commented out
-# COPY --from=deps --chown=nextjs:nodejs /playwright-env ./playwright-env
+# Copy Prisma engines from the pnpm virtual store — Next.js standalone file tracing does not follow
+# nested .prisma directories inside the pnpm store, so engines must be copied explicitly
+COPY --from=builder --chown=nextjs:nodejs \
+  /app/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/.prisma \
+  ./node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/.prisma
 
 USER nextjs
 EXPOSE 3000
