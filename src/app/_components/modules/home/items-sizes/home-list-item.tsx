@@ -46,7 +46,7 @@ const HomeListItem = (props: Props) => {
           <ItemStatusIcon className="hidden size-4 stroke-muted-foreground stroke-2 group-hover:stroke-primary group-hover:stroke-[2.5px] lg:block" />
         </div>
 
-        <div className="hidden items-center justify-end gap-2 md:flex lg:min-w-32">
+        <div className="hidden items-center justify-end gap-2 md:flex lg:min-w-40">
           <Paragraph className="hidden font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary lg:block">
             {item.rate ? RATING_NAMES[item.rate] : "None"}
           </Paragraph>
@@ -57,6 +57,17 @@ const HomeListItem = (props: Props) => {
           <Paragraph className="min-w-4 text-end font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary">
             {item.rate ?? 0}
           </Paragraph>
+
+          {item.externalRating != null && (
+            <>
+              <Paragraph className="hidden font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary lg:block">
+                |
+              </Paragraph>
+              <Paragraph className="hidden min-w-6 text-end font-medium text-muted-foreground group-hover:font-bold group-hover:text-primary lg:block">
+                {item.externalRating}
+              </Paragraph>
+            </>
+          )}
         </div>
 
         {showTimeAgo ? (

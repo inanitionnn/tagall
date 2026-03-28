@@ -3,6 +3,7 @@ import type { ItemType } from "../../../../../server/api/modules/item/types";
 import {
   CardContainer,
   CloudinaryImage,
+  ItemExternalRatingBadge,
   ItemRatingBadge,
   ItemStatusBadge,
   ItemTypeBadge,
@@ -68,8 +69,12 @@ const HomeSmallItem = (props: Props) => {
             <ItemRatingBadge rate={item.rate} className="text-base" />
           ) : null}
 
+        {item.externalRating != null && (
+            <ItemExternalRatingBadge rating={item.externalRating} className="text-base text-red-500" />
+          )}
+
         {item.year && (
-            <span className="text-base font-semibold text-muted-foreground">
+            <span className="text-base font-semibold text-chart-4">
               {item.year}
             </span>
           )}

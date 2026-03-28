@@ -37,6 +37,7 @@ import {
   getUserItemsStatusStats,
 } from "./item-stats.service";
 import { normalizeText } from "~/utils/normalize-text";
+import { normalizeExternalRating } from "../utils/normalize-external-rating.util";
 
 const ItemResponse = new ItemResponseClass();
 
@@ -207,6 +208,10 @@ async function CreateItem(props: {
           description: details.description as string,
           parsedId,
           image,
+          externalRating:
+            typeof details.rating === "number"
+              ? normalizeExternalRating(details.rating)
+              : null,
         },
       });
       console.log(`[CreateItem] Item created in DB: ${item.id} - "${item.title}"`);

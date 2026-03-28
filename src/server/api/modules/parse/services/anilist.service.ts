@@ -65,6 +65,7 @@ export async function GetAnilistDetailsById(mediaId: string) {
   );
 
   const {
+    averageScore,
     coverImage,
     id,
     title,
@@ -88,6 +89,7 @@ export async function GetAnilistDetailsById(mediaId: string) {
     people: staff?.nodes.map((node) => node.name.full).filter(Truthy) ?? [],
     genres: (genres ?? []).filter(Truthy),
     keywords: tags?.map((tag) => tag.name).filter(Truthy),
+    rating: averageScore != null ? averageScore / 10 : null,
   };
 }
 

@@ -9,6 +9,7 @@ import {
   CloudinaryImage,
   Container,
   DeleteItemModal,
+  ItemExternalRatingBadge,
   UpdateItemModal,
   UpdateItemImageModal,
   UpdateTagsModal,
@@ -82,6 +83,12 @@ function ItemContainer(props: Props) {
         <Header vtag="h6">Year:</Header>
         <Paragraph className="text-muted-foreground">{item.year}</Paragraph>
       </div>
+      {item.externalRating != null && (
+        <div className="flex flex-col">
+          <Header vtag="h6">Rating:</Header>
+          <ItemExternalRatingBadge rating={item.externalRating} className="text-sm" />
+        </div>
+      )}
       {fieldData &&
         Object.entries(fieldData).map(([key, value]) => (
           <div key={key} className="flex flex-col">

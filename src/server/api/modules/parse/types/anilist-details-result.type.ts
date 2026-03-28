@@ -21,6 +21,7 @@ export type AnilistDetailsResultType = {
         startDate?: {
           year?: number | null;
         } | null;
+        averageScore?: number | null;
         chapters?: number | null;
         staff?: {
           nodes: {

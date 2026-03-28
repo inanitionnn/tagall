@@ -7,6 +7,7 @@ export type ItemType = {
   description: string | null;
   image: string | null;
   rate: number | null;
+  externalRating: number | null;
   status: ItemStatus;
   collection: {
     id: string;

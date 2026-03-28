@@ -1,6 +1,6 @@
 import { Header } from "../../../ui";
 import type { ItemType } from "../../../../../server/api/modules/item/types";
-import { CardContainer, CloudinaryImage } from "../../../shared";
+import { CardContainer, CloudinaryImage, ItemExternalRatingBadge, ItemRatingBadge } from "../../../shared";
 
 type Props = {
   item: ItemType;
@@ -37,10 +37,20 @@ const HomeMediumItem = (props: Props) => {
           <div className="aspect-[27/40] rounded-xl bg-primary object-cover" />
         )}
       </div>
-      <div className="relative z-10 flex h-full items-center justify-center p-2">
+      <div className="relative z-10 flex h-full flex-col items-center justify-center gap-1 p-2">
         <Header vtag="h6" className="line-clamp-3 text-center">
           {item.title}
         </Header>
+        {(item.rate != null || item.externalRating != null) && (
+          <div className="flex items-center gap-2">
+            {item.rate != null && (
+              <ItemRatingBadge rate={item.rate} className="text-xs" />
+            )}
+            {item.externalRating != null && (
+              <ItemExternalRatingBadge rating={item.externalRating} className="text-xs text-red-500" />
+            )}
+          </div>
+        )}
       </div>
     </CardContainer>
   );

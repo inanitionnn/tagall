@@ -18,6 +18,7 @@ query ($mediaId: Int) {
         startDate {
             year
         }
+        averageScore
         chapters
         staff {
             nodes {

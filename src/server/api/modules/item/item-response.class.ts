@@ -20,6 +20,7 @@ export class ItemResponseClass {
       year: userItem.item.year,
       image: userItem.item.image,
       rate: userItem.rate,
+      externalRating: userItem.item.externalRating ?? null,
       status: userItem.status,
       timeAgo: dateToTimeAgoString(userItem.updatedAt),
       updatedAt: userItem.updatedAt,
@@ -45,6 +46,7 @@ export class ItemResponseClass {
       year: userItem.item.year,
       image: userItem.item.image,
       rate: userItem.rate,
+      externalRating: userItem.item.externalRating ?? null,
       status: userItem.status,
       collection: {
         id: userItem.item.collection.id,

@@ -6,6 +6,7 @@ export type TierItemType = {
   year: number | null;
   image: string | null;
   rate: number | null;
+  externalRating: number | null;
   status: ItemStatus;
   collection: {
     id: string;
