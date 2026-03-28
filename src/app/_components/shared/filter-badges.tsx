@@ -2,6 +2,7 @@ import React, { type Dispatch, type SetStateAction } from "react";
 import { Badge } from "../ui";
 import type { GetUserItemsFilterType } from "../../../server/api/modules/item/types";
 import { STATUS_NAMES } from "../../../constants";
+import { GrainCardContainer } from "./grain-card-container";
 
 type Props = {
   filtering: GetUserItemsFilterType;
@@ -26,10 +27,14 @@ const FilterBadges = (props: Props) => {
     );
   };
 
+  if (!filtering.length) return null;
+
   return (
-    <div className="flex flex-wrap gap-2">
+    <GrainCardContainer className="flex-wrap gap-2">
       {filtering.map((filter, index) => {
         let badgeText = "";
+        let isRange = false;
+
         switch (filter.name) {
           case "rate":
           case "year":
@@ -37,6 +42,7 @@ const FilterBadges = (props: Props) => {
               filter.type === "from"
                 ? `> ${filter.value}`
                 : `< ${filter.value}`;
+            isRange = true;
             break;
           case "status":
             badgeText =
@@ -53,25 +59,37 @@ const FilterBadges = (props: Props) => {
             break;
         }
 
+        if (isRange) {
+          return (
+            <Badge
+              key={index}
+              variant="warning"
+              className="cursor-pointer px-3 text-sm hover:bg-destructive"
+              onClick={() => removeFilter(filter)}
+            >
+              {badgeText}
+            </Badge>
+          );
+        }
+
         return (
           <Badge
-            className="cursor-pointer text-sm hover:bg-destructive"
             key={index}
+            className="cursor-pointer px-3 text-sm hover:bg-destructive"
             onClick={() => removeFilter(filter)}
           >
             {badgeText}
           </Badge>
         );
       })}
-      {filtering.length > 0 && (
-        <Badge
-          className="cursor-pointer bg-destructive text-sm"
-          onClick={removeAllFilters}
-        >
-          Clear
-        </Badge>
-      )}
-    </div>
+      <Badge
+        variant="destructive"
+        className="cursor-pointer px-3 hover:opacity-80 text-sm"
+        onClick={removeAllFilters}
+      >
+        Clear
+      </Badge>
+    </GrainCardContainer>
   );
 };
 

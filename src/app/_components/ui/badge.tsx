@@ -13,6 +13,10 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground",
         outline: "text-foreground",
+        warning:
+          "border-transparent bg-[hsl(var(--chart-2))] text-background",
+        exclude:
+          "border-transparent bg-[hsl(var(--chart-4))]",
         collection: "rounded-md px-1 py-0 font-medium text-foreground",
       },
     },
