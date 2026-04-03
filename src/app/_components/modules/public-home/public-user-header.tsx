@@ -52,7 +52,7 @@ export const PublicUserHeader = (props: Props) => {
 
       {/* Stats Section */}
       {stats && !isStatsLoading && (
-        <div className="flex gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row">
           <ProfileStatusStats all={stats.all} statusStats={stats.status} />
           <ProfileRateStats rateStats={stats.rate} />
         </div>
