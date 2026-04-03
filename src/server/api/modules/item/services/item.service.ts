@@ -693,31 +693,23 @@ export async function GetUserItemsStats(props: {
 }): Promise<ItemsStatsType> {
   const { ctx, input } = props;
 
-  const date = await getUserItemsDateStats({
-    ctx,
-    collectionsIds: input,
-  });
-  const rate = await getUserItemsRateStats({
-    ctx,
-    collectionsIds: input,
-  });
-  const status = await getUserItemsStatusStats({
-    ctx,
-    collectionsIds: input,
-  });
-
-  const all = await ctx.db.userToItem.count({
-    where: {
-      userId: ctx.session.user.id,
-      ...(input.length && {
-        item: {
-          collectionId: {
-            in: input,
+  const [date, rate, status, all] = await Promise.all([
+    getUserItemsDateStats({ ctx, collectionsIds: input }),
+    getUserItemsRateStats({ ctx, collectionsIds: input }),
+    getUserItemsStatusStats({ ctx, collectionsIds: input }),
+    ctx.db.userToItem.count({
+      where: {
+        userId: ctx.session.user.id,
+        ...(input.length && {
+          item: {
+            collectionId: {
+              in: input,
+            },
           },
-        },
-      }),
-    },
-  });
+        }),
+      },
+    }),
+  ]);
 
   return {
     date,

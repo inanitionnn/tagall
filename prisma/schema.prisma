@@ -119,6 +119,7 @@ model Item {
     @@index([updatedAt, createdAt])
     @@index([year, title])
     @@index([parsedId])
+    @@index([collectionId])
 }
 
 model ItemComment {
@@ -157,6 +158,8 @@ model UserToItem {
 
     @@unique([userId, itemId])
     @@index([createdAt, rate, status, userId, itemId, id])
+    @@index([userId])
+    @@index([updatedAt])
 }
 
 model FieldGroup {

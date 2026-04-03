@@ -1,4 +1,4 @@
-import { ItemStatus } from "@prisma/client";
+import { ItemStatus, Prisma } from "@prisma/client";
 import type { ContextType } from "../../../../types";
 import type {
   ItemsDateStatsType,
@@ -7,92 +7,70 @@ import type {
 } from "../types";
 import { STATUS_VALUES } from "~/constants";
 
+type DateStatsRow = { month: Date; created: bigint; updated: bigint };
+
 export async function getUserItemsDateStats(props: {
   ctx: ContextType;
   collectionsIds: string[] | undefined;
 }): Promise<ItemsDateStatsType[]> {
   const { ctx, collectionsIds } = props;
 
-  const currentDate = new Date();
-
-  const months = Array.from({ length: 6 })
-    .map((_, i) => {
-      const date = new Date(currentDate);
-      date.setMonth(currentDate.getMonth() - i);
-      return date;
-    })
-    .reverse();
+  const userId = ctx.session.user.id;
 
   const monthNamesFormatter = new Intl.DateTimeFormat("en-US", {
     month: "long",
     year: "numeric",
   });
 
-  const statsPromises = months.map(async (date) => {
-    const isoMonth = date.toISOString().slice(0, 7);
+  const collectionJoin = collectionsIds?.length
+    ? Prisma.sql`INNER JOIN "Item" i ON u."itemId" = i.id`
+    : Prisma.empty;
 
-    const [created, updated] = await Promise.all([
-      ctx.db.userToItem.count({
-        where: {
-          userId: ctx.session.user.id,
-          createdAt: {
-            gte: new Date(`${isoMonth}-01T00:00:00Z`),
-            lt: new Date(
-              new Date(`${isoMonth}-01T00:00:00Z`).setMonth(
-                new Date(`${isoMonth}-01T00:00:00Z`).getMonth() + 1,
-              ),
-            ),
-          },
+  const collectionWhere = collectionsIds?.length
+    ? Prisma.sql`AND i."collectionId" IN (${Prisma.join(collectionsIds)})`
+    : Prisma.empty;
 
-          ...(collectionsIds?.length && {
-            item: {
-              collectionId: {
-                in: collectionsIds,
-              },
-            },
-          }),
-        },
-      }),
+  const rows = await ctx.db.$queryRaw<DateStatsRow[]>`
+    WITH months AS (
+      SELECT generate_series(
+        date_trunc('month', NOW() - INTERVAL '5 months'),
+        date_trunc('month', NOW()),
+        INTERVAL '1 month'
+      ) AS month
+    ),
+    created_counts AS (
+      SELECT date_trunc('month', u."createdAt") AS month, COUNT(*) AS count
+      FROM "UserToItem" u
+      ${collectionJoin}
+      WHERE u."userId" = ${userId}
+        AND u."createdAt" >= date_trunc('month', NOW() - INTERVAL '5 months')
+        ${collectionWhere}
+      GROUP BY 1
+    ),
+    updated_counts AS (
+      SELECT date_trunc('month', u."updatedAt") AS month, COUNT(*) AS count
+      FROM "UserToItem" u
+      ${collectionJoin}
+      WHERE u."userId" = ${userId}
+        AND u."updatedAt" >= date_trunc('month', NOW() - INTERVAL '5 months')
+        ${collectionWhere}
+      GROUP BY 1
+    )
+    SELECT
+      m.month,
+      COALESCE(c.count, 0)::int AS created,
+      COALESCE(u.count, 0)::int AS updated
+    FROM months m
+    LEFT JOIN created_counts c ON c.month = m.month
+    LEFT JOIN updated_counts u ON u.month = m.month
+    ORDER BY m.month
+  `;
 
-      ctx.db.userToItem.count({
-        where: {
-          userId: ctx.session.user.id,
-          updatedAt: {
-            gte: new Date(`${isoMonth}-01T00:00:00Z`),
-            lt: new Date(
-              new Date(`${isoMonth}-01T00:00Z`).setMonth(
-                new Date(`${isoMonth}-01T00:00Z`).getMonth() + 1,
-              ),
-            ),
-          },
-
-          ...(collectionsIds?.length && {
-            item: {
-              collectionId: {
-                in: collectionsIds,
-              },
-            },
-          }),
-        },
-      }),
-    ]);
-
-    return {
-      date,
-      created,
-      updated,
-    };
-  });
-
-  const stats = (await Promise.all(statsPromises))
-    .sort((a, b) => a.date.getTime() - b.date.getTime())
-    .map((stat) => ({
-      month: monthNamesFormatter.format(stat.date),
-      created: stat.created,
-      updated: stat.updated,
-    }));
-
-  return stats;
+  return rows.map((row) => ({
+    month: monthNamesFormatter.format(row.month),
+    created: Number(row.created),
+    updated: Number(row.updated),
+  }));
 }
 
 export async function getUserItemsStatusStats(props: {
@@ -101,31 +79,25 @@ export async function getUserItemsStatusStats(props: {
 }): Promise<ItemsStatusStatsType[]> {
   const { ctx, collectionsIds } = props;
 
-  const statuses = Object.values(ItemStatus);
-  const statusCounts = await Promise.all(
-    statuses.map(async (status) => {
-      const count = await ctx.db.userToItem.count({
-        where: {
-          userId: ctx.session.user.id,
-          status,
+  const rows = await ctx.db.userToItem.groupBy({
+    by: ["status"],
+    _count: { _all: true },
+    where: {
+      userId: ctx.session.user.id,
+      ...(collectionsIds?.length && {
+        item: { collectionId: { in: collectionsIds } },
+      }),
+    },
+  });
 
-          ...(collectionsIds?.length && {
-            item: {
-              collectionId: {
-                in: collectionsIds,
-              },
-            },
-          }),
-        },
-      });
-      return { status, count };
-    }),
-  );
-  const stats = statusCounts.sort(
-    (a, b) =>
-      STATUS_VALUES.indexOf(a.status) - STATUS_VALUES.indexOf(b.status),
-  );
-  return stats;
+  const countMap = new Map(rows.map((r) => [r.status, r._count._all]));
+
+  return Object.values(ItemStatus)
+    .map((status) => ({ status, count: countMap.get(status) ?? 0 }))
+    .sort(
+      (a, b) =>
+        STATUS_VALUES.indexOf(a.status) - STATUS_VALUES.indexOf(b.status),
+    );
 }
 export async function getUserItemsRateStats(props: {
   ctx: ContextType;
@@ -133,27 +105,21 @@ export async function getUserItemsRateStats(props: {
 }): Promise<ItemsRateStatsType[]> {
   const { ctx, collectionsIds } = props;
 
-  const rates = [null, ...Array.from({ length: 10 }, (_, index) => index + 1)];
-  const rateCounts = await Promise.all(
-    rates.map(async (rate) => {
-      const count = await ctx.db.userToItem.count({
-        where: {
-          userId: ctx.session.user.id,
-          rate: rate,
+  const rows = await ctx.db.userToItem.groupBy({
+    by: ["rate"],
+    _count: { _all: true },
+    where: {
+      userId: ctx.session.user.id,
+      ...(collectionsIds?.length && {
+        item: { collectionId: { in: collectionsIds } },
+      }),
+    },
+  });
 
-          ...(collectionsIds?.length && {
-            item: {
-              collectionId: {
-                in: collectionsIds,
-              },
-            },
-          }),
-        },
-      });
-      return { rate: rate ?? 0, count };
-    }),
-  );
+  const countMap = new Map(rows.map((r) => [r.rate ?? 0, r._count._all]));
 
-  const stats = rateCounts.sort((a, b) => a.rate - b.rate);
-  return stats;
+  const allRates = [0, ...Array.from({ length: 10 }, (_, i) => i + 1)];
+  return allRates
+    .map((rate) => ({ rate, count: countMap.get(rate) ?? 0 }))
+    .sort((a, b) => a.rate - b.rate);
 }

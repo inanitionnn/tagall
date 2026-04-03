@@ -98,14 +98,16 @@ export const GetFilterFields = async (props: {
   const MINIMUM_ITEMS = 3 as const;
 
   const fields = await ctx.db.field.findMany({
+    where: {
+      fieldGroup: {
+        isFiltering: true,
+        ...(input.length && {
+          collections: { some: { id: { in: input } } },
+        }),
+      },
+    },
     select: {
       id: true,
-      fieldGroup: {
-        select: {
-          collections: true,
-          isFiltering: true,
-        },
-      },
       _count: {
         select: {
           items: {
