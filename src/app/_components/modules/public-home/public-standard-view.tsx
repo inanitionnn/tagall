@@ -113,7 +113,7 @@ export function PublicStandardView(props: Props) {
       {/* Items */}
       {(isLoading || isFetching) && <Loading />}
 
-      {!isLoading && !isFetching && queryData !== undefined && queryData.length === 0 && <NoItemsCard />}
+      {!isLoading && !isFetching && queryData?.length === 0 && <NoItemsCard />}
 
       {items.length > 0 && !isLoading && (
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3">
