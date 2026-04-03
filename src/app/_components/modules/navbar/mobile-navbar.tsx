@@ -20,7 +20,7 @@ const MobileNavbar = (props: SheetContentProps) => {
       </SheetTrigger>
       <SheetContent
         side={"left"}
-        className={cn("relative overflow-hidden p-0", className)}
+        className={cn("overflow-hidden p-0", className)}
         {...restProps}
       >
         <div
