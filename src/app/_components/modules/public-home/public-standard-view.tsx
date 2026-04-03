@@ -16,6 +16,7 @@ import {
   NoItemsCard,
   FilterBadges,
   CollectionsTabs,
+  ViewModeSwitcher,
 } from "../../shared";
 import {
   useGetPublicFilterFields,
@@ -23,7 +24,7 @@ import {
   useGetPublicUserItems,
   useParseFiltering,
 } from "../../../../hooks";
-import { HomeMediumItem } from "../home/items-sizes";
+import { HomeLargeItem } from "../home/items-sizes";
 
 type Props = {
   collections: CollectionType[];
@@ -35,6 +36,8 @@ type Props = {
   sorting: GetUserItemsSortType;
   setSorting: Dispatch<SetStateAction<GetUserItemsSortType>>;
   handleClearFilters: () => void;
+  viewMode: "standard" | "tierlist" | "random";
+  onViewModeChange: (mode: "standard" | "tierlist" | "random") => void;
 };
 
 export function PublicStandardView(props: Props) {
@@ -48,12 +51,14 @@ export function PublicStandardView(props: Props) {
     sorting,
     setSorting,
     handleClearFilters,
+    viewMode,
+    onViewModeChange,
   } = props;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchFilter, setSearchFilter] = useState("");
 
-  const { items, setPage, hasMore, isLoading } = useGetPublicUserItems({
+  const { items, setPage, hasMore, isLoading, isFetching, queryData } = useGetPublicUserItems({
     collectionsIds,
     sorting,
     filtering,
@@ -70,11 +75,11 @@ export function PublicStandardView(props: Props) {
     setFilterYears,
   } = useParseFiltering({ filtering, setFiltering, yearsRange });
 
-
   return (
     <div className="flex flex-col gap-4">
-      {/* Collections + Controls */}
+      {/* Controls row */}
       <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+        <ViewModeSwitcher viewMode={viewMode} onViewModeChange={onViewModeChange} />
         <CollectionsTabs
           collections={collections}
           selectedCollectionsIds={selectedCollectionsIds}
@@ -106,19 +111,23 @@ export function PublicStandardView(props: Props) {
       <FilterBadges filtering={filtering} setFiltering={setFiltering} />
 
       {/* Items */}
-      {isLoading && <Loading />}
+      {(isLoading || isFetching) && <Loading />}
 
-      {!isLoading && items?.length === 0 && <NoItemsCard />}
+      {!isLoading && !isFetching && queryData !== undefined && queryData.length === 0 && <NoItemsCard />}
 
-      {items && items.length > 0 && (
-        <div className="mx-auto grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8">
+      {items.length > 0 && !isLoading && (
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3">
           {items.map((item) => (
-            <HomeMediumItem key={item.id} item={item} />
+            <HomeLargeItem
+              key={item.id}
+              item={item}
+              selectedCollectionsIds={selectedCollectionsIds}
+            />
           ))}
         </div>
       )}
 
-      {hasMore && !isLoading && (
+      {hasMore && !isLoading && !isFetching && (
         <InfiniteScroll
           isLoading={isLoading}
           hasMore={hasMore}

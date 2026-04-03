@@ -7,6 +7,7 @@ import {
   ItemRatingBadge,
   ItemStatusBadge,
   ItemTypeBadge,
+  ItemYearBadge,
 } from "../../../shared";
 
 type Props = {
@@ -74,9 +75,7 @@ const HomeSmallItem = (props: Props) => {
           )}
 
         {item.year && (
-            <span className="text-base font-semibold text-chart-4">
-              {item.year}
-            </span>
+            <ItemYearBadge year={item.year} className="text-base" />
           )}
         
         

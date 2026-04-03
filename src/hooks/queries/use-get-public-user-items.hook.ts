@@ -35,7 +35,7 @@ export const useGetPublicUserItems = (props: Props) => {
     searchQuery: searchQuery.toLowerCase().trim(),
   });
 
-  const { data, isLoading, error, dataUpdatedAt } =
+  const { data, isLoading, isFetching, error, dataUpdatedAt } =
     api.item.getPublicUserItems.useQuery({
       limit: DEFAULT_HOME_LIMIT,
       page,
@@ -103,5 +103,10 @@ export const useGetPublicUserItems = (props: Props) => {
     setPage,
     hasMore,
     isLoading,
+    isFetching,
+    // Raw query response — used for the empty-state check so NoItemsCard only
+    // appears when the server genuinely returned [], not during the one-render
+    // gap between isFetching→false and the data effect populating local items.
+    queryData: data,
   };
 };

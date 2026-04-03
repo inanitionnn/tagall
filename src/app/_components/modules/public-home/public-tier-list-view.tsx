@@ -21,6 +21,7 @@ import {
   NoItemsCard,
   FilterBadges,
   CollectionsTabs,
+  ViewModeSwitcher,
 } from "../../shared";
 import {
   useGetPublicFilterFields,
@@ -42,6 +43,8 @@ type Props = {
   sorting: GetUserItemsSortType;
   setSorting: Dispatch<SetStateAction<GetUserItemsSortType>>;
   handleClearFilters: () => void;
+  viewMode: "standard" | "tierlist" | "random";
+  onViewModeChange: (mode: "standard" | "tierlist" | "random") => void;
 };
 
 export function PublicTierListView(props: Props) {
@@ -55,6 +58,8 @@ export function PublicTierListView(props: Props) {
     sorting,
     setSorting,
     handleClearFilters,
+    viewMode,
+    onViewModeChange,
   } = props;
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -110,8 +115,9 @@ export function PublicTierListView(props: Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Collections + Controls */}
+      {/* Controls row */}
       <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+        <ViewModeSwitcher viewMode={viewMode} onViewModeChange={onViewModeChange} />
         <CollectionsTabs
           collections={collections}
           selectedCollectionsIds={selectedCollectionsIds}

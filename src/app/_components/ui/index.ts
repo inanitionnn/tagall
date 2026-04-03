@@ -25,3 +25,4 @@ export * from "./autosize-text-area";
 export * from "./card";
 export * from "./chart";
 export * from "./accordion";
+export * from "./tooltip";

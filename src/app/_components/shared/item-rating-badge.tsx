@@ -1,4 +1,5 @@
 import { cn } from "../../../lib";
+import { Tooltip } from "../ui";
 
 type Props = {
   rate: number;
@@ -6,10 +7,12 @@ type Props = {
 };
 
 const ItemRatingBadge = ({ rate, className }: Props) => (
-  <span className={cn("flex items-center gap-1 font-semibold text-yellow-400", className)}>
-    <span>★</span>
-    <span>{Math.round(rate * 10) / 10}</span>
-  </span>
+  <Tooltip content="My rating">
+    <span className={cn("flex items-center gap-1 font-semibold text-yellow-400", className)}>
+      <span>★</span>
+      <span>{Math.round(rate * 10) / 10}</span>
+    </span>
+  </Tooltip>
 );
 
 export { ItemRatingBadge };
