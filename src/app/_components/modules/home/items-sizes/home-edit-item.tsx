@@ -29,6 +29,7 @@ const HomeEditItem = (props: Props) => {
       {item.image && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <CloudinaryImage
+            variant="background"
             className="!aspect-auto h-full w-full rounded-none border-0 object-cover opacity-5 blur-sm shadow-none"
             publicId={item.image}
             folder={item.collection.name}

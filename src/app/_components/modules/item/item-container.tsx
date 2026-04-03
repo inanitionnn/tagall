@@ -51,6 +51,7 @@ function ItemContainer(props: Props) {
                 publicId={item.image}
                 className="mx-auto w-full"
                 folder={item.collection.name}
+                priority
               />
             ) : (
               <div className="h-full w-full rounded-sm bg-primary object-cover" />
@@ -183,6 +184,7 @@ function ItemContainer(props: Props) {
                       publicId={item.image}
                       className="mx-auto w-full"
                       folder={item.collection.name}
+                      priority
                     />
                   ) : (
                     <div className="aspect-[27/40] rounded-sm bg-primary object-cover" />

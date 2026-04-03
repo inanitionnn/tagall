@@ -37,7 +37,7 @@ export const UploadImageByUrl = async (
     const response = await cloudinary.uploader.upload(imageUrl, {
       folder: `${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folder}`,
       transformation: [
-        { width: 1000, crop: "scale" },
+        { width: 600, crop: "scale" },
         { quality: "auto" },
         { fetch_format: "auto" },
       ],
@@ -71,7 +71,7 @@ export const UploadImageByBase64 = async (
     const response = await cloudinary.uploader.upload(base64Image, {
       folder: `${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${folder}`,
       transformation: [
-        { width: 1000, crop: "scale" },
+        { width: 600, crop: "scale" },
         { quality: "auto" },
         { fetch_format: "auto" },
       ],
