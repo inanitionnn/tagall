@@ -24,7 +24,7 @@ export const ViewModeSwitcher = ({ viewMode, onViewModeChange }: Props) => {
             key={value}
             variant={viewMode === value ? "default" : "ghost"}
             onClick={() => onViewModeChange(value)}
-            className="hover:scale-110 transition-all duration-300"
+            className="gap-1.5 hover:scale-110 transition-all duration-300"
           >
             <Icon className="h-4 w-4" />
             <span className="hidden sm:inline">{label}</span>
